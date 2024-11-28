@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
+    <meta name="description" content="POS - Bootstrap Admin Template">
+    <meta name="keywords"
+        content="admin, estimates, bootstrap, business, corporate, creative, invoice, html5, responsive, Projects">
+    <meta name="author" content="Dreamguys - Bootstrap Admin Template">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Dreams Pos admin template</title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cropperjs/dist/cropper.min.css">
+
+
+    <link rel="shortcut icon" type="image/x-icon" href="/admin-assets/img/favicon.jpg">
+
+    <link rel="stylesheet" href="/admin-assets/css/bootstrap.min.css">
+
+    <link rel="stylesheet" href="/admin-assets/css/animate.css">
+
+    <link rel="stylesheet" href="/admin-assets/plugins/select2/css/select2.min.css">
+
+    <link rel="stylesheet" href="/admin-assets/css/dataTables.bootstrap4.min.css">
+
+    <link rel="stylesheet" href="/admin-assets/plugins/fontawesome/css/fontawesome.min.css">
+    <link rel="stylesheet" href="/admin-assets/plugins/fontawesome/css/all.min.css">
+
+    <link rel="stylesheet" href="/admin-assets/css/style.css">
+
+    <style>
+        .thumbnails-container {
+            display: flex;
+            overflow-x: auto;
+        }
+ 
+ 
+        .thumbnail {
+            margin-right: 10px;
+        }
+        .input-upload {
+    position: relative;
+ }
+ 
+ 
+ .error-message {
+            color: red;
+            display: none;
+        }
+ 
+ 
+    </style>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cropperjs/dist/cropper.min.css">
+ 
+</head>
+
+<body>
+    <div id="global-loader">
+        <div class="whirly-loader"> </div>
+    </div>
+
+    <div class="main-wrapper">
+
+        <div class="header">
+
+            <div class="header-left active">
+                <a href="index.html" class="logo">
+                    <img src="/admin-assets/img/logo.png" alt="">
+                </a>
+                <a href="index.html" class="logo-small">
+                    <img src="/admin-assets/img/logo-small.png" alt="">
+                </a>
+                <a id="toggle_btn" href="javascript:void(0);">
+                </a>
+            </div>
+
+            <a id="mobile_btn" class="mobile_btn" href="#sidebar">
+                <span class="bar-icon">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </span>
+            </a>
+
+            <ul class="nav user-menu">
+
+                <li class="nav-item">
+                    <div class="top-nav-search">
+                        <a href="javascript:void(0);" class="responsive-search">
+                            <i class="fa fa-search"></i>
+                        </a>
+                        <form action="#">
+                            <div class="searchinputs">
+                                <input type="text" placeholder="Search Here ...">
+                                <div class="search-addon">
+                                    <span><img src="/admin-assets/img/icons/closes.svg" alt="img"></span>
+                                </div>
+                            </div>
+                            <a class="btn" id="searchdiv"><img src="/admin-assets/img/icons/search.svg" alt="img"></a>
+                        </form>
+                    </div>
+                </li>
+
+
+                <li class="nav-item dropdown has-arrow flag-nav">
+                    <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="javascript:void(0);"
+                        role="button">
+                        <img src="/admin-assets/img/flags/us1.png" alt="" height="20">
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right">
+                        <a href="javascript:void(0);" class="dropdown-item">
+                            <img src="/admin-assets/img/flags/us.png" alt="" height="16"> English
+                        </a>
+                        <a href="javascript:void(0);" class="dropdown-item">
+                            <img src="/admin-assets/img/flags/fr.png" alt="" height="16"> French
+                        </a>
+                        <a href="javascript:void(0);" class="dropdown-item">
+                            <img src="/admin-assets/img/flags/es.png" alt="" height="16"> Spanish
+                        </a>
+                        <a href="javascript:void(0);" class="dropdown-item">
+                            <img src="/admin-assets/img/flags/de.png" alt="" height="16"> German
+                        </a>
+                    </div>
+                </li>
+
+
+                <li class="nav-item dropdown">
+                    <a href="javascript:void(0);" class="dropdown-toggle nav-link" data-bs-toggle="dropdown">
+                        <img src="/admin-assets/img/icons/notification-bing.svg" alt="img"> <span
+                            class="badge rounded-pill">4</span>
+                    </a>
+                    <div class="dropdown-menu notifications">
+                        <div class="topnav-dropdown-header">
+                            <span class="notification-title">Notifications</span>
+                            <a href="javascript:void(0)" class="clear-noti"> Clear All </a>
+                        </div>
+                        <div class="noti-content">
+                            <ul class="notification-list">
+                                <li class="notification-message">
+                                    <a href="activities.html">
+                                        <div class="media d-flex">
+                                            <span class="avatar flex-shrink-0">
+                                                <img alt="" src="/admin-assets/img/profiles/avatar-02.jpg">
+                                            </span>
+                                            <div class="media-body flex-grow-1">
+                                                <p class="noti-details"><span class="noti-title">John Doe</span> added
+                                                    new task <span class="noti-title">Patient appointment booking</span>
+                                                </p>
+                                                <p class="noti-time"><span class="notification-time">4 mins ago</span>
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </li>
+                                <li class="notification-message">
+                                    <a href="activities.html">
+                                        <div class="media d-flex">
+                                            <span class="avatar flex-shrink-0">
+                                                <img alt="" src="/admin-assets/img/profiles/avatar-03.jpg">
+                                            </span>
+                                            <div class="media-body flex-grow-1">
+                                                <p class="noti-details"><span class="noti-title">Tarah Shropshire</span>
+                                                    changed the task name <span class="noti-title">Appointment booking
+                                                        with payment gateway</span></p>
+                                                <p class="noti-time"><span class="notification-time">6 mins ago</span>
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </li>
+                                <li class="notification-message">
+                                    <a href="activities.html">
+                                        <div class="media d-flex">
+                                            <span class="avatar flex-shrink-0">
+                                                <img alt="" src="/admin-assets/img/profiles/avatar-06.jpg">
+                                            </span>
+                                            <div class="media-body flex-grow-1">
+                                                <p class="noti-details"><span class="noti-title">Misty Tison</span>
+                                                    added <span class="noti-title">Domenic Houston</span> and <span
+                                                        class="noti-title">Claire Mapes</span> to project <span
+                                                        class="noti-title">Doctor available module</span></p>
+                                                <p class="noti-time"><span class="notification-time">8 mins ago</span>
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </li>
+                                <li class="notification-message">
+                                    <a href="activities.html">
+                                        <div class="media d-flex">
+                                            <span class="avatar flex-shrink-0">
+                                                <img alt="" src="/admin-assets/img/profiles/avatar-17.jpg">
+                                            </span>
+                                            <div class="media-body flex-grow-1">
+                                                <p class="noti-details"><span class="noti-title">Rolland Webber</span>
+                                                    completed task <span class="noti-title">Patient and Doctor video
+                                                        conferencing</span></p>
+                                                <p class="noti-time"><span class="notification-time">12 mins ago</span>
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </li>
+                                <li class="notification-message">
+                                    <a href="activities.html">
+                                        <div class="media d-flex">
+                                            <span class="avatar flex-shrink-0">
+                                                <img alt="" src="/admin-assets/img/profiles/avatar-13.jpg">
+                                            </span>
+                                            <div class="media-body flex-grow-1">
+                                                <p class="noti-details"><span class="noti-title">Bernardo Galaviz</span>
+                                                    added new task <span class="noti-title">Private chat module</span>
+                                                </p>
+                                                <p class="noti-time"><span class="notification-time">2 days ago</span>
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="topnav-dropdown-footer">
+                            <a href="activities.html">View all Notifications</a>
+                        </div>
+                    </div>
+                </li>
+
+                <li class="nav-item dropdown has-arrow main-drop">
+                    <a href="javascript:void(0);" class="dropdown-toggle nav-link userset" data-bs-toggle="dropdown">
+                        <span class="user-img"><img src="/admin-assets/img/profiles/avator1.jpg" alt="">
+                            <span class="status online"></span></span>
+                    </a>
+                    <div class="dropdown-menu menu-drop-user">
+                        <div class="profilename">
+                            <div class="profileset">
+                                <span class="user-img"><img src="/admin-assets/img/profiles/avator1.jpg" alt="">
+                                    <span class="status online"></span></span>
+                                <div class="profilesets">
+                                    <h6>John Doe</h6>
+                                    <h5>Admin</h5>
+                                </div>
+                            </div>
+                            <hr class="m-0">
+                            <a class="dropdown-item" href="profile.html"> <i class="me-2" data-feather="user"></i> My
+                                Profile</a>
+                            <a class="dropdown-item" href="generalsettings.html"><i class="me-2"
+                                    data-feather="settings"></i>Settings</a>
+                            <hr class="m-0">
+                            <a class="dropdown-item logout pb-0" href="signin.html"><img
+                                    src="/admin-assets/img/icons/log-out.svg" class="me-2" alt="img">Logout</a>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+
+
+            <div class="dropdown mobile-user-menu">
+                <a href="javascript:void(0);" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"
+                    aria-expanded="false"><i class="fa fa-ellipsis-v"></i></a>
+                <div class="dropdown-menu dropdown-menu-right">
+                    <a class="dropdown-item" href="profile.html">My Profile</a>
+                    <a class="dropdown-item" href="generalsettings.html">Settings</a>
+                    <a class="dropdown-item" href="signin.html">Logout</a>
+                </div>
+            </div>
+
+        </div>
+
+
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-inner slimscroll">
+                <div id="sidebar-menu" class="sidebar-menu">
+                    <ul>
+                        <li class="active">
+                            <a href="index.html"><span>
+                                    Dashboard</span> </a>
+                        </li>
+
+                        <li class="">
+                            <a href="/admin/users"><span>
+                                    Users</span> </a>
+                            
+                               
+                            
+                        </li>
+
+                        <li class="">
+                            <a href="/admin/productList"><span>
+                                    Products</span> </a>
+                            
+                               
+                            
+                        </li>                        
+                        <li class="">
+                            <a href="/admin/category"><span>
+                                    Category</span> </a>
+                            
+                               
+                            
+                        </li>                        
+                        <li class="">
+                            <a href="/admin/orders"><span>
+                                    Orders</span> </a>
+                            
+                               
+                            
+                        </li>                        
+                        <li class="">
+                            <a href="/admin/coupon"><span>
+                                    Coupon</span> </a>
+                            
+                               
+                            
+                        </li>                        
+                        <li class="">
+                            <a href="/admin/offers"><span>
+                                    Offer</span> </a>
+                            
+                               
+                            
+                        </li>                        
+                        <li class="">
+                            <a href="/admin/logout"><span>
+                                    Logout</span> </a>
+                            
+                               
+                            
+                        </li>                        
+
+
+                        
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="page-wrapper">
+            <div class="content">
+                <div class="page-header">
+                    <div class="page-title">
+                        <h4>Product Add</h4>
+                        <h6>Create new product</h6>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-body">
+                        <form action="/admin/editProducts/<%=product._id%>" method="POST" enctype="multipart/form-data" onsubmit="return validateForm()">
+
+                            
+                            <div class="row">
+                                <div class="col-lg-4 col-sm-6 col-12">
+                                    <div class="form-group">
+                                        <label>Product Name</label>
+                                        <input type="text" class="form-control" name="productName" value="<%product.productName%>">
+                                        <div id="productName-error" class="error-message"></div>
+
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 col-sm-6 col-12">
+                                    <div class="form-group">
+                                        <label>Category</label>
+                                        <select class="select" name="categoryId" id="categoryId">
+                                            <% category.forEach((category) => { %>
+                                                <option value="<%= category.name %>"><%= category.name %></option>
+                                            <% }) %>
+                                        </select>
+                                        <div id="category-error" class="error-message"></div>
+                                    </div>
+                                </div>
+                                
+                                <!-- <div class="col-lg-3 col-sm-6 col-12">
+                                    <div class="form-group">
+                                        <label>Sub Category</label>
+                                        <select class="select">
+                                            <option>Choose Sub Category</option>
+                                            <option>Fruits</option>
+                                        </select>
+                                    </div>
+                                </div> -->
+                                <!-- <div class="col-lg-3 col-sm-6 col-12">
+                                    <div class="form-group">
+                                        <label>Brand</label>
+                                        <select class="select">
+                                            <option>Choose Brand</option>
+                                            <option>Brand</option>
+                                        </select>
+                                    </div>
+                                </div> -->
+                                <div class="col-lg-4 col-sm-6 col-12">
+                                    <div class="form-group">
+                                        <label>Price</label>
+                                        <input type="number" class="form-control" name="price" value="<%=product.price%>" >
+                                        <div id="regularPrice-error" class="error-message"></div>
+
+                                    </div>
+                                </div>
+
+                                
+
+                                <div class="col-lg-4 col-sm-6 col-12">
+                                    <div class="form-group">
+                                        <label>Quantity</label>
+                                        <input type="number" class="form-control" name="quantity" value="<%=product.quantity%>">
+                                    </div>
+                                </div>
+
+                                
+
+                                <div class="col-lg-12">
+                                    <div class="form-group">
+                                        <label for="descriptionid">Description</label>
+                                        <textarea class="form-control" name="description" id="descriptionid" value="<%=product.description%>"></textarea>
+                                    </div>
+                                </div>
+                                
+                                <!-- <div class="col-lg-4 col-sm-6 col-12">
+                                    <div class="form-group">
+                                        <label>Discount Type</label>
+                                        <select class="select">
+                                            <option>Percentage</option>
+                                            <option>10%</option>
+                                            <option>20%</option>
+                                        </select>
+                                    </div>
+                                </div> -->
+
+                                <div class="card mb-2">
+                                    <div class="card-header"><h4>Choose images</h4></div>
+                                    <div class="border row">
+                                        <div id="addedImagesContainer" class="thumbnails-container"></div>
+                                    </div>
+
+                                    <%for(let i = 0; i<product.image.length; i++){%>
+                        
+                                    <div class="row">
+                                        <div class="card-body align-items-center" style="margin-bottom: 20px;">
+                                            <img src="/uploads/re-image/<%=product.productImage[i]%>" alt="" id="imgView1">
+                                            <input type="hidden" value="<%=product.image[i]%>" class="form-control" name="images" id="input1" accept="image/png, image/jpeg , image/jpg" onchange="viewImage1(event), viewImage(event,1)">
+                                            <div id="image-error" class="error-message"></div>
+                                            <div class="image-cropper d-flex align-items-center" style="display: none; width: 300px; height: 300px; margin-bottom: 20px;">
+                                                <img src="" id="croppedImg1" alt="">
+                                                <button type="button" id="saveButton1" class="btn-sm btn-primary">Save</button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <%}%>
+                        
+                                    <div class="row">
+                                        <div class="card-body align-items-center" style="margin-bottom: 20px;">
+                                            <img src="" alt="" id="imgView2">
+                                            <input type="file" class="form-control" name="images" id="input2" accept="image/png, image/jpeg , image/jpg" onchange="viewImage2(event), viewImage(event,2)">
+                                            <div id="image-error" class="error-message"></div>
+                                            <div class="image-cropper d-flex align-items-center" style="display: none; width: 300px; height: 300px; margin-bottom: 20px;">
+                                                <img src="" id="croppedImg2" alt="">
+                                                <button type="button" id="saveButton2" class="btn-sm btn-primary">Save</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                        
+                                    <div class="row">
+                                        <div class="card-body align-items-center" style="margin-bottom: 20px;">
+                                            <img src="" alt="" id="imgView3">
+                                            <input type="file" class="form-control" name="images" id="input1" accept="image/png, image/jpeg , image/jpg" onchange="viewImage3(event), viewImage(event,3)">
+                                            <div id="image-error" class="error-message"></div>
+                                            <div class="image-cropper d-flex align-items-center" style="display: none; width: 300px; height: 300px; margin-bottom: 20px;">
+                                                <img src="" id="croppedImg3" alt="">
+                                                <button type="button" id="saveButton3" class="btn-sm btn-primary">Save</button>
+                                           </div>
+                                        </div>
+                                    </div>
+                        
+                                    <div class="row">
+                                        <div class="card-body align-items-center" style="margin-bottom: 20px;">
+                                            <img src="" alt="" id="imgView4">
+                                            <input type="file" class="form-control" name="images" id="input4" accept="image/png, image/jpeg , image/jpg" onchange="viewImage4(event), viewImage(event,4)">
+                                            <div id="image-error" class="error-message"></div>
+                                            <div class="image-cropper d-flex align-items-center" style="display: none; width: 300px; height: 300px; margin-bottom: 20px;">
+                                                <img src="" id="croppedImg4" alt="">
+                                                <button type="button" id="saveButton4" class="btn-sm btn-primary">Save</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-md rounded font-sm hover-up" onclick="validateAndSubmit()">Submit</button>
+                        
+                       
+            </form>
+                        
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/cropperjs/dist/cropper.min.js"></script>
+
+    <script src="/admin-assets/js/jquery-3.6.0.min.js"></script>
+
+    <script src="/admin-assets/js/feather.min.js"></script>
+
+    <script src="/admin-assets/js/jquery.slimscroll.min.js"></script>
+
+    <script src="/admin-assets/js/jquery.dataTables.min.js"></script>
+    <script src="/admin-assets/js/dataTables.bootstrap4.min.js"></script>
+
+    <script src="/admin-assets/js/bootstrap.bundle.min.js"></script>
+
+    <script src="/admin-assets/plugins/select2/js/select2.min.js"></script>
+
+    <script src="/admin-assets/plugins/sweetalert/sweetalert2.all.min.js"></script>
+    <script src="/admin-assets/plugins/sweetalert/sweetalerts.min.js"></script>
+
+    <script src="/admin-assets/js/script.js"></script>
+    <script>
+
+          function validateAndSubmit(){
+              if(validateForm()){
+                document.forms[0].submit();
+              }
+          }
+
+          function viewImage(event, index) {
+    let input = event.target;
+    let reader = new FileReader();
+    
+    reader.onload = function() {
+        let dataURL = reader.result;
+        let image = document.getElementById("imgView" + index);
+        image.src = dataURL;
+        
+        // Destroy existing cropper if it exists
+        if (image.cropper) {
+            image.cropper.destroy();
+        }
+        
+        // Initialize Cropper
+        const cropper = new Cropper(image, {
+            aspectRatio: 1,
+            viewMode: 1,
+           
+        });
+        
+        // Store cropper instance
+        image.cropper = cropper;
+        
+        // Show cropper container
+        let cropperContainer = document.querySelector("#croppedImg" + index).parentElement;
+        cropperContainer.style.display = 'block';
+        
+        // Handle save button click
+        let saveButton = document.querySelector('#saveButton' + index);
+        saveButton.onclick = async function() {
+            try {
+                let croppedCanvas = cropper.getCroppedCanvas();
+                let croppedImage = document.getElementById("croppedImg" + index);
+                croppedImage.src = croppedCanvas.toDataURL('image/jpeg', 1.0);
+                
+                let timestamp = new Date().getTime();
+                let fileName = `cropped_img_${timestamp}_${index}.png`;
+                
+                await croppedCanvas.toBlob(blob => {
+                    let input = document.getElementById('input' + index);
+                    let imgFile = new File([blob], fileName, { type: 'image/png' });
+                    const fileList = new DataTransfer();
+                    fileList.items.add(imgFile);
+                    input.files = fileList.files;
+                }, 'image/png');
+                
+                cropperContainer.style.display = 'none';
+                cropper.destroy();
+            } catch (error) {
+                console.error('Error during image cropping:', error);
+                alert('There was an error processing the image. Please try again.');
+            }
+        };
+    };
+    
+    reader.readAsDataURL(input.files[0]);
+}
+
+// Individual image preview functions
+function viewImage1(event) {
+    document.getElementById("imgView1").src = URL.createObjectURL(event.target.files[0]);
+}
+
+function viewImage2(event) {
+    document.getElementById("imgView2").src = URL.createObjectURL(event.target.files[0]);
+}
+
+function viewImage3(event) {
+    document.getElementById("imgView3").src = URL.createObjectURL(event.target.files[0]);
+}
+
+function viewImage4(event) {
+    document.getElementById("imgView4").src = URL.createObjectURL(event.target.files[0]);
+}
+                                                                            //blob means making it a binary file                                                                      
+
+        //to display all images like thumbnail
+        const selectedImages = [];
+        document.getElementById("input1").addEventListener('change', handleFileSelect);
+
+        function handleFileSelect(event){
+            const addedImagesContainer = document.getElementById("addImagesContainer");
+            addedImagesContainer.innerHTML = "";
+            const files = event.target.files
+            for(let i = 0; i<files.length; i++){
+                const file = files[i];
+                selectedImages.push(file);
+                const thumbnail = document.createElement("div");
+                thumbnail.classList.add("thumbnail");
+
+                const img = document.createElement("img");
+                img.src= URL.createObjectURL(file);
+                img.alt= "thumbnail";
+                img.style.width = "50px";
+                img.style.height = "auto";
+                const removeIcon = document.createElement("span");
+                removeIcon.classList.add("remove-icon");
+                removeIcon.innerHTML = "&times";
+                removeIcon.addEventListener("click", function(){
+                    const index = selectedImages.indexOf(file);
+                    if(index !== -1){
+                        selectedImages.splice(index, 1);
+
+                    }
+                    thumbnail.remove();
+                });
+                thumbnail.appendChild(img);
+                thumbnail.appendChild(removeIcon);
+                addedImagesContainer.appendChild(thumbnail);
+
+            }
+           
+                }
+
+
+          function validateForm() {
+              clearErrorMessages();
+              const name = document.getElementsByName('productName')[0].value;
+              const description = document.getElementById('descriptionid').value;
+            //   const brand = document.getElementsByName('brand')[0].value;
+              const price = document.getElementsByName('price')[0].value;
+              const salesPrice = document.getElementsByName('salesPrice')[0].value;
+              
+              const category = document.getElementsByName('category')[0].value;
+              const images = document.getElementById('input1')
+              const quantity=document.getElementsByName('quantity').value;
+              let isValid = true
+              if (name.trim() === "") {
+      displayErrorMessage('productName-error', 'Please enter a product name.');
+      isValid = false;
+   } else if (!/^[a-zA-Z\s]+$/.test(name.trim())) {
+      displayErrorMessage('productName-error', 'Product name should contain only alphabetic characters.');
+      isValid = false;
+   }
+            
+   if (description.trim() === "") {
+      displayErrorMessage('description-error', 'Please enter a product description.');
+      isValid = false;
+   } else if (!/^[a-zA-Z\s]+$/.test(description.trim())) {
+      displayErrorMessage('description-error', 'Product description should contain only alphabetic characters.');
+      isValid = false;
+   }
+  
+  
+           
+  
+  
+              if ( parseInt(quantity) < 0) {
+                  displayErrorMessage('quantity-error', 'Please enter a valid non-negative quantity.');
+                  isValid = false;
+              }
+  
+  
+  
+  
+              if (!/^\d+(\.\d{1,2})?$/.test(price) || parseFloat(price) < 0) {
+                  displayErrorMessage('regularPrice-error', 'Please enter a valid non-negative price.');
+                  isValid = false;
+              }
+  
+  
+  
+  
+            //   if (!/^\d+(\.\d{1,2})?$/.test(salesPrice) || parseFloat(salesPrice) < 0) {
+            //       displayErrorMessage('salesPrice-error', 'Please enter a valid non-negative price.');
+            //       isValid = false;
+            //   }
+//               if (parseFloat(price) <= parseFloat(salesPrice)) {
+//       displayErrorMessage('regularPrice-error', 'Regular price must be greater than sale price.');
+//       isValid = false;
+//    }
+  
+  
+             
+  
+  
+            if (!images || images.files.length === 0) {
+                    displayErrorMessage("images-error", 'Please select an image.');
+                    isValid = false;
+                }
+
+
+            if (!category.trim()) {
+                displayErrorMessage('category-error', 'Please select a category.');
+                isValid = false;
+            }    
+
+              return isValid;
+          }
+
+
+          function displayErrorMessage(elementId, message) {
+              var errorElement = document.getElementById(elementId);
+              errorElement.innerText = message;
+              errorElement.style.display = "block";
+          }
+  
+  
+          function clearErrorMessages() {
+              const errorElements = document.getElementsByClassName('error-message');
+              Array.from(errorElements).forEach(element => {
+                  element.innerText = '';
+              });
+              const errorMessage = document.getElementById('errorMessage');
+  
+  
+          }
+
+
+
+    </script>
+</body>
+
+</html>
