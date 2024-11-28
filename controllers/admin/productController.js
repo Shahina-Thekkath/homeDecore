@@ -63,7 +63,7 @@ const addProducts = async(req, res) =>{
                 createdOn:new Date(),
                 quantity: products.quantity,
                
-                image: images, 
+                image:  images, 
 
                 status: 'Available',
 
