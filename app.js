@@ -8,6 +8,7 @@ const userRouter = require("./routes/userRouter");
 const adminRouter = require("./routes/adminRouter");
 
 
+
 const passport = require("./config/passport")
 db();
 app.use(express.static(path.join(__dirname,"public/ludus-free-premium-ecommerce-template-master")));
@@ -63,4 +64,9 @@ db().then(()=>{
 }).catch(error =>{
     console.log(`failed to connect to the database`,error)
 })
+
+
+
+
+
 module.exports = app;

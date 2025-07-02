@@ -66,6 +66,9 @@ const login = async (req, res) => {
         
         // Set user session
         req.session.user = findUser;
+     
+       
+
 
         res.redirect("/");
     } 

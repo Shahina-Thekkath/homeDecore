@@ -25,13 +25,19 @@ const addressSchema = mongoose.Schema({
         type:String,
         required:true
     },
-    state:{
-        type:String,
+    state: {
+        type: String,
+        enum: ['Assam', 'Utter Pradesh', 'Kerala', 'Tamil Nadu'], // Allowed states
         required:true
     },
     landmark:{
         type:String,
         required:false
+    },
+    country: {
+        type: String,
+        enum: ['uae', 'uk', 'us', 'india', 'pakistan'], // Enum values
+        required: true
     },
     alternatePhone:{
         type:Number,
@@ -39,8 +45,7 @@ const addressSchema = mongoose.Schema({
     },
     addressType:{
         type:String,
-        enum:['home','work'],
-        default:false
+        enum:['home','work']
     },
     createdAt:{
         type:Date,

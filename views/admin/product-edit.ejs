@@ -1,499 +1,530 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
-    <meta name="description" content="POS - Bootstrap Admin Template">
-    <meta name="keywords"
-        content="admin, estimates, bootstrap, business, corporate, creative, invoice, html5, responsive, Projects">
-    <meta name="author" content="Dreamguys - Bootstrap Admin Template">
-    <meta name="robots" content="noindex, nofollow">
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, user-scalable=0"
+    />
+    <meta name="description" content="POS - Bootstrap Admin Template" />
+    <meta
+      name="keywords"
+      content="admin, estimates, bootstrap, business, corporate, creative, invoice, html5, responsive, Projects"
+    />
+    <meta name="author" content="Dreamguys - Bootstrap Admin Template" />
+    <meta name="robots" content="noindex, nofollow" />
     <title>Dreams Pos admin template</title>
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cropperjs/dist/cropper.min.css">
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/cropperjs/dist/cropper.min.css"
+    />
 
+    <link
+      rel="shortcut icon"
+      type="image/x-icon"
+      href="/admin-assets/img/favicon.jpg"
+    />
 
-    <link rel="shortcut icon" type="image/x-icon" href="/admin-assets/img/favicon.jpg">
+    <link rel="stylesheet" href="/admin-assets/css/bootstrap.min.css" />
 
-    <link rel="stylesheet" href="/admin-assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/admin-assets/css/animate.css" />
 
-    <link rel="stylesheet" href="/admin-assets/css/animate.css">
+    <link
+      rel="stylesheet"
+      href="/admin-assets/plugins/select2/css/select2.min.css"
+    />
 
-    <link rel="stylesheet" href="/admin-assets/plugins/select2/css/select2.min.css">
+    <link
+      rel="stylesheet"
+      href="/admin-assets/css/dataTables.bootstrap4.min.css"
+    />
 
-    <link rel="stylesheet" href="/admin-assets/css/dataTables.bootstrap4.min.css">
+    <link
+      rel="stylesheet"
+      href="/admin-assets/plugins/fontawesome/css/fontawesome.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="/admin-assets/plugins/fontawesome/css/all.min.css"
+    />
 
-    <link rel="stylesheet" href="/admin-assets/plugins/fontawesome/css/fontawesome.min.css">
-    <link rel="stylesheet" href="/admin-assets/plugins/fontawesome/css/all.min.css">
-
-    <link rel="stylesheet" href="/admin-assets/css/style.css">
-
+    <link rel="stylesheet" href="/admin-assets/css/style.css" />
     <style>
         .thumbnails-container {
             display: flex;
             overflow-x: auto;
         }
- 
- 
         .thumbnail {
             margin-right: 10px;
         }
-        .input-upload {
-    position: relative;
- }
- 
- 
- .error-message {
+        .error-message {
             color: red;
             display: none;
         }
- 
- 
-    </style>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cropperjs/dist/cropper.min.css">
- 
-</head>
+        .image-cropper {
+    width: 300px; /* Set a fixed width for the cropper */
+    height: 300px; /* Set a fixed height for the cropper */
+    overflow: hidden; /* Hide overflow if the image is larger */
+    margin: 10px auto; /* Center the cropper */
+}
 
+.image-wrapper {
+    position: relative; /* Position relative for absolute positioning of elements */
+    width: 300px; /* Match the cropper width */
+    height: 300px; /* Match the cropper height */
+}
+
+.image-wrapper img {
+    max-width: 100%; /* Ensure the image fits within the wrapper */
+    max-height: 100%; /* Ensure the image fits within the wrapper */
+}
+
+        
+    </style>
+</head>
 <body>
     <div id="global-loader">
-        <div class="whirly-loader"> </div>
-    </div>
-
+        <div class="whirly-loader"></div>
+      </div>
     <div class="main-wrapper">
+      <div class="header">
+        <div class="header-left active">
+          <a href="index.html" class="logo">
+            <img src="/admin-assets/img/logo.png" alt="" />
+          </a>
+          <a href="index.html" class="logo-small">
+            <img src="/admin-assets/img/logo-small.png" alt="" />
+          </a>
+          <a id="toggle_btn" href="javascript:void(0);"> </a>
+        </div>
 
-        <div class="header">
+        <a id="mobile_btn" class="mobile_btn" href="#sidebar">
+          <span class="bar-icon">
+            <span></span>
+            <span></span>
+            <span></span>
+          </span>
+        </a>
 
-            <div class="header-left active">
-                <a href="index.html" class="logo">
-                    <img src="/admin-assets/img/logo.png" alt="">
-                </a>
-                <a href="index.html" class="logo-small">
-                    <img src="/admin-assets/img/logo-small.png" alt="">
-                </a>
-                <a id="toggle_btn" href="javascript:void(0);">
-                </a>
+        <ul class="nav user-menu">
+          <li class="nav-item">
+            <div class="top-nav-search">
+              <a href="javascript:void(0);" class="responsive-search">
+                <i class="fa fa-search"></i>
+              </a>
+              <form action="#">
+                <div class="searchinputs">
+                  <input type="text" placeholder="Search Here ..." />
+                  <div class="search-addon">
+                    <span
+                      ><img src="/admin-assets/img/icons/closes.svg" alt="img"
+                    /></span>
+                  </div>
+                </div>
+                <a class="btn" id="searchdiv"
+                  ><img src="/admin-assets/img/icons/search.svg" alt="img"
+                /></a>
+              </form>
             </div>
+          </li>
 
-            <a id="mobile_btn" class="mobile_btn" href="#sidebar">
-                <span class="bar-icon">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </span>
+          <li class="nav-item dropdown has-arrow flag-nav">
+            <a
+              class="nav-link dropdown-toggle"
+              data-bs-toggle="dropdown"
+              href="javascript:void(0);"
+              role="button"
+            >
+              <img src="/admin-assets/img/flags/us1.png" alt="" height="20" />
             </a>
+            <div class="dropdown-menu dropdown-menu-right">
+              <a href="javascript:void(0);" class="dropdown-item">
+                <img src="/admin-assets/img/flags/us.png" alt="" height="16" />
+                English
+              </a>
+              <a href="javascript:void(0);" class="dropdown-item">
+                <img src="/admin-assets/img/flags/fr.png" alt="" height="16" />
+                French
+              </a>
+              <a href="javascript:void(0);" class="dropdown-item">
+                <img src="/admin-assets/img/flags/es.png" alt="" height="16" />
+                Spanish
+              </a>
+              <a href="javascript:void(0);" class="dropdown-item">
+                <img src="/admin-assets/img/flags/de.png" alt="" height="16" />
+                German
+              </a>
+            </div>
+          </li>
 
-            <ul class="nav user-menu">
-
-                <li class="nav-item">
-                    <div class="top-nav-search">
-                        <a href="javascript:void(0);" class="responsive-search">
-                            <i class="fa fa-search"></i>
-                        </a>
-                        <form action="#">
-                            <div class="searchinputs">
-                                <input type="text" placeholder="Search Here ...">
-                                <div class="search-addon">
-                                    <span><img src="/admin-assets/img/icons/closes.svg" alt="img"></span>
-                                </div>
-                            </div>
-                            <a class="btn" id="searchdiv"><img src="/admin-assets/img/icons/search.svg" alt="img"></a>
-                        </form>
-                    </div>
-                </li>
-
-
-                <li class="nav-item dropdown has-arrow flag-nav">
-                    <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="javascript:void(0);"
-                        role="button">
-                        <img src="/admin-assets/img/flags/us1.png" alt="" height="20">
+          <li class="nav-item dropdown">
+            <a
+              href="javascript:void(0);"
+              class="dropdown-toggle nav-link"
+              data-bs-toggle="dropdown"
+            >
+              <img
+                src="/admin-assets/img/icons/notification-bing.svg"
+                alt="img"
+              />
+              <span class="badge rounded-pill">4</span>
+            </a>
+            <div class="dropdown-menu notifications">
+              <div class="topnav-dropdown-header">
+                <span class="notification-title">Notifications</span>
+                <a href="javascript:void(0)" class="clear-noti"> Clear All </a>
+              </div>
+              <div class="noti-content">
+                <ul class="notification-list">
+                  <li class="notification-message">
+                    <a href="activities.html">
+                      <div class="media d-flex">
+                        <span class="avatar flex-shrink-0">
+                          <img
+                            alt=""
+                            src="/admin-assets/img/profiles/avatar-02.jpg"
+                          />
+                        </span>
+                        <div class="media-body flex-grow-1">
+                          <p class="noti-details">
+                            <span class="noti-title">John Doe</span> added new
+                            task
+                            <span class="noti-title"
+                              >Patient appointment booking</span
+                            >
+                          </p>
+                          <p class="noti-time">
+                            <span class="notification-time">4 mins ago</span>
+                          </p>
+                        </div>
+                      </div>
                     </a>
-                    <div class="dropdown-menu dropdown-menu-right">
-                        <a href="javascript:void(0);" class="dropdown-item">
-                            <img src="/admin-assets/img/flags/us.png" alt="" height="16"> English
-                        </a>
-                        <a href="javascript:void(0);" class="dropdown-item">
-                            <img src="/admin-assets/img/flags/fr.png" alt="" height="16"> French
-                        </a>
-                        <a href="javascript:void(0);" class="dropdown-item">
-                            <img src="/admin-assets/img/flags/es.png" alt="" height="16"> Spanish
-                        </a>
-                        <a href="javascript:void(0);" class="dropdown-item">
-                            <img src="/admin-assets/img/flags/de.png" alt="" height="16"> German
-                        </a>
-                    </div>
-                </li>
-
-
-                <li class="nav-item dropdown">
-                    <a href="javascript:void(0);" class="dropdown-toggle nav-link" data-bs-toggle="dropdown">
-                        <img src="/admin-assets/img/icons/notification-bing.svg" alt="img"> <span
-                            class="badge rounded-pill">4</span>
+                  </li>
+                  <li class="notification-message">
+                    <a href="activities.html">
+                      <div class="media d-flex">
+                        <span class="avatar flex-shrink-0">
+                          <img
+                            alt=""
+                            src="/admin-assets/img/profiles/avatar-03.jpg"
+                          />
+                        </span>
+                        <div class="media-body flex-grow-1">
+                          <p class="noti-details">
+                            <span class="noti-title">Tarah Shropshire</span>
+                            changed the task name
+                            <span class="noti-title"
+                              >Appointment booking with payment gateway</span
+                            >
+                          </p>
+                          <p class="noti-time">
+                            <span class="notification-time">6 mins ago</span>
+                          </p>
+                        </div>
+                      </div>
                     </a>
-                    <div class="dropdown-menu notifications">
-                        <div class="topnav-dropdown-header">
-                            <span class="notification-title">Notifications</span>
-                            <a href="javascript:void(0)" class="clear-noti"> Clear All </a>
+                  </li>
+                  <li class="notification-message">
+                    <a href="activities.html">
+                      <div class="media d-flex">
+                        <span class="avatar flex-shrink-0">
+                          <img
+                            alt=""
+                            src="/admin-assets/img/profiles/avatar-06.jpg"
+                          />
+                        </span>
+                        <div class="media-body flex-grow-1">
+                          <p class="noti-details">
+                            <span class="noti-title">Misty Tison</span> added
+                            <span class="noti-title">Domenic Houston</span> and
+                            <span class="noti-title">Claire Mapes</span> to
+                            project
+                            <span class="noti-title"
+                              >Doctor available module</span
+                            >
+                          </p>
+                          <p class="noti-time">
+                            <span class="notification-time">8 mins ago</span>
+                          </p>
                         </div>
-                        <div class="noti-content">
-                            <ul class="notification-list">
-                                <li class="notification-message">
-                                    <a href="activities.html">
-                                        <div class="media d-flex">
-                                            <span class="avatar flex-shrink-0">
-                                                <img alt="" src="/admin-assets/img/profiles/avatar-02.jpg">
-                                            </span>
-                                            <div class="media-body flex-grow-1">
-                                                <p class="noti-details"><span class="noti-title">John Doe</span> added
-                                                    new task <span class="noti-title">Patient appointment booking</span>
-                                                </p>
-                                                <p class="noti-time"><span class="notification-time">4 mins ago</span>
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </a>
-                                </li>
-                                <li class="notification-message">
-                                    <a href="activities.html">
-                                        <div class="media d-flex">
-                                            <span class="avatar flex-shrink-0">
-                                                <img alt="" src="/admin-assets/img/profiles/avatar-03.jpg">
-                                            </span>
-                                            <div class="media-body flex-grow-1">
-                                                <p class="noti-details"><span class="noti-title">Tarah Shropshire</span>
-                                                    changed the task name <span class="noti-title">Appointment booking
-                                                        with payment gateway</span></p>
-                                                <p class="noti-time"><span class="notification-time">6 mins ago</span>
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </a>
-                                </li>
-                                <li class="notification-message">
-                                    <a href="activities.html">
-                                        <div class="media d-flex">
-                                            <span class="avatar flex-shrink-0">
-                                                <img alt="" src="/admin-assets/img/profiles/avatar-06.jpg">
-                                            </span>
-                                            <div class="media-body flex-grow-1">
-                                                <p class="noti-details"><span class="noti-title">Misty Tison</span>
-                                                    added <span class="noti-title">Domenic Houston</span> and <span
-                                                        class="noti-title">Claire Mapes</span> to project <span
-                                                        class="noti-title">Doctor available module</span></p>
-                                                <p class="noti-time"><span class="notification-time">8 mins ago</span>
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </a>
-                                </li>
-                                <li class="notification-message">
-                                    <a href="activities.html">
-                                        <div class="media d-flex">
-                                            <span class="avatar flex-shrink-0">
-                                                <img alt="" src="/admin-assets/img/profiles/avatar-17.jpg">
-                                            </span>
-                                            <div class="media-body flex-grow-1">
-                                                <p class="noti-details"><span class="noti-title">Rolland Webber</span>
-                                                    completed task <span class="noti-title">Patient and Doctor video
-                                                        conferencing</span></p>
-                                                <p class="noti-time"><span class="notification-time">12 mins ago</span>
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </a>
-                                </li>
-                                <li class="notification-message">
-                                    <a href="activities.html">
-                                        <div class="media d-flex">
-                                            <span class="avatar flex-shrink-0">
-                                                <img alt="" src="/admin-assets/img/profiles/avatar-13.jpg">
-                                            </span>
-                                            <div class="media-body flex-grow-1">
-                                                <p class="noti-details"><span class="noti-title">Bernardo Galaviz</span>
-                                                    added new task <span class="noti-title">Private chat module</span>
-                                                </p>
-                                                <p class="noti-time"><span class="notification-time">2 days ago</span>
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                        <div class="topnav-dropdown-footer">
-                            <a href="activities.html">View all Notifications</a>
-                        </div>
-                    </div>
-                </li>
-
-                <li class="nav-item dropdown has-arrow main-drop">
-                    <a href="javascript:void(0);" class="dropdown-toggle nav-link userset" data-bs-toggle="dropdown">
-                        <span class="user-img"><img src="/admin-assets/img/profiles/avator1.jpg" alt="">
-                            <span class="status online"></span></span>
+                      </div>
                     </a>
-                    <div class="dropdown-menu menu-drop-user">
-                        <div class="profilename">
-                            <div class="profileset">
-                                <span class="user-img"><img src="/admin-assets/img/profiles/avator1.jpg" alt="">
-                                    <span class="status online"></span></span>
-                                <div class="profilesets">
-                                    <h6>John Doe</h6>
-                                    <h5>Admin</h5>
-                                </div>
-                            </div>
-                            <hr class="m-0">
-                            <a class="dropdown-item" href="profile.html"> <i class="me-2" data-feather="user"></i> My
-                                Profile</a>
-                            <a class="dropdown-item" href="generalsettings.html"><i class="me-2"
-                                    data-feather="settings"></i>Settings</a>
-                            <hr class="m-0">
-                            <a class="dropdown-item logout pb-0" href="signin.html"><img
-                                    src="/admin-assets/img/icons/log-out.svg" class="me-2" alt="img">Logout</a>
+                  </li>
+                  <li class="notification-message">
+                    <a href="activities.html">
+                      <div class="media d-flex">
+                        <span class="avatar flex-shrink-0">
+                          <img
+                            alt=""
+                            src="/admin-assets/img/profiles/avatar-17.jpg"
+                          />
+                        </span>
+                        <div class="media-body flex-grow-1">
+                          <p class="noti-details">
+                            <span class="noti-title">Rolland Webber</span>
+                            completed task
+                            <span class="noti-title"
+                              >Patient and Doctor video conferencing</span
+                            >
+                          </p>
+                          <p class="noti-time">
+                            <span class="notification-time">12 mins ago</span>
+                          </p>
                         </div>
-                    </div>
-                </li>
+                      </div>
+                    </a>
+                  </li>
+                  <li class="notification-message">
+                    <a href="activities.html">
+                      <div class="media d-flex">
+                        <span class="avatar flex-shrink-0">
+                          <img
+                            alt=""
+                            src="/admin-assets/img/profiles/avatar-13.jpg"
+                          />
+                        </span>
+                        <div class="media-body flex-grow-1">
+                          <p class="noti-details">
+                            <span class="noti-title">Bernardo Galaviz</span>
+                            added new task
+                            <span class="noti-title">Private chat module</span>
+                          </p>
+                          <p class="noti-time">
+                            <span class="notification-time">2 days ago</span>
+                          </p>
+                        </div>
+                      </div>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+              <div class="topnav-dropdown-footer">
+                <a href="activities.html">View all Notifications</a>
+              </div>
+            </div>
+          </li>
+
+          <li class="nav-item dropdown has-arrow main-drop">
+            <a
+              href="javascript:void(0);"
+              class="dropdown-toggle nav-link userset"
+              data-bs-toggle="dropdown"
+            >
+              <span class="user-img"
+                ><img src="/admin-assets/img/profiles/avator1.jpg" alt="" />
+                <span class="status online"></span
+              ></span>
+            </a>
+            <div class="dropdown-menu menu-drop-user">
+              <div class="profilename">
+                <div class="profileset">
+                  <span class="user-img"
+                    ><img src="/admin-assets/img/profiles/avator1.jpg" alt="" />
+                    <span class="status online"></span
+                  ></span>
+                  <div class="profilesets">
+                    <h6>John Doe</h6>
+                    <h5>Admin</h5>
+                  </div>
+                </div>
+                <hr class="m-0" />
+                <a class="dropdown-item" href="profile.html">
+                  <i class="me-2" data-feather="user"></i> My Profile</a
+                >
+                <a class="dropdown-item" href="generalsettings.html"
+                  ><i class="me-2" data-feather="settings"></i>Settings</a
+                >
+                <hr class="m-0" />
+                <a class="dropdown-item logout pb-0" href="signin.html"
+                  ><img
+                    src="/admin-assets/img/icons/log-out.svg"
+                    class="me-2"
+                    alt="img"
+                  />Logout</a
+                >
+              </div>
+            </div>
+          </li>
+        </ul>
+
+        <div class="dropdown mobile-user-menu">
+          <a
+            href="javascript:void(0);"
+            class="nav-link dropdown-toggle"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+            ><i class="fa fa-ellipsis-v"></i
+          ></a>
+          <div class="dropdown-menu dropdown-menu-right">
+            <a class="dropdown-item" href="profile.html">My Profile</a>
+            <a class="dropdown-item" href="generalsettings.html">Settings</a>
+            <a class="dropdown-item" href="signin.html">Logout</a>
+          </div>
+        </div>
+      </div>
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-inner slimscroll">
+          <div id="sidebar-menu" class="sidebar-menu">
+            <ul>
+              <li class="">
+                <a href="/admin/dashboard"><span>
+                        Dashboard</span> </a>
+            </li>
+
+              <li class="">
+                <a href="/admin/users"><span> Users</span> </a>
+              </li>
+
+              <li class="active">
+                <a href="/admin/productList"><span> Products</span> </a>
+              </li>
+              <li class="">
+                <a href="/admin/category"><span> Category</span> </a>
+              </li>
+              <li class="">
+                <a href="/admin/orderList"><span> Orders</span> </a>
+              </li>
+              <li class="">
+                <a href="/admin/coupon"><span> Coupon</span> </a>
+              </li>
+              <li class="">
+                <a href="/admin/offers"><span> Offer</span> </a>
+              </li>
+              <li class="">
+                <a onclick="message(successMessage= 'Logout Successfully')" href="/admin/logout"><span> Logout</span> </a>
+              </li>
             </ul>
-
-
-            <div class="dropdown mobile-user-menu">
-                <a href="javascript:void(0);" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"
-                    aria-expanded="false"><i class="fa fa-ellipsis-v"></i></a>
-                <div class="dropdown-menu dropdown-menu-right">
-                    <a class="dropdown-item" href="profile.html">My Profile</a>
-                    <a class="dropdown-item" href="generalsettings.html">Settings</a>
-                    <a class="dropdown-item" href="signin.html">Logout</a>
+          </div>
+        </div>
+      </div>
+    <div class="page-wrapper">
+        <div class="content">
+            <div class="page-header">
+                <div class="page-title">
+                    <h4>Edit Product</h4>
+                    <h6>Update product details</h6>
                 </div>
             </div>
+            <div class="card">
+                <div class="card-body">
+                    <form action="/admin/products/updateProduct" method="POST" enctype="multipart/form-data" onsubmit="return validateForm()">
+                        <input type="hidden" name="productId" value="<%= product._id %>" />
+                        <input type="hidden" name="deletedImages" id="deletedImages" value="" />
 
-        </div>
+                        <div class="row">
+                            <div class="col-lg-4 col-sm-6 col-12">
+                                <div class="form-group">
+                                    <label>Product Name</label>
+                                    <input type="text" class="form-control" name="productName" value="<%= product.name %>" placeholder="Enter product name" />
+                                    <p id="productName-error" class="error-message"></p>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-4 col-sm-6 col-12">
+                                <div class="form-group">
+                                    <label>Category</label>
+                                    <select class="select" name="categoryId" id="categoryId">
+                                        <% category.forEach((category) => { %>
+                                            <option value="<%= category._id %>" <%= category._id === product.categoryId ? 'selected' : '' %>><%= category.name %></option>
+                                        <% }) %>
+                                    </select>
+                                    <div id="category-error" class="error-message"></div>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-4 col-sm-6 col-12">
+                                <div class="form-group">
+                                    <label>Price</label>
+                                    <input type="number" class="form-control" name="price" value="<%= product.price %>" placeholder="Enter product price" />
+                                    <p id="regularPrice-error" class="error-message"></p>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-4 col-sm-6 col-12">
+                                <div class="form-group">
+                                    <label>Quantity</label>
+                                    <input type="number" class="form-control" name="quantity" value="<%= product.quantity %>" />
+                                    <p id="quantity-error" class="error-message"></p>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-12">
+                                <div class="form-group">
+                                    <label for="descriptionid">Description</label>
+                                    <textarea class="form-control" name="description" id="descriptionid"><%= product.description %></textarea>
+                                    <p style="color: red" id="description-error" class="error-message"></p>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-12">
+                              <div class="form-group">
+                                <label for="productSpecifications">Specifications</label>
+                                <div id="specificationsContainer">
+                                    <% if (product.specification && product.specification.length > 0) { %>
+                                        <% product.specification.forEach((spec, index) => { %>
+                                            <div class="specification-group">
+                                                <input type="text" name="specifications[<%= index %>][key]" class="form-control" placeholder="Key" value="<%= spec.key %>" >
+                                                <p class="error-message spec-key-error" style="color: red;"></p>
+                                                <input type="text" name="specifications[<%= index %>][value]" class="form-control mt-2" placeholder="Value" value="<%= spec.value %>" >
+                                                <p class="error-message spec-value-error" style="color: red;"></p>
+                                                <button class="remove-btn btn-danger">Remove</button>
+                                            </div>
+                                        <% }); %>
+                                    <% } else { %>
+                                        <div class="specification-group">
+                                            <input type="text" name="specifications[0][key]" class="form-control" placeholder="Key" >
+                                            <p class="error-message spec-key-error" style="color: red;"></p>
+                                            <input type="text" name="specifications[0][value]" class="form-control mt-2" placeholder="Value" >
+                                            <p class="error-message spec-value-error" style="color: red;"></p>
+                                        </div>
+                                    <% } %>
+                                </div>
+                                <button type="button" id="addSpecification" class="btn btn-secondary mt-2">Add Specification</button>
+                            </div>
+                
+                            </div>
 
 
-        <div class="sidebar" id="sidebar">
-            <div class="sidebar-inner slimscroll">
-                <div id="sidebar-menu" class="sidebar-menu">
-                    <ul>
-                        <li class="active">
-                            <a href="index.html"><span>
-                                    Dashboard</span> </a>
-                        </li>
+                            <div class="card mb-2">
+                                <div class="card-header"><h4>Existing Images</h4></div>
+                                <div class="border row">
+                                    <div id="addedImagesContainer" class="thumbnails-container">
+                                        <% product.image.forEach((image, index) => { %>
+                                            <div class="image-wrapper" data-index="<%= index %>" style="margin-bottom: 20px;">
+                                                <img src="/admin-assets/product2/<%= image %>" alt="Existing Image <%= index + 1 %>" style="width: 300px; height: 300px; object-fit: cover;" id="existingImg<%= index %>" />
+                                                <div class="image-cropper" style="display: none; margin-top: 10px;">
+                                                    <img id="croppedImg<%= index %>" />
+                                                    <button type="button" class="btn btn-primary btn-sm save-button" id="saveButton<%= index %>">Crop</button>
+                                                </div>
+                                                <!-- <input type="file" class="form-control" id="inputFile<%= index %>" accept="image/png, image/jpeg, image/jpg" onchange="handleNewImage(event, <%= index %>)" > -->
+                                                <input type="file" class="form-control" id="inputFile<%= index %>" accept="image/png, image/jpeg, image/jpg" data-index="<%= index %>" />
 
-                        <li class="">
-                            <a href="/admin/users"><span>
-                                    Users</span> </a>
-                            
-                               
-                            
-                        </li>
+                                                <p id="image-error<%= index %>" class="error-message"></p>
+                                                <!-- <button type="button" class="btn btn-danger btn-sm remove-button" style="margin-top: 10px;" onclick="deleteImage(<%= index %>)">Delete</button> -->
+                                                <button type="button" class="btn btn-danger btn-sm remove-button" style="margin-top: 10px;" data-index="<%= index %>">Delete</button>
 
-                        <li class="">
-                            <a href="/admin/productList"><span>
-                                    Products</span> </a>
-                            
-                               
-                            
-                        </li>                        
-                        <li class="">
-                            <a href="/admin/category"><span>
-                                    Category</span> </a>
-                            
-                               
-                            
-                        </li>                        
-                        <li class="">
-                            <a href="/admin/orders"><span>
-                                    Orders</span> </a>
-                            
-                               
-                            
-                        </li>                        
-                        <li class="">
-                            <a href="/admin/coupon"><span>
-                                    Coupon</span> </a>
-                            
-                               
-                            
-                        </li>                        
-                        <li class="">
-                            <a href="/admin/offers"><span>
-                                    Offer</span> </a>
-                            
-                               
-                            
-                        </li>                        
-                        <li class="">
-                            <a href="/admin/logout"><span>
-                                    Logout</span> </a>
-                            
-                               
-                            
-                        </li>                        
-
-
-                        
-                    </ul>
+                                            </div>
+                                        <% }) %>
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="card-body align-items-center" style="margin-bottom: 20px">
+                                        <input type="file" class="form-control" name="images" id="inputFiles" accept="image/png, image/jpeg, image/jpg" multiple onchange="handleFileSelect(event)" />
+                                        <p id="image-error" class="error-message"></p>
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-md rounded font-sm hover-up" >Update</button>
+                        </div>
+                    </form>
                 </div>
             </div>
-        </div>
-
-
-        <div class="page-wrapper">
-            <div class="content">
-                <div class="page-header">
-                    <div class="page-title">
-                        <h4>Product Add</h4>
-                        <h6>Create new product</h6>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-body">
-                        <form action="/admin/editProducts/<%=product._id%>" method="POST" enctype="multipart/form-data" onsubmit="return validateForm()">
-
-                            
-                            <div class="row">
-                                <div class="col-lg-4 col-sm-6 col-12">
-                                    <div class="form-group">
-                                        <label>Product Name</label>
-                                        <input type="text" class="form-control" name="productName" value="<%product.productName%>">
-                                        <div id="productName-error" class="error-message"></div>
-
-                                    </div>
-                                </div>
-                                <div class="col-lg-4 col-sm-6 col-12">
-                                    <div class="form-group">
-                                        <label>Category</label>
-                                        <select class="select" name="categoryId" id="categoryId">
-                                            <% category.forEach((category) => { %>
-                                                <option value="<%= category.name %>"><%= category.name %></option>
-                                            <% }) %>
-                                        </select>
-                                        <div id="category-error" class="error-message"></div>
-                                    </div>
-                                </div>
-                                
-                                <!-- <div class="col-lg-3 col-sm-6 col-12">
-                                    <div class="form-group">
-                                        <label>Sub Category</label>
-                                        <select class="select">
-                                            <option>Choose Sub Category</option>
-                                            <option>Fruits</option>
-                                        </select>
-                                    </div>
-                                </div> -->
-                                <!-- <div class="col-lg-3 col-sm-6 col-12">
-                                    <div class="form-group">
-                                        <label>Brand</label>
-                                        <select class="select">
-                                            <option>Choose Brand</option>
-                                            <option>Brand</option>
-                                        </select>
-                                    </div>
-                                </div> -->
-                                <div class="col-lg-4 col-sm-6 col-12">
-                                    <div class="form-group">
-                                        <label>Price</label>
-                                        <input type="number" class="form-control" name="price" value="<%=product.price%>" >
-                                        <div id="regularPrice-error" class="error-message"></div>
-
-                                    </div>
-                                </div>
-
-                                
-
-                                <div class="col-lg-4 col-sm-6 col-12">
-                                    <div class="form-group">
-                                        <label>Quantity</label>
-                                        <input type="number" class="form-control" name="quantity" value="<%=product.quantity%>">
-                                    </div>
-                                </div>
-
-                                
-
-                                <div class="col-lg-12">
-                                    <div class="form-group">
-                                        <label for="descriptionid">Description</label>
-                                        <textarea class="form-control" name="description" id="descriptionid" value="<%=product.description%>"></textarea>
-                                    </div>
-                                </div>
-                                
-                                <!-- <div class="col-lg-4 col-sm-6 col-12">
-                                    <div class="form-group">
-                                        <label>Discount Type</label>
-                                        <select class="select">
-                                            <option>Percentage</option>
-                                            <option>10%</option>
-                                            <option>20%</option>
-                                        </select>
-                                    </div>
-                                </div> -->
-
-                                <div class="card mb-2">
-                                    <div class="card-header"><h4>Choose images</h4></div>
-                                    <div class="border row">
-                                        <div id="addedImagesContainer" class="thumbnails-container"></div>
-                                    </div>
-
-                                    <%for(let i = 0; i<product.image.length; i++){%>
-                        
-                                    <div class="row">
-                                        <div class="card-body align-items-center" style="margin-bottom: 20px;">
-                                            <img src="/uploads/re-image/<%=product.productImage[i]%>" alt="" id="imgView1">
-                                            <input type="hidden" value="<%=product.image[i]%>" class="form-control" name="images" id="input1" accept="image/png, image/jpeg , image/jpg" onchange="viewImage1(event), viewImage(event,1)">
-                                            <div id="image-error" class="error-message"></div>
-                                            <div class="image-cropper d-flex align-items-center" style="display: none; width: 300px; height: 300px; margin-bottom: 20px;">
-                                                <img src="" id="croppedImg1" alt="">
-                                                <button type="button" id="saveButton1" class="btn-sm btn-primary">Save</button>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <%}%>
-                        
-                                    <div class="row">
-                                        <div class="card-body align-items-center" style="margin-bottom: 20px;">
-                                            <img src="" alt="" id="imgView2">
-                                            <input type="file" class="form-control" name="images" id="input2" accept="image/png, image/jpeg , image/jpg" onchange="viewImage2(event), viewImage(event,2)">
-                                            <div id="image-error" class="error-message"></div>
-                                            <div class="image-cropper d-flex align-items-center" style="display: none; width: 300px; height: 300px; margin-bottom: 20px;">
-                                                <img src="" id="croppedImg2" alt="">
-                                                <button type="button" id="saveButton2" class="btn-sm btn-primary">Save</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                        
-                                    <div class="row">
-                                        <div class="card-body align-items-center" style="margin-bottom: 20px;">
-                                            <img src="" alt="" id="imgView3">
-                                            <input type="file" class="form-control" name="images" id="input1" accept="image/png, image/jpeg , image/jpg" onchange="viewImage3(event), viewImage(event,3)">
-                                            <div id="image-error" class="error-message"></div>
-                                            <div class="image-cropper d-flex align-items-center" style="display: none; width: 300px; height: 300px; margin-bottom: 20px;">
-                                                <img src="" id="croppedImg3" alt="">
-                                                <button type="button" id="saveButton3" class="btn-sm btn-primary">Save</button>
-                                           </div>
-                                        </div>
-                                    </div>
-                        
-                                    <div class="row">
-                                        <div class="card-body align-items-center" style="margin-bottom: 20px;">
-                                            <img src="" alt="" id="imgView4">
-                                            <input type="file" class="form-control" name="images" id="input4" accept="image/png, image/jpeg , image/jpg" onchange="viewImage4(event), viewImage(event,4)">
-                                            <div id="image-error" class="error-message"></div>
-                                            <div class="image-cropper d-flex align-items-center" style="display: none; width: 300px; height: 300px; margin-bottom: 20px;">
-                                                <img src="" id="croppedImg4" alt="">
-                                                <button type="button" id="saveButton4" class="btn-sm btn-primary">Save</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <button type="submit" class="btn btn-md rounded font-sm hover-up" onclick="validateAndSubmit()">Submit</button>
-                        
-                       
-            </form>
-                        
         </div>
     </div>
-    
-    <script src="https://cdn.jsdelivr.net/npm/cropperjs/dist/cropper.min.js"></script>
+</div>
+   <script src="https://cdn.jsdelivr.net/npm/cropperjs/dist/cropper.min.js"></script>
 
     <script src="/admin-assets/js/jquery-3.6.0.min.js"></script>
 
@@ -513,225 +544,435 @@
 
     <script src="/admin-assets/js/script.js"></script>
     <script>
-
-          function validateAndSubmit(){
-              if(validateForm()){
-                document.forms[0].submit();
-              }
-          }
-
-          function viewImage(event, index) {
-    let input = event.target;
-    let reader = new FileReader();
+        
+        $(document).ready(function() {
+        let specificationCount = $('#specificationsContainer .specification-group').length;
+        let variantCount = $('#variantsContainer .variant-group').length;
     
-    reader.onload = function() {
-        let dataURL = reader.result;
-        let image = document.getElementById("imgView" + index);
-        image.src = dataURL;
-        
-        // Destroy existing cropper if it exists
-        if (image.cropper) {
-            image.cropper.destroy();
-        }
-        
-        // Initialize Cropper
-        const cropper = new Cropper(image, {
-            aspectRatio: 1,
-            viewMode: 1,
-           
+        // Add new specification input fields
+        $('#addSpecification').click(function() {
+            $('#specificationsContainer').append(`
+                <div class="specification-group">
+                    <input type="text" name="specifications[${specificationCount}][key]" class="form-control" placeholder="Key" >
+                    <input type="text" name="specifications[${specificationCount}][value]" class="form-control mt-2" placeholder="Value" >
+                    <button type="button" class="btn btn-danger mt-2 remove-btn">Remove Specification</button>
+                </div>
+            `);
+            specificationCount++;
         });
-        
-        // Store cropper instance
-        image.cropper = cropper;
-        
-        // Show cropper container
-        let cropperContainer = document.querySelector("#croppedImg" + index).parentElement;
-        cropperContainer.style.display = 'block';
-        
-        // Handle save button click
-        let saveButton = document.querySelector('#saveButton' + index);
-        saveButton.onclick = async function() {
-            try {
-                let croppedCanvas = cropper.getCroppedCanvas();
-                let croppedImage = document.getElementById("croppedImg" + index);
-                croppedImage.src = croppedCanvas.toDataURL('image/jpeg', 1.0);
-                
-                let timestamp = new Date().getTime();
-                let fileName = `cropped_img_${timestamp}_${index}.png`;
-                
-                await croppedCanvas.toBlob(blob => {
-                    let input = document.getElementById('input' + index);
-                    let imgFile = new File([blob], fileName, { type: 'image/png' });
-                    const fileList = new DataTransfer();
-                    fileList.items.add(imgFile);
-                    input.files = fileList.files;
-                }, 'image/png');
-                
-                cropperContainer.style.display = 'none';
-                cropper.destroy();
-            } catch (error) {
-                console.error('Error during image cropping:', error);
-                alert('There was an error processing the image. Please try again.');
-            }
-        };
-    };
     
-    reader.readAsDataURL(input.files[0]);
-}
+        // Remove specification input fields
+        $('#specificationsContainer').on('click', '.remove-btn', function() {
+            $(this).parent().remove();
+        })
 
-// Individual image preview functions
-function viewImage1(event) {
-    document.getElementById("imgView1").src = URL.createObjectURL(event.target.files[0]);
-}
+        })
+        
+        
+        
+        let selectedImages = [];
 
-function viewImage2(event) {
-    document.getElementById("imgView2").src = URL.createObjectURL(event.target.files[0]);
-}
 
-function viewImage3(event) {
-    document.getElementById("imgView3").src = URL.createObjectURL(event.target.files[0]);
-}
+        //new images
+        function handleFileSelect(event) {
+        const files = event.target.files;
+        const imageErrorElement = document.getElementById("image-error");
+        imageErrorElement.textContent = ""; // Clear previous error messages
 
-function viewImage4(event) {
-    document.getElementById("imgView4").src = URL.createObjectURL(event.target.files[0]);
-}
-                                                                            //blob means making it a binary file                                                                      
+        // Clear existing selected images
+        selectedImages = [];
 
-        //to display all images like thumbnail
-        const selectedImages = [];
-        document.getElementById("input1").addEventListener('change', handleFileSelect);
+        // Process each selected file
+        Array.from(files).forEach((file, index) => {
+            if (file && file.type.startsWith("image/")) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    // Create a new image element for cropping
+                    const img = document.createElement("img");
+                    img.src = e.target.result; // Set the image source to the file data
+                    img.id = `newImg${index}`; // Give a unique ID to the image
 
-        function handleFileSelect(event){
-            const addedImagesContainer = document.getElementById("addImagesContainer");
-            addedImagesContainer.innerHTML = "";
-            const files = event.target.files
-            for(let i = 0; i<files.length; i++){
-                const file = files[i];
-                selectedImages.push(file);
-                const thumbnail = document.createElement("div");
-                thumbnail.classList.add("thumbnail");
+                    // Create a cropper container
+                    const cropperContainer = document.createElement("div");
+                    cropperContainer.classList.add("image-cropper");
+                    cropperContainer.style.display = "block"; // Show cropper container
 
-                const img = document.createElement("img");
-                img.src= URL.createObjectURL(file);
-                img.alt= "thumbnail";
-                img.style.width = "50px";
-                img.style.height = "auto";
-                const removeIcon = document.createElement("span");
-                removeIcon.classList.add("remove-icon");
-                removeIcon.innerHTML = "&times";
-                removeIcon.addEventListener("click", function(){
-                    const index = selectedImages.indexOf(file);
-                    if(index !== -1){
-                        selectedImages.splice(index, 1);
+                    // Append the image and cropper container to the DOM
+                    const addedImagesContainer = document.getElementById("addedImagesContainer");
+                    const imageWrapper = document.createElement("div");
+                    imageWrapper.classList.add("image-wrapper");
+                    imageWrapper.appendChild(img);
+                    imageWrapper.appendChild(cropperContainer);
+                    addedImagesContainer.appendChild(imageWrapper);
 
-                    }
-                    thumbnail.remove();
-                });
-                thumbnail.appendChild(img);
-                thumbnail.appendChild(removeIcon);
-                addedImagesContainer.appendChild(thumbnail);
+                    // Initialize the cropper
+                    const cropper = new Cropper(img, {
+                        aspectRatio: 1,
+                        viewMode: 1,
+                    });
 
+                    // Create a save button for cropping
+                    const saveButton = document.createElement("button");
+                    saveButton.type = "button";
+                    saveButton.className = "btn btn-primary btn-sm save-button";
+                    saveButton.textContent = "Crop";
+                    cropperContainer.appendChild(saveButton);
+
+                    saveButton.onclick = () => {
+                        const cropperCanvas = cropper.getCroppedCanvas({
+                            width: 400,
+                            height: 400,
+                        });
+
+                        img.src = cropperCanvas.toDataURL("image/png");
+
+                        cropperCanvas.toBlob((blob) => {
+                            const croppedFile = new File([blob], `cropped_img_${index}.png`, { type: "image/png" });
+                            selectedImages[index] = croppedFile;
+
+                            const dataTransfer = new DataTransfer();
+                            selectedImages.forEach((file) => {
+                                if (file) {
+                                    dataTransfer.items.add(file);
+                                }
+                            });
+                            document.getElementById("inputFiles").files = dataTransfer.files;
+
+                            cropper.destroy(); // Destroy the cropper after use
+                            cropperContainer.style.display = "none"; // Hide the cropper container
+                            saveButton.textContent = "Cropped"; // Change button text
+                            saveButton.disabled = true; // Disable the button after cropping
+                        }, "image/png");
+                    };
+                };
+
+                reader.readAsDataURL(file);
+            } else {
+                imageErrorElement.textContent = "Please select a valid image.";
+                imageErrorElement.style.display = "block";
             }
-           
-                }
+        });
+    }
 
 
-          function validateForm() {
-              clearErrorMessages();
-              const name = document.getElementsByName('productName')[0].value;
-              const description = document.getElementById('descriptionid').value;
-            //   const brand = document.getElementsByName('brand')[0].value;
-              const price = document.getElementsByName('price')[0].value;
-              const salesPrice = document.getElementsByName('salesPrice')[0].value;
-              
-              const category = document.getElementsByName('category')[0].value;
-              const images = document.getElementById('input1')
-              const quantity=document.getElementsByName('quantity').value;
-              let isValid = true
-              if (name.trim() === "") {
-      displayErrorMessage('productName-error', 'Please enter a product name.');
-      isValid = false;
-   } else if (!/^[a-zA-Z\s]+$/.test(name.trim())) {
-      displayErrorMessage('productName-error', 'Product name should contain only alphabetic characters.');
-      isValid = false;
-   }
-            
-   if (description.trim() === "") {
-      displayErrorMessage('description-error', 'Please enter a product description.');
-      isValid = false;
-   } else if (!/^[a-zA-Z\s]+$/.test(description.trim())) {
-      displayErrorMessage('description-error', 'Product description should contain only alphabetic characters.');
-      isValid = false;
-   }
-  
-  
-           
-  
-  
-              if ( parseInt(quantity) < 0) {
-                  displayErrorMessage('quantity-error', 'Please enter a valid non-negative quantity.');
-                  isValid = false;
-              }
-  
-  
-  
-  
-              if (!/^\d+(\.\d{1,2})?$/.test(price) || parseFloat(price) < 0) {
-                  displayErrorMessage('regularPrice-error', 'Please enter a valid non-negative price.');
-                  isValid = false;
-              }
-  
-  
-  
-  
-            //   if (!/^\d+(\.\d{1,2})?$/.test(salesPrice) || parseFloat(salesPrice) < 0) {
-            //       displayErrorMessage('salesPrice-error', 'Please enter a valid non-negative price.');
-            //       isValid = false;
-            //   }
-//               if (parseFloat(price) <= parseFloat(salesPrice)) {
-//       displayErrorMessage('regularPrice-error', 'Regular price must be greater than sale price.');
-//       isValid = false;
-//    }
-  
-  
-             
-  
-  
-            if (!images || images.files.length === 0) {
-                    displayErrorMessage("images-error", 'Please select an image.');
-                    isValid = false;
-                }
 
 
-            if (!category.trim()) {
-                displayErrorMessage('category-error', 'Please select a category.');
+
+
+
+
+
+
+    //replace images
+        function handleNewImage(event, index) {
+    const file = event.target.files[0];
+    const imageErrorElement = document.getElementById(`image-error${index}`);
+    if (imageErrorElement) {
+        imageErrorElement.textContent = "";
+    }
+
+    if (file && file.type.startsWith("image/")) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const img = document.getElementById(`existingImg${index}`);
+            img.src = e.target.result; // Update the existing image with the new one
+
+            const cropperContainer = document.querySelector(`.image-wrapper[data-index="${index}"] .image-cropper`);
+            const croppedImg = document.getElementById(`croppedImg${index}`);
+            cropperContainer.style.display = "block"; // Show cropper container
+
+            // Initialize the cropper
+            const cropper = new Cropper(img, {
+                aspectRatio: 1,
+                viewMode: 1,
+                ready() {
+                    // Optional: You can do something when the cropper is ready
+                },
+            });
+
+            const saveButton = document.getElementById(`saveButton${index}`);
+            saveButton.onclick = () => {
+                const cropperCanvas = cropper.getCroppedCanvas({
+                    width: 200,
+                    height: 200,
+                });
+
+                img.src = cropperCanvas.toDataURL("image/png");
+                croppedImg.src = cropperCanvas.toDataURL("image/png");
+
+                cropperCanvas.toBlob((blob) => {
+                    const croppedFile = new File([blob], `cropped_img_${index}.png`, { type: "image/png" });
+                    selectedImages[index] = croppedFile;
+
+                    const dataTransfer = new DataTransfer();
+                    selectedImages.forEach((file) => {
+                        if (file) {
+                            dataTransfer.items.add(file);
+                        }
+                    });
+                    document.getElementById("inputFiles").files = dataTransfer.files;
+
+                    // Create and append the replaceImageIndex input
+                    let replaceImageInput = document.querySelector(`input[name="replaceImageIndex"][data-index="${index}"]`);
+                    if (!replaceImageInput) {
+                        replaceImageInput = document.createElement('input');
+                        replaceImageInput.type = 'hidden';
+                        replaceImageInput.name = 'replaceImageIndex';
+                        replaceImageInput.dataset.index = index; // Store the index in a data attribute
+                        document.forms[0].appendChild(replaceImageInput);
+                    }
+                    replaceImageInput.value = index; // Set the value to the current index
+
+                    cropper.destroy(); // Destroy the cropper after use
+                    cropperContainer.style.display = "none"; // Hide the cropper container
+                    saveButton.textContent = "Cropped"; // Change button text
+                    saveButton.disabled = true; // Disable the button after cropping
+                }, "image/png");
+            };
+        };
+        
+        reader.readAsDataURL(file);
+    } else {
+        imageErrorElement.textContent = "Please select a valid image.";
+        imageErrorElement.style.display = "block";
+    }
+}
+
+$('input[type="file"]').on('change', function (event) {
+  const index = $(this).data('index');
+  handleNewImage(event, parseInt(index));
+});
+
+
+
+
+
+        function clearErrorMessages() {
+            const errorElements = document.getElementsByClassName("error-message");
+            Array.from(errorElements).forEach((element) => {
+                element.textContent = "";
+                element.style.display = "none";
+            });
+        }
+
+
+
+//delete image
+        function deleteImage(index) {
+     const imageWrapper = document.querySelector(`.image-wrapper[data-index="${index}"]`);
+     if (imageWrapper) {
+         imageWrapper.remove();
+     }
+
+     if (selectedImages[index]) {
+         selectedImages[index] = null;
+     }
+
+     let deletedImageInput = document.getElementById('deletedImages');
+     const deletedImages = deletedImageInput.value ? deletedImageInput.value.split(',') : [];
+
+     if (!deletedImages.includes(index.toString())) {
+         deletedImages.push(index);
+         deletedImageInput.value = deletedImages.join(',');
+     }
+}
+
+
+$('.remove-button').on('click', function (event) {
+  const index = $(this).data('index');
+  deleteImage(parseInt(index));
+});
+
+
+
+
+
+
+//validation
+        function validateForm() {
+            clearErrorMessages();
+            let isValid = true;
+
+            const name = document.getElementsByName("productName")[0].value;
+            const nameErrorElement = document.getElementById("productName-error");
+            if (name.trim() === "") {
+                nameErrorElement.textContent = "Product name is required.";
+                nameErrorElement.style.display = "block";
                 isValid = false;
-            }    
+            } else if (name.trim().length < 5) {
+                nameErrorElement.textContent = "Product name must be at least 5 characters long.";
+                nameErrorElement.style.display = "block";
+                isValid = false;
+            }
 
-              return isValid;
+            const description = document.getElementById("descriptionid").value;
+            const descriptionErrorElement = document.getElementById("description-error");
+            if (description.trim() === "") {
+                descriptionErrorElement.textContent = "Product description is required.";
+                descriptionErrorElement.style.display = "block";
+                isValid = false;
+            }else if(description.trim().length<10){
+              descriptionErrorElement.textContent = "Product description Should Be Min 10 Characters.";
+                descriptionErrorElement.style.display = "block";
+                isValid = false;
+            }
+
+            const price = document.getElementsByName("price")[0].value;
+            const priceErrorElement = document.getElementById("regularPrice-error");
+            if (price.trim() === "") {
+                priceErrorElement.textContent = "Price is required.";
+                priceErrorElement.style.display = "block";
+                isValid = false;
+            }else if(price<=0){
+              priceErrorElement.textContent = "Price Should Be Min 1.";
+                priceErrorElement.style.display = "block";
+                isValid = false;
+            }
+
+            const quantity = document.getElementsByName("quantity")[0].value;
+            const quantityErrorElement = document.getElementById("quantity-error");
+            if (quantity.trim() === "") {
+                quantityErrorElement.textContent = "Quantity is required.";
+                quantityErrorElement.style.display = "block";
+                isValid = false;
+            }else if(quantity<=0){
+              quantityErrorElement.textContent = "Quantity Should Be Min 1.";
+                quantityErrorElement.style.display = "block";
+                isValid = false;
+            }
+
+            // Product Specification Validation
+            const specificationsContainer = document.getElementById("specificationsContainer");
+    const specifications = specificationsContainer.getElementsByClassName("specification-group");
+    let hasValidSpecifications = false;
+
+    // Check if there are any specifications
+    if (specifications.length === 0) {
+        let existingErrorElement = specificationsContainer.querySelector("p");
+        
+        if (!existingErrorElement) {
+            const specificationsErrorElement = document.createElement("p");
+            specificationsErrorElement.textContent = "At least one specification is required.";
+            specificationsErrorElement.style.color = "red";
+            specificationsContainer.appendChild(specificationsErrorElement);
+        }
+        isValid = false;
+    } else {
+        // Validation regex to include all possible characters
+        const specRegex = /^[a-zA-Z0-9\s.,!?'"():;@#%&*_\-\/\\]+$/;
+
+        // Loop through all specification groups
+        for (let i = 0; i < specifications.length; i++) {
+            const keyInput = specifications[i].querySelector('input[name^="specifications"][name$="[key]"]');
+            const valueInput = specifications[i].querySelector('input[name^="specifications"][name$="[value]"]');
+            const keyErrorElement = specifications[i].querySelector(`[id^="invalidSpecKey"]`) || 
+                specifications[i].querySelector(".spec-key-error");
+            const valueErrorElement = specifications[i].querySelector(`[id^="invalidSpecValue"]`) || 
+                specifications[i].querySelector(".spec-value-error");
+
+            const key = keyInput.value.trim();
+            const value = valueInput.value.trim();
+
+            // Reset previous error messages
+            if (keyErrorElement) keyErrorElement.textContent = "";
+            if (valueErrorElement) valueErrorElement.textContent = "";
+
+            let specValid = true;
+
+            // Key validation
+            if (key === "") {
+                
+                    keyErrorElement.textContent = "Specification key is required.";
+                specValid = false;
+            } else if (value.length < 2) {
+                valueErrorElement.textContent = "Value must be at least 2 characters long.";
+                specValid = false;
+            } else if (value.length > 15) {
+                valueErrorElement.textContent = "Value must be no more than 15 characters.";
+                specValid = false;
+            } else if (!specRegex.test(key)) {
+               
+                    keyErrorElement.textContent = "Key contains invalid characters.";
+                specValid = false;
+            }
+
+            // Value validation
+            if (value === "") {
+              
+                    valueErrorElement.textContent = "Specification value is required.";
+                specValid = false;
+            } else if (value.length < 2 || value.length > 15) {
+            
+                    valueErrorElement.textContent = "Value must be between 2 and 15 characters.";
+                specValid = false;
+            } else if (!specRegex.test(value)) {
+            
+                    valueErrorElement.textContent = "Value contains invalid characters.";
+                specValid = false;
+            }
+
+            // If this specification is valid, mark that we have at least one valid specification
+            if (specValid) {
+                hasValidSpecifications = true;
+            } else {
+                isValid = false;
+            }
+        }
+
+        // Check if there are any valid specifications
+        if (!hasValidSpecifications) {
+            let existingErrorElement = specificationsContainer.querySelector("p");
+            
+            if (!existingErrorElement) {
+                const specificationsErrorElement = document.createElement("p");
+                specificationsErrorElement.textContent = "Please provide valid specifications.";
+                specificationsErrorElement.style.color = "red";
+                specificationsContainer.appendChild(specificationsErrorElement);
+            }
+            isValid = false;
+        }
+    }
+
+   
+      
+            
+
+            const category = document.getElementsByName("categoryId")[0].value;
+            const categoryErrorElement = document.getElementById("category-error");
+            if (!category.trim()) {
+                categoryErrorElement.textContent = "Please select a category.";
+                categoryErrorElement.style.display = "block";
+                isValid = false;
+            }
+
+            return isValid;
+        }
+      
+
+
+
+        
+        // function validateAndSubmit() {
+        //     if (validateForm()) {
+        //         document.forms[0].submit();
+        //     }
+        // }
+
+
+        function message(msg){
+            if(msg){
+                  Swal.fire({
+                    position: "center",
+                    icon: "success",
+                    title: msg,
+                    showConfirmButton: false,
+                    timer: 3000
+                  }).then(() =>{
+                    window.location.href = "/admin";
+                  })
+            }
           }
-
-
-          function displayErrorMessage(elementId, message) {
-              var errorElement = document.getElementById(elementId);
-              errorElement.innerText = message;
-              errorElement.style.display = "block";
-          }
-  
-  
-          function clearErrorMessages() {
-              const errorElements = document.getElementsByClassName('error-message');
-              Array.from(errorElements).forEach(element => {
-                  element.innerText = '';
-              });
-              const errorMessage = document.getElementById('errorMessage');
-  
-  
-          }
-
-
-
+          
     </script>
 </body>
-
 </html>

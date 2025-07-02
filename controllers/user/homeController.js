@@ -7,8 +7,6 @@ const loadHomepage = async(req, res) =>{
          const user = req.session.user || req.session.passport;
          let product = await Product.find({isBlocked:false});
          if(user){
-            console.log("hi");
-            
             return res.render('home', {user,product})
          }else{
             console.log("Hello");

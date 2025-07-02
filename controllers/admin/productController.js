@@ -1,145 +1,269 @@
 const Product = require("../../models/productSchema");
 const Category = require("../../models/categorySchema");
-const User = require("../../models/userSchma");
 const fs = require("fs");
-const path = require("path");
-const sharp = require("sharp");
+const mongoose = require("mongoose");
 
-const getProductAddPage = async(req, res)=>{
-    try {
-        const category = await Category.find();
+const getProductAddPage = async (req, res) => {
+  try {
+    const category = await Category.find();
 
-        
-
-        res.render('product-add', {category});
-        
-    } catch (error) {
-        res.status(404).send("page not found");
-    }
+    res.render("product-add", { category });
+  } catch (error) {
+    res.status(404).send("page not found");
+  }
 };
 
-module.exports = {getProductAddPage,
+const addProducts = async (req, res) => {
+  try {
+      
+    console.log(req.body);
     
-}
 
+    const products = req.body;
 
-const addProducts = async(req, res) =>{
-    try {
-        const products = req.body;
-        console.log(req.body);
-        console.log(req.files);
-        const productExists = await Product.findOne({
-            name:products.productName,
-
-        });
-
-        if(!productExists){
-            const images = [];
-
-            if(req.files && req.files.length>0){
-                for(let i = 0; i<req.files.length; i++){
-                    const originalImagePath = req.files[i].path;
-                    console.log("image1");
-
-                    const resizedImagePath = path.join('admin-public', 'assets','product2', req.files[i].filename);
-                    console.log("image2");
-
-                    await sharp(originalImagePath).resize({width:400, height:440}).toFile(resizedImagePath);
-                    images.push(req.files[i].filename);
-                }
-            }
-
-            // const categoryId = await Category.findOne({name: products.category});
-
-            // if(!categoryId){
-            //     return res.status(400).json("Invalid category name");
-            // }
-
-            const newProduct = new Product({
-                name: products.productName,
-                description: products.description, 
-                categoryId: products.categoryId,
-                price: products.price,
-                createdOn:new Date(),
-                quantity: products.quantity,
-               
-                image:  images, 
-
-                status: 'Available',
-
-
-            });
-
-            await newProduct.save();
-            return res.redirect("/admin/productList");
-        }else{
-            return res.status(400).json("Product already exist, please try with another name");
-        }
-    } catch (error) {
-            console.error("Error saving product", error);
-            return res.redirect("/admin/pageerror")
-        
-    }
-}
-
-
-const getAllProducts = async (req, res) =>{
-        
-    try {
-        // console.log("product");
-        // const search = req.query.search || "";
-        // const page = req.query.page || 1;
-        // const limit = 4;
-        // console.log("product1");
-        const productData = await Product.find();
-        // .limit(limit*1).skip((page-1)*limit).populate('category').exec();
-        // console.log("product2");
-        // const count = await Product.find({
-        //     productName:{$regex:new RegExp(".*"+search+".*", "i")},
-        // }).countDocuments();
-
-        console.log("categoory");
-
-        const category = await Category.find({isListed:true});
-
-        console.log("categooryend");
-        console.log(productData);
-        
-
-          res.render("productList", {data:productData});
-        // res.render("productList",{
-        //     data: productData,
-        //     currentPage: page,
-        //     totalPages:Math.ceil(count/limit),
-        //     cat: category,
-        //   
-        // })
    
+
+    const images = [];
+
+    if (req.files && req.files.length > 0) {
+      for (let i = 0; i < req.files.length; i++) {
+        images.push(req.files[i].filename);
+      }
+    }
+
+    const newProduct = new Product({
+      name: products.productName,
+      description: products.description,
+      specification:  products.specifications.map(spec =>({key: spec.key, value: spec.value})),
+      categoryId: products.categoryId,
+      price: products.price,
+      createdOn: new Date(),
+      quantity: products.quantity,
+
+      image: images,
+
+      status: "Available",
+
+    });
+
+    await newProduct.save();
+    return res.redirect(
+      "/admin/productList/?success=Product added Successfully"
+    );
+  } catch (error) {
+    console.error("Error saving product", error);
+    return res.redirect("/admin/pageerror");
+  }
+};
+
+const getAllProducts = async (req, res) => {
+  try {
+    const productData =  await Product.find({isBlocked: false}).populate("categoryId", "name");
+
+    const categories = await Category.find({}, 'name');
+    const productNames = await Product.find({}, 'name');
+
+    res.render("productList", { 
+                data: productData,
+                categories,
+                productNames
+     });
+  } catch (error) {
+    console.log("Error loading productList: ", error);
+    res.redirect("/pageerror");
+  }
+};
+
+const getEditProduct = async (req, res) => {
+  try {
+    const id = req.params.id;
+    console.log(req.params.id);
+
+    const product = await Product.findOne({ _id: id });
+    const category = await Category.find({});
+    console.log("productEdit", product, category);
+
+    
+
+    //when done normally
+    res.render("product-edit", {
+      category,
+      product,
+    });
+
+    //when doing with fetch()
+  } catch (error) {
+    //     res.redirect("/pageerror");
+
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch product",
+      error: error.message,
+    });
+  }
+};
+
+
+
+const updateProduct = async (req, res) => {
+  try {
+    const {
+      productId,
+      productName,
+      categoryId,
+      price,
+      quantity,
+      description,
+      specifications,
+      replaceImageIndex,
+      deletedImages,
+    } = req.body;
+
+    let filteredSpecifications = specifications.filter(spec => spec && spec.key && spec.value);
+
+    const product = await Product.findById(productId);
+    if (!product) {
+      return res.status(404).send("Product not found");
+    }
+
+    product.name = productName;
+    product.categoryId = categoryId;
+    product.price = price;
+    product.quantity = quantity;
+    product.description = description;
+    product.specification = filteredSpecifications;
+
+    if (req.files && req.files.length > 0) {
+      const newImagePaths = req.files.map((file) => file.filename);
+
+      if (
+        replaceImageIndex !== undefined &&
+        replaceImageIndex >= 0 &&
+        replaceImageIndex < product.image.length
+      ) {
+        product.image[replaceImageIndex] = newImagePaths[0];
+      } else {
+        product.image = product.image
+          ? [...product.image, ...newImagePaths]
+          : newImagePaths;
+      }
+    }
+    if (deletedImages) {
+      // Ensure deletedImages is a string before splitting
+      const deletedIndices = Array.isArray(deletedImages)
+        ? deletedImages
+        : deletedImages
+            .split(",")
+            .map(Number)
+            .filter((index) => !isNaN(index));
+      deletedIndices.forEach((index) => {
+        if (index >= 0 && index < product.image.length) {
+          product.image.splice(index, 1);
+        }
+      });
+    }
+
+    await product.save();
+    res.redirect("/admin/productList/?success=Product Updated Successfully");
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Server error");
+  }
+};
+
+const removeProduct  = async (req, res) => {
+           console.log("block",req.params.id);
+    try {
+        const productId = req.params.id;
         
-    }catch(error){
-        res.redirect("/pageerror");
+        const product = await Product.findByIdAndUpdate(productId, { isBlocked: true }, {new: true});
+        
+
+        if (!product) {
+            return res.status(404).json({ success: false, message: 'Product not found'});
+        }
+        res.status(200).json({ success: true, message: 'Product successfully deleted' });
+    } catch (error) {
+        console.error('Internal server error', error);
+        res.status(500).json({ success: false });
     }
 };
 
-const getEditProduct = async(req, res) =>{
-    try {
-        const id = req.query.id;
-        const product = await Product.findOne({_id: id});
-        const category = await Category.find({});
-        res.render("product-edit",{
-            cat:category,
-            product:product
-        })
-    } catch (error) {
-        res.redirect("/pageerror");
+
+const filterProducts = async (req, res) =>{
+  try {
+  
+         const {product = null, category = null, priceOrder, other} = req.query;
+         
+
+         const filter = {};
+         if(product) filter.name = product;
+         if(category) filter.categoryId = category;
+         
+
+          //apply sort based on dropdown selections
+          // if(priceOrder === 'asc') query = query.sort({ price: 1 });
+          // if(priceOrder === 'desc') query = query.sort({ price: -1 });
+ 
+          let query = {};
+           switch(other){
+            case 'asc':
+                    query = { price: 1 };
+                    break;
+              case 'desc':
+                      query = { price: -1 };
+                      break;
+                          
+             case 'alphabetical-asc':
+                               query = { name: 1 };
+                               break;
+             case 'alphabetical-desc':
+                               query = { name: -1 };
+                               break;
+             case 'new-arrivals':
+                                 query = { createdAt: -1 };
+                                 break;
+            default:
+                    query = {};
+                           
+ }  
+         
+
+         let products = await Product.find(filter).sort(query).populate('categoryId');
+         
         
-    }
-}
+          
+                // const products = await query.exec();
+                
+                
+                 res.status(200).json({success: true, data: products});
+
+                // res.render('partials/productRows', { data: products }, (err, html) => {
+                //   if (err) {
+                //     console.error('Partial render error:', err);
+                //     return res.status(500).send('Error rendering filtered products');
+                //   }
+                //   res.(html); // Send back only the rendered rows
+                // });
+      
+
+  } catch (error) {
+       console.error('Error filtering products: ', error);
+       res.status(500).json({success: false, message: 'Error filtering products'});
+  }
+};
 
 
-module.exports ={
-    getProductAddPage,
-    addProducts,
-    getAllProducts
-}
 
+
+
+module.exports = {
+  getProductAddPage,
+  addProducts,
+  getAllProducts,
+  getEditProduct,
+  updateProduct,
+  removeProduct,
+  filterProducts
+  
+};

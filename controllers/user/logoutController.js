@@ -6,6 +6,7 @@ const logout = async(req, res) =>{
         }else if(req.session.passport && req.session){
              delete req.session.passport  
         }
+        
         return res.redirect("/?logout=logout Successfully");
     } catch (error) {
         res.redirect("/pageNotFound");

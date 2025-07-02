@@ -38,7 +38,7 @@ async function sendVerificationEmail(email, otp){
             html: `<b>Your OTP: ${otp}</b>`,
         })
 
-        return info.accepted.length > 0
+        return info.accepted.length > 0    // info.accepted contains an array of email addresses which accepted the mail
     } catch (error) {
         console.error("Error sending email", error);
         return false;
@@ -65,8 +65,9 @@ const signup = async(req, res) =>{
         }
 
         req.session.userOtp = otp;
+        
         req.session.userData = {name, phone, email, password};
-
+        
         res.render("verify-otp");
         console.log("OTP Sent", otp);
         
@@ -92,13 +93,13 @@ const securePassword = async (password) =>{
 const verifyOtp = async (req, res) =>{
     try {
         const {otp} = req.body;
-        console.log(otp);
+        console.log("verifyOtp",otp);
 
         if(otp == req.session.userOtp){
-            console.log("hi");
+            
             const user = req.session.userData;
             const passwordHash = await securePassword(user.password);
-            console.log("hello");
+          
 
             const saveUserData = new User({
                 name: user.name,
@@ -111,9 +112,9 @@ const verifyOtp = async (req, res) =>{
         await saveUserData.save();
         req.session.user = saveUserData;
 
-        req.session.userOtp = null;
-        req.session.userData = null;
-
+        
+        
+        
         res.json({success: true, redirectUrl: "/"})
     }else {
         res.status(400).json({success: false, message: "Invalid OTP, Please try again"})
@@ -186,10 +187,12 @@ const sendResetPasswordEmail = async(name,email,token) =>{
             from: process.env.NODEMAILER_EMAIL,
             to: email,
             subject:"For Reset Password",
-            html:`<p>Hii ${name} please click here to <a href="http://localhost:3000/resetPassword?token=${token}">Reset</a>your password</p>`
+            html:`<p>Hii ${name} please click here to 
+                           <a href="http://localhost:3000/resetPassword?token=${token}">Reset</a>
+                        your password</p>`
         })
 
-        return info.accepted.lenght>0
+        return info.accepted.length > 0              //an array of email addresses that the SMTP server accepted for delivery.
 
     } catch (error) {
         console.log("Sent verification email error",error.message);
@@ -201,10 +204,13 @@ const forgotPassword = async(req,res)=>{
     try {
         res.render("forgotPassword",{message:""});
     } catch (error) {
-        console.log("Forgott password logic error",error.message);
+        console.log("Forgot password logic error",error.message);
         return res.status(404).redirect("/pageNotFound");
     }
 }
+
+
+
 
 const forgotVerify = async(req,res) =>{
     try {
@@ -230,10 +236,45 @@ const forgotVerify = async(req,res) =>{
     }
 }
 
+const changePassword = async(req,res)=>{
+    try {
+        res.render("changePassword",{message:""});
+    } catch (error) {
+        console.log("Forgot password logic error",error.message);
+        return res.status(404).redirect("/pageNotFound");
+    }
+}
+
+const changeVerify = async(req,res) =>{
+    try {
+        const email = req.body.email;
+        const user = await User.findOne({email});
+
+        if(user){
+            const randomString = randomstring.generate();
+            await User.updateOne({email},{$set:{token:randomString}});
+
+            sendResetPasswordEmail(user.name, user.email, randomString);
+
+            res.render("forgotPassword", {message:"Please check your mail to  reset your password"});
+
+
+        }else{
+            res.render("changePassword",{message:"User Email is incorrect"});
+
+        }
+    } catch (error) {
+        console.log("Forgot verify error", error.message);
+        return res.status(404).redirect("/pageNotFound")
+    }
+}
+
 const resetPasswordLoad = async(req, res) =>{
     try {
         const token = req.query.token;
         const tokenData = await User.findOne({token});
+        console.log("resetPassword",token);
+        console.log("resetPassword2",tokenData);
 
         if(tokenData){
             res.render("resetPassword",{user_id:tokenData._id} )
@@ -274,7 +315,9 @@ module.exports = {loadSignup,
                   forgotPassword,
                   forgotVerify,
                   resetPasswordLoad,
-                  verifyResetPassword
+                  verifyResetPassword,
+                  changePassword,
+                  changeVerify
 
 
 }

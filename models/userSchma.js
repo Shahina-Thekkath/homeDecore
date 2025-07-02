@@ -47,6 +47,10 @@ const UserSchema = new Schema({
         
     },
     addresses:[addressSchema],
+    defaultAddress: {
+        type: mongoose.Schema.Types.ObjectId, // References the _id of one of the addresses
+        ref: "Address", // Optional: Logical reference (not a separate collection)
+    },
     wishlist: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Product',

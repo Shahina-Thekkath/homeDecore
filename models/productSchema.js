@@ -9,12 +9,14 @@ const ProductSchema = new Schema(
     description: { type: String, required: true },
     stock: { type: Number, default: 0 },
     price: { type: Number, required: true },
+    // salePrice: { type: Number },
     categoryId: { type: Types.ObjectId, ref: "Category", required: true },
    
-    // salePrice: { type: Number, required: true },
+
     quantity: { type: Number, required: true },
     image: [String],
     rating: { type: Number, default: 0 },
+    isFeatured: { type: Boolean, default: false },
     discounts: { type: String, default: null },
     reviews: [
       {
@@ -35,6 +37,12 @@ const ProductSchema = new Schema(
   },
   { timestamps: true }
 );
+
+// ProductSchema.index({ price: 1 });
+// ProductSchema.index({ averageRating: -1 });
+// ProductSchema.index({ name: 1 });
+// ProductSchema.index({ isFeatured: 1 });
+
 
 const Product = model("Product", ProductSchema);
 module.exports = Product;

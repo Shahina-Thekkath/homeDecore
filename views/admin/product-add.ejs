@@ -1,454 +1,545 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
-    <meta name="description" content="POS - Bootstrap Admin Template">
-    <meta name="keywords"
-        content="admin, estimates, bootstrap, business, corporate, creative, invoice, html5, responsive, Projects">
-    <meta name="author" content="Dreamguys - Bootstrap Admin Template">
-    <meta name="robots" content="noindex, nofollow">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, user-scalable=0"
+    />
+    <meta name="description" content="POS - Bootstrap Admin Template" />
+    <meta
+      name="keywords"
+      content="admin, estimates, bootstrap, business, corporate, creative, invoice, html5, responsive, Projects"
+    />
+    <meta name="author" content="Dreamguys - Bootstrap Admin Template" />
+    <meta name="robots" content="noindex, nofollow" />
     <title>Dreams Pos admin template</title>
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cropperjs/dist/cropper.min.css">
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/cropperjs/dist/cropper.min.css"
+    />
 
+    <link
+      rel="shortcut icon"
+      type="image/x-icon"
+      href="/admin-assets/img/favicon.jpg"
+    />
 
-    <link rel="shortcut icon" type="image/x-icon" href="/admin-assets/img/favicon.jpg">
+    <link rel="stylesheet" href="/admin-assets/css/bootstrap.min.css" />
 
-    <link rel="stylesheet" href="/admin-assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/admin-assets/css/animate.css" />
 
-    <link rel="stylesheet" href="/admin-assets/css/animate.css">
+    <link
+      rel="stylesheet"
+      href="/admin-assets/plugins/select2/css/select2.min.css"
+    />
 
-    <link rel="stylesheet" href="/admin-assets/plugins/select2/css/select2.min.css">
+    <link
+      rel="stylesheet"
+      href="/admin-assets/css/dataTables.bootstrap4.min.css"
+    />
 
-    <link rel="stylesheet" href="/admin-assets/css/dataTables.bootstrap4.min.css">
+    <link
+      rel="stylesheet"
+      href="/admin-assets/plugins/fontawesome/css/fontawesome.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="/admin-assets/plugins/fontawesome/css/all.min.css"
+    />
 
-    <link rel="stylesheet" href="/admin-assets/plugins/fontawesome/css/fontawesome.min.css">
-    <link rel="stylesheet" href="/admin-assets/plugins/fontawesome/css/all.min.css">
-
-    <link rel="stylesheet" href="/admin-assets/css/style.css">
+    <link rel="stylesheet" href="/admin-assets/css/style.css" />
 
     <style>
-        .thumbnails-container {
-            display: flex;
-            overflow-x: auto;
-        }
- 
- 
-        .thumbnail {
-            margin-right: 10px;
-        }
-        .input-upload {
-    position: relative;
- }
- 
- 
- .error-message {
-            color: red;
-            display: none;
-        }
- 
- 
-    </style>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cropperjs/dist/cropper.min.css">
- 
-</head>
+      .thumbnails-container {
+        display: flex;
+        overflow-x: auto;
+      }
 
-<body>
+      .thumbnail {
+        margin-right: 10px;
+      }
+      .input-upload {
+        position: relative;
+      }
+
+      .error-message {
+        color: red;
+        display: none;
+      }
+    </style>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/cropperjs/dist/cropper.min.css"
+    />
+  </head>
+
+  <body>
     <div id="global-loader">
-        <div class="whirly-loader"> </div>
+      <div class="whirly-loader"></div>
     </div>
 
     <div class="main-wrapper">
+      <div class="header">
+        <div class="header-left active">
+          <a href="index.html" class="logo">
+            <img src="/admin-assets/img/logo.png" alt="" />
+          </a>
+          <a href="index.html" class="logo-small">
+            <img src="/admin-assets/img/logo-small.png" alt="" />
+          </a>
+          <a id="toggle_btn" href="javascript:void(0);"> </a>
+        </div>
 
-        <div class="header">
+        <a id="mobile_btn" class="mobile_btn" href="#sidebar">
+          <span class="bar-icon">
+            <span></span>
+            <span></span>
+            <span></span>
+          </span>
+        </a>
 
-            <div class="header-left active">
-                <a href="index.html" class="logo">
-                    <img src="/admin-assets/img/logo.png" alt="">
-                </a>
-                <a href="index.html" class="logo-small">
-                    <img src="/admin-assets/img/logo-small.png" alt="">
-                </a>
-                <a id="toggle_btn" href="javascript:void(0);">
-                </a>
+        <ul class="nav user-menu">
+          <li class="nav-item">
+            <div class="top-nav-search">
+              <a href="javascript:void(0);" class="responsive-search">
+                <i class="fa fa-search"></i>
+              </a>
+              <form action="#">
+                <div class="searchinputs">
+                  <input type="text" placeholder="Search Here ..." />
+                  <div class="search-addon">
+                    <span
+                      ><img src="/admin-assets/img/icons/closes.svg" alt="img"
+                    /></span>
+                  </div>
+                </div>
+                <a class="btn" id="searchdiv"
+                  ><img src="/admin-assets/img/icons/search.svg" alt="img"
+                /></a>
+              </form>
             </div>
+          </li>
 
-            <a id="mobile_btn" class="mobile_btn" href="#sidebar">
-                <span class="bar-icon">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </span>
+          <li class="nav-item dropdown has-arrow flag-nav">
+            <a
+              class="nav-link dropdown-toggle"
+              data-bs-toggle="dropdown"
+              href="javascript:void(0);"
+              role="button"
+            >
+              <img src="/admin-assets/img/flags/us1.png" alt="" height="20" />
             </a>
+            <div class="dropdown-menu dropdown-menu-right">
+              <a href="javascript:void(0);" class="dropdown-item">
+                <img src="/admin-assets/img/flags/us.png" alt="" height="16" />
+                English
+              </a>
+              <a href="javascript:void(0);" class="dropdown-item">
+                <img src="/admin-assets/img/flags/fr.png" alt="" height="16" />
+                French
+              </a>
+              <a href="javascript:void(0);" class="dropdown-item">
+                <img src="/admin-assets/img/flags/es.png" alt="" height="16" />
+                Spanish
+              </a>
+              <a href="javascript:void(0);" class="dropdown-item">
+                <img src="/admin-assets/img/flags/de.png" alt="" height="16" />
+                German
+              </a>
+            </div>
+          </li>
 
-            <ul class="nav user-menu">
-
-                <li class="nav-item">
-                    <div class="top-nav-search">
-                        <a href="javascript:void(0);" class="responsive-search">
-                            <i class="fa fa-search"></i>
-                        </a>
-                        <form action="#">
-                            <div class="searchinputs">
-                                <input type="text" placeholder="Search Here ...">
-                                <div class="search-addon">
-                                    <span><img src="/admin-assets/img/icons/closes.svg" alt="img"></span>
-                                </div>
-                            </div>
-                            <a class="btn" id="searchdiv"><img src="/admin-assets/img/icons/search.svg" alt="img"></a>
-                        </form>
-                    </div>
-                </li>
-
-
-                <li class="nav-item dropdown has-arrow flag-nav">
-                    <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="javascript:void(0);"
-                        role="button">
-                        <img src="/admin-assets/img/flags/us1.png" alt="" height="20">
+          <li class="nav-item dropdown">
+            <a
+              href="javascript:void(0);"
+              class="dropdown-toggle nav-link"
+              data-bs-toggle="dropdown"
+            >
+              <img
+                src="/admin-assets/img/icons/notification-bing.svg"
+                alt="img"
+              />
+              <span class="badge rounded-pill">4</span>
+            </a>
+            <div class="dropdown-menu notifications">
+              <div class="topnav-dropdown-header">
+                <span class="notification-title">Notifications</span>
+                <a href="javascript:void(0)" class="clear-noti"> Clear All </a>
+              </div>
+              <div class="noti-content">
+                <ul class="notification-list">
+                  <li class="notification-message">
+                    <a href="activities.html">
+                      <div class="media d-flex">
+                        <span class="avatar flex-shrink-0">
+                          <img
+                            alt=""
+                            src="/admin-assets/img/profiles/avatar-02.jpg"
+                          />
+                        </span>
+                        <div class="media-body flex-grow-1">
+                          <p class="noti-details">
+                            <span class="noti-title">John Doe</span> added new
+                            task
+                            <span class="noti-title"
+                              >Patient appointment booking</span
+                            >
+                          </p>
+                          <p class="noti-time">
+                            <span class="notification-time">4 mins ago</span>
+                          </p>
+                        </div>
+                      </div>
                     </a>
-                    <div class="dropdown-menu dropdown-menu-right">
-                        <a href="javascript:void(0);" class="dropdown-item">
-                            <img src="/admin-assets/img/flags/us.png" alt="" height="16"> English
-                        </a>
-                        <a href="javascript:void(0);" class="dropdown-item">
-                            <img src="/admin-assets/img/flags/fr.png" alt="" height="16"> French
-                        </a>
-                        <a href="javascript:void(0);" class="dropdown-item">
-                            <img src="/admin-assets/img/flags/es.png" alt="" height="16"> Spanish
-                        </a>
-                        <a href="javascript:void(0);" class="dropdown-item">
-                            <img src="/admin-assets/img/flags/de.png" alt="" height="16"> German
-                        </a>
-                    </div>
-                </li>
-
-
-                <li class="nav-item dropdown">
-                    <a href="javascript:void(0);" class="dropdown-toggle nav-link" data-bs-toggle="dropdown">
-                        <img src="/admin-assets/img/icons/notification-bing.svg" alt="img"> <span
-                            class="badge rounded-pill">4</span>
+                  </li>
+                  <li class="notification-message">
+                    <a href="activities.html">
+                      <div class="media d-flex">
+                        <span class="avatar flex-shrink-0">
+                          <img
+                            alt=""
+                            src="/admin-assets/img/profiles/avatar-03.jpg"
+                          />
+                        </span>
+                        <div class="media-body flex-grow-1">
+                          <p class="noti-details">
+                            <span class="noti-title">Tarah Shropshire</span>
+                            changed the task name
+                            <span class="noti-title"
+                              >Appointment booking with payment gateway</span
+                            >
+                          </p>
+                          <p class="noti-time">
+                            <span class="notification-time">6 mins ago</span>
+                          </p>
+                        </div>
+                      </div>
                     </a>
-                    <div class="dropdown-menu notifications">
-                        <div class="topnav-dropdown-header">
-                            <span class="notification-title">Notifications</span>
-                            <a href="javascript:void(0)" class="clear-noti"> Clear All </a>
+                  </li>
+                  <li class="notification-message">
+                    <a href="activities.html">
+                      <div class="media d-flex">
+                        <span class="avatar flex-shrink-0">
+                          <img
+                            alt=""
+                            src="/admin-assets/img/profiles/avatar-06.jpg"
+                          />
+                        </span>
+                        <div class="media-body flex-grow-1">
+                          <p class="noti-details">
+                            <span class="noti-title">Misty Tison</span> added
+                            <span class="noti-title">Domenic Houston</span> and
+                            <span class="noti-title">Claire Mapes</span> to
+                            project
+                            <span class="noti-title"
+                              >Doctor available module</span
+                            >
+                          </p>
+                          <p class="noti-time">
+                            <span class="notification-time">8 mins ago</span>
+                          </p>
                         </div>
-                        <div class="noti-content">
-                            <ul class="notification-list">
-                                <li class="notification-message">
-                                    <a href="activities.html">
-                                        <div class="media d-flex">
-                                            <span class="avatar flex-shrink-0">
-                                                <img alt="" src="/admin-assets/img/profiles/avatar-02.jpg">
-                                            </span>
-                                            <div class="media-body flex-grow-1">
-                                                <p class="noti-details"><span class="noti-title">John Doe</span> added
-                                                    new task <span class="noti-title">Patient appointment booking</span>
-                                                </p>
-                                                <p class="noti-time"><span class="notification-time">4 mins ago</span>
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </a>
-                                </li>
-                                <li class="notification-message">
-                                    <a href="activities.html">
-                                        <div class="media d-flex">
-                                            <span class="avatar flex-shrink-0">
-                                                <img alt="" src="/admin-assets/img/profiles/avatar-03.jpg">
-                                            </span>
-                                            <div class="media-body flex-grow-1">
-                                                <p class="noti-details"><span class="noti-title">Tarah Shropshire</span>
-                                                    changed the task name <span class="noti-title">Appointment booking
-                                                        with payment gateway</span></p>
-                                                <p class="noti-time"><span class="notification-time">6 mins ago</span>
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </a>
-                                </li>
-                                <li class="notification-message">
-                                    <a href="activities.html">
-                                        <div class="media d-flex">
-                                            <span class="avatar flex-shrink-0">
-                                                <img alt="" src="/admin-assets/img/profiles/avatar-06.jpg">
-                                            </span>
-                                            <div class="media-body flex-grow-1">
-                                                <p class="noti-details"><span class="noti-title">Misty Tison</span>
-                                                    added <span class="noti-title">Domenic Houston</span> and <span
-                                                        class="noti-title">Claire Mapes</span> to project <span
-                                                        class="noti-title">Doctor available module</span></p>
-                                                <p class="noti-time"><span class="notification-time">8 mins ago</span>
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </a>
-                                </li>
-                                <li class="notification-message">
-                                    <a href="activities.html">
-                                        <div class="media d-flex">
-                                            <span class="avatar flex-shrink-0">
-                                                <img alt="" src="/admin-assets/img/profiles/avatar-17.jpg">
-                                            </span>
-                                            <div class="media-body flex-grow-1">
-                                                <p class="noti-details"><span class="noti-title">Rolland Webber</span>
-                                                    completed task <span class="noti-title">Patient and Doctor video
-                                                        conferencing</span></p>
-                                                <p class="noti-time"><span class="notification-time">12 mins ago</span>
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </a>
-                                </li>
-                                <li class="notification-message">
-                                    <a href="activities.html">
-                                        <div class="media d-flex">
-                                            <span class="avatar flex-shrink-0">
-                                                <img alt="" src="/admin-assets/img/profiles/avatar-13.jpg">
-                                            </span>
-                                            <div class="media-body flex-grow-1">
-                                                <p class="noti-details"><span class="noti-title">Bernardo Galaviz</span>
-                                                    added new task <span class="noti-title">Private chat module</span>
-                                                </p>
-                                                <p class="noti-time"><span class="notification-time">2 days ago</span>
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                        <div class="topnav-dropdown-footer">
-                            <a href="activities.html">View all Notifications</a>
-                        </div>
-                    </div>
-                </li>
-
-                <li class="nav-item dropdown has-arrow main-drop">
-                    <a href="javascript:void(0);" class="dropdown-toggle nav-link userset" data-bs-toggle="dropdown">
-                        <span class="user-img"><img src="/admin-assets/img/profiles/avator1.jpg" alt="">
-                            <span class="status online"></span></span>
+                      </div>
                     </a>
-                    <div class="dropdown-menu menu-drop-user">
-                        <div class="profilename">
-                            <div class="profileset">
-                                <span class="user-img"><img src="/admin-assets/img/profiles/avator1.jpg" alt="">
-                                    <span class="status online"></span></span>
-                                <div class="profilesets">
-                                    <h6>John Doe</h6>
-                                    <h5>Admin</h5>
-                                </div>
-                            </div>
-                            <hr class="m-0">
-                            <a class="dropdown-item" href="profile.html"> <i class="me-2" data-feather="user"></i> My
-                                Profile</a>
-                            <a class="dropdown-item" href="generalsettings.html"><i class="me-2"
-                                    data-feather="settings"></i>Settings</a>
-                            <hr class="m-0">
-                            <a class="dropdown-item logout pb-0" href="signin.html"><img
-                                    src="/admin-assets/img/icons/log-out.svg" class="me-2" alt="img">Logout</a>
+                  </li>
+                  <li class="notification-message">
+                    <a href="activities.html">
+                      <div class="media d-flex">
+                        <span class="avatar flex-shrink-0">
+                          <img
+                            alt=""
+                            src="/admin-assets/img/profiles/avatar-17.jpg"
+                          />
+                        </span>
+                        <div class="media-body flex-grow-1">
+                          <p class="noti-details">
+                            <span class="noti-title">Rolland Webber</span>
+                            completed task
+                            <span class="noti-title"
+                              >Patient and Doctor video conferencing</span
+                            >
+                          </p>
+                          <p class="noti-time">
+                            <span class="notification-time">12 mins ago</span>
+                          </p>
                         </div>
-                    </div>
-                </li>
+                      </div>
+                    </a>
+                  </li>
+                  <li class="notification-message">
+                    <a href="activities.html">
+                      <div class="media d-flex">
+                        <span class="avatar flex-shrink-0">
+                          <img
+                            alt=""
+                            src="/admin-assets/img/profiles/avatar-13.jpg"
+                          />
+                        </span>
+                        <div class="media-body flex-grow-1">
+                          <p class="noti-details">
+                            <span class="noti-title">Bernardo Galaviz</span>
+                            added new task
+                            <span class="noti-title">Private chat module</span>
+                          </p>
+                          <p class="noti-time">
+                            <span class="notification-time">2 days ago</span>
+                          </p>
+                        </div>
+                      </div>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+              <div class="topnav-dropdown-footer">
+                <a href="activities.html">View all Notifications</a>
+              </div>
+            </div>
+          </li>
+
+          <li class="nav-item dropdown has-arrow main-drop">
+            <a
+              href="javascript:void(0);"
+              class="dropdown-toggle nav-link userset"
+              data-bs-toggle="dropdown"
+            >
+              <span class="user-img"
+                ><img src="/admin-assets/img/profiles/avator1.jpg" alt="" />
+                <span class="status online"></span
+              ></span>
+            </a>
+            <div class="dropdown-menu menu-drop-user">
+              <div class="profilename">
+                <div class="profileset">
+                  <span class="user-img"
+                    ><img src="/admin-assets/img/profiles/avator1.jpg" alt="" />
+                    <span class="status online"></span
+                  ></span>
+                  <div class="profilesets">
+                    <h6>John Doe</h6>
+                    <h5>Admin</h5>
+                  </div>
+                </div>
+                <hr class="m-0" />
+                <a class="dropdown-item" href="profile.html">
+                  <i class="me-2" data-feather="user"></i> My Profile</a
+                >
+                <a class="dropdown-item" href="generalsettings.html"
+                  ><i class="me-2" data-feather="settings"></i>Settings</a
+                >
+                <hr class="m-0" />
+                <a class="dropdown-item logout pb-0" href="signin.html"
+                  ><img
+                    src="/admin-assets/img/icons/log-out.svg"
+                    class="me-2"
+                    alt="img"
+                  />Logout</a
+                >
+              </div>
+            </div>
+          </li>
+        </ul>
+
+        <div class="dropdown mobile-user-menu">
+          <a
+            href="javascript:void(0);"
+            class="nav-link dropdown-toggle"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+            ><i class="fa fa-ellipsis-v"></i
+          ></a>
+          <div class="dropdown-menu dropdown-menu-right">
+            <a class="dropdown-item" href="profile.html">My Profile</a>
+            <a class="dropdown-item" href="generalsettings.html">Settings</a>
+            <a class="dropdown-item" href="signin.html">Logout</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="sidebar" id="sidebar">
+        <div class="sidebar-inner slimscroll">
+          <div id="sidebar-menu" class="sidebar-menu">
+            <ul>
+              <li class="">
+                <a href="/admin/dashboard"><span> Dashboard</span> </a>
+              </li>
+
+              <li class="">
+                <a href="/admin/users"><span> Users</span> </a>
+              </li>
+
+              <li class="active">
+                <a href="/admin/productList"><span> Products</span> </a>
+              </li>
+              <li class="">
+                <a href="/admin/category"><span> Category</span> </a>
+              </li>
+              <li class="">
+                <a href="/admin/orderList"><span> Orders</span> </a>
+              </li>
+              <li class="">
+                <a href="/admin/coupon"><span> Coupon</span> </a>
+              </li>
+              <li class="">
+                <a href="/admin/offers"><span> Offer</span> </a>
+              </li>
+              <li class="">
+                <a
+                  onclick="message(successMessage= 'Logout Successfully')"
+                  href="/admin/logout"
+                  ><span> Logout</span>
+                </a>
+              </li>
             </ul>
-
-
-            <div class="dropdown mobile-user-menu">
-                <a href="javascript:void(0);" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"
-                    aria-expanded="false"><i class="fa fa-ellipsis-v"></i></a>
-                <div class="dropdown-menu dropdown-menu-right">
-                    <a class="dropdown-item" href="profile.html">My Profile</a>
-                    <a class="dropdown-item" href="generalsettings.html">Settings</a>
-                    <a class="dropdown-item" href="signin.html">Logout</a>
-                </div>
-            </div>
-
+          </div>
         </div>
+      </div>
 
-
-        <div class="sidebar" id="sidebar">
-            <div class="sidebar-inner slimscroll">
-                <div id="sidebar-menu" class="sidebar-menu">
-                    <ul>
-                        <li class="active">
-                            <a href="index.html"><span>
-                                    Dashboard</span> </a>
-                        </li>
-
-                        <li class="">
-                            <a href="/admin/users"><span>
-                                    Users</span> </a>
-                            
-                               
-                            
-                        </li>
-
-                        <li class="">
-                            <a href="/admin/productList"><span>
-                                    Products</span> </a>
-                            
-                               
-                            
-                        </li>                        
-                        <li class="">
-                            <a href="/admin/category"><span>
-                                    Category</span> </a>
-                            
-                               
-                            
-                        </li>                        
-                        <li class="">
-                            <a href="/admin/orders"><span>
-                                    Orders</span> </a>
-                            
-                               
-                            
-                        </li>                        
-                        <li class="">
-                            <a href="/admin/coupon"><span>
-                                    Coupon</span> </a>
-                            
-                               
-                            
-                        </li>                        
-                        <li class="">
-                            <a href="/admin/offers"><span>
-                                    Offer</span> </a>
-                            
-                               
-                            
-                        </li>                        
-                        <li class="">
-                            <a href="/admin/logout"><span>
-                                    Logout</span> </a>
-                            
-                               
-                            
-                        </li>                        
-
-
-                        
-                    </ul>
-                </div>
+      <div class="page-wrapper">
+        <div class="content">
+          <div class="page-header">
+            <div class="page-title">
+              <h4>Product Add</h4>
+              <h6>Create new product</h6>
             </div>
-        </div>
+          </div>
 
-
-        <div class="page-wrapper">
-            <div class="content">
-                <div class="page-header">
-                    <div class="page-title">
-                        <h4>Product Add</h4>
-                        <h6>Create new product</h6>
+          <div class="card">
+            <div class="card-body">
+              <form
+                action="/admin/products/addProducts"
+                method="POST"
+                enctype="multipart/form-data"
+                onsubmit="return validateForm()"
+              >
+                <div class="row">
+                  <div class="col-lg-4 col-sm-6 col-12">
+                    <div class="form-group">
+                      <label>Product Name</label>
+                      <input
+                        type="text"
+                        class="form-control"
+                        name="productName"
+                        placeholder="Enter product name"
+                      />
+                      <p id="productName-error" class="error-message"></p>
                     </div>
+                  </div>
+                  <div class="col-lg-4 col-sm-6 col-12">
+                    <div class="form-group">
+                      <label>Category</label>
+                      <select class="select" name="categoryId" id="categoryId">
+                        <% category.forEach((category) => { %>
+                        <option value="<%= category._id %>">
+                          <%= category.name %>
+                        </option>
+                        <% }) %>
+                      </select>
+                      <div id="category-error" class="error-message"></div>
+                    </div>
+                  </div>
+
+                  <div class="col-lg-4 col-sm-6 col-12">
+                    <div class="form-group">
+                      <label>Price</label>
+                      <input
+                        type="number"
+                        class="form-control"
+                        name="price"
+                        placeholder="Enter product price"
+                      />
+                      <p id="regularPrice-error" class="error-message"></p>
+                    </div>
+                  </div>
+
+                  <div class="col-lg-4 col-sm-6 col-12">
+                    <div class="form-group">
+                      <label>Quantity</label>
+                      <input
+                        type="number"
+                        class="form-control"
+                        name="quantity"
+                      />
+                      <p id="quantity-error" class="error-message"></p>
+                    </div>
+                  </div>
+
+                  <div class="col-lg-12">
+                    <div class="form-group">
+                      <label for="descriptionid">Description</label>
+                      <textarea
+                        class="form-control"
+                        name="description"
+                        id="descriptionid"
+                      ></textarea>
+                      <p
+                        style="color: red"
+                        id="description-error"
+                        class="error-message"
+                      ></p>
+                    </div>
+                  </div>
+
+                  <div class="col-lg-12">
+                    <div class="form-group">
+                      <label for="productSpecificationid"
+                        >Product Specification</label
+                      >
+                      <div id="specificationsContainer"></div>
+                      <button
+                        type="button"
+                        id="addSpecification"
+                        class="btn btn-secondary mt-2"
+                      >
+                        Add Specification
+                      </button>
+                    </div>
+                  </div>
+
+                  <div class="card mb-2">
+                    <div class="card-header"><h4>Choose images</h4></div>
+                    <div class="border row">
+                      <div
+                        id="addedImagesContainer"
+                        class="thumbnails-container"
+                      ></div>
+                    </div>
+
+                    <div class="row">
+                      <div
+                        class="card-body align-items-center"
+                        style="margin-bottom: 20px"
+                      >
+                        <input
+                          type="file"
+                          class="form-control"
+                          name="images"
+                          id="inputFiles"
+                          accept="image/png, image/jpeg, image/jpg"
+                          multiple
+                          onchange="handleFileSelect(event)"
+                        />
+                        <p id="image-error" class="error-message"></p>
+                      </div>
+                    </div>
+                  </div>
+                  <button
+                    type="submit"
+                    class="btn btn-md rounded font-sm hover-up"
+                    onclick="validateAndSubmit()"
+                  >
+                    Submit
+                  </button>
                 </div>
-
-                <div class="card">
-                    <div class="card-body">
-                        <form action="/admin/products/addProducts" method="POST" enctype="multipart/form-data" onsubmit="return validateForm()">
-
-                            
-                            <div class="row">
-                                <div class="col-lg-4 col-sm-6 col-12">
-                                    <div class="form-group">
-                                        <label>Product Name</label>
-                                        <input type="text" class="form-control" name="productName" placeholder="Enter product name">
-                                        <div id="productName-error" class="error-message"></div>
-
-                                    </div>
-                                </div>
-                                <div class="col-lg-4 col-sm-6 col-12">
-                                    <div class="form-group">
-                                        <label>Category</label>
-                                        <select class="select" name="categoryId" id="categoryId">
-                                            <% category.forEach((category) => { %>
-                                                <option value="<%= category._id %>"><%= category.name %></option>
-                                            <% }) %>
-                                        </select>
-                                        <div id="category-error" class="error-message"></div>
-                                    </div>
-                                </div>
-                                
-                                <!-- <div class="col-lg-3 col-sm-6 col-12">
-                                    <div class="form-group">
-                                        <label>Sub Category</label>
-                                        <select class="select">
-                                            <option>Choose Sub Category</option>
-                                            <option>Fruits</option>
-                                        </select>
-                                    </div>
-                                </div> -->
-                                <!-- <div class="col-lg-3 col-sm-6 col-12">
-                                    <div class="form-group">
-                                        <label>Brand</label>
-                                        <select class="select">
-                                            <option>Choose Brand</option>
-                                            <option>Brand</option>
-                                        </select>
-                                    </div>
-                                </div> -->
-                                <div class="col-lg-4 col-sm-6 col-12">
-                                    <div class="form-group">
-                                        <label>Price</label>
-                                        <input type="number" class="form-control" name="price" placeholder="Enter product price">
-                                        <div id="regularPrice-error" class="error-message"></div>
-
-                                    </div>
-                                </div>
-
-                                
-
-                                <div class="col-lg-4 col-sm-6 col-12">
-                                    <div class="form-group">
-                                        <label>Quantity</label>
-                                        <input type="number" class="form-control" name="quantity">
-                                    </div>
-                                </div>
-
-                                
-
-                                <div class="col-lg-12">
-                                    <div class="form-group">
-                                        <label for="descriptionid">Description</label>
-                                        <textarea class="form-control" name="description" id="descriptionid"></textarea>
-                                    </div>
-                                </div>
-                                
-                                <!-- <div class="col-lg-4 col-sm-6 col-12">
-                                    <div class="form-group">
-                                        <label>Discount Type</label>
-                                        <select class="select">
-                                            <option>Percentage</option>
-                                            <option>10%</option>
-                                            <option>20%</option>
-                                        </select>
-                                    </div>
-                                </div> -->
-
-
-                                <div class="card mb-2">
-                                    <div class="card-header"><h4>Choose images</h4></div>
-                                    <div class="border row">
-                                        <div id="addedImagesContainer" class="thumbnails-container"></div>
-                                    </div>
-                                
-                                    <div class="row">
-                                        <div class="card-body align-items-center" style="margin-bottom: 20px;">
-                                            <input type="file" class="form-control" name="images" id="inputFiles" accept="image/png, image/jpeg, image/jpg" multiple onchange="handleFileSelect(event)">
-                                            <div id="image-error" class="error-message"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <button type="submit" class="btn btn-md rounded font-sm hover-up" onclick="validateAndSubmit()">Submit</button>
-                               
-                               
-            </form>
-                        
+              </form>
+            </div>
+          </div>
         </div>
+      </div>
     </div>
-    
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/cropperjs/dist/cropper.min.js"></script>
 
     <script src="/admin-assets/js/jquery-3.6.0.min.js"></script>
@@ -469,242 +560,454 @@
 
     <script src="/admin-assets/js/script.js"></script>
     <script>
+      $(document).ready(function () {
+        let specificationCount = $(
+          "#specificationsContainer .specification-group"
+        ).length;
+        console.log(specificationCount);
 
+        $("#addSpecification").click(function () {
+          $("#specificationsContainer").append(`
+             <div class="specification-group">
+                 <input type="text" name="specifications[${specificationCount}][key]" class="form-control" placeholder="Key" >
+                 <p style="color: red;" id="invalidSpecKey${specificationCount}"></p>
+                 <input type="text" name="specifications[${specificationCount}][value]" class="form-control mt-2" placeholder="Value" >
+                 <p style="color: red;" id="invalidSpecValue${specificationCount}"></p>
+             <button type="button" class="btn btn-danger mt-2 remove-btn">Remove Specification</button>
+             </div>
+         `);
+          specificationCount++;
+        });
 
+        $("#specificationsContainer").on("click", ".remove-btn", function () {
+          $(this).parent().remove();
+        });
+      });
 
+      let selectedImages = [];
 
-
-          function validateAndSubmit(){
-              if(validateForm()){
-                document.forms[0].submit();
-              }
-          }
-
-        
-
-          let selectedImages = [];
-
-          function handleFileSelect(event){
-
-            const files = event.target.files;        //get selected files
-            const container = document.getElementById('addedImagesContainer');
-
-            container.innerHTML = "";       //clear existing previews
-            selectedImages = [];            //reset selected images
-
-            if(files.length > 0){
-                Array.from(files).forEach((file, index) =>{
-                    if(file.type.startsWith('image/')){     //ensure it's an image file
-                          const reader = new FileReader();
-                          reader.onload = (e) =>{
-                            const wrapper = document.createElement('div');
-                            wrapper.classList.add('image-wrapper');
-                            wrapper.style.marginBottom = '20px';
-                            wrapper.dataset.index = index;
-
-                            //create image preview
-                            const img = document.createElement('img');
-                            img.src = e.target.result;
-                            img.alt = `Selected Image ${index + 1}`;
-                            img.style.width = '100px';
-                            img.style.height = '100px';
-                            img.style.objectFit = 'cover';
-                            img.id = `imgView${index}`;
-
-                            //create a div for the cropper
-                            const cropperContainer = document.createElement('div');
-                            cropperContainer.style.display = 'none';
-                            cropperContainer.style.marginTop = '10px';
-                            cropperContainer.classList.add('image-cropper');
-                            const croppedImg = document.createElement('img');
-                            croppedImg.id = `croppedImg${index}`;
-                            cropperContainer.appendChild(croppedImg);
-
-                            //create a "save" button for cropping
-                            const saveButton = document.createElement("button");
-                            saveButton.textContent = 'Save';
-                            saveButton.classList.add('btn', 'btn-primary', 'btn-sm', 'save-button');
-                            saveButton.style.marginTop = '10px';
-                            saveButton.id = `saveButton${index}`;
-
-                            // Create a "remove" button for removing the image
-                            const removeButton = document.createElement("button");
-                            removeButton.textContent = 'Remove';
-                            removeButton.classList.add('btn', 'btn-danger', 'btn-sm', 'remove-button');
-                            removeButton.style.marginTop = '10px';
-                            removeButton.style.marginLeft = '10px';
-                            removeButton.id = `removeButton${index}`;
-
-                            //Append cropper container and save button
-                            cropperContainer.appendChild(saveButton);
-
-                            //Append all elements to the wrappper
-                            wrapper.appendChild(img);
-                            wrapper.appendChild(cropperContainer);
-                            wrapper.appendchild(removeButton);
-                            container.appendChild(wrapper);
-
-                            selectedImage.push(file);
-
-                            //Initialize cropper on image click
-                            img.addEventListener('click', () => initializeCropper(img, croppedImg, saveButton, cropperContainer, file, index));
-                              
-                            
-                            //Add remove functionality
-                            removeButton.addEventListener('click', () =>{
-                                const indexToRemove = parseInt(wrapper.dataset.index);
-                                wrapper.remove();
-                                selectedImages.splice(indexToRemove, 1);   //Remove the image from the selectedImages array
-                            });
-
-                           };
-                           reader.readAsDataURL(file);   //Read file as Data URL
-                        }
-                    });
-                        
-                }
-            }
-
-        
-
-        function initializeCropper(img, cropperImg, saveButton, cropperContainer, file, Index){
-            const cropper = new Cropper(img, {
-                aspectRatio: 1,
-                viewMode: 1
-            });
-
-
-            cropperContainer.style.display = 'block';  //show cropper container
-
-            saveButton.onclick = () => {
-                const cropperCanvas = cropper.getCroppedCanvas();
-                croppedImg.src = croppedCanvas.toDataURL('image/jpeg', 1.0);    //set cropped image preview
-
-                //Replace the original file in 'selectedImages' with the cropped version
-                croppedCanvas.toBlob((blob) =>{
-                    const croppedFile = new File([blob], `cropped_img_${index}.png`, {type:image/png});
-                    selectedImages[index] = croppedFile;   //update the selected images array
-                }, 'image/png');
-
-                cropper.destroy();   //destroy the cropper instance
-                cropperContainer.style.display = 'none';   //hide the cropper container
-            };
+      function handleFileSelect(event) {
+        const imageErrorElement = document.getElementById("image-error");
+        if (imageErrorElement) {
+          imageErrorElement.textContent = "";
         }
 
-        // function validateAndSubmit(){
-           
+        const files = event.target.files;
+        const container = document.getElementById("addedImagesContainer");
 
-        //     //simulate form submission or handle uploaded files
-        //     alert("From submitted successfully with cropped images!");
-        //     console.log(selectedImages);  //logs the array of cropped image files 
-            
-        //         }
+        container.innerHTML = "";
+        selectedImages = [];
 
-                
+        if (files.length > 0) {
+          Array.from(files).forEach((file, index) => {
+            if (file.type.startsWith("image/")) {
+              const reader = new FileReader();
+              reader.onload = (e) => {
+                const wrapper = document.createElement("div");
+                wrapper.classList.add("image-wrapper");
+                wrapper.style.marginBottom = "20px";
+                wrapper.dataset.index = index;
 
+                //create image preview
+                const img = document.createElement("img");
+                img.src = e.target.result;
+                img.alt = `Selected Image ${index + 1}`;
+                img.style.width = "300px";
+                img.style.height = "300px";
+                img.style.objectFit = "cover";
+                img.id = `imgView${index}`;
 
+                //create a div for the cropper
+                const cropperContainer = document.createElement("div");
+                cropperContainer.style.display = "none";
+                cropperContainer.style.marginTop = "10px";
+                cropperContainer.classList.add("image-cropper");
+                const croppedImg = document.createElement("img");
+                croppedImg.id = `croppedImg${index}`;
+                cropperContainer.appendChild(croppedImg);
 
+                //create a "save" button for cropping
+                const saveButton = document.createElement("button");
+                saveButton.setAttribute("type", "button");
+                saveButton.type = "button";
+                saveButton.textContent = "Crop";
+                saveButton.classList.add(
+                  "btn",
+                  "btn-primary",
+                  "btn-sm",
+                  "save-button"
+                );
+                saveButton.style.marginTop = "10px";
+                saveButton.id = `saveButton${index}`;
 
+                // Create a "remove" button for removing the image
+                const removeButton = document.createElement("button");
+                removeButton.textContent = "Remove";
+                removeButton.classList.add(
+                  "btn",
+                  "btn-danger",
+                  "btn-sm",
+                  "remove-button"
+                );
+                removeButton.style.marginTop = "10px";
+                removeButton.style.marginLeft = "10px";
+                removeButton.id = `removeButton${index}`;
 
-          
+                //Append cropper container and save button
+                cropperContainer.appendChild(saveButton);
 
+                //Append all elements to the wrappper
+                wrapper.appendChild(img);
+                wrapper.appendChild(cropperContainer);
+                wrapper.appendChild(removeButton);
+                container.appendChild(wrapper);
 
-          function validateForm() {
-              clearErrorMessages();
-              const name = document.getElementsByName('productName')[0].value;
-              const description = document.getElementById('descriptionid').value;
-            //   const brand = document.getElementsByName('brand')[0].value;
-              const price = document.getElementsByName('price')[0].value;
-              const salesPrice = document.getElementsByName('salesPrice')[0].value;
-              
-              const category = document.getElementsByName('category')[0].value;
-              const images = document.getElementById('input1')
-              const quantity=document.getElementsByName('quantity').value;
-              let isValid = true
-              if (name.trim() === "") {
-      displayErrorMessage('productName-error', 'Please enter a product name.');
-      isValid = false;
-   } else if (!/^[a-zA-Z\s]+$/.test(name.trim())) {
-      displayErrorMessage('productName-error', 'Product name should contain only alphabetic characters.');
-      isValid = false;
-   }
-            
-   if (description.trim() === "") {
-      displayErrorMessage('description-error', 'Please enter a product description.');
-      isValid = false;
-   } else if (!/^[a-zA-Z\s]+$/.test(description.trim())) {
-      displayErrorMessage('description-error', 'Product description should contain only alphabetic characters.');
-      isValid = false;
-   }
-  
-  
-           
-  
-  
-              if ( parseInt(quantity) < 0) {
-                  displayErrorMessage('quantity-error', 'Please enter a valid non-negative quantity.');
-                  isValid = false;
-              }
-  
-  
-  
-  
-              if (!/^\d+(\.\d{1,2})?$/.test(price) || parseFloat(price) < 0) {
-                  displayErrorMessage('regularPrice-error', 'Please enter a valid non-negative price.');
-                  isValid = false;
-              }
-  
-  
-  
-  
-            //   if (!/^\d+(\.\d{1,2})?$/.test(salesPrice) || parseFloat(salesPrice) < 0) {
-            //       displayErrorMessage('salesPrice-error', 'Please enter a valid non-negative price.');
-            //       isValid = false;
-            //   }
-//               if (parseFloat(price) <= parseFloat(salesPrice)) {
-//       displayErrorMessage('regularPrice-error', 'Regular price must be greater than sale price.');
-//       isValid = false;
-//    }
-  
-  
-             
-  
-  
-if(selectedImages.length === 0){
-                alert("please select and crop at least one image.");
-                isValid = false;
+                selectedImages.push(file);
+
+                //Initialize cropper on image click
+                img.addEventListener("click", () =>
+                  initializeCropper(
+                    img,
+                    croppedImg,
+                    saveButton,
+                    cropperContainer,
+                    file,
+                    index
+                  )
+                );
+
+                //Add remove functionality
+                removeButton.addEventListener("click", () => {
+                  // Remove the wrapper from the DOM
+                  wrapper.remove();
+
+                  // Remove the file from selectedImages
+                  selectedImages.splice(index, 1);
+
+                  // Recreate the FileList with remaining files
+                  const dataTransfer = new DataTransfer();
+                  selectedImages.forEach((file) => {
+                    dataTransfer.items.add(file);
+                  });
+
+                  // Update the file input
+                  document.getElementById("inputFiles").files =
+                    dataTransfer.files;
+
+                  // Reindex the remaining images
+                  const remainingWrappers =
+                    container.getElementsByClassName("image-wrapper");
+                  Array.from(remainingWrappers).forEach(
+                    (remainingWrapper, newIndex) => {
+                      remainingWrapper.dataset.index = newIndex;
+                    }
+                  );
+                });
+              };
+              reader.readAsDataURL(file); //Read file as Data URL
+            }
+          });
+        }
+      }
+
+      function initializeCropper(
+        img,
+        cropperImg,
+        saveButton,
+        cropperContainer,
+        file,
+        index
+      ) {
+        const cropper = new Cropper(img, {
+          aspectRatio: 1,
+          viewMode: 1,
+        });
+
+        cropperContainer.style.display = "block"; // show cropper container
+
+        saveButton.onclick = () => {
+          const cropperCanvas = cropper.getCroppedCanvas({
+            width: 400, // specify desired width
+            height: 400, // specify desired height
+          });
+
+          // Update the original img with cropped image
+          img.src = cropperCanvas.toDataURL("image/png");
+
+          // Update cropper preview image
+          cropperImg.src = cropperCanvas.toDataURL("image/png");
+
+          cropperCanvas.toBlob((blob) => {
+            // Create a new File object from the blob
+            const croppedFile = new File([blob], `cropped_img_${index}.png`, {
+              type: "image/png",
+            });
+
+            // Update the specific file in selectedImages
+            selectedImages[index] = croppedFile;
+
+            // Recreate FileList with updated files
+            const dataTransfer = new DataTransfer();
+            selectedImages.forEach((file) => {
+              dataTransfer.items.add(file);
+            });
+
+            // Update the file input
+            document.getElementById("inputFiles").files = dataTransfer.files;
+
+            cropper.destroy();
+            cropperContainer.style.display = "none";
+
+            // Change save button text to indicate cropped
+            saveButton.textContent = "Cropped";
+            saveButton.disabled = true;
+          }, "image/png");
+        };
+      }
+
+      function clearErrorMessages() {
+        const errorElements = document.getElementsByClassName("error-message");
+        Array.from(errorElements).forEach((element) => {
+          element.textContent = "";
+          element.style.color = "red";
+          element.style.display = "none"; // Hide error elements by default
+        });
+      }
+
+      function validateForm() {
+        clearErrorMessages();
+        let isValid = true;
+
+        // Product Name Validation
+        const name = document.getElementsByName("productName")[0].value;
+        const nameErrorElement = document.getElementById("productName-error");
+        if (nameErrorElement) {
+          // Add a check to ensure element exists
+          if (name.trim() === "") {
+            nameErrorElement.textContent = "Product name is required.";
+            nameErrorElement.style.display = "block"; // Ensure visibility
+            isValid = false;
+          } else if (name.trim().length < 5) {
+            nameErrorElement.textContent =
+              "Product name must be at least 5 characters long.";
+            nameErrorElement.style.display = "block";
+            isValid = false;
+          } else if (!/^[a-zA-Z\s]+$/.test(name.trim())) {
+            nameErrorElement.textContent =
+              "Product name should contain only alphabetic characters.";
+            nameErrorElement.style.display = "block";
+            isValid = false;
+          }
+        } else {
+          console.error("Product Name error element not found");
+        }
+
+        // Description Validation
+        const description = document.getElementById("descriptionid").value;
+        const descriptionErrorElement =
+          document.getElementById("description-error");
+        if (descriptionErrorElement) {
+          if (description.trim() === "") {
+            descriptionErrorElement.textContent =
+              "Product description is required.";
+            descriptionErrorElement.style.display = "block";
+            isValid = false;
+          } else if (description.trim().length < 10) {
+            descriptionErrorElement.textContent =
+              "Description must be at least 10 characters long.";
+            descriptionErrorElement.style.display = "block";
+            isValid = false;
+          } else if (
+            !/^[a-zA-Z0-9\s.,!?'"():;@#%&*-\/]+$/.test(description.trim())
+          ) {
+            descriptionErrorElement.textContent =
+              "Description should contain only alphabetic characters and punctuations only.";
+            descriptionErrorElement.style.display = "block";
+            isValid = false;
+          }
+        }
+
+      
+
+        // Price Validation
+        const price = document.getElementsByName("price")[0].value;
+        const priceErrorElement = document.getElementById("regularPrice-error");
+        if (priceErrorElement) {
+          if (price.trim() === "") {
+            priceErrorElement.textContent = "Price is required.";
+            priceErrorElement.style.display = "block";
+            isValid = false;
+          } else if (parseFloat(price) < 1) {
+            priceErrorElement.textContent = "Price must be at least 1.";
+            priceErrorElement.style.display = "block";
+            isValid = false;
+          }
+        }
+
+        // Quantity Validation
+        const quantity = document.getElementsByName("quantity")[0].value;
+        const quantityErrorElement = document.getElementById("quantity-error");
+        if (quantityErrorElement) {
+          if (quantity.trim() === "") {
+            quantityErrorElement.textContent = "Quantity is required.";
+            quantityErrorElement.style.display = "block";
+            isValid = false;
+          } else if (parseInt(quantity) < 1) {
+            quantityErrorElement.textContent = "Quantity must be at least 1.";
+            quantityErrorElement.style.display = "block";
+            isValid = false;
+          }
+        }
+        // Images Validation
+        const imageErrorElement = document.getElementById("image-error");
+        if (imageErrorElement) {
+          if (selectedImages.length < 3) {
+            imageErrorElement.textContent = "Minimum 3 images are required.";
+            imageErrorElement.style.display = "block";
+            isValid = false;
+          }
+
+          // Image Format Validation
+          const invalidImages = selectedImages.filter(
+            (file) => !["image/png"].includes(file.type)
+          );
+          if (invalidImages.length > 0) {
+            imageErrorElement.textContent = "Only PNG images are allowed.";
+            imageErrorElement.style.display = "block";
+            isValid = false;
+          }
+        }
+
+        // Category Validation
+        const category = document.getElementsByName("categoryId")[0].value;
+        const categoryErrorElement = document.getElementById("category-error");
+        if (categoryErrorElement) {
+          if (!category.trim()) {
+            categoryErrorElement.textContent = "Please select a category.";
+            categoryErrorElement.style.display = "block";
+            isValid = false;
+          }
+        }
+
+        
+        // Product Specification Validation
+        const specificationsContainer = document.getElementById(
+          "specificationsContainer"
+        );
+        const specifications = specificationsContainer.getElementsByClassName(
+          "specification-group"
+        );
+        let hasValidSpecifications = false;
+
+        if (specifications.length === 0) {
+  let existingErrorElement = specificationsContainer.querySelector(
+    "p"
+  );
+  if (!existingErrorElement) {
+    const specificationsErrorElement = document.createElement("p");
+    specificationsErrorElement.textContent =
+      "At least one specification is required.";
+    specificationsErrorElement.style.color = "red";
+    specificationsContainer.appendChild(specificationsErrorElement);
+  }
+  isValid = false;
+}
+ else {
+          for (let i = 0; i < specifications.length; i++) {
+            const keyInput = specifications[i].querySelector(
+              'input[name^="specifications"][name$="[key]"]'
+            );
+            const valueInput = specifications[i].querySelector(
+              'input[name^="specifications"][name$="[value]"]'
+            );
+            const keyErrorElement = specifications[i].querySelector(
+              `[id^="invalidSpecKey"]`
+            );
+            const valueErrorElement = specifications[i].querySelector(
+              `[id^="invalidSpecValue"]`
+            );
+
+            const key = keyInput.value.trim();
+            const value = valueInput.value.trim();
+
+            // Reset previous error messages
+            if (keyErrorElement) keyErrorElement.textContent = "";
+            if (valueErrorElement) valueErrorElement.textContent = "";
+
+            // Validation regex to include all possible characters
+            const specRegex = /^[a-zA-Z0-9\s.,!?'"():;@#%&*_\-\/\\]+$/;
+
+            let specValid = true;
+
+            // Key validation
+            if (key === "") {
+              if (keyErrorElement)
+                keyErrorElement.textContent = "Specification key is required.";
+              specValid = false;
+            } else if (key.length < 2 || key.length > 15) {
+              if (keyErrorElement)
+                keyErrorElement.textContent =
+                  "Key must be between 2 and 15 characters.";
+              specValid = false;
+            } else if (!specRegex.test(key)) {
+              if (keyErrorElement)
+                keyErrorElement.textContent =
+                  "Key contains invalid characters.";
+              specValid = false;
             }
 
+            // Value validation
+            if (value === "") {
+              if (valueErrorElement)
+                valueErrorElement.textContent =
+                  "Specification value is required.";
+              specValid = false;
+            } else if (value.length < 2 || value.length > 15) {
+              if (valueErrorElement)
+                valueErrorElement.textContent =
+                  "Value must be between 2 and 15 characters.";
+              specValid = false;
+            } else if (!specRegex.test(value)) {
+              if (valueErrorElement)
+                valueErrorElement.textContent =
+                  "Value contains invalid characters.";
+              specValid = false;
+            }
 
-            if (!category.trim()) {
-                displayErrorMessage('category-error', 'Please select a category.');
-                isValid = false;
-            }    
-
-              return isValid;
+            // If this specification is valid, mark that we have at least one valid specification
+            if (specValid) {
+              hasValidSpecifications = true;
+            } else {
+              isValid = false;
+            }
           }
 
+          // If no valid specifications were found
+         
+        }
 
-          function displayErrorMessage(elementId, message) {
-              var errorElement = document.getElementById(elementId);
-              errorElement.innerText = message;
-              errorElement.style.display = "block";
-          }
-  
-  
-          function clearErrorMessages() {
-              const errorElements = document.getElementsByClassName('error-message');
-              Array.from(errorElements).forEach(element => {
-                  element.innerText = '';
-              });
-              const errorMessage = document.getElementById('errorMessage');
-  
-  
-          }
+        return isValid;
+      }
 
+      function validateAndSubmit() {
+        if (validateForm()) {
+          document.forms[0].submit();
+        }
+      }
 
-
+      function message(msg) {
+        if (msg) {
+          Swal.fire({
+            positition: "center",
+            icon: "success",
+            title: msg,
+            showConfirmButton: false,
+            timer: 3000,
+          }).then(() => {
+            window.location.href = "/admin";
+          });
+        }
+      }
     </script>
-</body>
-
+  </body>
 </html>

@@ -245,8 +245,8 @@
             <div class="sidebar-inner slimscroll">
                 <div id="sidebar-menu" class="sidebar-menu">
                     <ul>
-                        <li class="active">
-                            <a href="index.html"><span>
+                        <li class="">
+                            <a href="/admin/dashboard"><span>
                                     Dashboard</span> </a>
                         </li>
     
@@ -265,7 +265,7 @@
                                
                             
                         </li>                        
-                        <li class="">
+                        <li class="active">
                             <a href="/admin/category"><span>
                                     Category</span> </a>
                             
@@ -273,7 +273,7 @@
                             
                         </li>                        
                         <li class="">
-                            <a href="/admin/orders"><span>
+                            <a href="/admin/orderList"><span>
                                     Orders</span> </a>
                             
                                
@@ -294,7 +294,7 @@
                             
                         </li>                        
                         <li class="">
-                            <a href="/admin/logout"><span>
+                            <a onclick="message(successMessage= 'Logout Successfully')" href="/admin/logout"><span>
                                     Logout</span> </a>
                             
                                
@@ -383,44 +383,59 @@
 
                  try {
 
-const response = await fetch('/admin/addCategory', {
-method: 'POST',
-headers: { 'Content-Type': 'application/json' },
-body: JSON.stringify(formData)
-});
-
-if(response.ok){
-Swal.fire({
-        icon: "success",
-        title: "category Added!",
-        text: "category has been added.",
-        showConfirmButton: false,
-        timer: 1500,
-    }).then(() => {
-        window.location.href = "/admin/category"
-    });
-
-}else{
-
-const errorData = await response.json()
-document.getElementById("error-message").innerHTML = errorData.message;
-}
+                const response = await fetch('/admin/addCategory', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formData)
+                });
 
 
-} catch (error) {
+                if(response.ok){
+                Swal.fire({
+                        icon: "success",
+                        title: "category Added!",
+                        text: "category has been added.",
+                        showConfirmButton: false,
+                        timer: 1500,
+                    }).then(() => {
+                        window.location.href = "/admin/category"
+                    });
 
-   console.error("Error submitting form");
+                }else{
 
-}   
-   console.log(formData);
+                const errorData = await response.json()
+                document.getElementById("error-message").innerHTML = errorData.message;
+                }
 
-}
 
-              
+            } catch (error) {
+
+            console.error("Error submitting form");
+
+          }   
+            console.log(formData);
+
+        }
+
+                        
 
                
 
 })
+
+        function message(msg){
+            if(msg){
+                  Swal.fire({
+                    positition: "center",
+                    icon: "success",
+                    title: msg,
+                    showConfirmButton: false,
+                    timer: 3000
+                  }).then(() =>{
+                    window.location.href = "/admin";
+                  })
+            }
+          }
                  
     </script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
