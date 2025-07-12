@@ -61,6 +61,8 @@ userRouter.get("/success",signupController.successGoogleLogin)
 userRouter.get("/failure",signupController.failureGoogleLogin)
 
 userRouter.get('/product-details/:id', auth.isLogin, productController.loadProductDetails);
+userRouter.get('/userProductList', auth.isLogin, productController.getUserProductList);
+userRouter.get('/user/products/filter', auth.isLogin, productController.getFilteredProductList)
 
 userRouter.get('/userProfile',auth.isLogin, profileController.userProfile);
 userRouter.get('/updateProfile',auth.isLogin,profileController.getEditProfile );
@@ -86,8 +88,8 @@ userRouter.post('/saveSelectedAddress', auth.sessionVerify, checkoutController.s
 userRouter.get('/userOrder/success', auth.sessionVerify, orderController.getOrderSuccess);
 userRouter.post('/userOrder/save', auth.sessionVerify,orderController.saveOrderInSession);
 userRouter.get("/userOrders", auth.sessionVerify, orderController.getOrdersPage);
-userRouter.get("orderDetails/:orderId", auth.sessionVerify, orderController.getOrderDetails);
-userRouter.post("/order/cancel/:orderId", auth.sessionVerify, orderController.cancelOrder);
+userRouter.get("/orderDetails/:orderId", auth.sessionVerify, orderController.getOrderDetails);
+userRouter.patch("/order/:orderId/cancel/:productId", auth.sessionVerify, orderController.cancelOrder);
 userRouter.post("/order/return/:orderId", auth.sessionVerify, orderController.returnOrder);
 
 

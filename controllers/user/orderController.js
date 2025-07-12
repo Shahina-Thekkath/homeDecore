@@ -9,15 +9,15 @@ const Order = require("../../models/orderSchema");
 const saveOrderInSession = async (req, res) => {
     try {
       
+         
         const { cartItems, grandTotal, shippingAddress, payment } = req.body;
-        console.log("orderController",cartItems);
+      
 
         
         const itemsArray = Array.isArray(cartItems) ? cartItems : Object.values(cartItems);
 
         // Format the order details
-        console.log("itemArray:",itemsArray);
-        console.log(req.session.user.id);
+     
         
         
         const order = {
@@ -41,6 +41,8 @@ const saveOrderInSession = async (req, res) => {
 
         const newOrder = new Order(order);
         await newOrder.save();
+
+        await Cart.findOneAndUpdate({userId: req.session.user._id}, {$set:{items: []}});
 
         res.redirect("/userOrder/success");
     } catch (error) {
@@ -68,9 +70,14 @@ const getOrderSuccess = (req, res) => {
 
 const getOrdersPage = async(req, res) =>{
     try {
-        const userId = req.session.userId;
+        const userId = req.session.user?._id;
+       
+
+        const user = await User.findById(userId);
         const filter = req.query.filter || "all"; // Default to 'all' if no filter is selected
         const query = { userId };
+        console.log("User ID from session:", req.session.user);
+
 
         if (filter === "5") {
             query.createdAt = { $gte: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000) }; // Last 5 days
@@ -83,9 +90,10 @@ const getOrdersPage = async(req, res) =>{
         }
 
 
-        const orders = await Order.find({userId}).sort({createdAt: -1}).populate("products.productId", "name image price");
+        const orders = await Order.find(query).sort({createdAt: -1}).populate("products.productId", "name image price");
+        
     
-        res.render("userOrder", {orders});
+        res.render("userOrder", {orders, user, filter});
     } catch (error) {
         console.error("Error fetching orders:", error);
         res.status(500).send("Failed to load orders");
@@ -95,8 +103,10 @@ const getOrdersPage = async(req, res) =>{
    
 };
 
-const getOrderDetails = async(req, res) =>{
+const getOrderDetails = async (req, res) =>{
     try {
+        const userId = req.session.user?._id;
+        const user = await User.findById(userId);
         const {orderId} = req.params;
 
         const order = await Order.findById(orderId)
@@ -107,13 +117,28 @@ const getOrderDetails = async(req, res) =>{
             return res.status(404).send("Order not found");
         }     
 
-        const isCancellable = order.status === "Processing" || order.status === "Shipped";
-        const isReturnable = order.status === "Delivered";
+        const grandTotal = order.products.reduce((acc, product) => {
+           return acc + product.price * product.quantity
+        }, 0);
+        
+        console.log("Statuses for order products:");
+        order.products.forEach((p, i) => {
+        console.log(`Product ${i + 1}:`, p.status, typeof p.status);
+        });
 
-        res.render("orderDetails", {
-            order, 
-            isCancellable,
-            isReturnable
+
+        order.products = order.products.map(product => {
+            return {
+                ...product,
+                isCancellable: ["Pending", "Processing"].includes(product.status),
+                isReturnable: product.status === "Delivered"
+            };
+        });
+
+        res.render("manageOrder", {
+            order,
+            user,
+            grandTotal
         });
                             
     } catch (error) {
@@ -123,15 +148,29 @@ const getOrderDetails = async(req, res) =>{
 };
 
 const cancelOrder = async(req, res) =>{
-    const {orderId} = req.params;
+    const {orderId, productId} = req.params;
     try {
         const order = await Order.findById(orderId);
-        if(order.status !== "Processing" && order.status !== "Shipped"){
-            return res.status(400).json({ success: false, message: "Order cannot be cancelled"});
+     
+
+        if(!order){
+            return res.status(404).json({success: false, message: "Order not found"});
         }
-        order.status = "Cancelled";
+
+        const product = order.products.find((p) => p.productId.toString() === productId);
+
+        if(!product){
+            return res.status(404).json({ success: false, message: "Product not found in this order"});
+        }
+
+        if (!["Pending", "Processing"].includes(product.status)) {
+        return res.status(400).json({ success: false, message: `Cannot cancel a ${product.status.toLowerCase()} item` });
+       }
+
+        product.status = "Cancelled";
+        console.log("new Order:", order);
         await order.save();
-        res.json({success: true});
+       return res.json({ success: true });
     } catch (error) {
         console.error("Error cancelling order:", error);
         res.status(500).json({ success: false, message: "Failed to cancel order"});

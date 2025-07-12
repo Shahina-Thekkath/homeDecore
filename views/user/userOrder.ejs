@@ -13,13 +13,13 @@
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600,700,800" rel="stylesheet">
 
     <!--====== Vendor Css ======-->
-    <link rel="stylesheet" href="css/vendor.css">
+    <link rel="stylesheet" href="/css/vendor.css">
 
     <!--====== Utility-Spacing ======-->
-    <link rel="stylesheet" href="css/utility.css">
+    <link rel="stylesheet" href="/css/utility.css">
 
     <!--====== App ======-->
-    <link rel="stylesheet" href="css/app.css">
+    <link rel="stylesheet" href="/css/app.css">
 </head>
 <body class="config">
     <div class="preloader is-active">
@@ -74,32 +74,48 @@
                                 <ul class="ah-list ah-list--design1 ah-list--link-color-secondary">
                                     <li class="has-dropdown" data-tooltip="tooltip" data-placement="left" title="Account">
 
-                                        <a><i class="far fa-user-circle"></i></a>
+                                        <%if(locals.user){%>
 
+                                                <a href="/userProfile"><i ><%=locals.user.name%></i></a>
+
+                                        <%}else{%>
+
+                                                <a><i class="far fa-user-circle"></i></a>
+
+                                        <%}%>
                                         <!--====== Dropdown ======-->
 
                                         <span class="js-menu-toggle"></span>
                                         <ul style="width:120px">
-                                            <li>
+                                            <%if(locals.user){%>
+                                                        <li>
+                                                           <a href="/userProfile"><i><%=locals.user.name%></i>
 
-                                                <a href="dashboard.html"><i class="fas fa-user-circle u-s-m-r-6"></i>
+                                                            </a>
+                                                        </li> 
+                                                           
+                                                   
+                                                       
+                                                        <li>
 
-                                                    <span>Account</span></a></li>
-                                            <li>
+                                                            <a href="/logout"><i class="fas fa-lock-open u-s-m-r-6"></i>
+        
+                                                                <span>Logout</span></a>
+                                                        </li>
+                                                    <%}else{%>
+                                                        <li>
 
-                                                <a href="signup.html"><i class="fas fa-user-plus u-s-m-r-6"></i>
+                                                            <a href="/signup"><i class="fas fa-user-plus u-s-m-r-6"></i>
+        
+                                                                <span>Signup</span></a>
+                                                        </li>
+                                                        <li>
 
-                                                    <span>Signup</span></a></li>
-                                            <li>
-
-                                                <a href="signin.html"><i class="fas fa-lock u-s-m-r-6"></i>
-
-                                                    <span>Signin</span></a></li>
-                                            <li>
-
-                                                <a href="signup.html"><i class="fas fa-lock-open u-s-m-r-6"></i>
-
-                                                    <span>Signout</span></a></li>
+                                                            <a href="/login"><i class="fas fa-lock u-s-m-r-6"></i>
+        
+                                                            <span>Login</span></a>
+                                                        </li>
+                                                    <%}%>
                                         </ul>
                                         <!--====== End - Dropdown ======-->
                                     </li>
@@ -1211,153 +1227,20 @@
                                 <ul class="ah-list ah-list--design1 ah-list--link-color-secondary">
                                     <li>
 
-                                        <a href="index.html"><i class="fas fa-home"></i></a></li>
+                                        <a href="/"><i class="fas fa-home"></i></a></li>
                                     <li>
 
                                         <a href="wishlist.html"><i class="far fa-heart"></i></a></li>
                                     <li class="has-dropdown">
 
-                                        <a class="mini-cart-shop-link"><i class="fas fa-shopping-bag"></i>
+                                        <a class="mini-cart-shop-link" href="/loadCart"><i class="fas fa-shopping-bag"></i>
 
                                             <span class="total-item-round">2</span></a>
 
                                         <!--====== Dropdown ======-->
 
                                         <span class="js-menu-toggle"></span>
-                                        <div class="mini-cart">
-
-                                            <!--====== Mini Product Container ======-->
-                                            <div class="mini-product-container gl-scroll u-s-m-b-15">
-
-                                                <!--====== Card for mini cart ======-->
-                                                <div class="card-mini-product">
-                                                    <div class="mini-product">
-                                                        <div class="mini-product__image-wrapper">
-
-                                                            <a class="mini-product__link" href="product-detail.html">
-
-                                                                <img class="u-img-fluid" src="images/product/electronic/product3.jpg" alt=""></a></div>
-                                                        <div class="mini-product__info-wrapper">
-
-                                                            <span class="mini-product__category">
-
-                                                                <a href="shop-side-version-2.html">Electronics</a></span>
-
-                                                            <span class="mini-product__name">
-
-                                                                <a href="product-detail.html">Yellow Wireless Headphone</a></span>
-
-                                                            <span class="mini-product__quantity">1 x</span>
-
-                                                            <span class="mini-product__price">$8</span></div>
-                                                    </div>
-
-                                                    <a class="mini-product__delete-link far fa-trash-alt"></a>
-                                                </div>
-                                                <!--====== End - Card for mini cart ======-->
-
-
-                                                <!--====== Card for mini cart ======-->
-                                                <div class="card-mini-product">
-                                                    <div class="mini-product">
-                                                        <div class="mini-product__image-wrapper">
-
-                                                            <a class="mini-product__link" href="product-detail.html">
-
-                                                                <img class="u-img-fluid" src="images/product/electronic/product18.jpg" alt=""></a></div>
-                                                        <div class="mini-product__info-wrapper">
-
-                                                            <span class="mini-product__category">
-
-                                                                <a href="shop-side-version-2.html">Electronics</a></span>
-
-                                                            <span class="mini-product__name">
-
-                                                                <a href="product-detail.html">Nikon DSLR Camera 4k</a></span>
-
-                                                            <span class="mini-product__quantity">1 x</span>
-
-                                                            <span class="mini-product__price">$8</span></div>
-                                                    </div>
-
-                                                    <a class="mini-product__delete-link far fa-trash-alt"></a>
-                                                </div>
-                                                <!--====== End - Card for mini cart ======-->
-
-
-                                                <!--====== Card for mini cart ======-->
-                                                <div class="card-mini-product">
-                                                    <div class="mini-product">
-                                                        <div class="mini-product__image-wrapper">
-
-                                                            <a class="mini-product__link" href="product-detail.html">
-
-                                                                <img class="u-img-fluid" src="images/product/women/product8.jpg" alt=""></a></div>
-                                                        <div class="mini-product__info-wrapper">
-
-                                                            <span class="mini-product__category">
-
-                                                                <a href="shop-side-version-2.html">Women Clothing</a></span>
-
-                                                            <span class="mini-product__name">
-
-                                                                <a href="product-detail.html">New Dress D Nice Elegant</a></span>
-
-                                                            <span class="mini-product__quantity">1 x</span>
-
-                                                            <span class="mini-product__price">$8</span></div>
-                                                    </div>
-
-                                                    <a class="mini-product__delete-link far fa-trash-alt"></a>
-                                                </div>
-                                                <!--====== End - Card for mini cart ======-->
-
-
-                                                <!--====== Card for mini cart ======-->
-                                                <div class="card-mini-product">
-                                                    <div class="mini-product">
-                                                        <div class="mini-product__image-wrapper">
-
-                                                            <a class="mini-product__link" href="product-detail.html">
-
-                                                                <img class="u-img-fluid" src="images/product/men/product8.jpg" alt=""></a></div>
-                                                        <div class="mini-product__info-wrapper">
-
-                                                            <span class="mini-product__category">
-
-                                                                <a href="shop-side-version-2.html">Men Clothing</a></span>
-
-                                                            <span class="mini-product__name">
-
-                                                                <a href="product-detail.html">New Fashion D Nice Elegant</a></span>
-
-                                                            <span class="mini-product__quantity">1 x</span>
-
-                                                            <span class="mini-product__price">$8</span></div>
-                                                    </div>
-
-                                                    <a class="mini-product__delete-link far fa-trash-alt"></a>
-                                                </div>
-                                                <!--====== End - Card for mini cart ======-->
-                                            </div>
-                                            <!--====== End - Mini Product Container ======-->
-
-
-                                            <!--====== Mini Product Statistics ======-->
-                                            <div class="mini-product-stat">
-                                                <div class="mini-total">
-
-                                                    <span class="subtotal-text">SUBTOTAL</span>
-
-                                                    <span class="subtotal-value">$16</span></div>
-                                                <div class="mini-action">
-
-                                                    <a class="mini-link btn--e-brand-b-2" href="checkout.html">PROCEED TO CHECKOUT</a>
-
-                                                    <a class="mini-link btn--e-transparent-secondary-b-2" href="cart.html">VIEW CART</a></div>
-                                            </div>
-                                            <!--====== End - Mini Product Statistics ======-->
-                                        </div>
+                                        
                                         <!--====== End - Dropdown ======-->
                                     </li>
                                 </ul>
@@ -1420,14 +1303,14 @@
                                             <ul class="dash__f-list">
                                                 <li>
 
-                                                    <a class="dash-active" href="/userProfile">My Profile</a></li>
+                                                    <a  href="/userProfile">My Profile</a></li>
                                                 <li>
 
                                                     <a href="/userAddress">Address Book</a></li>
                                                
                                                 <li>
 
-                                                    <a href="/userOrders">My Orders</a></li>
+                                                    <a class="dash-active" href="/userOrders">My Orders</a></li>
                                                 <li>
 
                                                     <a href="/userWallet">My Wallet</a></li>
@@ -1502,22 +1385,25 @@
                                                             <div>
                                                                 <div class="dash__link dash__link--brand">
 
-                                                                    <a href="dash-manage-order.html">MANAGE</a></div>
+                                                                    <a href="/orderDetails/<%= order._id %>">MANAGE</a></div>
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <div class="manage-o__description">
-                                                        <% order.products.forEach(product => { %>
+                                                     <% order.products.forEach(product => { %>
+                                                    <div class="manage-o__description"style="margin-bottom: 20px;">
+                                                       
                                                             <div class="description__container">
                                                                 <div class="description__img-wrap">
 
-                                                                    <img class="u-img-fluid" src="<%= product.productId.image %>" alt="<%= product.productId.name %>"></div>
+                                                                    <img class="u-img-fluid" src="/admin-assets/product2/<%= product.productId.image[0] %>" alt="<%= product.productId.name %>"></div>
                                                                 <div class="description-title"><%= product.productId.name %></div>
                                                             </div>
-                                                            <div class="description__info-wrap">
-                                                                <div>
+                                                            <div class="description__info-wrap ">
+                                                                <!-- <div>
 
-                                                                    <span class="manage-o__badge badge--<%= order.orderStatus.toLowerCase() %>"><%= order.orderStatus %></span></div>
+                                                                    <span class="manage-o__badge badge--<%= order.orderStatus.toLowerCase() %>"><%= order.orderStatus %></span>
+                                                                
+                                                                </div> -->
                                                                 <div>
 
                                                                     <span class="manage-o__text-2 u-c-silver">Quantity:
@@ -1527,11 +1413,13 @@
 
                                                                     <span class="manage-o__text-2 u-c-silver">Total:
 
-                                                                        <span class="manage-o__text-2 u-c-secondary">₹<%= product.price * product.quantity %></span></span></div>
+                                                                        <span class="manage-o__text-2 u-c-secondary">₹<%= (product.price * product.quantity).toFixed(2)%></span></span></div>
                                                             </div>
-                                                         <% }); %>
+                                                          
                                                     </div>
+                                                   <% }); %>
                                                 </div>
+                                                
                                                 <% }); %>
                                                 
                                             </div>
@@ -1733,6 +1621,12 @@
 
     <!--====== App ======-->
     <script src="js/app.js"></script>
+
+    <script>
+        document.getElementById("my-order-sort").addEventListener("change", function () {
+    this.form.submit();
+  });
+    </script>
 
     <!--====== Noscript ======-->
     <noscript>

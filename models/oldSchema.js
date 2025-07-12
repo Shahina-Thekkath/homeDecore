@@ -42,8 +42,8 @@ const WalletSchema = new Schema({
    const OrderSchema = new Schema({
     userId: { type: Types.ObjectId, ref: 'User', required: true},
     OrderNumber: String,
-    offerDeicsount: Number,
-    itemOrdred:[
+    offerDiscount: Number,
+    itemOrdered:[
         {
             price: Number,
             productId: {type: Types.ObjectId, ref: 'Product'},

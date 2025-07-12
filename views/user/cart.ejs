@@ -109,25 +109,27 @@
                                     <li class="has-dropdown" data-tooltip="tooltip" data-placement="left" title="Account">
 
                                         <%if(locals.user){%>
+
                                                 <a href="/userProfile"><i ><%=locals.user.name%></i></a>
 
-                                            <%}else{%>
+                                        <%}else{%>
 
                                                 <a><i class="far fa-user-circle"></i></a>
 
-                                                <%}%>
+                                        <%}%>
                                         <!--====== Dropdown ======-->
 
                                         <span class="js-menu-toggle"></span>
                                         <ul style="width:120px">
-                                            <li>
+                                            
                                                     <%if(locals.user){%>
+                                                        <li>
                                                         <a href="/userProfile"><i><%=locals.user.name%></i>
 
                                                             </a></li> 
-                                                            <%}%>
+                                                            
                                                    
-                                                        <%if(locals.user){%>
+                                                        
                                                             <li>
 
                                                                 <a href="/logout"><i class="fas fa-lock-open u-s-m-r-6"></i>

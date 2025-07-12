@@ -9,6 +9,11 @@ const OrderSchema = new Schema(
         productId: { type: Types.ObjectId, ref: "Product", required: true },
         quantity: { type: Number, required: true },
         price: { type: Number, required: true }, // Price per product at the time of the order
+        status: {
+          type: String,
+          enum: ["Pending", "Processing", "Shipped", "Delivered", "Cancelled", "Return Requested", "Returned"],
+          default: "Processing",
+        },
       },
     ],
     totalAmount: { type: Number, required: true }, // Total amount for the order
@@ -27,8 +32,8 @@ const OrderSchema = new Schema(
     },
     orderStatus: {
       type: String,
-      enum: ["Pending Payment", "Processing", "Shipped", "Delivered", "Cancelled", "Return Requested", "Returned"],
-      default: "Pending Payment",
+      enum: ["Pending", "Processing", "Shipped", "Delivered", "Cancelled", "Return Requested", "Returned"],
+      default: "Processing",
     },
     isPaid: { type: Boolean, default: false }, // COD orders will have this as false initially
     paymentDetails: {

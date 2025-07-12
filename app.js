@@ -51,7 +51,11 @@ app.use((req, res, next) =>{
 });
 
 app.set("view engine","ejs");
-app.set("views", [path.join(__dirname,'views/user'),path.join(__dirname, 'views/admin')]);
+app.set("views", [
+                    path.join(__dirname,'views/user'),
+                    path.join(__dirname, 'views/admin'),
+                  path.join(__dirname, 'views/partials')
+                ]);
 
 
 app.use("/",userRouter);

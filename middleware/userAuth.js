@@ -9,7 +9,7 @@ const isLogin = async (req,res,next)=>{
             res.redirect('/');
         }
     } catch (error) {
-        console.log("Islogin middleware error",error.message);
+        console.log("IsLogin middleware error",error.message);
     }
 }
 
@@ -28,7 +28,7 @@ const isLogout = async (req,res,next)=>{
         next();
     }
    } catch (error) {
-    console.log("islogout middleware error ",error.message);
+    console.log("isLogout middleware error ",error.message);
    }
 }
 
@@ -45,7 +45,7 @@ const sessionVerify = async (req, res, next) =>{
             res.redirect('/login');
         }
     } catch (error) {
-        console.log("Islogin middleware error",error.message);
+        console.log("IsLogin middleware error",error.message);
     }
 }
 

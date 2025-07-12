@@ -20,12 +20,13 @@
 
     <!--====== App ======-->
     <link rel="stylesheet" href="/css/app.css">
+   
 </head>
 <body class="config">
     <div class="preloader is-active">
         <div class="preloader__wrap">
 
-            <img class="preloader__img" src="/images/preloader.png" alt=""></div>
+            <img class="preloader__img" src="images/preloader.png" alt=""></div>
     </div>
 
     <!--====== Main App ======-->
@@ -43,10 +44,9 @@
 
                         <!--====== Main Logo ======-->
 
-                        <a class="main-logo" href="/" style="display: inline-block; margin-left: -15px;">
+                        <a class="main-logo" href="index.html">
 
-                            <%- include('../../views/partials/icons/icon-logo') %>
-                                     </a>
+                            <img src="images/logo/logo-1.png" alt=""></a>
                         <!--====== End - Main Logo ======-->
 
 
@@ -84,14 +84,14 @@
 
                                                 <%}%>
 
+
+
+
                                         <!--====== Dropdown ======-->
 
                                         <span class="js-menu-toggle"></span>
                                         <ul style="width:120px">
-
-                                           
-                                           
-                                                    <%if(locals.user){%>
+                                            <%if(locals.user){%>
                                                         <li>
                                                            <a href="/userProfile"><i><%=locals.user.name%></i>
 
@@ -1245,6 +1245,7 @@
 
                                         <span class="js-menu-toggle"></span>
                                         
+
                                         <!--====== End - Dropdown ======-->
                                     </li>
                                 </ul>
@@ -1266,294 +1267,196 @@
         <div class="app-content">
 
             <!--====== Section 1 ======-->
-            <div class="u-s-p-y-60">
+            <div class="u-s-p-y-90">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-lg-3 col-md-12">
+                            <div class="shop-w-master">
+                                <h1 class="shop-w-master__heading u-s-m-b-30"><i class="fas fa-filter u-s-m-r-8"></i>
 
-                <!--====== Section Content ======-->
-                <div class="section__content">
-                    <div class="container">
-                        <div class="breadcrumb">
-                            <div class="breadcrumb__wrap">
-                                <ul class="breadcrumb__list">
-                                    <li class="has-separator">
+                                    <span>FILTERS</span></h1>
+                                <div class="shop-w-master__sidebar">
+                                    <div class="u-s-m-b-30">
+                                        <div class="shop-w shop-w--style">
+                                            <div class="shop-w__intro-wrap">
+                                                <h1 class="shop-w__h">CATEGORY</h1>
 
-                                        <a href="/">Home</a></li>
-                                    <li class="is-marked">
+                                                <span class="fas fa-minus shop-w__toggle" data-target="#s-category" data-toggle="collapse"></span>
+                                            </div>
+                                            <div class="shop-w__wrap collapse show" id="s-category">
+                                                <ul class="shop-w__category-list gl-scroll">
+                                                    <li class="has-list">
 
-                                        <a href="dash-manage-order.html">My Account</a></li>
-                                </ul>
+                                                        <a href="#" class="category-link" data-category="Home Decore">Home Decore</a>
+
+                                                        <span class="category-list__text u-s-m-l-6">(23)</span>
+
+                                                        <!-- <span class="js-shop-category-span is-expanded fas fa-plus u-s-m-l-6"></span> -->
+                                                        
+                                                    </li>
+                                                    <li class="has-list">
+
+                                                        <a href="#" class="category-link" data-category="Chandeliers">Chandeliers</a>
+
+                                                        <span class="category-list__text u-s-m-l-6">(5)</span>
+
+                                                        <!-- <span class="js-shop-category-span fas fa-plus u-s-m-l-6"></span> -->
+                                                        
+                                                    </li>
+                                                    <li class="has-list">
+
+                                                        <a href="#" class="category-link" data-category="Pendants">Pendants</a>
+
+                                                        <span class="category-list__text u-s-m-l-6">(5)</span>
+
+                                                        <!-- <span class="js-shop-category-span fas fa-plus u-s-m-l-6"></span> -->
+                                                        
+                                                    </li>
+                                                    <li>
+
+                                                        <a href="#" class="category-link" data-category="Wall Lights">Wall Lights</a>
+
+                                                        <span class="category-list__text u-s-m-l-6">(0)</span></li>
+                                                    <li>
+
+                                                        <a href="#" class="category-link" data-category="Ceiling fans">Ceiling Fans</a>
+
+                                                        <span class="category-list__text u-s-m-l-6">(0)</span></li>
+                                                    
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    
+                                    <!-- <div class="u-s-m-b-30">
+                                        <div class="shop-w shop-w--style">
+                                            <div class="shop-w__intro-wrap">
+                                                <h1 class="shop-w__h">PRICE</h1>
+
+                                                <span class="fas fa-minus shop-w__toggle" data-target="#s-price" data-toggle="collapse"></span>
+                                            </div>
+                                            <div class="shop-w__wrap collapse show" id="s-price">
+                                                <form class="shop-w__form-p">
+                                                    <div class="shop-w__form-p-wrap">
+                                                        <div>
+
+                                                            <label for="price-min"></label>
+
+                                                            <input class="input-text input-text--primary-style" type="text" id="price-min" placeholder="Min"></div>
+                                                        <div>
+
+                                                            <label for="price-max"></label>
+
+                                                            <input class="input-text input-text--primary-style" type="text" id="price-max" placeholder="Max"></div>
+                                                        <div>
+
+                                                            <button class="btn btn--icon fas fa-angle-right btn--e-transparent-platinum-b-2" type="submit"></button></div>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div> -->
+                                    
+                                    
+                                    
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-9 col-md-12">
+                            <div class="shop-p">
+                                <div class="shop-p__toolbar u-s-m-b-30">
+                                     <div class="shop-p__meta-wrap u-s-m-b-60">
+
+                                       <span class="shop-p__meta-text-1"></span>
+                                      <div class="shop-p__meta-text-2">
+
+                                            
+                                    </div> 
+                                    <div class="shop-p__tool-style">
+                                        <div class="tool-style__group u-s-m-b-8">
+
+                                            <span class="js-shop-grid-target is-active">Grid</span>
+
+                                            <span class="js-shop-list-target">List</span></div>
+                                        <form>
+                                            <div class="tool-style__form-wrap" >
+                                                <div class="u-s-m-b-8"><select class="select-box select-box--transparent-b-2" id="pageSizeSelect">
+                                                        <option value="8" <%= limit == 8 ? 'selected' : '' %>>Show: 8</option>
+                                                        <option value="12" <%= limit == 12 ? 'selected' : '' %>>Show: 12</option>
+                                                        <option value="16" <%= limit == 16 ? 'selected' : '' %>>Show: 16</option>
+                                                        <option value="28" <%= limit == 28 ? 'selected' : '' %>>Show: 28</option>
+                                                    </select></div>
+                                                <div class="u-s-m-b-8"><select class="select-box select-box--transparent-b-2"  id="sortSelect">
+                                                        <option value='newest' <%= sort === 'newest' ? 'selected' : '' %>>Sort By: Newest Items</option>
+                                                        <option value="name-asc" <%= sort === 'name_asc' ? 'selected' : '' %>>Sort By: Name A → Z</option>
+                                                        <option value="name_desc" <%= sort === 'name_desc' ? 'selected' : '' %>>Sort By: Name Z → A</option>
+                                                        <option value="price_asc" <%= sort === 'price_asc' ? 'selected' : '' %>>Sort By: Lowest Price</option>
+                                                        <option value="price_desc" <%= sort === 'price_desc' ? 'selected' : '' %>>Sort By: Highest Price</option>
+                                                    </select></div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                                <div class="shop-p__collection" >
+                                    <div class="row is-grid-active" id="product-container">
+                                     <%- include('../partials/user/productListPartial', { products, sort}) %>
+                                     </div>
+                                        
+                                        
+                                        
+                                <!-- <div class="u-s-p-y-60">
+                                     -->
+
+                                    <!--====== Pagination ======-->
+                                    <!-- <ul class="shop-p__pagination">
+                                        <li class="is-active">
+
+                                            <a href="shop-side-version-2.html">1</a></li>
+                                        <li>
+
+                                            <a href="shop-side-version-2.html">2</a></li>
+                                        <li>
+
+                                            <a href="shop-side-version-2.html">3</a></li>
+                                        <li>
+
+                                            <a href="shop-side-version-2.html">4</a></li>
+                                        <li>
+
+                                            <a class="fas fa-angle-right" href="shop-side-version-2.html"></a></li>
+                                    </ul> -->
+                                    <!--====== End - Pagination ======-->
+                                <!-- </div> -->
+                                
+                                 <div class="u-s-p-y-60">
+                                    <ul class="shop-p__pagination">
+                                        <% if (totalPages > 1) { %>
+                                        <% for (let i = 1; i <= totalPages; i++) { %>
+                                            <li class="<%= currentPage == i ? 'is-active' : '' %>">
+                                            <a href="#" class="pagination-link" data-page="<%= i %>"><%= i %></a>
+                                            </li>
+                                        <% } %>
+                                        <% if (currentPage < totalPages) { %>
+                                            <li>
+                                            <a href="#" class="pagination-link fas fa-angle-right" data-page="<%= currentPage + 1 %>"></a>
+                                            </li>
+                                        <% } %>
+                                        <% } %>
+                                    </ul>
+                                    </div>
+
+
+
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
             <!--====== End - Section 1 ======-->
-
-
-            <!--====== Section 2 ======-->
-            <div class="u-s-p-b-60">
-
-                <!--====== Section Content ======-->
-                <div class="section__content">
-                    <div class="dash">
-                        <div class="container">
-                            <div class="row">
-                                <div class="col-lg-3 col-md-12">
-
-                                    <!--====== Dashboard Features ======-->
-                                    <div class="dash__box dash__box--bg-white dash__box--shadow u-s-m-b-30">
-                                        <div class="dash__pad-1">
-
-                                            <span class="dash__text u-s-m-b-16">Hello, <%= user.name%></span>
-                                            <ul class="dash__f-list">
-                                                <li>
-
-                                                    <a  href="/userProfile">My Profile</a></li>
-                                                <li>
-
-                                                    <a href="/userAddress">Address Book</a></li>
-                                               
-                                                <li>
-
-                                                    <a class="dash-active" href="/userOrders">My Orders</a></li>
-                                                <li>
-
-                                                    <a href="/userWallet">My Wallet</a></li>
-                                                <li>
-
-                                                    <a href="/logout">Logout</a></li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                    <div class="dash__box dash__box--bg-white dash__box--shadow dash__box--w">
-                                        <div class="dash__pad-1">
-                                            <ul class="dash__w-list">
-                                                <li>
-                                                    <div class="dash__w-wrap">
-
-                                                        <span class="dash__w-icon dash__w-icon-style-1"><i class="fas fa-cart-arrow-down"></i></span>
-
-                                                        <span class="dash__w-text">4</span>
-
-                                                        <span class="dash__w-name">Orders Placed</span></div>
-                                                </li>
-                                                <li>
-                                                    <div class="dash__w-wrap">
-
-                                                        <span class="dash__w-icon dash__w-icon-style-2"><i class="fas fa-times"></i></span>
-
-                                                        <span class="dash__w-text">0</span>
-
-                                                        <span class="dash__w-name">Cancel Orders</span></div>
-                                                </li>
-                                                <li>
-                                                    <div class="dash__w-wrap">
-
-                                                        <span class="dash__w-icon dash__w-icon-style-3"><i class="far fa-heart"></i></span>
-
-                                                        <span class="dash__w-text">0</span>
-
-                                                        <span class="dash__w-name">Wishlist</span></div>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                    <!--====== End - Dashboard Features ======-->
-                                </div>
-                                <div class="col-lg-9 col-md-12">
-                                    <h1 class="dash__h1 u-s-m-b-30">Order Details</h1>
-                                    <div class="dash__box dash__box--shadow dash__box--radius dash__box--bg-white u-s-m-b-30">
-                                        <div class="dash__pad-2">
-                                            <div class="dash-l-r">
-                                                <div>
-                                                    <div class="manage-o__text-2 u-c-secondary">Order #<%= order._id %></div>
-                                                    <div class="manage-o__text u-c-silver">Placed on <%= new Date(order.createdAt).toLocaleString() %></div>
-                                                </div>
-                                                <div>
-                                                    <div class="manage-o__text-2 u-c-silver">Total:
-
-                                                        <span class="manage-o__text-2 u-c-secondary">₹<%= order.products.filter(p=> p.status !== 'Cancelled').reduce((sum, p) => sum + p.price * p.quantity, 0).toFixed(2) %></span></div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <%order.products.forEach((product, index) =>{%>
-
-                                        <div class="dash__box dash__box--shadow dash__box--radius dash__box--bg-white u-s-m-b-30">
-                                            <div class="dash__pad-2">
-                                                <div class="manage-o">
-                                                    <div class="manage-o__header u-s-m-b-30">
-                                                        <div class="manage-o__icon"><i class="fas fa-box u-s-m-r-5"></i>
-    
-                                                            <span class="manage-o__text">Package <%= index + 1 %></span></div>
-                                                    </div>
-                                                    <div class="dash-l-r">
-                                                        <div class="manage-o__text u-c-secondary"></div>
-                                                        <div class="manage-o__icon"><i class="fas fa-truck u-s-m-r-5"></i>
-    
-                                                            <span class="manage-o__text">Standard</span></div>
-                                                    </div>
-                                                    <div class="manage-o__timeline">
-                                                        <div class="timeline-row">
-                                                            <div class="col-lg-4 u-s-m-b-30">
-                                                                <div class="timeline-step">
-                                                                    <div class="timeline-l-i <%= product.status === 'Processing' || product.status === 'Shipped' || product.status === 'Delivered' ? 'timeline-l-i--finish' : '' %>">
-    
-                                                                        <span class="timeline-circle"></span></div>
-    
-                                                                    <span class="timeline-text">Processing</span>
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-lg-4 u-s-m-b-30">
-                                                                <div class="timeline-step">
-                                                                    <div class="timeline-l-i <%= product.status === 'Shipped' || product.status === 'Delivered' ? 'timeline-l-i--finish' : '' %>">
-    
-                                                                        <span class="timeline-circle"></span></div>
-    
-                                                                    <span class="timeline-text">Shipped</span>
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-lg-4 u-s-m-b-30">
-                                                                <div class="timeline-step">
-                                                                    <div class="timeline-l-i <%= product.status === 'Delivered' ? 'timeline-l-i--finish' : '' %>">
-    
-                                                                        <span class="timeline-circle"></span></div>
-    
-                                                                    <span class="timeline-text">Delivered</span>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="manage-o__description">
-                                                        <div class="description__container">
-                                                            <div class="description__img-wrap">
-    
-                                                                <img class="u-img-fluid" src="/admin-assets/product2/<%= product.productId.image[0] %>" alt="<%= product.productId.name %>"></div>
-                                                            <div class="description-title"><%= product.productId.name %></div>
-                                                        </div>
-                                                        <div class="description__info-wrap">
-                                                            <div>
-    
-                                                                <span class="manage-o__text-2 u-c-silver">Quantity:
-    
-                                                                    <span class="manage-o__text-2 u-c-secondary"><%= product.quantity %></span></span></div>
-                                                            <div>
-    
-                                                                <span class="manage-o__text-2 u-c-silver">Total:
-    
-                                                                    <span class="manage-o__text-2 u-c-secondary">₹<%= (product.price * product.quantity).toFixed(2) %></span></span></div>
-                                                        </div>
-                                                    </div>
-    
-                                                    
-  
-                                                       <div class="u-s-m-t-15" style="text-align: right;">
-                                                       
-                                                                <% if (product.status === "Cancelled") { %>
-                                                                    <span class="badge badge-danger" style="font-weight:600; color: #dc3545;">Cancelled</span>
-                                                                <% } else { %>
-                                                                    
-                                                                    <% if (product.isCancellable) { %>
-                                                                    <button 
-                                                                        class="dash__custom-link btn--e-transparent-brand-b-2 u-s-m-t-10"
-                                                                        onclick="cancelOrder('<%= order._id %>', '<%= product.productId._id %>')">
-                                                                        Cancel Order
-                                                                    </button>
-                                                                    <% } else { %>
-                                                                    <button 
-                                                                        class="dash__custom-link btn--e-transparent-brand-b-2 u-s-m-t-10 disabled"
-                                                                        style="pointer-events: none; opacity: 0.6;">
-                                                                        Cancel Order
-                                                                    </button>
-                                                                    <% } %>
-
-                                                                    <% if (product.isReturnable) { %>
-                                                                    <button 
-                                                                        id="returnButton"
-                                                                        class="dash__custom-link btn--e-transparent-brand-b-2 u-s-m-t-10"
-                                                                        onclick="requestReturn('<%= order._id %>', '<%= product.productId._id %>')">
-                                                                        Return
-                                                                    </button>
-                                                                    <% } %>
-
-                                                                <% } %>
-                                                                </div>
-                                                    
-
-
-
-    
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                    <%})%>
-                                    
-                                    <div class="row">
-                                        <div class="col-lg-6">
-                                            <div class="dash__box dash__box--bg-white dash__box--shadow u-s-m-b-30">
-                                                <div class="dash__pad-3">
-                                                    <h2 class="dash__h2 u-s-m-b-8">Shipping Address</h2>
-                                                    <h2 class="dash__h2 u-s-m-b-8"><%= order.shippingAddress.name %></h2>
-
-                                                    <span class="dash__text-2">
-                                                        <%= order.shippingAddress.address %>,
-                                                        <%= order.shippingAddress.locality %>,
-                                                        <%= order.shippingAddress.state %> - 
-                                                        <%= order.shippingAddress.pincode %> - 
-                                                        <%= order.shippingAddress.country %></span>
-
-                                                    <span class="dash__text-2">(+0) <%= order.shippingAddress.phone || 'N/A' %></span>
-                                                </div>
-                                            </div>
-                                            <div class="dash__box dash__box--bg-white dash__box--shadow dash__box--w">
-                                                <div class="dash__pad-3">
-                                                    <h2 class="dash__h2 u-s-m-b-8">Billing Address</h2>
-                                                    <h2 class="dash__h2 u-s-m-b-8"><%= order.shippingAddress.name %></h2>
-
-                                                    <span class="dash__text-2">
-                                                        <%= order.shippingAddress.address %>,
-                                                        <%= order.shippingAddress.locality %>,
-                                                        <%= order.shippingAddress.state %> - 
-                                                        <%= order.shippingAddress.pincode %> - 
-                                                        <%= order.shippingAddress.country %></span>
-
-                                                    <span class="dash__text-2">(+0) <%= order.shippingAddress.phone || 'N/A' %></span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-6">
-                                            <div class="dash__box dash__box--bg-white dash__box--shadow u-h-100">
-                                                <div class="dash__pad-3">
-                                                    <h2 class="dash__h2 u-s-m-b-8">Total Summary</h2>
-                                                    <div class="dash-l-r u-s-m-b-8">
-                                                        <div class="manage-o__text-2 u-c-secondary">Subtotal</div>
-                                                        <div class="manage-o__text-2 u-c-secondary">₹<%= order.products.filter(p=> p.status !== 'Cancelled').reduce((sum, p) => sum + p.price * p.quantity, 0).toFixed(2) %></div>
-                                                    </div>
-                                                    <div class="dash-l-r u-s-m-b-8">
-                                                        <div class="manage-o__text-2 u-c-secondary">Shipping Fee</div>
-                                                        <div class="manage-o__text-2 u-c-secondary">₹0.00</div>
-                                                    </div>
-                                                    <div class="dash-l-r u-s-m-b-8">
-                                                        <div class="manage-o__text-2 u-c-secondary">Total</div>
-                                                        <div class="manage-o__text-2 u-c-secondary">₹<%= order.products.filter(p=> p.status !== 'Cancelled').reduce((sum, p) => sum + p.price * p.quantity, 0).toFixed(2) %></div>
-                                                    </div>
-
-                                                    <span class="dash__text-2">Paid by <%= order.paymentMethod %></span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!--====== End - Section Content ======-->
-            </div>
-            <!--====== End - Section 2 ======-->
         </div>
         <!--====== End - App Content ======-->
-
+</div>
 
         <!--====== Main Footer ======-->
         <footer>
@@ -1712,7 +1615,21 @@
                 </div>
             </div>
         </footer>
-    </div>
+
+        <!--====== Modal Section ======-->
+
+
+        <!--====== Quick Look Modal ======-->
+        
+        <!--====== End - Quick Look Modal ======-->
+
+
+        <!--====== Add to Cart Modal ======-->
+        
+        <!--====== End - Add to Cart Modal ======-->
+        <!--====== End - Modal Section ======-->
+
+   
     <!--====== End - Main App ======-->
 
 
@@ -1727,8 +1644,6 @@
         ga('send', 'pageview')
     </script>
     <script src="https://www.google-analytics.com/analytics.js" async defer></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
 
     <!--====== Vendor Js ======-->
     <script src="/js/vendor.js"></script>
@@ -1738,98 +1653,66 @@
 
     <!--====== App ======-->
     <script src="/js/app.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 
     <script>
-        function cancelOrder(orderId,productId){
-            Swal.fire({
-                title: "Are you sure?",
-                text: "Do you really want to cancel this order?",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#d33",
-                cancelButtonColor: "#3085d6",
-                confirmButtonText: "Yes, cancel it!",
-            }).then((result) =>{
-                if(result.isConfirmed){
-                   fetch(`/order/${orderId}/cancel/${productId}`, {
-                    method: "PATCH"
-                   })
-                   .then((response) => response.json())
-                   .then((data) =>{
-                    if(data.success){
-                        Swal.fire(
-                            "Cancelled!",
-                            "Your order has been cancelled successfully.",
-                            "success"
-                        ).then(() => {
-                            location.reload();
-                        });
-                    }else{
-                        Swal.fire(
-                            "Error",
-                            "Failed to cancel the order. Please try again later. ",
-                            "error"
-                        );
+
+        $(document).ready(function () {
+            let currentCategory = '';
+            let currentSort = 'newest';
+            let currentPage = 1;          
+            let limit = 12;
+
+            function fetchProducts() {
+                console.log("Fetching with:", currentCategory, currentSort, limit, currentPage);
+                $.ajax({
+                    url: '/user/products/filter',
+                    method: 'GET',
+                    data: { category: currentCategory,
+                             sort: currentSort,
+                             limit: limit,
+                             page: currentPage
+                          },
+                    success: function (response) {
+                        console.log("Response received:", response);
+                        $('#product-container').html(response);
+                    },
+                    error: function (xhr, status, error) {
+                     console.error("AJAX Error:", status, error);
                     }
-                   })
-                   .catch((error) =>{
-                     console.error("Error cancelling order:", error);
-                     Swal.fire(
-                        "Error!",
-                        "Something went wrong. Please try again later.",
-                        "error"
-                     );
-                     
-                   });
-                }
-            });
-        }
+                });
+            }
 
-        function requestReturn(orderId){
-            Swal.fire({
-                title: "Request Return?",
-                text: "Are you sure you want to request a return for this order?",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#f39c12",
-                cancelButtonColor: "#3085d6",
-                confirmButtonText: "Yes, request return!",
-            }).then((result) =>{
-                if(result.isConfirmed){
-                    fetch(`/order/return/${orderId}`, {
-                        method: "POST"
-                    })
-                    .then((response) => response.json())
-                    .then((data) => {
-                        if (data.success) {
-                            Swal.fire(
-                                "Requested!",
-                                "Your return request has been submitted successfully.",
-                                "success"
-                            ).then(() => {
-                                location.reload();
-                            });
-                        }else{
-                            Swal.fire(
-                                "Error!",
-                                "Failed to submit return request. please try again later.",
-                                "error"
-                            );
-                        }
-                    })
-                    .catch((error) =>{
-                        console.error("Error submitting return request:", error);
-                        Swal.fire(
-                            "Error!",
-                            "Something went wrong. Please try again later.",
-                            "error"
-                        );
-                        
-                    });
-                }
-            });
-        }
+             $('#sortSelect').on('change', function () {
+                currentSort = $(this).val();
+                console.log("current Sort:",currentSort);
+                currentPage = 1;
+                fetchProducts();
+                });
 
+            $('.category-link').on('click', function (e) {
+                e.preventDefault();
+                currentCategory = $(this).data('category');
+                currentPage = 1;
+                fetchProducts();
+            });
+
+            $('#pageSizeSelect').on('change', function () {
+                limit = $(this).val();
+                currentPage = 1; // reset to first page
+                fetchProducts();
+            });
+
+            $(document).on('click', '.pagination-link', function (e) {
+                e.preventDefault();
+                currentPage = $(this).data('page');
+                fetchProducts();
+            });
+
+
+
+        });
 
     </script>
 

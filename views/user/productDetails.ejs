@@ -20,6 +20,12 @@
 
     <!--====== App ======-->
     <link rel="stylesheet" href="/css/app.css">
+    <style>
+        .product-o__action-wrap {
+          pointer-events: none;
+        }
+
+    </style>
 </head>
 <body class="config">
     <div class="preloader is-active">
@@ -1906,15 +1912,14 @@
                         <div class="slider-fouc">
                             <div class="owl-carousel product-slider" data-item="4">
                                 <% if (relatedProduct && relatedProduct.length > 0) { %>
-                                <%for(let i = relatedProduct.length-1;i>=0;i--){%>
+                                <%for(let i = 0; i < relatedProduct.length; i++){%>
                                 <div class="u-s-m-b-30">
                                    
                                     <div class="product-o product-o--hover-on">
                                         <div class="product-o__wrap">
-
-                                            <a class="aspect aspect--bg-grey aspect--square u-d-block" href="/product-details/<%=relatedProduct[i]._id%>">
-
-                                                <img class="aspect__img" src="/admin-assets/product2/<%=relatedProduct[i].image[0]%>" alt="<%relatedProduct[i].name%>"></a>
+                                            <a class="aspect aspect--bg-grey aspect--square u-d-block" href="/product-details/<%= relatedProduct[i]._id %>">
+                                            <img class="aspect__img" src="/admin-assets/product2/<%= relatedProduct[i].image[0] %>" alt="<%= relatedProduct[i].name %>">
+                                            </a>
                                             <div class="product-o__action-wrap">
                                                 <ul class="product-o__action-list">
                                                     <li>
@@ -1939,7 +1944,9 @@
 
                                         <span class="product-o__name">
 
-                                            <a href="product-detail.html"><%=relatedProduct[i].name%></a></span>
+                                           <span class="product-o__name">
+                                                <a href="/product-details/<%= relatedProduct[i]._id %>"><%= relatedProduct[i].name %></a>
+                                                </span></span>
                                         <div class="product-o__rating gl-rating-style"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
 
                                             <span class="product-o__review">(20)</span></div>

@@ -5,7 +5,7 @@ const Product = require("../../models/productSchema");
 const loadHomepage = async(req, res) =>{
     try{
          const user = req.session.user || req.session.passport;
-         let product = await Product.find({isBlocked:false});
+         let product = await Product.find({isBlocked:false}).limit(20);
          if(user){
             return res.render('home', {user,product})
          }else{

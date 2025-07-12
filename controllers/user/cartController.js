@@ -9,11 +9,12 @@ const loadCart = async(req, res) =>{
            console.log("req.body cart",req.body);
            
        
-           const userId = req.session.user._id;
+           const userId = req.session.user?._id;
+           const user = await User.findById(userId);
            const cart = await Cart.findOne({userId}).populate("items.productId");
 
            if(!cart || cart.items.length === 0){
-            return res.render("cart",{cartItems:[], grandTotal: 0});
+            return res.render("emptyCart");
            }
 
            const cartItems = cart.items.map((item) =>({
@@ -28,10 +29,10 @@ const loadCart = async(req, res) =>{
 
            const grandTotal = cartItems.reduce((total, item) => total + item.subtotal, 0);
 
-           res.render("cart", { cartItems, grandTotal});
+           res.render("cart", { cartItems, grandTotal, user});
 
     } catch (error) {
-        console.error("Error laoding cart page:", error);
+        console.error("Error loading cart page:", error);
         res.status(500).send("Internal Server Error");
     }
 };
