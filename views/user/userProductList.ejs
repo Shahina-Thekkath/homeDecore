@@ -1285,43 +1285,13 @@
                                             </div>
                                             <div class="shop-w__wrap collapse show" id="s-category">
                                                 <ul class="shop-w__category-list gl-scroll">
-                                                    <li class="has-list">
-
-                                                        <a href="#" class="category-link" data-category="Home Decore">Home Decore</a>
-
-                                                        <span class="category-list__text u-s-m-l-6">(23)</span>
-
-                                                        <!-- <span class="js-shop-category-span is-expanded fas fa-plus u-s-m-l-6"></span> -->
-                                                        
-                                                    </li>
-                                                    <li class="has-list">
-
-                                                        <a href="#" class="category-link" data-category="Chandeliers">Chandeliers</a>
-
-                                                        <span class="category-list__text u-s-m-l-6">(5)</span>
-
-                                                        <!-- <span class="js-shop-category-span fas fa-plus u-s-m-l-6"></span> -->
-                                                        
-                                                    </li>
-                                                    <li class="has-list">
-
-                                                        <a href="#" class="category-link" data-category="Pendants">Pendants</a>
-
-                                                        <span class="category-list__text u-s-m-l-6">(5)</span>
-
-                                                        <!-- <span class="js-shop-category-span fas fa-plus u-s-m-l-6"></span> -->
-                                                        
-                                                    </li>
-                                                    <li>
-
-                                                        <a href="#" class="category-link" data-category="Wall Lights">Wall Lights</a>
-
-                                                        <span class="category-list__text u-s-m-l-6">(0)</span></li>
-                                                    <li>
-
-                                                        <a href="#" class="category-link" data-category="Ceiling fans">Ceiling Fans</a>
-
-                                                        <span class="category-list__text u-s-m-l-6">(0)</span></li>
+                                                    <% categories.forEach(cat => { %>
+                                                        <li class="has-list">
+                                                            <a href="#" class="category-link" data-category="<%= cat.name %>"><%= cat.name %></a>
+                                                            <span class="category-list__text u-s-m-l-6">(<%= cat.count %>)</span>
+                                                        </li>
+                                                    <% }) %>
+                                                    
                                                     
                                                 </ul>
                                             </div>

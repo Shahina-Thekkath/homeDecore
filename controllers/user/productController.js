@@ -84,6 +84,27 @@ const getUserProductList = async(req, res) =>{
             .limit(limit)
             .lean();
 
+            // 👉 Aggregate product count by category
+        const categoryCounts = await Product.aggregate([
+            { $match: { isBlocked: false } },
+            { $group: {
+                _id: "$categoryId",
+                count: { $sum: 1 }
+            }}
+        ]);
+
+        // 👉 Populate category names
+        const countsWithNames = await Category.populate(categoryCounts, {
+            path: "_id",
+            select: "name"
+        });
+
+        // 👉 Convert to a simpler format
+        const categories = countsWithNames.map(item => ({
+            name: item._id.name,
+            count: item.count
+        }));
+
        
         res.render('userProductList', {
             products,
@@ -91,7 +112,8 @@ const getUserProductList = async(req, res) =>{
             sort,
             limit,
             totalPages,    
-            currentPage: page 
+            currentPage: page,
+            categories
         });
     } catch (error) {
         console.error("Error loading user product List:", error);
