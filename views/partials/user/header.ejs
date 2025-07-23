@@ -82,7 +82,7 @@
 
                                             
                                             <%if(locals.user){%>
-                                                <a href="/userProfile"><i ><%=locals.user.name%></i></a>
+                                                <a href="/profile"><i ><%=locals.user.name%></i></a>
 
                                             <%}else{%>
                                                 <a><i class="far fa-user-circle"></i></a>
@@ -94,7 +94,7 @@
                                             <ul style="width:120px">
                                                 <li>
                                                     <%if(locals.user){%>
-                                                        <a href="/userProfile"><i><%=locals.user.name%></i>
+                                                        <a href="/profile"><i><%=locals.user.name%></i>
 
                                                             </a></li> 
                                                             <%}%>
@@ -1237,7 +1237,7 @@
                                             <a href="wishlist.html"><i class="far fa-heart"></i></a></li>
                                         <li class="has-dropdown">
 
-                                            <a class="mini-cart-shop-link" href="/loadCart"><i class="fas fa-shopping-bag"></i>
+                                            <a class="mini-cart-shop-link" href="/cart"><i class="fas fa-shopping-bag"></i>
 
                                                 <span class="total-item-round">2</span></a>
 

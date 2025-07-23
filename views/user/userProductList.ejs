@@ -76,7 +76,7 @@
                                     <li class="has-dropdown" data-tooltip="tooltip" data-placement="left" title="Account">
 
                                         <%if(locals.user){%>
-                                                <a href="/userProfile"><i ><%=locals.user.name%></i></a>
+                                                <a href="/profile"><i ><%=locals.user.name%></i></a>
 
                                             <%}else{%>
 
@@ -93,7 +93,7 @@
                                         <ul style="width:120px">
                                             <%if(locals.user){%>
                                                         <li>
-                                                           <a href="/userProfile"><i><%=locals.user.name%></i>
+                                                           <a href="/profile"><i><%=locals.user.name%></i>
 
                                                             </a>
                                                         </li> 
@@ -1237,7 +1237,7 @@
                                         <a href="wishlist.html"><i class="far fa-heart"></i></a></li>
                                     <li class="has-dropdown">
 
-                                        <a class="mini-cart-shop-link" href="/loadCart"><i class="fas fa-shopping-bag"></i>
+                                        <a class="mini-cart-shop-link" href="/cart"><i class="fas fa-shopping-bag"></i>
 
                                             <span class="total-item-round">2</span></a>
 
@@ -1398,57 +1398,26 @@
                                         </form>
                                     </div>
                                 </div>
-                                <div class="shop-p__collection" >
-                                    <div class="row is-grid-active" id="product-container">
-                                     <%- include('../partials/user/productListPartial', { products, sort}) %>
-                                     </div>
-                                        
-                                        
-                                        
-                                <!-- <div class="u-s-p-y-60">
-                                     -->
+                                   <div class="">
+                                     
+                                              <%- include('../partials/user/productListPartial', { products, totalPages, currentPage, limit}) %>
 
-                                    <!--====== Pagination ======-->
-                                    <!-- <ul class="shop-p__pagination">
-                                        <li class="is-active">
-
-                                            <a href="shop-side-version-2.html">1</a></li>
-                                        <li>
-
-                                            <a href="shop-side-version-2.html">2</a></li>
-                                        <li>
-
-                                            <a href="shop-side-version-2.html">3</a></li>
-                                        <li>
-
-                                            <a href="shop-side-version-2.html">4</a></li>
-                                        <li>
-
-                                            <a class="fas fa-angle-right" href="shop-side-version-2.html"></a></li>
-                                    </ul> -->
-                                    <!--====== End - Pagination ======-->
-                                <!-- </div> -->
+                                      
+                                   </div>
+                                     
+                                    
+                                     
                                 
-                                 <div class="u-s-p-y-60">
-                                    <ul class="shop-p__pagination">
-                                        <% if (totalPages > 1) { %>
-                                        <% for (let i = 1; i <= totalPages; i++) { %>
-                                            <li class="<%= currentPage == i ? 'is-active' : '' %>">
-                                            <a href="#" class="pagination-link" data-page="<%= i %>"><%= i %></a>
-                                            </li>
-                                        <% } %>
-                                        <% if (currentPage < totalPages) { %>
-                                            <li>
-                                            <a href="#" class="pagination-link fas fa-angle-right" data-page="<%= currentPage + 1 %>"></a>
-                                            </li>
-                                        <% } %>
-                                        <% } %>
-                                    </ul>
-                                    </div>
+                                        
+                                        
+                                        
+                                
+                                
+                                 
 
 
 
-                            </div>
+                            
                         </div>
                     </div>
                 </div>
@@ -1659,10 +1628,11 @@
     <script>
 
         $(document).ready(function () {
-            let currentCategory = '';
-            let currentSort = 'newest';
+            let currentCategory = $('#product-pagination-container').data('category') || '';
+            let currentSort = $('#product-pagination-container').data('sort') || 'newest';
             let currentPage = 1;          
             let limit = 12;
+            let currentSearch = '';
 
             function fetchProducts() {
                 console.log("Fetching with:", currentCategory, currentSort, limit, currentPage);
@@ -1672,11 +1642,12 @@
                     data: { category: currentCategory,
                              sort: currentSort,
                              limit: limit,
-                             page: currentPage
+                             page: currentPage,
+                             search: currentSearch
                           },
                     success: function (response) {
                         console.log("Response received:", response);
-                        $('#product-container').html(response);
+                        $('#product-pagination-container').replaceWith(response);
                     },
                     error: function (xhr, status, error) {
                      console.error("AJAX Error:", status, error);
@@ -1685,31 +1656,42 @@
             }
 
              $('#sortSelect').on('change', function () {
-                currentSort = $(this).val();
-                console.log("current Sort:",currentSort);
-                currentPage = 1;
-                fetchProducts();
-                });
+        currentSort = $(this).val();
+        currentPage = 1;
+        fetchProducts();
+    });
 
-            $('.category-link').on('click', function (e) {
-                e.preventDefault();
-                currentCategory = $(this).data('category');
-                currentPage = 1;
-                fetchProducts();
-            });
+    // Handle category click
+    $(document).on('click', '.category-link', function (e) {
+        e.preventDefault();
+        currentCategory = $(this).data('category');
+        currentPage = 1;
+        fetchProducts();
+    });
 
-            $('#pageSizeSelect').on('change', function () {
-                limit = $(this).val();
-                currentPage = 1; // reset to first page
-                fetchProducts();
-            });
+    // Handle page size (limit) change
+    $('#pageSizeSelect').on('change', function () {
+        limit = parseInt($(this).val()); // make sure it's a number
+        currentPage = 1;
+        fetchProducts();
+    });
 
-            $(document).on('click', '.pagination-link', function (e) {
-                e.preventDefault();
-                currentPage = $(this).data('page');
-                fetchProducts();
-            });
+    $('.main-form').on('submit', function (e) {
+        e.preventDefault();
+        currentSearch = $('#main-search').val().trim();
+        currentPage = 1;
+        fetchProducts();
+    });
 
+    // Handle pagination click
+    $(document).on('click', '.pagination-link', function (e) {
+        e.preventDefault();
+        const selectedPage = parseInt($(this).data('page')); // parse to int
+        if (!isNaN(selectedPage) && selectedPage !== currentPage) {
+            currentPage = selectedPage;
+            fetchProducts();
+        }
+    });
 
 
         });

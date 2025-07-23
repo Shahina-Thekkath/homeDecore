@@ -78,7 +78,6 @@ const updateCartTotals = async (req, res) =>{
             const grandTotal = cart.items.reduce(
             (total, item) => total + item.price * item.quantity, 0);
 
-            console.log("updatefunc",subtotal, grandTotal);
 
             await cart.save();
             

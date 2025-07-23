@@ -383,7 +383,7 @@
                                                             <font style="vertical-align: inherit;">
                                                                 <font
                                                                     style="vertical-align: inherit;font-size: 14px;color:#000;font-weight: 400;">
-                                                                    Status</font>
+                                                                    Payment Method</font>
                                                             </font><br>
                                                         </td>
 
@@ -392,7 +392,7 @@
                                                             <font style="vertical-align: inherit;">
                                                                 <font
                                                                     style="vertical-align: inherit;font-size: 14px;color:#2E7D32;font-weight: 400;">
-                                                                    <%= order.orderStatus %></font>
+                                                                    <%= order.paymentMethod %></font>
                                                             </font><br>
                                                         </td>
                                                         
@@ -420,8 +420,16 @@
                                             style="padding: 5px;vertical-align: middle;font-weight: 600;color: #5E5873;font-size: 14px;padding: 10px; ">
                                             Subtotal
                                         </td>
+                                        <td
+                                            style="padding: 5px;vertical-align: middle;font-weight: 600;color: #5E5873;font-size: 14px;padding: 10px; ">
+                                            Status
+                                        </td>
+                                        <td
+                                            style="padding: 5px;vertical-align: middle;font-weight: 600;color: #5E5873;font-size: 14px;padding: 10px; ">
+                                            Actions
+                                        </td>
                                     </tr>
-                                    <% order.products.forEach((product) => { %>
+                                    <% order.products.forEach((product, index) => { %>
                                         <tr class="details" style="border-bottom:1px solid #E9ECEF ;">
                                             <td
                                                 style="padding: 10px;vertical-align: top; display: flex;align-items: center;">
@@ -438,6 +446,41 @@
                                             <td style="padding: 10px;vertical-align: top; ">
                                                 <%= (product.quantity * product.price).toFixed(2) %>
                                             </td>
+                                            <td style="padding: 10px;vertical-align: top; ">
+                                                <div><%=product.status %></div>
+                                                
+                                                <% if(product.status === 'Delivered' && product.deliveredAt){ %>
+                                                    <div style="color: green; font-size: 0.9rem; margin-top: 4px;">
+                                                        Delivered on: <%= new Date(product.deliveredAt).toLocaleDateString('en-IN') %>
+                                                    </div>
+                                                <% } %>
+
+                                            </td>
+
+
+                                            <!-- Management Controls -->
+                                                <td style="padding: 10px; vertical-align: top;">
+                                                    <div class="d-flex align-items-center gap-2">
+                                                <input type="hidden" class="order-id" value="<%= order._id %>">
+                                                <input type="hidden" class="product-index" value="<%= index %>">
+
+                                                <select class="status-dropdown form-select mb-2" data-order-id="<%= order._id %>" data-index="<%= index %>">
+                                                    <% const statusOptions = ["Pending", "Processing", "Shipped", "Delivered", "Cancelled", "Return Requested", "Returned"]; %>
+                                                    <% statusOptions.forEach(opt => { %>
+                                                    <option value="<%= opt %>" <%= product.status === opt ? 'selected' : '' %>><%= opt %></option>
+                                                    <% }) %>
+                                                </select>
+                                                
+
+                                                <button 
+                                                    class="btn btn-cancel cancel-product-btn"
+                                                    data-order-id="<%= order._id %>"
+                                                    data-index="<%= index %>"
+                                                    <%= !['Pending', 'Processing'].includes(product.status) ? 'disabled' : '' %>>
+                                                    Cancel
+                                                </button>
+                                                </div>
+                                                </td>
                                         </tr>
                                    <% }) %>
                                     
@@ -463,10 +506,22 @@
                                 <a href="/admin/orderList" class="btn btn-submit me-2">Back</a>
                                 <!-- cancel button -->
 
-                                <% const cancellableStatuses = ['Pending Payment', 'Processing']; %>
-                                <% if(cancellableStatuses.includes(order.orderStatus)) { %>
-                                    <button class = "btn btn-cancel" id = "cancelOrderBtn" data-id="<%= order._id %>">Cancel Order</button>
-                                <% } %>
+                    
+
+                                <% 
+                                    const cancellableStatuses = ['Pending', 'Processing']; 
+                                    const allCancellable = order.products.every(p => cancellableStatuses.includes(p.status));
+                                 %>
+
+                                    <button 
+                                    class="btn btn-cancel" 
+                                    id="cancelOrderBtn" 
+                                    data-id="<%= order._id %>" 
+                                    <%= allCancellable ? '' : 'disabled' %>
+                                    >
+                                    Cancel Order
+                                    </button>
+
 
                             </div>
                         </div>
@@ -476,6 +531,7 @@
         </div>
     </div>
 
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <script data-cfasync="false" src="../../cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
     <script src="/admin-assets/js/jquery-3.6.0.min.js"></script>
@@ -499,44 +555,124 @@
 
     <script>
 
-       document.getElementById('cancelOrderBtn')?.addEventListener('click', function(){
-        const orderId = this.dataset.id;
-         
+      $(document).ready(function () {
+    $('#cancelOrderBtn')?.on('click', function () {
+      const orderId = $(this).data('id');
+
+      Swal.fire({
+        title: 'Are you sure?',
+        text: 'This action will cancel the order and refund the wallet.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        cancelButtonText: 'Cancel',
+        confirmButtonText: 'Yes, Cancel Order!'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          $.ajax({
+            url: `/admin/orders/${orderId}/cancel`,
+            method: 'POST',
+            contentType: 'application/json',
+            success: function (data) {
+              Swal.fire({
+                title: data.success ? 'Cancelled' : 'Oops!',
+                text: data.message,
+                icon: data.success ? 'success' : 'error'
+              }).then(() => {
+                if (data.success) location.reload();
+              });
+            },
+            error: function (xhr, status, error) {
+                console.error('AJAX Error:', status, error);
+                console.log('Response Text:', xhr.responseText);
+               Swal.fire({
+                    title: 'Something went wrong!',
+                    text: 'We couldn’t process your request. Please try again later.',
+                    icon: 'error'
+                });
+                }
+
+          });
+        }
+      });
+    });
+  });
+
+
+    //status update AJAX (dropdown)
+
+    $('.status-dropdown').on('change', function() {
+        const orderId = $(this).data('order-id');
+        const index = $(this).data('index');
+        const newStatus = $(this).val();
+
+        $.ajax({
+            url: '/admin/orders/update-status',
+            method: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({orderId, productIndex: index, newStatus}),
+            success: function (res){
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Status Updated',
+                    text: res.message,
+                    timer: 1500,
+                    showConfirmButton: false
+                }).then(() => {
+                    location.reload();
+                })
+            },
+            error: function (err){
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Update Failed',
+                    text: 'There was an error updating the product status.'
+                });
+            }
+        });
+    });
+
+    $('.cancel-product-btn').on('click', function(){
+        const orderId = $(this).data('order-id');
+        const index = $(this).data('index');
+
         Swal.fire({
             title: 'Are you sure?',
-            text: "This action will cancel the order and refund the wallet.",
+            text: "This product will be cancelled and refunded!",
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#d33',
-            cancelButtonText: 'Cancel',
-            cancelButtonColor: "#3085d6",
-            confirmButtonText: "Yes, Cancel Order!"
-        }).then((result) => {
-            if(result.isConfirmed){
-                fetch(`/admin/orders/${orderId}/cancel`, {
+            cancelButtonColor: '#aaa',
+            confirmButtonText: 'Yes, cancel it!',
+            reverseButtons: true
+        }).then((result) =>{
+            if(result.isConfirmed) {
+                $.ajax({
+                    url: '/admin/order/cancel-product',
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
+                    contentType: 'application/json',
+                    data: JSON.stringify({ orderId, productIndex: index}),
+                    success: function (res) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Cancelled',
+                            text: res.message,
+                            timer: 1500,
+                            showConfirmButton: false
+                        }).then(() =>{
+                            location.reload();
+                        });
+                    },
+                    error: function (err) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'There was an error cancelling the product.'
+                        });
                     }
-                })
-                .then(res => res.json())   // json string into js object
-                .then(data => {
-                    Swal.fire({
-                        title: data.success ? 'Cancelled' : 'Oops!',
-                        text: data.message,
-                        icon: data.success ? 'success' : 'error'
-                    }).then(() => {
-                        console.log("after oops");
-                        if(data.success) location.reload();
-                    });
-                })
-                .catch(err => {
-                    console.error('Error:', err);
-                    Swal.fire('Error!', 'Something went wrong.', 'error')
-                })
+                });
             }
         });
-
     });
 
     </script>

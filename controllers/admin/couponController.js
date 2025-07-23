@@ -1,0 +1,132 @@
+const Coupon = require("../../models/couponSchema");
+
+const renderAddCouponPage = async (req, res) => {
+  try {
+    res.render("addCoupon");
+  } catch (error) {
+    console.error("Add Coupon render error:", error);
+    res.status(500).send("server Error");
+  }
+};
+
+const addCoupon = async (req, res) => {
+  try {
+    const {
+      name,
+      code,
+      discountAmount,
+      usageLimit,
+      minPurchaseAmount,
+      expiresOn,
+      discountType,
+    } = req.body;
+
+    const errors = {};
+
+    // Required field checks
+    if (!name) errors.name = "Coupon name is required";
+    if (!code) errors.code = "Coupon code is required";
+    if (!discountAmount) errors.discountAmount = "Discount amount is required";
+    if (!usageLimit) errors.usageLimit = "Usage limit amount is required";
+    if (!minPurchaseAmount)
+      errors.minPurchaseAmount = "Minimum purchase amount is required";
+    if (!expiresOn) errors.expiresOn = "Expiry date is required";
+    if (!discountType) errors.discountType = "Discount type is required";
+
+    // pattern validation
+    if (name && !/^[A-Za-z\s]{3,30}$/.test(name)) {
+      errors.name = "Name should be 3-30 letters only";
+    }
+
+    if (code && !/^[A-Z0-9_-]{3,10}$/.test(code)) {
+      errors.code =
+        "Code should be 3-10 character, uppercase letters/numbers only";
+    }
+
+    if (discountAmount && !/^\d+(\.\d{1,2})?$/.test(discountAmount)) {
+      errors.discountAmount = "Enter a valid amount (e.g., 10 or 10.50)";
+    }
+
+    if (usageLimit && !/^\d+$/.test(usageLimit)) {
+      errors.usageLimit = "Usage limit must be a valid number";
+    }
+
+    if (minPurchaseAmount && !/^\d+(\.\d{1,2})?$/.test(minPurchaseAmount)) {
+      errors.minPurchaseAmount = "Enter a valid amount (e.g., 50 or 50.00)";
+    }
+
+    if (expiresOn && isNaN(Date.parse(expiresOn))) {
+      errors.expiresOn = "Invalid date format";
+    }
+
+    if (discountType && !["percentage", "fixed"].includes(discountType)) {
+      errors.discountType =
+        'Discount type must be either "percentage" or "fixed"';
+    }
+
+    if (Object.keys(errors).length > 0) {
+      return res.status(400).json({ success: false, errors });
+    }
+
+    const existingCoupon = await Coupon.findOne({ code });
+    if (existingCoupon) {
+      return res.status(400).json({
+        success: false,
+        errors: { code: "Coupon code already exists" },
+      });
+    }
+
+    await Coupon.create({
+      name,
+      code,
+      discountAmount,
+      usageLimit,
+      minPurchaseAmount,
+      expiresOn,
+      discountType,
+    });
+
+    return res.json({ success: true, message: "Coupon added successfully" });
+  } catch (error) {
+    console.error("Internal Server Error adding coupon)", error);
+    return res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
+
+const getCouponList = async (req, res) => {
+    try {
+        const coupons = await Coupon.find().sort({ createdAt: -1 });
+        res.render('couponList', { coupons });
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Server error');
+    }
+};
+
+const toggleCouponStatus = async (req, res) => {
+    try {
+        const couponId = req.params.id;
+        const coupon = await Coupon.findById(couponId);
+
+        if(!coupon) {
+            return res.status(404).json({ success: false, message: 'Coupon not found' });
+        }
+
+        coupon.isActive = !coupon.isActive;
+        await coupon.save();
+
+        return res.json({ success: true, message: `Coupon ${coupon.isActive ? 'activated' : 'deactivated'} successfully` });
+    } catch (error) {
+        console.error(err);
+        return res.status(500).json({ success: false, message:'Server error' });
+        
+    }
+};
+
+module.exports = {
+    renderAddCouponPage,
+    addCoupon,
+    getCouponList,
+    toggleCouponStatus
+};

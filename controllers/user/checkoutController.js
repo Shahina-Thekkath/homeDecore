@@ -9,6 +9,9 @@ const loadCheckout = async (req, res) => {
     try {
         const userId = req.session.user._id;
         const cart = await Cart.findOne({ userId }).populate("items.productId");
+        console.log("cart",cart);
+        console.log("cart2",cart.items[0].productId);
+        
         const user = await User.findById(userId);
 
         const cartItems = cart.items.map((item) => ({

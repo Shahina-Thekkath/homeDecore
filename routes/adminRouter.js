@@ -3,58 +3,66 @@ const adminRouter = express.Router();
 const loginController = require("../controllers/admin/loginController");
 const dashboardController = require("../controllers/admin/dashboardController");
 const userController = require("../controllers/admin/userController");
-const adminAuth = require('../middleware/adminAuth');
+const adminAuth = require("../middleware/adminAuth");
 const admin404Controller = require("../controllers/admin/404Controller");
 const productController = require("../controllers/admin/productController");
-const multer = require('multer');
+const multer = require("multer");
 const uploads = require("../middleware/productUpload");
 const categoryController = require("../controllers/admin/categoryController");
 const logoutController = require("../controllers/admin/logoutController");
-const orderController = require("../controllers/admin/orderController")
+const orderController = require("../controllers/admin/orderController");
+const couponController = require("../controllers/admin/couponController")
 
+adminRouter.get("/", adminAuth.isLogout, loginController.loadLogin);
+adminRouter.post("/", adminAuth.isLogout, loginController.login);
+adminRouter.use(adminAuth.isLogin);
+adminRouter.get("/dashboard", dashboardController.loadDashboard);
+adminRouter.get("/users", userController.getAllUsers);
 
-
-adminRouter.get("/",adminAuth.isLogout, loginController.loadLogin);
-adminRouter.post("/",adminAuth.isLogout,loginController.login);
-adminRouter.get("/dashboard",adminAuth.isLogin, dashboardController.loadDashboard);
-adminRouter.get('/users',adminAuth.isLogin, userController.getAllUsers);
-
-adminRouter.delete("/block/:id",adminAuth.isLogin, userController.blockUser);
-adminRouter.put("/unblock/:id",adminAuth.isLogin, userController.unblockUser);
-adminRouter.get("/pageerror",adminAuth.isLogin, admin404Controller.pageError);
-
+adminRouter.delete("/block/:id", userController.blockUser);
+adminRouter.put("/unblock/:id", userController.unblockUser);
+adminRouter.get("/pageerror", admin404Controller.pageError);
 
 //product Management
 
+adminRouter.get("/products/addProducts", productController.getProductAddPage);
+adminRouter.post(
+  "/products/addProducts",
+  uploads.any(),
+  productController.addProducts
+);
+adminRouter.get("/productList", productController.getAllProducts);
+adminRouter.get("/products/editProduct/:id", productController.getEditProduct);
+adminRouter.post(
+  "/products/updateProduct",
+  uploads.any(),
+  productController.updateProduct
+);
+adminRouter.post(
+  "/products/removeProduct/:id",
+  productController.removeProduct
+);
+adminRouter.get("/products/filter", productController.filterProducts);
 
-adminRouter.get("/products/addProducts",adminAuth.isLogin,  productController.getProductAddPage)
-adminRouter.post("/products/addProducts", adminAuth.isLogin, uploads.any(), productController.addProducts);
-adminRouter.get("/productList", adminAuth.isLogin,productController.getAllProducts);
-adminRouter.get("/products/editProduct/:id", adminAuth.isLogin,productController.getEditProduct);
-adminRouter.post("/products/updateProduct",adminAuth.isLogin, uploads.any(), productController.updateProduct);
-adminRouter.post("/products/removeProduct/:id",adminAuth.isLogin, productController.removeProduct);
-adminRouter.get('/products/filter', adminAuth.isLogin, productController.filterProducts);
+adminRouter.get("/category", categoryController.categoryInfo);
+adminRouter.get("/addCategory", categoryController.getAddCategory);
+adminRouter.post("/addCategory", categoryController.addCategory);
+adminRouter.get("/editCategory/:id", categoryController.getEditCategory);
+adminRouter.post("/editCategory/:id", categoryController.editCategory);
+adminRouter.delete("/categoryBlock/:id", categoryController.blockCategory);
+adminRouter.put("/categoryUnblock/:id", categoryController.unblockCategory);
+adminRouter.get("/logout", logoutController.logout);
 
-adminRouter.get("/category",adminAuth.isLogin,categoryController.categoryInfo);
-adminRouter.get("/addCategory",adminAuth.isLogin,categoryController.getAddCategory);
-adminRouter.post("/addCategory",adminAuth.isLogin,categoryController.addCategory);
-adminRouter.get("/editCategory/:id",adminAuth.isLogin,categoryController.getEditCategory);
-adminRouter.post("/editCategory/:id",adminAuth.isLogin,categoryController.editCategory);
-adminRouter.delete("/categoryBlock/:id",adminAuth.isLogin,categoryController.blockCategory);
-adminRouter.put("/categoryUnblock/:id", adminAuth.isLogin,categoryController.unblockCategory);
-adminRouter.get('/logout', adminAuth.isLogin, logoutController.logout);
+adminRouter.get("/orderList", orderController.getAdminOrders);
+adminRouter.get("/orders/:orderId", orderController.getOrderById);
+adminRouter.post("/orders/:id/cancel", orderController.cancelOrder);
+adminRouter.post('/orders/update-status', orderController.updateProductStatus);
+adminRouter.post('/orders/cancel-product', orderController.cancelProductByIndex);
 
-adminRouter.get('/orderList', adminAuth.isLogin, orderController.getAdminOrders);
-adminRouter.post("/orders/updateStatus/:orderId", adminAuth.isLogin, orderController.updateOrderStatus);
-adminRouter.get('/orders/:orderId', adminAuth.isLogin, orderController.getOrderById);
-adminRouter.post('/orders/:id/cancel', adminAuth.isLogin, orderController.cancelOrder);
-
-
-
-
-
-
-
+adminRouter.get("/coupon", couponController.getCouponList);
+adminRouter.get("/coupon/add-coupon", couponController.renderAddCouponPage);
+adminRouter.post("/coupon/add-coupon", couponController.addCoupon);
+adminRouter.patch("/coupons/toggle/:id", couponController.toggleCouponStatus);
 
 
 

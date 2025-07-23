@@ -26,6 +26,14 @@
         <div class="order-success">
             <h1 class="page-title text-center">Thank You for Your Order!</h1>
             <p class="subtitle text-center">Your order has been successfully placed.</p>
+            <div class="text-center mb-4">
+                <% if (paymentMethod === "Razorpay") { %>
+                    <p class="text-success fw-bold">Payment received via Razorpay.</p>
+                <% } else if (paymentMethod === "COD") { %>
+                    <p class="text-warning fw-bold">Cash on Delivery selected.</p>
+                <% } %>
+            </div>
+
 
             <!-- Order Details -->
             <div class="order-details">

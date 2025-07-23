@@ -77,7 +77,7 @@
                                     <li class="has-dropdown" data-tooltip="tooltip" data-placement="left" title="Account">
 
                                         <%if(locals.user){%>
-                                                <a href="/userProfile"><i ><%=locals.user.name%></i></a>
+                                                <a href="/profile"><i ><%=locals.user.name%></i></a>
 
                                             <%}else{%>
 
@@ -91,7 +91,7 @@
                                         <ul style="width:120px">
                                             <li>
                                                     <%if(locals.user){%>
-                                                        <a href="/userProfile"><i><%=locals.user.name%></i>
+                                                        <a href="/profile"><i><%=locals.user.name%></i>
 
                                                             </a></li> 
                                                             <%}%>
@@ -1231,7 +1231,7 @@
                                         <a href="wishlist.html"><i class="far fa-heart"></i></a></li>
                                     <li class="has-dropdown">
 
-                                        <a class="mini-cart-shop-link" href="/loadCart"><i class="fas fa-shopping-bag"></i>
+                                        <a class="mini-cart-shop-link" href="/cart"><i class="fas fa-shopping-bag"></i>
 
                                             <!-- <span class="total-item-round">2</span>--> </a> 
 
@@ -1275,7 +1275,7 @@
                                         <a href="/">Home</a></li>
                                     <li class="is-marked">
 
-                                        <a href="/userAddress">My Account</a></li>
+                                        <a href="/address">My Account</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -1304,14 +1304,14 @@
                                                
                                                 <li>
 
-                                                    <a href="/userProfile">My Profile</a></li>
+                                                    <a href="/profile">My Profile</a></li>
                                                 <li>
 
-                                                    <a class="dash-active" href="/userAddress">Address Book</a></li>
+                                                    <a class="dash-active" href="/address">Address Book</a></li>
                                                 
                                                 <li>
 
-                                                    <a href="/userOrders">My Orders</a></li>
+                                                    <a href="/orders">My Orders</a></li>
                                                 <li>
 
                                                     <a href="/userWallet">My Wallet</a></li>
@@ -1648,7 +1648,7 @@
                     title: "Address Delete!",
                     text: result.message || "Your address has been successfully deleted",
                 }).then(() => {
-                    window.location.href = "/userAddress"
+                    window.location.href = "/address"
                 });
                 } else {
                 Swal.fire({

@@ -61,33 +61,36 @@ userRouter.get("/success",signupController.successGoogleLogin)
 userRouter.get("/failure",signupController.failureGoogleLogin)
 
 userRouter.get('/product-details/:id', auth.isLogin, productController.loadProductDetails);
-userRouter.get('/userProductList', auth.isLogin, productController.getUserProductList);
+userRouter.get('/productList', auth.isLogin, productController.getUserProductList);
 userRouter.get('/user/products/filter', auth.isLogin, productController.getFilteredProductList)
 
-userRouter.get('/userProfile',auth.isLogin, profileController.userProfile);
+userRouter.get('/profile',auth.isLogin, profileController.userProfile);
 userRouter.get('/updateProfile',auth.isLogin,profileController.getEditProfile );
 userRouter.post('/updateProfile',auth.isLogin,profileController.updateProfile );
 
-userRouter.get('/userAddress', auth.isLogin, addressController.getAddress);
+userRouter.get('/address', auth.isLogin, addressController.getAddress);
 userRouter.get('/addAddress', auth.isLogin, addressController.loadAddAddress);
 userRouter.post('/addAddress',auth.isLogin, addressController.addAddress );
 userRouter.get('/editAddress/:addressId', auth.isLogin, addressController.loadEditAddress);
 userRouter.put('/editAddress/:addressId', auth.isLogin, addressController.editAddress);
 userRouter.delete('/deleteAddress/:id', auth.isLogin, addressController.deleteAddress);
 
-userRouter.post('/userCart',auth.sessionVerify, cartController.addToCart);
+userRouter.post('/add-to-cart',auth.sessionVerify, cartController.addToCart);
 userRouter.post("/cart/update", auth.isLogin, cartController.updateCartTotals);
-userRouter.get('/loadCart',auth.sessionVerify, cartController.loadCart );
+userRouter.get('/cart',auth.sessionVerify, cartController.loadCart );
 userRouter.delete('/deleteCartItem/:id',auth.sessionVerify, cartController.deleteCartItem);
 userRouter.post('/updateCartTotals', auth.sessionVerify, cartController.updateCartTotals);
 
 
-userRouter.get('/userCheckout', auth.sessionVerify, checkoutController.loadCheckout);
+userRouter.get('/checkout', auth.sessionVerify, checkoutController.loadCheckout);
 userRouter.post('/saveSelectedAddress', auth.sessionVerify, checkoutController.saveSelectedAddress)
 
-userRouter.get('/userOrder/success', auth.sessionVerify, orderController.getOrderSuccess);
-userRouter.post('/userOrder/save', auth.sessionVerify,orderController.saveOrderInSession);
-userRouter.get("/userOrders", auth.sessionVerify, orderController.getOrdersPage);
+userRouter.post('/create-razorpay-order', auth.sessionVerify, orderController.createRazorpayOrder);
+userRouter.post('/verify-razorpay-payment', auth.sessionVerify, orderController.verifyRazorpayPayment);
+
+userRouter.get('/order-success', auth.sessionVerify, orderController.getOrderSuccess);
+userRouter.post('/order-save', auth.sessionVerify,orderController.saveOrderInSession);
+userRouter.get("/orders", auth.sessionVerify, orderController.getOrdersPage);
 userRouter.get("/orderDetails/:orderId", auth.sessionVerify, orderController.getOrderDetails);
 userRouter.patch("/order/:orderId/cancel/:productId", auth.sessionVerify, orderController.cancelOrder);
 userRouter.post("/order/return/:orderId", auth.sessionVerify, orderController.returnOrder);

@@ -1288,9 +1288,9 @@
                                                     <span class="subtotal-value"><%=grandTotal%></span></div>
                                                 <div class="mini-action">
 
-                                                    <a class="mini-link btn--e-brand-b-2" href="/userCheckout">PROCEED TO CHECKOUT</a>
+                                                    <a class="mini-link btn--e-brand-b-2" href="/checkout">PROCEED TO CHECKOUT</a>
 
-                                                    <a class="mini-link btn--e-transparent-secondary-b-2" href="/loadCart">VIEW CART</a></div>
+                                                    <a class="mini-link btn--e-transparent-secondary-b-2" href="/cart">VIEW CART</a></div>
                                             </div>
 
                                             
@@ -2417,7 +2417,7 @@
 
         // Send selected quantity to the backend via fetch
         try {
-            const response = await fetch('/userCart', {
+            const response = await fetch('/add-to-cart', {
                 method: 'POST',
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ productId, quantity: selectedQuantity }),

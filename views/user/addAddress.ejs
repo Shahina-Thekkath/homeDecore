@@ -48,14 +48,14 @@
                                               
                                                 <li>
 
-                                                    <a href="/userProfile">My Profile</a></li>
+                                                    <a href="/profile">My Profile</a></li>
                                                 <li>
 
-                                                    <a class="dash-active" href="/userAddress">Address Book</a></li>
+                                                    <a class="dash-active" href="/address">Address Book</a></li>
                                                 
                                                 <li>
 
-                                                    <a href="/userOrders">My Orders</a></li>
+                                                    <a href="/orders">My Orders</a></li>
                                                 <li>
 
                                                     <a href="/userWallet">My Wallet</a></li>
@@ -550,9 +550,9 @@
           text: result.message || "Your address has been successfully added.",
         }).then(() => {
              if(from === 'checkout') {
-                window.location.href = '/userCheckout';
+                window.location.href = '/checkout';
              } else if(from === 'addressBook') {
-                window.location.href = '/userAddress';
+                window.location.href = '/address';
              }
         });
       } else {

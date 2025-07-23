@@ -61,8 +61,11 @@ const getUserProductList = async(req, res) =>{
         const userId = req.session.user?._id;
         const user = await User.findById(userId);
 
-        const sort = 'newest'; // default
-        const limit = 8;
+        const sort = req.query.sort || 'newest';
+        
+
+        // default
+        const limit = 9;
         const page = parseInt(req.query.page) || 1;
         const skip = (page - 1) * limit;
 
@@ -99,7 +102,7 @@ const getUserProductList = async(req, res) =>{
 
 const getFilteredProductList = async (req, res) =>{
     try {
-          const {sort, category } = req.query;
+          const {sort, category, search } = req.query;
 
           const limit = parseInt(req.query.limit) || 12;
           const page = parseInt(req.query.page) || 1;
@@ -123,10 +126,40 @@ const getFilteredProductList = async (req, res) =>{
             case 'price_desc' : sortOption = {price: -1}; break;
           }
 
+          const trimmedSearch = search?.trim();
+          if(trimmedSearch && trimmedSearch.length > 0){
+            const searchRegex =  new RegExp(trimmedSearch, 'i');
+
+            // returns all the categories which starts with the searchRegex
+            const catDocs = await Category.find({ name: searchRegex });
+            const catIds = catDocs.map(cat => cat._id);
+
+            const parsedPrice = parseFloat(trimmedSearch);
+            const isValidPrice = !isNaN(parsedPrice);
+
+            query.$or = [
+                {name: searchRegex},
+                ...(isValidPrice
+                        ? [{
+                            $expr: {
+                            $regexMatch: {
+                                input: { $toString: "$price" },
+                                regex: `^${parsedPrice}`
+                            }
+                            }
+                        }]
+                        : []),      // The ... spreads the contents of either array (the [ { price: parsedPrice } ] or the empty []) into the $or array.
+                { categoryId: { $in: catIds } }
+            ];
+
+
+          }
+
           const totalProducts = await Product.countDocuments(query);
             const totalPages = Math.ceil(totalProducts / limit);
 
-            const safePage = (page > totalPages && totalPages !== 0) ? totalPages : page;
+            const safePage = (page > totalPages && totalPages !== 0) ? totalPages : (page < 1 ? 1 : page);
+
             const skip = (safePage - 1) * limit;
 
           const products = await Product.find(query).populate("categoryId", "name").sort(sortOption).skip(skip)
@@ -135,7 +168,7 @@ const getFilteredProductList = async (req, res) =>{
             
 
 
-          res.render('user/productListPartial', {products, totalPages, currentPage: page, limit});
+          res.render('user/productListPartial', {products, totalPages, currentPage: safePage, limit});
 
     } catch (error) {
          console.error("Error fetching products while using filter:", error);

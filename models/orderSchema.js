@@ -11,9 +11,18 @@ const OrderSchema = new Schema(
         price: { type: Number, required: true }, // Price per product at the time of the order
         status: {
           type: String,
-          enum: ["Pending", "Processing", "Shipped", "Delivered", "Cancelled", "Return Requested", "Returned"],
+          enum: [
+            "Pending",
+            "Processing",
+            "Shipped",
+            "Delivered",
+            "Cancelled",
+            "Return Requested",
+            "Returned",
+          ],
           default: "Processing",
         },
+        deliveredAt: { type: Date },
       },
     ],
     totalAmount: { type: Number, required: true }, // Total amount for the order
@@ -27,12 +36,25 @@ const OrderSchema = new Schema(
     },
     paymentMethod: {
       type: String,
-      enum: ["Cash on Delivery", "Credit/Debit Card", "PayPal", "Bank Transfer"],
+      enum: [
+        "Cash on Delivery",
+        "Credit/Debit Card",
+        "Razorpay",
+        "Bank Transfer",
+      ],
       required: true,
     },
     orderStatus: {
       type: String,
-      enum: ["Pending", "Processing", "Shipped", "Delivered", "Cancelled", "Return Requested", "Returned"],
+      enum: [
+        "Pending",
+        "Processing",
+        "Shipped",
+        "Delivered",
+        "Cancelled",
+        "Return Requested",
+        "Returned",
+      ],
       default: "Processing",
     },
     isPaid: { type: Boolean, default: false }, // COD orders will have this as false initially
@@ -40,6 +62,11 @@ const OrderSchema = new Schema(
       // Optional field for payment confirmation
       transactionId: { type: String },
       paymentDate: { type: Date },
+
+          // Razorpay-specific additions
+      razorpayOrderId: { type: String },     // Razorpay Order ID (returned after order creation)
+      razorpayPaymentId: { type: String },   // Razorpay Payment ID (returned after payment)
+      razorpaySignature: { type: String },   // Used to verify the payment authenticity
     },
     createdAt: { type: Date, default: Date.now },
   },

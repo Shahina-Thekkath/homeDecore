@@ -72,7 +72,7 @@ const updateProfile = async(req,res) =>{
         console.log("updatedUser",updatedUser);
         
 
-        res.redirect('/userProfile?success=true');
+        res.redirect('/profile?success=true');
 
 
    } catch (error) {

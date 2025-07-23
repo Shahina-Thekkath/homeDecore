@@ -516,7 +516,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <button type="submit" class="btn btn-md rounded font-sm hover-up" >Update</button>
+                            <button type="submit" class="btn btn-primary">Update</button>
                         </div>
                     </form>
                 </div>
@@ -548,6 +548,12 @@
         $(document).ready(function() {
         let specificationCount = $('#specificationsContainer .specification-group').length;
         let variantCount = $('#variantsContainer .variant-group').length;
+
+        $(document).ready(function() {
+          $('input[type="file"][data-index]').on('change', function (event) {
+              const index = $(this).data('index');
+              handleNewImage(event, parseInt(index));
+          });
     
         // Add new specification input fields
         $('#addSpecification').click(function() {

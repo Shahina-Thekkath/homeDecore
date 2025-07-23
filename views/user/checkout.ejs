@@ -1217,7 +1217,7 @@
                                         <a href="wishlist.html"><i class="far fa-heart"></i></a></li>
                                     <li class="has-dropdown">
 
-                                        <a class="mini-cart-shop-link" href="/loadCart"><i class="fas fa-shopping-bag"></i>
+                                        <a class="mini-cart-shop-link" href="/cart"><i class="fas fa-shopping-bag"></i>
 
                                             <span class="total-item-round">2</span></a>
 
@@ -1259,7 +1259,7 @@
                                         <a href="/">Home</a></li>
                                     <li class="is-marked">
 
-                                        <a href="/userCheckout">Checkout</a></li>
+                                        <a href="/checkout">Checkout</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -1359,7 +1359,7 @@
                                     <div class="o-summary__section u-s-m-b-30">
                                         <div class="o-summary__box">
                                             <h1 class="checkout-f__h1">PAYMENT INFORMATION</h1>
-                                            <form class="checkout-f__payment" action="/userOrder/save" method="POST">
+                                            <form class="checkout-f__payment" id="orderForm" action="/order-save" method="POST">
 
 
                                                 <input type="hidden" name="grandTotal" value="<%= grandTotal %>">
@@ -1431,19 +1431,19 @@
                                                     <!--====== Radio Box ======-->
                                                     <div class="radio-box">
 
-                                                        <input type="radio" id="pay-pal" name="payment" value="PayPal" required>
+                                                        <input type="radio" id="razorpay" name="payment" value="Razorpay" required>
                                                         <div class="radio-box__state radio-box__state--primary">
 
-                                                            <label class="radio-box__label" for="pay-pal">Pay Pal</label></div>
+                                                            <label class="radio-box__label" for="razorpay">Razorpay</label></div>
                                                     </div>
                                                     <!--====== End - Radio Box ======-->
 
-                                                    <span class="gl-text u-s-m-t-6">When you click "Place Order" below we'll take you to Paypal's site to set up your billing information.</span>
+                                                    <span class="gl-text u-s-m-t-6">When you click "Place Order" below we'll take you to Razorpay's site to set up your billing information.</span>
                                                 </div>
                                                 
                                                 <div>
 
-                                                 <button class="btn btn--e-brand-b-2" type="submit" >PLACE ORDER</button>
+                                                 <button class="btn btn--e-brand-b-2" id="placeOrderBtn" type="submit" >PLACE ORDER</button>
                                                 </div>
                                             </form>
                                         </div>
@@ -1849,6 +1849,7 @@
     <!--====== End - Main App ======-->
 
 
+
     <!--====== Google Analytics: change UA-XXXXX-Y to be your site's ID ======-->
     <script>
         window.ga = function() {
@@ -1871,7 +1872,14 @@
     <!--====== App ======-->
     <script src="js/app.js"></script>
 
+    <!--====== Razorpay ======-->
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    
+
     <script>
+
+   // Save Selected Address
+
       document.querySelector(".checkout-modal2__form").addEventListener("submit", async (event) => {
     event.preventDefault(); // Prevent form submission and page reload
 
@@ -1910,12 +1918,11 @@
     }
 });
 
-    </script>
     
-
-    <script>
         
-
+            // ----------------------
+            //   Delete Cart Item
+            // ----------------------
 
         async function deleteItem(id){
             try {
@@ -1937,7 +1944,7 @@
                     title: "Item Delete!",
                     text: result.message || "The Item has been successfully deleted",
                 }).then(() => {
-                    window.location.href = "/userCheckout"
+                    window.location.href = "/checkout"
                 });
             } else {
                 Swal.fire({
@@ -1955,6 +1962,84 @@
                 }
             }
 
+
+            // ----------------------
+            //    Handle Order Form Submission (Razorpay / COD)
+            // ----------------------
+
+    
+        $('#orderForm').submit(function (e) {
+                e.preventDefault();
+
+                const paymentMethod = $('input[name ="payment"]:checked').val();
+                const formData = $(this).serialize();   // to make it urlencoded
+               
+
+                if(paymentMethod === 'Razorpay'){
+                    // create Razorpay Order
+                    $.ajax({
+                        method: 'POST',
+                        url: '/create-razorpay-order',
+                        data: formData,
+                        xhrFields: {
+                            withCredentials: true 
+                        },
+                        success: function (orderData) {
+                            const options = {
+                                key: orderData.key_id,
+                                amount: orderData.amount,
+                                currency: "INR",
+                                name: "Your Store Name",
+                                description: "Order Payment",
+                                order_id: orderData.razorpay_order_id,
+                                handler: function (response) {
+                                    //verify Payment
+                                    $.ajax({
+                                        method: 'POST',
+                                        url: '/verify-razorpay-payment',
+                                        data: {
+                                            ...response,   //razorpay_payment_id, razorpay_order_id, razorpay_signature
+                                            formData
+                                        },
+                                        success: function (res) {
+                                            if(res.success) {
+                                                Swal.fire('Success', 'Order Placed Successfully!', 'success').then(() => {
+                                                    window.location.href = '/order-success';
+                                                });
+                                            } else {
+                                                Swal.fire('Error', 'Payment verification failed', 'error');
+                                            }
+                                        }
+                                    });
+                                },
+                                theme: {
+                                    color: "#F37254"
+                                }
+                            };
+                            const rzp = new Razorpay(options);
+                            rzp.open();
+                        }
+                    });
+                } else {
+                    // handle cash on delivery and other
+                    $.ajax({
+                        method: 'POST',
+                        url: '/order-save',
+                        data: formData,
+                        success: function (res) {
+                            if (res.success) {
+                                Swal.fire('Success', 'Order Placed Successfully!' , 'success').then(() => {
+                                    window.location.href = '/order-success';
+                                });
+                            } else {
+                                Swal.fire('Error', 'Order placement failed', 'error');
+                                console.log("placement fail: ", res);
+                                
+                            }
+                        }
+                    });
+                }
+             });
 
     </script>
 

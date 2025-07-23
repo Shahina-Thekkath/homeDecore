@@ -72,7 +72,7 @@
                                         <span class="gl-text u-s-m-b-30">By creating an account with our store, you will be able to move through the checkout process faster, store shipping addresses, view and track your orders in your account and more.</span>
                                         <div class="u-s-m-b-15">
 
-                                            <a class="l-f-o__create-link btn--e-transparent-brand-b-2" href="signup.html">CREATE AN ACCOUNT</a></div>
+                                            <a class="l-f-o__create-link btn--e-transparent-brand-b-2" href="/signup">CREATE AN ACCOUNT</a></div>
                                         <h1 class="gl-h1">SIGNIN</h1>
 
                                         <span class="gl-text u-s-m-b-30">If you have an account with us, please log in.</span>
@@ -85,9 +85,10 @@
                                                         <span>Signin with Facebook</span></button></div> -->
                                                 <div class="u-s-m-b-15">
 
-                                                    <button class="gl-s-api__btn gl-s-api__btn--gplus" type="button"><i class="fab fa-google"></i>
-
-                                                        <span>Signin with Google</span></button></div>
+                                                    <a href="/auth/google" class="gl-s-api__btn gl-s-api__btn--gplus">
+                                                            <i class="fab fa-google"></i>
+                                                            <span>Signup with Google</span>
+                                                        </a></div>
                                             </div>
                                             <p class="text-danger"><%=locals.message?locals.message:""%></p>
                                             <div class="u-s-m-b-30">

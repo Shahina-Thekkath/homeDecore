@@ -1,38 +1,93 @@
-<% products.forEach((product) =>{ %>
-                                         <div class="col-lg-4 col-md-6 col-sm-6">
-                                            <div class="product-m">
-                                                <div class="product-m__thumb">
+ <div id="product-pagination-container" class="shop-p__collection">
+<div class="row is-grid-active" id="product-container">  
+    <% products.forEach((product) =>{ %>
+    <div class="col-lg-4 col-md-6 col-sm-6">
+      <div class="product-m">
+        <div class="product-m__thumb">
+          <a
+            class="aspect aspect--bg-grey aspect--square u-d-block"
+            href="/product-details/<%= product._id%>"
+          >
+            <img
+              class="aspect__img"
+              src="/admin-assets/product2/<%= product.image[0] %>"
+              alt=""
+          /></a>
+          <div class="product-m__quick-look">
+            <a
+              class="fas fa-search"
+              data-tooltip="tooltip"
+              data-placement="top"
+              title="Quick Look"
+              href="/product-details/<%= product._id%>"
+            ></a>
+          </div>
+          <div class="product-m__add-cart">
+            <a class="btn--e-brand">View Description</a>
+          </div>
+        </div>
+        <div class="product-m__content">
+          <div class="product-m__category">
+            <a href="#"><%= product.categoryId.name %></a>
+          </div>
+          <div class="product-m__name">
+            <a href="/product-details/<%= product._id%>"><%= product.name%></a>
+          </div>
+          <div class="product-m__rating gl-rating-style">
+            <i class="fas fa-star"></i><i class="fas fa-star"></i
+            ><i class="fas fa-star-half-alt"></i><i class="far fa-star"></i
+            ><i class="far fa-star"></i>
 
-                                                    <a class="aspect aspect--bg-grey aspect--square u-d-block" href="/product-details/<%= product._id%>">
+            <span class="product-m__review">(23)</span>
+          </div>
+          <div class="product-m__price">₹<%= product.price.toFixed(2) %></div>
+          <div class="product-m__hover">
+            <div class="product-m__preview-description">
+              <span><%= product.description %></span>
+            </div>
+            <div class="product-m__wishlist">
+              <a
+                class="far fa-heart"
+                href="#"
+                data-tooltip="tooltip"
+                data-placement="top"
+                title="Add to Wishlist"
+              ></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <% }) %>
+  </div>
 
-                                                        <img class="aspect__img" src="/admin-assets/product2/<%= product.image[0] %>" alt=""></a>
-                                                    <div class="product-m__quick-look">
-
-                                                        <a class="fas fa-search"  data-tooltip="tooltip" data-placement="top" title="Quick Look" href="/product-details/<%= product._id%>"></a></div>
-                                                    <div class="product-m__add-cart">
-
-                                                        <a class="btn--e-brand" >View Description</a></div>
-                                                </div>
-                                                <div class="product-m__content">
-                                                    <div class="product-m__category">
-
-                                                        <a href="#"><%= product.categoryId.name %></a></div>
-                                                    <div class="product-m__name">
-
-                                                        <a href="/product-details/<%= product._id%>"><%= product.name%></a></div>
-                                                    <div class="product-m__rating gl-rating-style"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i><i class="far fa-star"></i><i class="far fa-star"></i>
-
-                                                        <span class="product-m__review">(23)</span></div>
-                                                    <div class="product-m__price"> ₹<%= product.price.toFixed(2) %></div>
-                                                    <div class="product-m__hover">
-                                                        <div class="product-m__preview-description">
-
-                                                            <span><%= product.description %></span></div>
-                                                        <div class="product-m__wishlist">
-
-                                                            <a class="far fa-heart" href="#" data-tooltip="tooltip" data-placement="top" title="Add to Wishlist"></a></div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    <% }) %>
+<% if (totalPages > 1) { %>
+  <div class="u-s-p-y-60">
+    <ul class="shop-p__pagination">
+      <% if (currentPage > 1) { %>
+      <li>
+        <a
+          href="#"
+          class="pagination-link fas fa-angle-left"
+          data-page="<%= currentPage - 1 %>"
+        ></a>
+      </li>
+      <% } %> 
+      <% for (let i = 1; i <= totalPages; i++) { %>
+      <li class="<%= parseInt(currentPage) === i ? 'is-active' : '' %>">
+        <a href="#" class="pagination-link" data-page="<%= i %>"><%= i %></a>
+      </li>
+      <% } %> 
+      <% if (currentPage < totalPages) { %>
+      <li>
+        <a
+          href="#"
+          class="pagination-link fas fa-angle-right"
+          data-page="<%= currentPage + 1 %>"
+        ></a>
+      </li>
+      <% } %>
+    </ul>
+  </div>
+  <% } %>
+</div>
