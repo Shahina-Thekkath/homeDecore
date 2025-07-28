@@ -36,10 +36,7 @@ const couponSchema = new mongoose.Schema({
         required: true
     },
     isActive: { type: Boolean, default: true },
-    status: {
-    type: Boolean,
-    default: true         // true = active, false = deactivated
-  }
+    usersUsed: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }]
 }, {
     timestamps: true
 });

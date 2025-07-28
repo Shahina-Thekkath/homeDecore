@@ -20,6 +20,115 @@
 
     <!--====== App ======-->
     <link rel="stylesheet" href="css/app.css">
+
+    <!--====== coupon modal style ======-->
+    <link rel="stylesheet" href="css/couponModal.css">
+   
+    <!--====== find coupon css ======-->
+    <style>
+        .u-s-p-b-60 { padding-bottom: 60px; }
+        .u-s-m-b-16 { margin-bottom: 16px; }
+        .u-s-m-b-15 { margin-bottom: 15px; }
+        .msg { 
+            background: #fff8e1; 
+            padding: 20px; 
+            border-radius: 8px; 
+            margin-bottom: 15px;
+            border-left: 4px solid #ff6b35;
+            box-shadow: 0 2px 8px rgba(255, 107, 53, 0.1);
+        }
+        .msg__text { 
+            font-size: 16px; 
+            color: #333;
+            display: block;
+            margin-bottom: 10px;
+        }
+        .gl-link { 
+            color: #ff6b35; 
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .gl-link:hover { 
+            color: #e55a2b; 
+            text-decoration: underline;
+        }
+        .gl-text { 
+            color: #666; 
+            font-size: 14px;
+            display: block;
+        }
+        .input-text {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        .input-text--primary-style:focus {
+            border-color: #ff6b35;
+            outline: none;
+            box-shadow: 0 0 0 0.2rem rgba(255, 107, 53, 0.25);
+        }
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            font-weight: 600;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .btn--e-transparent-brand-b-2 {
+            background-color: #ff6b35;
+            color: white;
+            border: 2px solid #ff6b35;
+        }
+        .btn--e-transparent-brand-b-2:hover {
+            background-color: #e55a2b;
+            border-color: #e55a2b;
+        }
+        .coupon-finder {
+            background: linear-gradient(135deg, #ff6b35 0%, #ffa500 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);
+        }
+        .coupon-finder__text {
+            font-size: 16px;
+            margin-bottom: 12px;
+            display: block;
+            font-weight: 500;
+        }
+        .coupon-finder__link {
+            color: #ff6b35;
+            background: #fff;
+            padding: 10px 20px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-block;
+            transition: all 0.3s ease;
+            border: 2px solid #fff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .coupon-finder__link:hover {
+            background: #fff3e0;
+            color: #e55a2b;
+            text-decoration: none;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        .c-f {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+        }
+    </style>
+
 </head>
 <body class="config">
     <div class="preloader is-active">
@@ -1278,6 +1387,13 @@
                         <div class="row">
                             <div class="col-lg-12">
                                 <div id="checkout-msg-group">
+                                    <!-- Find Coupons Section -->
+                                    <div class="coupon-finder">
+                                        <span class="coupon-finder__text">Looking for savings? Don't miss out on our latest deals!</span>
+                                        <a class="coupon-finder__link" href="#" data-toggle="modal" data-target="#couponModal" >
+                                            Browse Available Coupons & Offers
+                                        </a>
+                                    </div>
                                     
                                     <div class="msg">
 
@@ -1311,7 +1427,14 @@
                 <!--====== End - Section Content ======-->
             </div>
             <!--====== End - Section 2 ======-->
+            
+            
+           
 
+                
+
+               
+                 
 
             <!--====== Section 3 ======-->
             <div class="u-s-p-b-60">
@@ -1330,15 +1453,24 @@
 
                                                 <span class="ship-b__text">Ship to:</span>
                                                     <div class="ship-b__box u-s-m-b-10" id="ship-to-address">
-                                                        <p class="ship-b__p">
-                                                            <%= selectedAddress.name %>,<%= selectedAddress.address %>, 
-                                                            <%= selectedAddress.locality %>, <%= selectedAddress.state %>, 
-                                                            <%= selectedAddress.country %>, <%= selectedAddress.pincode %>
-                                                        </p>
+                                                        <% if (selectedAddress) { %>
+                                                            <p class="ship-b__p">
+                                                                <%= selectedAddress.name %>, <%= selectedAddress.address %>,
+                                                                <%= selectedAddress.locality %>, <%= selectedAddress.state %>,
+                                                                <%= selectedAddress.country %>, <%= selectedAddress.pincode %>
+                                                            </p>
+                                                        <% } else { %>
+                                                            <p class="ship-b__p text-danger">No address selected or available.</p>
+                                                        <% } %>
+
                                                         
-                                                        <a class="ship-b__edit btn--e-transparent-platinum-b-2" data-modal="modal" 
-                                                            data-modal-id="#edit-ship-address" 
-                                                            href="/editAddress/<%= selectedAddress._id %>?from=checkout">Edit</a>
+                                                        <% if (selectedAddress) { %>
+                                                            <a class="ship-b__edit btn--e-transparent-platinum-b-2" data-modal="modal"
+                                                                data-modal-id="#edit-ship-address"
+                                                                href="/editAddress/<%= selectedAddress._id %>?from=checkout">Edit</a>
+                                                        <% } %>
+                                                            
+
                                                     </div>
 
                                                 <div class="ship-b__box">
@@ -1374,12 +1506,15 @@
                 
                                                 <% }) %>
 
+                                                <% if(selectedAddress){ %>
                                                 <input type="hidden" name="shippingAddress[name]" value="<%= selectedAddress.name %>">
                                                 <input type="hidden" name="shippingAddress[address]" value="<%= selectedAddress.address %>">
                                                 <input type="hidden" name="shippingAddress[locality]" value="<%= selectedAddress.locality %>">
                                                 <input type="hidden" name="shippingAddress[state]" value="<%= selectedAddress.state %>">
                                                 <input type="hidden" name="shippingAddress[country]" value="<%= selectedAddress.country %>">
                                                 <input type="hidden" name="shippingAddress[pincode]" value="<%= selectedAddress.pincode %>">
+                                                <% } %>
+                                                
 
                 
 
@@ -1727,7 +1862,8 @@
                                                             id="address<%= index %>" 
                                                             value="<%= address._id %>" 
                                                             data-address="<%= JSON.stringify(address) %>"
-                                                            <% if (selectedAddress && address._id.toString() === selectedAddress._id.toString() || (!selectedAddress && index === 0)) { %> checked <% } %>
+                                                            <% if ((selectedAddress && address._id.toString() === selectedAddress._id.toString()) || (!selectedAddress && index === 0)) { %> checked <% } %>
+
 
                                                         >
                                                         <div class="radio-box__state radio-box__state--primary">
@@ -1848,6 +1984,185 @@
     </div>
     <!--====== End - Main App ======-->
 
+    <div class="modal fade coupon-modal" id="couponModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-tags mr-2"></i>
+                    Available Coupons & Offers
+                </h5>
+                <button type="button" class="close" data-dismiss="modal">
+                    <span>&times;</span>
+                </button>
+            </div>
+            
+       
+            
+            <!-- Modal Body -->
+            <div class="modal-body">
+              
+                <% if(coupons && coupons.length > 0) { %>
+
+                   <% percentageCoupons.forEach(coupon => { %>
+
+                   <div class="coupon-card">
+                    <div class="coupon-header">
+                        <div class="coupon-code"><%= coupon.code %></div>
+                        <h6 class="coupon-name"><%= coupon.name %></h6>
+                    </div>
+                    <div class="coupon-body">
+                        <div class="coupon-details">
+                            <div class="detail-row">
+                                <span class="detail-label">
+                                    <i class="fas fa-percentage"></i>
+                                    Discount:
+                                </span>
+                                <span class="detail-value">
+                                    <span class="discount-amount"><%= coupon.discountAmount %>% OFF</span>
+                                </span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">
+                                    <i class="fas fa-shopping-cart"></i>
+                                    Min Purchase:
+                                </span>
+                                <span class="detail-value">₹<%= coupon.minPurchaseAmount %></span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">
+                                    <i class="fas fa-calendar"></i>
+                                    Valid Until:
+                                </span>
+                                <span class="detail-value"><%= coupon.expiresOn.toDateString() %></span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">
+                                    <i class="fas fa-users"></i>
+                                    Remaining Uses:
+                                </span>
+                                <span class="detail-value"><%= coupon.usedCount %> / <%= coupon.usageLimit %></span>
+                            </div>
+                        </div>
+                        <button class="btn btn-copy" data-coupon="<%= coupon.code %>">
+                            <i class="fas fa-copy mr-2"></i>
+                            Copy Code & Apply
+                        </button>
+                    </div>
+                </div>
+
+               <% }) %>
+                
+
+               <% flatCoupons.forEach( coupon => { %>
+
+               <div class="coupon-card">
+                    <div class="coupon-header">
+                        <div class="coupon-code"><%= coupon.code %></div>
+                        <h6 class="coupon-name"><%= coupon.name %></h6>
+                    </div>
+                    <div class="coupon-body">
+                        <div class="coupon-details">
+                            <div class="detail-row">
+                                <span class="detail-label">
+                                    <i class="fas fa-percentage"></i>
+                                    Discount:
+                                </span>
+                                <span class="detail-value">
+                                    <span class="discount-amount">₹<%= coupon.discountAmount %> OFF</span>
+                                </span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">
+                                    <i class="fas fa-shopping-cart"></i>
+                                    Min Purchase:
+                                </span>
+                                <span class="detail-value">₹<%= coupon.minPurchaseAmount %></span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">
+                                    <i class="fas fa-calendar"></i>
+                                    Valid Until:
+                                </span>
+                                <span class="detail-value"><%= coupon.expiresOn.toDateString() %></span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">
+                                    <i class="fas fa-users"></i>
+                                    Remaining Uses:
+                                </span>
+                                <span class="detail-value"><%= coupon.usedCount %>/<%= coupon.usageLimit %></span>
+                            </div>
+                        </div>
+                        <button class="btn btn-copy" data-coupon="<%= coupon.code %>">
+                            <i class="fas fa-copy mr-2"></i>
+                            Copy Code & Apply
+                        </button>
+                    </div>
+                </div>
+
+               <% }) %>
+
+               <% expiredCoupons.forEach(coupon => { %>
+        
+                 <div class="coupon-card coupon-expired">
+                    <div class="coupon-header">
+                        <div class="coupon-code"><%= coupon.code %></div>
+                        <h6 class="coupon-name"><%= coupon.name %></h6>
+                    </div>
+                    <div class="coupon-body">
+                        <div class="coupon-details">
+                            <div class="detail-row">
+                                <span class="detail-label">
+                                    <i class="fas fa-percentage"></i>
+                                    Discount:
+                                </span>
+                                <span class="detail-value">
+                                    <span class="discount-amount"><%= coupon.discountType === "percentage"? `${coupon.discountAmount} % OFF`:`₹${coupon.discountAmount}  OFF` %></span>
+                                </span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">
+                                    <i class="fas fa-shopping-cart"></i>
+                                    Min Purchase:
+                                </span>
+                                <span class="detail-value">₹<%= coupon.minPurchaseAmount %></span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">
+                                    <i class="fas fa-calendar"></i>
+                                    Valid Until:
+                                </span>
+                                <span class="detail-value"><%= coupon.expiresOn.toDateString() %></span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">
+                                    <i class="fas fa-users"></i>
+                                    Remaining Uses:
+                                </span>
+                                <span class="detail-value"><%= coupon.usedCount %>/<%= coupon.usageLimit %></span>
+                            </div>
+                        </div>
+                        <button class="btn btn-expired" disabled>
+                            <i class="fas fa-clock mr-2"></i>
+                            Expired
+                        </button>
+                    </div>
+                </div>
+
+               <% }) %>
+
+        <% } else { %>
+
+                   <div class="no-coupons">
+                    <i class="fas fa-tags"></i>
+                    <h5>No Coupons Available</h5>
+                    <p class="text-muted">Check back later for exciting offers and discounts!</p>
+                </div>
+
+            <% } %>
+
 
 
     <!--====== Google Analytics: change UA-XXXXX-Y to be your site's ID ======-->
@@ -1874,6 +2189,10 @@
 
     <!--====== Razorpay ======-->
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.2/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     
 
     <script>
@@ -2042,6 +2361,369 @@
              });
 
     </script>
+    <script>
+$(document).ready(function() {
+    
+    // Handle copy button click
+    $('.btn-copy').on('click', function() {
+        var couponCode = $(this).data('coupon');
+        
+        
+        
+        // Copy to clipboard
+        copyToClipboard(couponCode);
+        
+        $('#coupon').val(couponCode);
+        
+        // Show success message
+        showSuccess();
+        
+        // Close modal after 1.5 seconds
+        setTimeout(function() {
+            $('#couponModal').modal('hide');
+        }, 1500);
+    });
+
+     // Proper modal close function
+    function closeModalProperly() {
+        $('#couponModal').modal('hide');
+        
+        // Force remove backdrop and blur after modal hide
+        setTimeout(function() {
+            $('.modal-backdrop').remove();
+            $('body').removeClass('modal-open');
+            $('body').css('padding-right', '');
+        }, 300); // Wait for Bootstrap's animation to complete
+    }
+    
+    // Also handle when modal is manually closed
+    $('#couponModal').on('hidden.bs.modal', function() {
+        // Ensure backdrop is completely removed
+        $('.modal-backdrop').remove();
+        $('body').removeClass('modal-open');
+        $('body').css('padding-right', '');
+    });
+    
+    // Copy to clipboard function
+    function copyToClipboard(text) {
+        if (navigator.clipboard) {
+            navigator.clipboard.writeText(text).catch(function() {
+                console.log('❌ Failed to copy with modern method:', err);
+                fallbackCopy(text);
+            });
+        } else {
+            fallbackCopy(text);
+        }
+    }
+    
+    // Fallback copy method for older browsers
+    function fallbackCopy(text) {
+        var textArea = document.createElement('textarea');
+        textArea.value = text;
+        textArea.style.position = 'fixed';
+        textArea.style.left = '-9999px';
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+    }
+    
+    // Show success notification
+    function showSuccess() {
+    swal({
+        title: "Copied!",
+        text: "Coupon code has been applied to your order",
+        icon: "success",
+        timer: 2000,           // Auto close after 2 seconds
+        buttons: false,        // No buttons needed
+        dangerMode: false,
+        className: "sweet-alert-custom"  // Optional: for custom styling
+    });
+}
+    
+});
+</script>
+
+<script>
+    // AJAX handler for coupon code application 
+$(document).ready(function() {
+    // Handle coupon form submission - using the actual class from your HTML
+    $('.c-f__form').on('submit', function(e) {
+        e.preventDefault();
+        
+        const couponCode = $('#coupon').val().trim();
+        
+        if (!couponCode) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Missing Coupon Code',
+                text: 'Please enter a coupon code',
+                confirmButtonColor: '#3085d6'
+            });
+            return;
+        }
+        
+        // Show loading state
+        const submitBtn = $(this).find('button[type="submit"]');
+        const originalText = submitBtn.text();
+        submitBtn.text('APPLYING...').prop('disabled', true);
+        
+        // AJAX request to apply coupon
+        $.ajax({
+            url: '/apply-coupon', 
+            method: 'POST',
+            data: {
+                couponCode: couponCode,
+                // Add any other required data like cart items, user ID, etc.
+            },
+            dataType: 'json',
+            success: function(response) {
+                if (response.success) {
+                    // Update the UI with new values
+                    updateOrderSummary(response.data);
+                    
+                    // Show success message with SweetAlert
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Coupon Applied!',
+                        text: response.message || 'Coupon applied successfully!',
+                        timer: 3000,
+                        showConfirmButton: false,
+                        toast: true,
+                        position: 'top-end'
+                    });
+                    
+                    // Update button states after successful coupon application
+                    updateButtonsAfterCouponApply(response.data.appliedDiscount);
+                    
+                    // Disable the coupon input
+                    $('#coupon').prop('disabled', true);
+                    
+                } else {
+                    // Show error message with SweetAlert
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Invalid Coupon',
+                        text: response.message || 'Invalid coupon code',
+                        confirmButtonColor: '#d33'
+                    });
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('AJAX Error:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Connection Error',
+                    text: 'Something went wrong. Please try again.',
+                    confirmButtonColor: '#d33'
+                });
+            },
+            complete: function() {
+                // Reset button state
+                submitBtn.text(originalText).prop('disabled', false);
+            }
+        });
+    });
+    
+    // Function to update order summary with new values
+    function updateOrderSummary(data) {
+        const { grandTotal, subtotal, appliedDiscount, discountAmount } = data;
+        
+        
+        const summaryTable = $('.o-summary__table tbody');
+        
+        // Clear existing rows
+        summaryTable.empty();
+        
+        // Add SUBTOTAL row 
+        summaryTable.append(`
+            <tr>
+                <td>SUBTOTAL</td>
+                <td>₹${subtotal.toFixed(2)}</td>
+            </tr>
+        `);
+        
+        // Add SHIPPING row 
+        summaryTable.append(`
+            <tr>
+                <td>SHIPPING</td>
+                <td>₹0.00</td>
+            </tr>
+        `);
+        
+        // Add discount row if discount is applied (this is NEW - not in original EJS)
+        if (appliedDiscount && discountAmount > 0) {
+            summaryTable.append(`
+                <tr class="discount-row">
+                    <td>DISCOUNT (${appliedDiscount})</td>
+                    <td class="discount-amount">-₹${discountAmount.toFixed(2)}</td>
+                </tr>
+            `);
+        }
+        
+        // Add GRAND TOTAL row (matches your EJS structure)
+        summaryTable.append(`
+            <tr>
+                <td>GRAND TOTAL</td>
+                <td>₹${grandTotal.toFixed(2)}</td>
+            </tr>
+        `);
+        
+        // Add animation effect
+        summaryTable.fadeOut(200).fadeIn(400);
+    }
+    
+    // Function to update buttons after coupon is applied
+    function updateButtonsAfterCouponApply(appliedCouponCode) {
+        const buttonContainer = $('.c-f__form .u-s-m-b-15').last(); // Get the button container
+        
+        // Disable and update the Apply button
+        const applyBtn = buttonContainer.find('button[type="submit"]');
+        applyBtn.text('APPLIED').prop('disabled', true).addClass('btn-applied');
+        
+        // Add the Remove button next to Apply button
+        const removeBtn = `
+            <button type="button" class="btn btn--e-brand-b-2 remove-coupon-btn u-s-m-l-10" style="margin-left: 10px;">
+                REMOVE
+            </button>
+        `;
+        
+        // Check if remove button doesn't already exist
+        if (!buttonContainer.find('.remove-coupon-btn').length) {
+            buttonContainer.append(removeBtn);
+        }
+        
+        // Show which coupon is applied
+        const couponInfo = `
+            <div class="applied-coupon-info u-s-m-t-10">
+                <small class="text-success">
+                    <i class="fas fa-check-circle"></i> 
+                    Coupon "${appliedCouponCode}" applied successfully
+                </small>
+            </div>
+        `;
+        
+        // Add coupon info if it doesn't exist
+        if (!$('.applied-coupon-info').length) {
+            $('.c-f').append(couponInfo);
+        }
+    }
+    
+    // Function to reset buttons when coupon is removed
+    function resetButtonsAfterCouponRemove() {
+        const buttonContainer = $('.c-f__form .u-s-m-b-15').last();
+        
+        // Reset the Apply button
+        const applyBtn = buttonContainer.find('button[type="submit"]');
+        applyBtn.text('APPLY').prop('disabled', false).removeClass('btn-applied');
+        
+        // Remove the Remove button
+        buttonContainer.find('.remove-coupon-btn').remove();
+        
+        // Remove coupon info
+        $('.applied-coupon-info').remove();
+        
+        // Enable the coupon input
+        $('#coupon').prop('disabled', false).val('');
+    }
+    
+    // Function to show messages to user
+    function showMessage(message, type) {
+        // Remove existing messages
+        $('.coupon-message').remove();
+        
+        const messageClass = type === 'success' ? 'alert-success' : 'alert-danger';
+        const messageHtml = `
+            <div class="alert ${messageClass} coupon-message" style="margin-top: 10px;">
+                ${message}
+                <button type="button" class="close" data-dismiss="alert">
+                    <span>&times;</span>
+                </button>
+            </div>
+        `;
+        
+        // Append to the form container - using your actual HTML structure
+        $('.c-f').append(messageHtml);
+        
+        // Auto hide success messages after 3 seconds
+        if (type === 'success') {
+            setTimeout(() => {
+                $('.coupon-message').fadeOut();
+            }, 3000);
+        }
+    }
+});
+
+function showSuccessToast(message) {
+    Swal.fire({
+        icon: 'success',
+        title: message,
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true
+    });
+}
+
+// 2. Full modal with custom styling
+function showCouponSuccess(message, savings) {
+    Swal.fire({
+        icon: 'success',
+        title: 'Coupon Applied Successfully!',
+        html: `
+            <p>${message}</p>
+            <p><strong>You saved: ₹${savings}</strong></p>
+        `,
+        confirmButtonText: 'Great!',
+        confirmButtonColor: '#28a745',
+        showClass: {
+            popup: 'animate__animated animate__fadeInDown'
+        },
+        hideClass: {
+            popup: 'animate__animated animate__fadeOutUp'
+        }
+    });
+}
+
+// 3. Loading state while processing
+function showLoadingAlert() {
+    Swal.fire({
+        title: 'Applying Coupon...',
+        text: 'Please wait while we process your coupon code.',
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        showConfirmButton: false,
+        didOpen: () => {
+            Swal.showLoading();
+        }
+    });
+}
+</script>
+
+<script>
+  $('#removeCouponBtn').on('click', function () {
+    $.ajax({
+      url: '/remove-coupon',
+      method: 'POST',
+      success: function (response) {
+        if (response.success) {
+          
+          $('#applied-coupon-box').remove(); // Remove coupon box
+          $('#discount-amount').text('₹0');
+          $('#grand-total').text(`₹${response.data.grandTotal}`);
+          Swal.fire('Coupon Removed', response.message, 'success');
+        } else {
+          Swal.fire('Error', response.message, 'error');
+        }
+      },
+      error: function () {
+        Swal.fire('Error', 'Failed to remove coupon. Try again later.', 'error');
+      }
+    });
+  });
+</script>
+
 
     <!--====== Noscript ======-->
     <noscript>

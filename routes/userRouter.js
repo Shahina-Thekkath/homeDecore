@@ -13,6 +13,7 @@ const addressController = require("../controllers/user/addressController");
 const cartController = require("../controllers/user/cartController");
 const checkoutController = require("../controllers/user/checkoutController");
 const orderController = require("../controllers/user/orderController");
+const couponController = require("../controllers/user/couponController");
 
 // const GoogleStrategy = require('passport-google-oauth20').Strategy;
 
@@ -94,6 +95,9 @@ userRouter.get("/orders", auth.sessionVerify, orderController.getOrdersPage);
 userRouter.get("/orderDetails/:orderId", auth.sessionVerify, orderController.getOrderDetails);
 userRouter.patch("/order/:orderId/cancel/:productId", auth.sessionVerify, orderController.cancelOrder);
 userRouter.post("/order/return/:orderId", auth.sessionVerify, orderController.returnOrder);
+
+userRouter.post('/apply-coupon', auth.sessionVerify, couponController.applyCoupon);
+userRouter.post('/remove-coupon', auth.sessionVerify, couponController.removeCoupon);
 
 
 

@@ -62,7 +62,9 @@ adminRouter.post('/orders/cancel-product', orderController.cancelProductByIndex)
 adminRouter.get("/coupon", couponController.getCouponList);
 adminRouter.get("/coupon/add-coupon", couponController.renderAddCouponPage);
 adminRouter.post("/coupon/add-coupon", couponController.addCoupon);
-adminRouter.patch("/coupons/toggle/:id", couponController.toggleCouponStatus);
+adminRouter.get("/coupon/edit-coupon/:id", couponController.getEditCoupon);
+adminRouter.put("/coupon/edit-coupon/:id", couponController.updateCoupon);
+adminRouter.patch('/coupons/toggle/:id', couponController.toggleCouponStatus);
 
 
 

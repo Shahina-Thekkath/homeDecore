@@ -7,12 +7,14 @@ const Order = require("../../models/orderSchema");
 const razorpay = require("../../config/razorpayInstance");
 const crypto = require('crypto');
 const qs = require('qs');
+const Coupon = require('../../models/couponSchema');
 
 
 const saveOrderFromSerializedData = async (formData, userId, isPaid = false) => {
     
 
     try {
+        const userId = req.session.user._id;
         const parsedFormData = qs.parse(formData);
         
         
@@ -51,6 +53,20 @@ const saveOrderFromSerializedData = async (formData, userId, isPaid = false) => 
              throw new Error("Order save failed");
         }
     
+     if (couponCode) {
+            const coupon = await Coupon.findOne({ code: couponCode.trim().toUpperCase() });
+
+            if (coupon) {
+                // Prevent double-use by the same user
+                if (!coupon.usersUsed.includes(userId)) {
+                    coupon.usersUsed.push(userId);
+                    coupon.usedCount += 1;
+                    await coupon.save();
+                }
+            }
+        }
+
+
 
     //  Clear cart
     await Cart.deleteOne({userId });
@@ -76,7 +92,7 @@ const saveOrderFromSerializedData = async (formData, userId, isPaid = false) => 
 const saveOrderInSession = async (req, res) => {
     try {
       
-         
+         const userId = req.session.user._id;
         const { cartItems, grandTotal, shippingAddress, payment } = req.body;
       
 
@@ -109,6 +125,19 @@ const saveOrderInSession = async (req, res) => {
 
         const newOrder = new Order(order);
         await newOrder.save();
+
+            if (couponCode) {
+            const coupon = await Coupon.findOne({ code: couponCode.trim().toUpperCase() });
+
+            if (coupon) {
+                // Prevent double-use by the same user
+                if (!coupon.usersUsed.includes(userId)) {
+                    coupon.usersUsed.push(userId);
+                    coupon.usedCount += 1;
+                    await coupon.save();
+                }
+            }
+        }
 
         await Cart.findOneAndUpdate({userId: req.session.user._id}, {$set:{items: []}});
 

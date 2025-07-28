@@ -1,4 +1,5 @@
 const Coupon = require("../../models/couponSchema");
+const moment = require("moment");
 
 const renderAddCouponPage = async (req, res) => {
   try {
@@ -21,6 +22,9 @@ const addCoupon = async (req, res) => {
       discountType,
     } = req.body;
 
+    console.log("CouponformData:", name, code, discountAmount, usageLimit, minPurchaseAmount, expiresOn, discountType);
+    
+
     const errors = {};
 
     // Required field checks
@@ -34,7 +38,7 @@ const addCoupon = async (req, res) => {
     if (!discountType) errors.discountType = "Discount type is required";
 
     // pattern validation
-    if (name && !/^[A-Za-z\s]{3,30}$/.test(name)) {
+    if (name && !/^[a-zA-Z0-9₹\s]{3,30}$/.test(name)) {
       errors.name = "Name should be 3-30 letters only";
     }
 
@@ -55,20 +59,28 @@ const addCoupon = async (req, res) => {
       errors.minPurchaseAmount = "Enter a valid amount (e.g., 50 or 50.00)";
     }
 
-    if (expiresOn && isNaN(Date.parse(expiresOn))) {
-      errors.expiresOn = "Invalid date format";
+    let newDate;
+    if (expiresOn) {
+      const [day, month, year] = expiresOn.split('-');
+      const isoDate = new Date(`${year}-${month}-${day}`); // Convert to valid Date object
+      if (isNaN(Date.parse(isoDate))) {
+        errors.expiresOn = "Invalid date format";
+      }else {
+      newDate = isoDate;
+      }
     }
 
-    if (discountType && !["percentage", "fixed"].includes(discountType)) {
+
+    if (discountType && !["percentage", "flat"].includes(discountType)) {
       errors.discountType =
-        'Discount type must be either "percentage" or "fixed"';
+        'Discount type must be either "percentage" or "flat"';
     }
 
     if (Object.keys(errors).length > 0) {
       return res.status(400).json({ success: false, errors });
     }
 
-    const existingCoupon = await Coupon.findOne({ code });
+    const existingCoupon = await Coupon.findOne({ code});
     if (existingCoupon) {
       return res.status(400).json({
         success: false,
@@ -82,7 +94,7 @@ const addCoupon = async (req, res) => {
       discountAmount,
       usageLimit,
       minPurchaseAmount,
-      expiresOn,
+      expiresOn: newDate,
       discountType,
     });
 
@@ -124,9 +136,119 @@ const toggleCouponStatus = async (req, res) => {
     }
 };
 
+const getEditCoupon = async (req, res) => {
+  try {
+    const coupon = await Coupon.findById(req.params.id);
+    res.render('editCoupon', {moment, coupon});
+  } catch (error) {
+    console.error("EditCoupon render error", error);
+    res.status(500).send("Server Error")
+    
+  }
+};
+
+const updateCoupon = async (req, res) => {
+  try {
+     const id = req.params.id;
+
+    const {
+      name,
+      code,
+      discountAmount,
+      usageLimit,
+      minPurchaseAmount,
+      expiresOn,
+      discountType,
+    } = req.body;
+
+    
+    
+
+    const errors = {};
+
+    // Required field checks
+    if (!name) errors.name = "Coupon name is required";
+    if (!code) errors.code = "Coupon code is required";
+    if (!discountAmount) errors.discountAmount = "Discount amount is required";
+    if (!usageLimit) errors.usageLimit = "Usage limit amount is required";
+    if (!minPurchaseAmount)
+      errors.minPurchaseAmount = "Minimum purchase amount is required";
+    if (!expiresOn) errors.expiresOn = "Expiry date is required";
+    if (!discountType) errors.discountType = "Discount type is required";
+
+    // pattern validation
+    if (name && !/^[a-zA-Z0-9₹\s]{3,30}$/.test(name)) {
+      errors.name = "Name should be 3-30 letters only";
+    }
+
+    if (code && !/^[A-Z0-9_-]{3,10}$/.test(code)) {
+      errors.code =
+        "Code should be 3-10 character, uppercase letters/numbers only";
+    }
+
+    if (discountAmount && !/^\d+(\.\d{1,2})?$/.test(discountAmount)) {
+      errors.discountAmount = "Enter a valid amount (e.g., 10 or 10.50)";
+    }
+
+    if (usageLimit && !/^\d+$/.test(usageLimit)) {
+      errors.usageLimit = "Usage limit must be a valid number";
+    }
+
+    if (minPurchaseAmount && !/^\d+(\.\d{1,2})?$/.test(minPurchaseAmount)) {
+      errors.minPurchaseAmount = "Enter a valid amount (e.g., 50 or 50.00)";
+    }
+
+    let newDate;
+    if (expiresOn) {
+      const [day, month, year] = expiresOn.split('-');
+      const isoDate = new Date(`${year}-${month}-${day}`); // Convert to valid Date object
+      if (isNaN(Date.parse(isoDate))) {
+        errors.expiresOn = "Invalid date format";
+      }else {
+      newDate = isoDate;
+      }
+    }
+
+
+    if (discountType && !["percentage", "flat"].includes(discountType)) {
+      errors.discountType =
+        'Discount type must be either "percentage" or "flat"';
+    }
+
+    if (Object.keys(errors).length > 0) {
+      return res.status(400).json({ success: false, errors });
+    }
+
+    const existingCoupon = await Coupon.findOne({ code, _id: {$ne: id} });
+    if (existingCoupon) {
+      return res.status(400).json({
+        success: false,
+        errors: { code: "Coupon code already exists" },
+      });
+    }
+
+    await Coupon.findByIdAndUpdate( id, {
+      name,
+      code,
+      discountAmount,
+      usageLimit,
+      minPurchaseAmount,
+      expiresOn: newDate,
+      discountType,
+    }, { new: true });
+
+    return res.json({ success: true, message: "Coupon updated successfully" });
+  } catch (error) {
+    console.error("Internal Server Error editing coupon", error);
+    return res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
 module.exports = {
     renderAddCouponPage,
     addCoupon,
     getCouponList,
-    toggleCouponStatus
+    toggleCouponStatus,
+    getEditCoupon,
+    updateCoupon
 };
