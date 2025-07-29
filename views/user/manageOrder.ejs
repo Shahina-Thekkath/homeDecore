@@ -1448,34 +1448,43 @@
   
                                                        <div class="u-s-m-t-15" style="text-align: right;">
                                                        
-                                                                <% if (product.status === "Cancelled") { %>
-                                                                    <span class="badge badge-danger" style="font-weight:600; color: #dc3545;">Cancelled</span>
-                                                                <% } else { %>
-                                                                    
-                                                                    <% if (product.isCancellable) { %>
-                                                                    <button 
-                                                                        class="dash__custom-link btn--e-transparent-brand-b-2 u-s-m-t-10"
-                                                                        onclick="cancelOrder('<%= order._id %>', '<%= product.productId._id %>')">
-                                                                        Cancel Order
-                                                                    </button>
+                                                               <div class="u-s-m-t-15" style="text-align: right;">
+
+                                                                    <% if (product.status === "Cancelled") { %>
+                                                                        <span style="color: #dc3545; font-weight: 600;">
+                                                                        Cancelled
+                                                                        </span>
+
+                                                                    <% } else if (product.status === "Returned") { %>
+                                                                        <span style="color: #28a745; font-weight: 600;">
+                                                                        Returned
+                                                                        </span>
+
+                                                                    <% } else if (product.status === "Return Requested") { %>
+                                                                        <span style="color: #ffc107; font-weight: 600;">
+                                                                        Return Requested
+                                                                        </span>
+
                                                                     <% } else { %>
-                                                                    <button 
-                                                                        class="dash__custom-link btn--e-transparent-brand-b-2 u-s-m-t-10 disabled"
-                                                                        style="pointer-events: none; opacity: 0.6;">
-                                                                        Cancel Order
-                                                                    </button>
-                                                                    <% } %>
 
-                                                                    <% if (product.isReturnable) { %>
-                                                                    <button 
-                                                                        id="returnButton"
-                                                                        class="dash__custom-link btn--e-transparent-brand-b-2 u-s-m-t-10"
-                                                                        onclick="requestReturn('<%= order._id %>', '<%= product.productId._id %>')">
-                                                                        Return
-                                                                    </button>
-                                                                    <% } %>
+                                                                        <% if (product.isCancellable && product.status !== "Delivered") { %>
+                                                                        <button 
+                                                                            class="dash__custom-link btn--e-transparent-brand-b-2 u-s-m-t-10"
+                                                                            onclick="cancelOrder('<%= order._id %>', '<%= product.productId._id %>')">
+                                                                            Cancel Order
+                                                                        </button>
+                                                                        <% } %>
 
-                                                                <% } %>
+                                                                        <% if (product.isReturnable && product.status === "Delivered") { %>
+                                                                        <button 
+                                                                            id="returnButton"
+                                                                            class="dash__custom-link btn--e-transparent-brand-b-2 u-s-m-t-10"
+                                                                            onclick="requestReturn('<%= order._id %>', '<%= product.productId._id %>')">
+                                                                            Return
+                                                                        </button>
+                                                                        <% } %>
+
+                                                                    <% } %>
                                                                 </div>
                                                     
 
@@ -1785,7 +1794,7 @@
             });
         }
 
-        function requestReturn(orderId){
+        function requestReturn(orderId, productId){
             Swal.fire({
                 title: "Request Return?",
                 text: "Are you sure you want to request a return for this order?",
@@ -1796,11 +1805,12 @@
                 confirmButtonText: "Yes, request return!",
             }).then((result) =>{
                 if(result.isConfirmed){
-                    fetch(`/order/return/${orderId}`, {
+                    fetch(`/order/return/${orderId}/${productId}`, {
                         method: "POST"
                     })
                     .then((response) => response.json())
                     .then((data) => {
+                        console.log("Return request response:", data);
                         if (data.success) {
                             Swal.fire(
                                 "Requested!",

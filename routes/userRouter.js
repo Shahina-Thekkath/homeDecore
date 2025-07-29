@@ -94,7 +94,7 @@ userRouter.post('/order-save', auth.sessionVerify,orderController.saveOrderInSes
 userRouter.get("/orders", auth.sessionVerify, orderController.getOrdersPage);
 userRouter.get("/orderDetails/:orderId", auth.sessionVerify, orderController.getOrderDetails);
 userRouter.patch("/order/:orderId/cancel/:productId", auth.sessionVerify, orderController.cancelOrder);
-userRouter.post("/order/return/:orderId", auth.sessionVerify, orderController.returnOrder);
+userRouter.post("/order/return/:orderId/:productId", auth.sessionVerify, orderController.returnOrder);
 
 userRouter.post('/apply-coupon', auth.sessionVerify, couponController.applyCoupon);
 userRouter.post('/remove-coupon', auth.sessionVerify, couponController.removeCoupon);

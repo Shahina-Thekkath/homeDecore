@@ -1625,48 +1625,57 @@
 
     <script>
 
-        async function deleteAddress(id){
-            
-            try {
+        async function deleteAddress(id) {
+    // Show SweetAlert confirmation FIRST
+    const result = await Swal.fire({
+        title: 'Are you sure?',
+        text: "Do you really want to delete this address?",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Yes, delete it!',
+        cancelButtonText: 'Cancel'
+    });
 
-       
-        
-                // Use fetch API to send data
-                const response = await fetch(`/deleteAddress/${id}`, {
+    // If the user confirmed, proceed to delete
+    if (result.isConfirmed) {
+        try {
+            const response = await fetch(`/deleteAddress/${id}`, {
                 method: "DELETE",
                 headers: {
                     "Content-Type": "application/json",
                 },
-               
-                });
+            });
 
-                const result = await response.json();  //parse the response (convert int normal from JSON)  ie it would like normal key value pair in an object
+            const data = await response.json();
 
-                if (response.ok) {
+            if (response.ok) {
                 Swal.fire({
                     icon: "success",
-                    title: "Address Delete!",
-                    text: result.message || "Your address has been successfully deleted",
+                    title: "Deleted!",
+                    text: data.message || "Address has been successfully deleted.",
                 }).then(() => {
-                    window.location.href = "/address"
+                    // Reload or redirect after success
+                    window.location.href = "/address";
                 });
-                } else {
+            } else {
                 Swal.fire({
                     icon: "error",
                     title: "Error",
-                    text: result.message || "Failed to delete the address. Please try again.",
+                    text: data.message || "Failed to delete the address. Please try again.",
                 });
-                }
-                } catch (error) {
-                Swal.fire({
+            }
+        } catch (error) {
+            Swal.fire({
                 icon: "error",
                 title: "Error",
                 text: "An unexpected error occurred. Please try again later.",
-                });
-                }
-      
-           
-        }    
+            });
+        }
+    }
+}
+
         
 
 

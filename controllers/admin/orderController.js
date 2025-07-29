@@ -130,6 +130,9 @@ const updateProductStatus = async (req, res) =>{
             order.products[productIndex].status = newStatus;
             
         }
+        if(newStatus === "Returned"){
+            order.products[productIndex].status = newStatus;
+        }
 
         await order.save();
         console.log("update Product status;",order);

@@ -2377,11 +2377,9 @@ $(document).ready(function() {
         
         // Show success message
         showSuccess();
-        
-        // Close modal after 1.5 seconds
-        setTimeout(function() {
-            $('#couponModal').modal('hide');
-        }, 1500);
+
+        closeModalProperly();
+       
     });
 
      // Proper modal close function
@@ -2430,7 +2428,7 @@ $(document).ready(function() {
     
     // Show success notification
     function showSuccess() {
-    swal({
+    swal.fire({
         title: "Copied!",
         text: "Coupon code has been applied to your order",
         icon: "success",
@@ -2551,7 +2549,7 @@ $(document).ready(function() {
             </tr>
         `);
         
-        // Add discount row if discount is applied (this is NEW - not in original EJS)
+        // Add discount row if discount is applied 
         if (appliedDiscount && discountAmount > 0) {
             summaryTable.append(`
                 <tr class="discount-row">
@@ -2561,16 +2559,16 @@ $(document).ready(function() {
             `);
         }
         
-        // Add GRAND TOTAL row (matches your EJS structure)
+        // Add GRAND TOTAL row 
         summaryTable.append(`
             <tr>
                 <td>GRAND TOTAL</td>
-                <td>₹${grandTotal.toFixed(2)}</td>
+                <td id="grand-total">₹${grandTotal.toFixed(2)}</td>
             </tr>
         `);
         
         // Add animation effect
-        summaryTable.fadeOut(200).fadeIn(400);
+        // summaryTable.fadeOut(200).fadeIn(400);
     }
     
     // Function to update buttons after coupon is applied
@@ -2583,7 +2581,7 @@ $(document).ready(function() {
         
         // Add the Remove button next to Apply button
         const removeBtn = `
-            <button type="button" class="btn btn--e-brand-b-2 remove-coupon-btn u-s-m-l-10" style="margin-left: 10px;">
+            <button id="removeCouponBtn" type="button" class="btn btn--e-brand-b-2 remove-coupon-btn u-s-m-l-10" style="margin-left: 10px;">
                 REMOVE
             </button>
         `;
@@ -2609,7 +2607,7 @@ $(document).ready(function() {
         }
     }
     
-    // Function to reset buttons when coupon is removed
+    
     function resetButtonsAfterCouponRemove() {
         const buttonContainer = $('.c-f__form .u-s-m-b-15').last();
         
@@ -2710,7 +2708,7 @@ function showLoadingAlert() {
         if (response.success) {
           
           $('#applied-coupon-box').remove(); // Remove coupon box
-          $('#discount-amount').text('₹0');
+          $('.discount-row').text('₹0');
           $('#grand-total').text(`₹${response.data.grandTotal}`);
           Swal.fire('Coupon Removed', response.message, 'success');
         } else {

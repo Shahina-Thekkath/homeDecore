@@ -84,7 +84,7 @@ const getUserProductList = async(req, res) =>{
             .limit(limit)
             .lean();
 
-            // 👉 Aggregate product count by category
+            //  Aggregate product count by category
         const categoryCounts = await Product.aggregate([
             { $match: { isBlocked: false } },
             { $group: {
@@ -93,13 +93,13 @@ const getUserProductList = async(req, res) =>{
             }}
         ]);
 
-        // 👉 Populate category names
+        //  Populate category names
         const countsWithNames = await Category.populate(categoryCounts, {
             path: "_id",
             select: "name"
         });
 
-        // 👉 Convert to a simpler format
+        //  Convert to a simpler format
         const categories = countsWithNames.map(item => ({
             name: item._id.name,
             count: item.count

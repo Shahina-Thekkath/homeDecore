@@ -10,11 +10,11 @@ const qs = require('qs');
 const Coupon = require('../../models/couponSchema');
 
 
-const saveOrderFromSerializedData = async (formData, userId, isPaid = false) => {
+const saveOrderFromSerializedData = async (formData, userId, isPaid = false, couponCode = null) => {
     
 
     try {
-        const userId = req.session.user._id;
+        
         const parsedFormData = qs.parse(formData);
         
         
@@ -126,6 +126,7 @@ const saveOrderInSession = async (req, res) => {
         const newOrder = new Order(order);
         await newOrder.save();
 
+        const couponCode = req.session.coupon?.code;
             if (couponCode) {
             const coupon = await Coupon.findOne({ code: couponCode.trim().toUpperCase() });
 
@@ -164,6 +165,7 @@ const getOrderSuccess = (req, res) => {
 
         req.session.order = null;
         req.session.paymentMethod = null;
+        req.session.coupon = null;
 
         // Render the success page with order details
         res.render("orderSuccess", { order, paymentMethod});
@@ -287,23 +289,34 @@ const cancelOrder = async(req, res) =>{
     }
 };
 
-const returnOrder = async(req, res) =>{
-    const {orderId} = req.params;
+const returnOrder = async (req, res) => {
+    const { orderId, productId } = req.params;
+
     try {
         const order = await Order.findById(orderId);
-        if(order.status !== "Delivered"){
-            return res.status(400).json({success: false, message: "Order cannot be returned"});
+        if (!order) {
+            return res.status(404).json({ success: false, message: "Order not found" });
         }
-        order.status = "return Requested";
+
+        const product = order.products.find(p => p.productId.toString() === productId);
+        if (!product) {
+            return res.status(404).json({ success: false, message: "Product not found in this order" });
+        }
+
+        if (product.status !== "Delivered") {
+            return res.status(400).json({ success: false, message: "Product cannot be returned" });
+        }
+
+        product.status = "Return Requested";
         await order.save();
-        res.json({ success: true}); 
-        
+
+        return res.json({ success: true });
     } catch (error) {
         console.error("Error requesting return:", error);
-        res.status(500).json({ success: false, message: "Failed to request return"});
-        
+        return res.status(500).json({ success: false, message: "Failed to request return" });
     }
 };
+
 
 
 //  Implementing Razorpay
@@ -353,7 +366,7 @@ const verifyRazorpayPayment = async (req, res) => {
 
            if(generated_signature === razorpay_signature){
                //  Save the order in DB
-            const savedOrder = await saveOrderFromSerializedData(formData, req.session.user?._id, true); // true means paid
+            const savedOrder = await saveOrderFromSerializedData(formData, req.session.user?._id, true, req.session?.coupon?.code ); // true means paid
 
             console.log("savedOrder: ", savedOrder);
             
