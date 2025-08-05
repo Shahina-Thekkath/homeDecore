@@ -180,35 +180,54 @@
                                 <span class="ah-close">✕ Close</span>
 
                                 <!--====== List ======-->
-                                <ul class="ah-list ah-list--design1 ah-list--link-color-secondary">
+                               <ul class="ah-list ah-list--design1 ah-list--link-color-secondary">
                                     <li class="has-dropdown" data-tooltip="tooltip" data-placement="left" title="Account">
 
-                                        <a><i class="far fa-user-circle"></i></a>
+                                        <%if(locals.user){%>
+                                                <a href="/profile"><i ><%=locals.user.name%></i></a>
+
+                                            <%}else{%>
+
+                                                <a><i class="far fa-user-circle"></i></a>
+
+                                                <%}%>
 
                                         <!--====== Dropdown ======-->
 
                                         <span class="js-menu-toggle"></span>
                                         <ul style="width:120px">
-                                            <li>
 
-                                                <a href="dashboard.html"><i class="fas fa-user-circle u-s-m-r-6"></i>
+                                           
+                                           
+                                                    <%if(locals.user){%>
+                                                        <li>
+                                                           <a href="/profile"><i><%=locals.user.name%></i>
 
-                                                    <span>Account</span></a></li>
-                                            <li>
+                                                            </a>
+                                                        </li> 
+                                                           
+                                                   
+                                                       
+                                                        <li>
 
-                                                <a href="signup.html"><i class="fas fa-user-plus u-s-m-r-6"></i>
+                                                            <a href="/logout"><i class="fas fa-lock-open u-s-m-r-6"></i>
+        
+                                                                <span>Logout</span></a>
+                                                        </li>
+                                                    <%}else{%>
+                                                        <li>
 
-                                                    <span>Signup</span></a></li>
-                                            <li>
+                                                            <a href="/signup"><i class="fas fa-user-plus u-s-m-r-6"></i>
+        
+                                                                <span>Signup</span></a>
+                                                        </li>
+                                                        <li>
 
-                                                <a href="signin.html"><i class="fas fa-lock u-s-m-r-6"></i>
-
-                                                    <span>Signin</span></a></li>
-                                            <li>
-
-                                                <a href="signup.html"><i class="fas fa-lock-open u-s-m-r-6"></i>
-
-                                                    <span>Signout</span></a></li>
+                                                            <a href="/login"><i class="fas fa-lock u-s-m-r-6"></i>
+        
+                                                            <span>Login</span></a>
+                                                        </li>
+                                                    <%}%>
                                         </ul>
                                         <!--====== End - Dropdown ======-->
                                     </li>
@@ -1495,6 +1514,7 @@
 
 
                                                 <input type="hidden" name="grandTotal" value="<%= grandTotal %>">
+                                                <input type="hidden" name="discountAmount" value="<%= discountAmount || 0 %>">
                                                 <% cartItems.forEach((item, index) =>{%>
                                                     <input type="hidden" name="cartItems[<%= index %>][id]" value="<%= item.productId._id %>">
 
@@ -2294,70 +2314,98 @@
                 const formData = $(this).serialize();   // to make it urlencoded
                
 
-                if(paymentMethod === 'Razorpay'){
-                    // create Razorpay Order
-                    $.ajax({
-                        method: 'POST',
-                        url: '/create-razorpay-order',
-                        data: formData,
-                        xhrFields: {
-                            withCredentials: true 
-                        },
-                        success: function (orderData) {
-                            const options = {
-                                key: orderData.key_id,
-                                amount: orderData.amount,
-                                currency: "INR",
-                                name: "Your Store Name",
-                                description: "Order Payment",
-                                order_id: orderData.razorpay_order_id,
-                                handler: function (response) {
-                                    //verify Payment
-                                    $.ajax({
-                                        method: 'POST',
-                                        url: '/verify-razorpay-payment',
-                                        data: {
-                                            ...response,   //razorpay_payment_id, razorpay_order_id, razorpay_signature
-                                            formData
-                                        },
-                                        success: function (res) {
-                                            if(res.success) {
-                                                Swal.fire('Success', 'Order Placed Successfully!', 'success').then(() => {
-                                                    window.location.href = '/order-success';
-                                                });
-                                            } else {
-                                                Swal.fire('Error', 'Payment verification failed', 'error');
-                                            }
-                                        }
-                                    });
-                                },
-                                theme: {
-                                    color: "#F37254"
+                
+    if (paymentMethod === 'Razorpay') {
+
+        $.ajax({
+            method: 'POST',
+            url: '/create-razorpay-order',
+            data: formData,
+            success: function (orderData) {
+                const options = {
+                    key: orderData.key_id,
+                    amount: orderData.amount,
+                    currency: "INR",
+                    name: "The Elegant Adobe",
+                    description: "Order Payment",
+                    order_id: orderData.razorpay_order_id,
+
+                    handler: function (response) {
+                        // Step 2: Payment succeeded, verify with server
+                        $.ajax({
+                            method: 'POST',
+                            url: '/verify-razorpay-payment',
+                            data: {
+                                ...response,
+                                formData: formData
+                            },
+                            success: function (res) {
+                                if (res.success) {
+                                    Swal.fire('Success', 'Order Placed Successfully!', 'success')
+                                        .then(() => window.location.href = '/order-success');
+                                } else {
+                                    Swal.fire('Error', 'Payment verification failed', 'error');
                                 }
-                            };
-                            const rzp = new Razorpay(options);
-                            rzp.open();
+                            }
+                        });
+                    },
+
+                   modal: {
+                        ondismiss: function () {
+                            // Optional: handle manual close
+                            console.log("User dismissed Razorpay modal.");
+                             window.location.href = '/payment-failed';
                         }
-                    });
-                } else {
-                    // handle cash on delivery and other
+                    },
+
+                    theme: {
+                        color: "#F37254"
+                    }
+                };
+
+                const rzp = new Razorpay(options);
+                rzp.on('payment.failed', function (response) {
                     $.ajax({
                         method: 'POST',
-                        url: '/order-save',
+                        url: '/razorpay-payment-failed',
                         data: formData,
                         success: function (res) {
                             if (res.success) {
-                                Swal.fire('Success', 'Order Placed Successfully!' , 'success').then(() => {
-                                    window.location.href = '/order-success';
-                                });
+                                window.location.href = '/payment-failed';
                             } else {
-                                Swal.fire('Error', 'Order placement failed', 'error');
-                                console.log("placement fail: ", res);
-                                
+                                Swal.fire('Error', 'Failed to log failed payment.', 'error');
                             }
                         }
                     });
+                });
+                rzp.open();
+            },
+            error: function () {
+                Swal.fire('Error', 'Failed to initialize payment', 'error');
+            }
+        });
+    } else {
+        // Cash on Delivery or other methods
+        $.ajax({
+            method: 'POST',
+            url: '/order-save',
+            data: formData,
+            success: function (res) {
+                console.log("formData", formData);
+                
+                if (res.success) {
+                    Swal.fire('Success', 'Order Placed Successfully!', 'success')
+                        .then(() => window.location.href = '/order-success');
+                } else {
+                    Swal.fire('Error', 'Order placement failed', 'error');
                 }
+            },
+            error: function () {
+                Swal.fire('Error', 'Server error during order placement.', 'error');
+            }
+        });
+    }
+
              });
 
     </script>
@@ -2460,6 +2508,9 @@ $(document).ready(function() {
             });
             return;
         }
+
+        // Show loading alert
+        showLoadingAlert();
         
         // Show loading state
         const submitBtn = $(this).find('button[type="submit"]');
@@ -2476,26 +2527,23 @@ $(document).ready(function() {
             },
             dataType: 'json',
             success: function(response) {
+                Swal.close(); 
                 if (response.success) {
                     // Update the UI with new values
                     updateOrderSummary(response.data);
+
+                    //  Use the custom full modal with savings
+                    showCouponSuccess(response.message || 'Coupon applied successfully!', response.data.appliedDiscount);
                     
-                    // Show success message with SweetAlert
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Coupon Applied!',
-                        text: response.message || 'Coupon applied successfully!',
-                        timer: 3000,
-                        showConfirmButton: false,
-                        toast: true,
-                        position: 'top-end'
-                    });
                     
                     // Update button states after successful coupon application
                     updateButtonsAfterCouponApply(response.data.appliedDiscount);
+                    console.log("coupon-frontend-one");
+                    
                     
                     // Disable the coupon input
                     $('#coupon').prop('disabled', true);
+                    console.log("coupon-frontend-two");
                     
                 } else {
                     // Show error message with SweetAlert
@@ -2508,6 +2556,7 @@ $(document).ready(function() {
                 }
             },
             error: function(xhr, status, error) {
+                Swal.close(); 
                 console.error('AJAX Error:', error);
                 Swal.fire({
                     icon: 'error',
@@ -2517,6 +2566,7 @@ $(document).ready(function() {
                 });
             },
             complete: function() {
+                
                 // Reset button state
                 submitBtn.text(originalText).prop('disabled', false);
             }
@@ -2700,23 +2750,57 @@ function showLoadingAlert() {
 </script>
 
 <script>
-  $('#removeCouponBtn').on('click', function () {
+ $(document).on('click', '#removeCouponBtn', function () {
+    console.log("inside remove");
+    
     $.ajax({
       url: '/remove-coupon',
       method: 'POST',
       success: function (response) {
         if (response.success) {
           
-          $('#applied-coupon-box').remove(); // Remove coupon box
-          $('.discount-row').text('₹0');
+          $('.applied-coupon-info').remove(); // Remove coupon box
+          $('.discount-row').remove();
           $('#grand-total').text(`₹${response.data.grandTotal}`);
-          Swal.fire('Coupon Removed', response.message, 'success');
+
+          //  Restore the coupon form to its original state
+                const buttonContainer = $('.c-f__form .u-s-m-b-15').last();
+
+                // Reset Apply button
+                const applyBtn = buttonContainer.find('button[type="submit"]');
+                applyBtn.text('APPLY').prop('disabled', false).removeClass('btn-applied');
+
+                // Remove the Remove button
+                buttonContainer.find('.remove-coupon-btn').remove();
+
+                // Enable and clear the coupon input
+                $('#coupon').prop('disabled', false).val('');
+
+          Swal.fire({
+                    icon: 'success',
+                    title: 'Coupon Removed',
+                    text: response.message || 'Coupon removed successfully!',
+                    timer: 2000,
+                    showConfirmButton: false,
+                    toast: true,
+                    position: 'top-end'
+                });
         } else {
-          Swal.fire('Error', response.message, 'error');
+          Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: response.message || 'Something went wrong.',
+                    confirmButtonColor: '#d33'
+                });
         }
       },
       error: function () {
-        Swal.fire('Error', 'Failed to remove coupon. Try again later.', 'error');
+        Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Failed to remove coupon. Try again later.',
+                confirmButtonColor: '#d33'
+            });
       }
     });
   });

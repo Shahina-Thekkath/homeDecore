@@ -10,7 +10,7 @@ const loadCheckout = async (req, res) => {
     const userId = req.session.user._id;
     const cart = await Cart.findOne({ userId }).populate("items.productId");
     console.log("cart", cart);
-    console.log("cart2", cart.items[0].productId);
+    console.log("cart2", cart.items[0].productId._id);
 
     const user = await User.findById(userId);
     //    const coupons = await Coupon.find({
@@ -67,6 +67,12 @@ console.log("expired coupons", expiredCoupons);
       0
     );
 
+    let discountAmount = 0;
+
+    if(req.session.coupon){
+      discountAmount = req.session.coupon.discount || 0;
+    }
+
     // Use the default address or fallback to the first address
     let selectedAddress = null;
     if (user.addresses && user.addresses.length > 0) {
@@ -82,6 +88,8 @@ console.log("expired coupons", expiredCoupons);
     
 
     res.render("checkout", {
+      user,
+      discountAmount,
       cartItems,
       grandTotal,
       addresses: user.addresses,

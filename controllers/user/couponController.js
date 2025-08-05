@@ -97,6 +97,7 @@ const applyCoupon = async (req, res) => {
           discount: discountAmount,
           subtotal,
           grandTotal,
+          discountType: coupon.discountType
         };
 
         return res.status(200).json({
@@ -139,7 +140,7 @@ const removeCoupon = async (req, res) => {
       data: {
         subtotal,
         discountAmount: 0,
-        grandTotal,
+        grandTotal: subtotal,
         couponCode: null,
         appliedDiscount: null
       }

@@ -1466,14 +1466,17 @@
                                                                         </span>
 
                                                                     <% } else { %>
-
-                                                                        <% if (product.isCancellable && product.status !== "Delivered") { %>
+                                                                        <% if(order.paymentMethod === "Cash on Delivery"){ %>
+                                                                            <% if (product.isCancellable && product.status !== "Delivered") { %>
                                                                         <button 
                                                                             class="dash__custom-link btn--e-transparent-brand-b-2 u-s-m-t-10"
                                                                             onclick="cancelOrder('<%= order._id %>', '<%= product.productId._id %>')">
                                                                             Cancel Order
                                                                         </button>
                                                                         <% } %>
+                                                                        <% } %>
+
+                                                                        
 
                                                                         <% if (product.isReturnable && product.status === "Delivered") { %>
                                                                         <button 

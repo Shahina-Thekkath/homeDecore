@@ -96,6 +96,14 @@ userRouter.get("/orderDetails/:orderId", auth.sessionVerify, orderController.get
 userRouter.patch("/order/:orderId/cancel/:productId", auth.sessionVerify, orderController.cancelOrder);
 userRouter.post("/order/return/:orderId/:productId", auth.sessionVerify, orderController.returnOrder);
 
+userRouter.post('/razorpay-payment-failed', auth.sessionVerify, orderController.razorPaymentFailed);
+userRouter.get('/payment-failed', auth.sessionVerify, orderController.getOrderFailurePage);
+userRouter.post('/retry-payment/:orderId', auth.sessionVerify, orderController.retryPayment);
+userRouter.post('/retry/razorpay-payment-failed', auth.sessionVerify, orderController.retryRazorPaymentFailed);
+userRouter.get('/retry/payment-failed', auth.sessionVerify, orderController.getRetryRazorpayFailurePage);
+
+
+
 userRouter.post('/apply-coupon', auth.sessionVerify, couponController.applyCoupon);
 userRouter.post('/remove-coupon', auth.sessionVerify, couponController.removeCoupon);
 

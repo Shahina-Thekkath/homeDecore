@@ -63,11 +63,19 @@ const OrderSchema = new Schema(
       transactionId: { type: String },
       paymentDate: { type: Date },
 
-          // Razorpay-specific additions
-      razorpayOrderId: { type: String },     // Razorpay Order ID (returned after order creation)
-      razorpayPaymentId: { type: String },   // Razorpay Payment ID (returned after payment)
-      razorpaySignature: { type: String },   // Used to verify the payment authenticity
-    }
+      // Razorpay-specific additions
+      razorpayOrderId: { type: String }, // Razorpay Order ID (returned after order creation)
+      razorpayPaymentId: { type: String }, // Razorpay Payment ID (returned after payment)
+      razorpaySignature: { type: String }, // Used to verify the payment authenticity
+    },
+    discountAmount: {
+      type: Number,
+      default: 0,
+    },
+    couponCode: {
+      type: String,
+      default: null,
+    },
   },
   { timestamps: true }
 );

@@ -80,32 +80,51 @@
                                 <ul class="ah-list ah-list--design1 ah-list--link-color-secondary">
                                     <li class="has-dropdown" data-tooltip="tooltip" data-placement="left" title="Account">
 
-                                        <a><i class="far fa-user-circle"></i></a>
+                                        <%if(locals.user){%>
+                                                <a href="/profile"><i ><%=locals.user.name%></i></a>
+
+                                            <%}else{%>
+
+                                                <a><i class="far fa-user-circle"></i></a>
+
+                                                <%}%>
 
                                         <!--====== Dropdown ======-->
 
                                         <span class="js-menu-toggle"></span>
                                         <ul style="width:120px">
-                                            <li>
 
-                                                <a href="dashboard.html"><i class="fas fa-user-circle u-s-m-r-6"></i>
+                                           
+                                           
+                                                    <%if(locals.user){%>
+                                                        <li>
+                                                           <a href="/profile"><i><%=locals.user.name%></i>
 
-                                                    <span>Account</span></a></li>
-                                            <li>
+                                                            </a>
+                                                        </li> 
+                                                           
+                                                   
+                                                       
+                                                        <li>
 
-                                                <a href="signup.html"><i class="fas fa-user-plus u-s-m-r-6"></i>
+                                                            <a href="/logout"><i class="fas fa-lock-open u-s-m-r-6"></i>
+        
+                                                                <span>Logout</span></a>
+                                                        </li>
+                                                    <%}else{%>
+                                                        <li>
 
-                                                    <span>Signup</span></a></li>
-                                            <li>
+                                                            <a href="/signup"><i class="fas fa-user-plus u-s-m-r-6"></i>
+        
+                                                                <span>Signup</span></a>
+                                                        </li>
+                                                        <li>
 
-                                                <a href="signin.html"><i class="fas fa-lock u-s-m-r-6"></i>
-
-                                                    <span>Signin</span></a></li>
-                                            <li>
-
-                                                <a href="signup.html"><i class="fas fa-lock-open u-s-m-r-6"></i>
-
-                                                    <span>Signout</span></a></li>
+                                                            <a href="/login"><i class="fas fa-lock u-s-m-r-6"></i>
+        
+                                                            <span>Login</span></a>
+                                                        </li>
+                                                    <%}%>
                                         </ul>
                                         <!--====== End - Dropdown ======-->
                                     </li>
@@ -2275,6 +2294,7 @@
                                                 <a class="s-gplus--color-hover" href="#"><i class="fab fa-google-plus-g"></i></a></li>
                                         </ul>
                                     </div>
+                                    
                                     <div class="u-s-m-b-15">
                                         <form class="pd-detail__form">
                                             <div class="pd-detail-inline-2">
@@ -2406,6 +2426,8 @@
 
         // Validate selected quantity against stock
         if (selectedQuantity > stock) {
+            console.log(selectedQuantity, stock);
+            
             Swal.fire({
                 icon: "error",
                 title: "Quantity Exceeded",

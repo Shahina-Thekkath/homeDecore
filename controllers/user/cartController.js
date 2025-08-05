@@ -14,7 +14,7 @@ const loadCart = async(req, res) =>{
            const cart = await Cart.findOne({userId}).populate("items.productId");
 
            if(!cart || cart.items.length === 0){
-            return res.render("emptyCart");
+            return res.render("emptyCart", {user});
            }
 
            const cartItems = cart.items.map((item) =>({
@@ -106,9 +106,7 @@ const addToCart = async(req, res) =>{
             return res.status(400).json({error: "Requested quantity exceeds stock"});
         }
 
-        //deduct stock in the product schema
-        product.quantity -= quantity;
-        await product.save();
+        
         
         //find or create the user's cart
         let cart = await Cart.findOne({ userId: req.session.user._id});
@@ -120,7 +118,8 @@ const addToCart = async(req, res) =>{
         const itemIndex = cart.items.findIndex((item) => item.productId.equals(productId));
         if(itemIndex > -1){
             //update quantity if product already exists in cart
-            cart.items[itemIndex].quantity = quantity;
+            cart.items[itemIndex].quantity += quantity;
+
         }else{
             const price = product.price;
             //add new product to the cart
@@ -133,7 +132,7 @@ const addToCart = async(req, res) =>{
      
     } catch (error) {
        console.error(error);
-       return res.status(500).json({ error: "Server Errro"}); 
+       return res.status(500).json({ error: "Server Error"}); 
     }
 };
 

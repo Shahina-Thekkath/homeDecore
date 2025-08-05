@@ -8,6 +8,8 @@ const loadProductDetails = async (req, res) =>{
     try {
         const productId = req.params.id;
         console.log("loadProduct1", productId);
+
+        
         
 
         const user = req.session.user || req.session.passport;
@@ -47,7 +49,7 @@ const loadProductDetails = async (req, res) =>{
       
         
         
-        res.render('productDetails',{currentProduct, relatedProduct, cart, grandTotal});
+        res.render('productDetails',{currentProduct, relatedProduct, cart, grandTotal, user});
     } catch (error) {
        console.error("Error while rendering the product details page: ", error);
        
