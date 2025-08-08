@@ -1,5 +1,7 @@
 
 const Product = require("../../models/productSchema");
+const CategoryOffer = require('../models/categoryOfferModel');
+const ProductOffer = require('../models/productOfferModel');
 
 
 const loadHomepage = async(req, res) =>{

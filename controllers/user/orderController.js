@@ -502,6 +502,10 @@ const razorPaymentFailed = async (req, res) => {
       ? cartItems
       : Object.values(cartItems);
 
+      const discountAmount = req.session.coupon?.discount || 0;
+      const finalTotal = parseFloat(grandTotal) - parseFloat(discountAmount);
+
+
     const order = {
       userId: userId,
       products: itemsArray.map((item) => ({
@@ -513,9 +517,11 @@ const razorPaymentFailed = async (req, res) => {
       })),
       shippingAddress,
       paymentMethod: "Razorpay",
-      totalAmount: parseFloat(grandTotal),
+      totalAmount: parseFloat(finalTotal),
       orderStatus: "Pending",
       createdAt: new Date(),
+      discountAmount: parseFloat(discountAmount) || 0,
+      couponCode: req.session.coupon?.code || null
     };
     console.log("failure", order);
 
@@ -541,11 +547,14 @@ const getOrderFailurePage = async (req, res) => {
 
     if (!order) return res.redirect("/checkout");
 
+    const grandTotal = order.products.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+
     req.session.failedOrder = null;
 
     return res.render("orderFailure", {
       order,
       paymentMethod: "Razorpay",
+      grandTotal
     });
   } catch (error) {
     console.error("Error loading order failure page:", error);
@@ -570,7 +579,10 @@ const retryPayment = async (req, res) => {
         .json({ success: false, message: "Invalid retry request" });
     }
 
-    const amount = order.totalAmount * 100;
+    const grandTotal = order.products.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    const totalAmount = parseFloat(grandTotal) - parseFloat(order.discountAmount);
+
+    const amount = totalAmount * 100;
 
     const razorpayOrder = await razorpay.orders.create({
       amount,
@@ -621,12 +633,14 @@ const getRetryRazorpayFailurePage = async (req, res) => {
     if (!failedOrderId) return res.redirect("/checkout");
 
     const failedOrder = await Order.findById(failedOrderId).populate("products.productId").lean();
+    const grandTotal = failedOrder.products.reduce((sum, item) => sum + (item.price * item.quantity), 0);
 
     req.session.failedOrderId = null; // clear it after use
 
     return res.render("orderFailure", {
       order: failedOrder,
-      paymentMethod: "Razorpay"
+      paymentMethod: "Razorpay",
+      grandTotal
     });
   } catch (error) {
     console.error("Error rendering failed payment page:", error);

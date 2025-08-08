@@ -95,8 +95,16 @@
                         <tfoot>
                             <tr>
                                 <td colspan="2" class="fw-bold">Subtotal</td>
-                                <td class="price-text">₹<%= order.totalAmount.toFixed(2) %></td>
+                                <td class="price-text">₹<%= grandTotal.toFixed(2) %></td>
                             </tr>
+                            <% if (order.discountAmount && order.discountAmount > 0) { %>
+                                <tr>
+                                <td colspan="2" class="fw-bold">
+                                    Discount <% if (order.couponCode) { %> (<%= order.couponCode %>) <% } %>
+                                </td>
+                                <td class="price-text text-danger">-₹<%= order.discountAmount.toFixed(2) %></td>
+                                </tr>
+                            <% } %>
                             <tr>
                                 <td colspan="2" class="fw-bold">Shipping</td>
                                 <td class="price-text">₹0.00</td>

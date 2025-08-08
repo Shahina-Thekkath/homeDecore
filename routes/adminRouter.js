@@ -11,7 +11,8 @@ const uploads = require("../middleware/productUpload");
 const categoryController = require("../controllers/admin/categoryController");
 const logoutController = require("../controllers/admin/logoutController");
 const orderController = require("../controllers/admin/orderController");
-const couponController = require("../controllers/admin/couponController")
+const couponController = require("../controllers/admin/couponController");
+const offerController = require('../controllers/admin/offerController');
 
 adminRouter.get("/", adminAuth.isLogout, loginController.loadLogin);
 adminRouter.post("/", adminAuth.isLogout, loginController.login);
@@ -65,6 +66,13 @@ adminRouter.post("/coupon/add-coupon", couponController.addCoupon);
 adminRouter.get("/coupon/edit-coupon/:id", couponController.getEditCoupon);
 adminRouter.put("/coupon/edit-coupon/:id", couponController.updateCoupon);
 adminRouter.patch('/coupons/toggle/:id', couponController.toggleCouponStatus);
+
+adminRouter.get('/offer', offerController.getOfferList);
+adminRouter.get('/offer/add-offer', offerController.getAddOffer);
+adminRouter.post('/offer/add-offer', offerController.postAddOffer);
+adminRouter.patch('/offer/toggle/:id', offerController.toggleOfferStatus);
+adminRouter.get('/offer/edit-offer/:id', offerController.getEditOffer);
+adminRouter.put('/offer/edit-offer/:id', offerController.updateOffer);
 
 
 

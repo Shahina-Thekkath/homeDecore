@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Offer</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background-color: #fdfdfd; /* light background */
+            font-family: Arial, sans-serif;
+        }
+
+        .offer-container {
+            max-width: 700px;
+            margin: 40px auto;
+            background-color: #fff;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0px 3px 10px rgba(0,0,0,0.1);
+            border-top: 5px solid #ff6600; /* Orange top border */
+        }
+
+        h3 {
+            color: #ff6600; /* Orange heading */
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        label {
+            font-weight: 500;
+            color: #333;
+        }
+
+        .form-check-input:checked {
+            background-color: #ff6600;
+            border-color: #ff6600;
+        }
+
+        .btn-orange {
+            background-color: #ff6600;
+            border: none;
+            color: white;
+            font-weight: 500;
+            padding: 10px 20px;
+            border-radius: 5px;
+        }
+
+        .btn-orange:hover {
+            background-color: #e65c00;
+        }
+    </style>
+</head>
+<body>
+<div class="offer-container">
+    <h3>Create Offer</h3>
+
+    <form action="/admin/add-offer" method="POST">
+        
+        <!-- Offer Type Radio -->
+        <div class="mb-3">
+            <label class="form-label d-block">Offer Type</label>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="offerType" id="productOffer" value="product" checked>
+                <label class="form-check-label" for="productOffer">Product Offer</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="offerType" id="categoryOffer" value="category">
+                <label class="form-check-label" for="categoryOffer">Category Offer</label>
+            </div>
+        </div>
+
+        <!-- Product Dropdown -->
+        <div class="mb-3" id="productSelect">
+            <label for="product" class="form-label">Select Product</label>
+            <select class="form-select" name="product" id="product">
+                <% products.forEach(product => { %>         
+                    <option value="<%= product._id %>"><%= product.name %></option>
+                <% }) %>
+            </select>
+        </div>
+
+        <!-- Category Dropdown -->
+        <div class="mb-3" id="categorySelect" style="display:none;">
+            <label for="category" class="form-label">Select Category</label>
+            <select class="form-select" name="category" id="category">
+                <% categories.forEach(category => { %>
+                    <option value="<%= category._id %>"><%= category.name %></option>
+                <% }) %>
+            </select>
+        </div>
+
+        <!-- Discount Type -->
+        <div class="mb-3">
+            <label for="discountType" class="form-label">Discount Type</label>
+            <select class="form-select" name="discountType" id="discountType">
+                <option value="percentage">Percentage</option>
+                <option value="flat">Flat</option>
+            </select>
+        </div>
+
+        <!-- Discount Value -->
+        <div class="mb-3">
+            <label for="discountValue" class="form-label">Discount Value</label>
+            <input type="number" class="form-control" name="discountValue" id="discountValue" placeholder="Enter discount value" required>
+        </div>
+
+        <!-- Start Date -->
+        <div class="mb-3">
+            <label for="startDate" class="form-label">Start Date</label>
+            <input type="date" class="form-control" name="startDate" id="startDate" required>
+        </div>
+
+        <!-- End Date -->
+        <div class="mb-3">
+            <label for="endDate" class="form-label">End Date</label>
+            <input type="date" class="form-control" name="endDate" id="endDate" required>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="text-end">
+            <button type="submit" class="btn-orange">Create Offer</button>
+        </div>
+    </form>
+</div>
+
+<script>
+    document.querySelectorAll('input[name="offerType"]').forEach(radio => {
+        radio.addEventListener('change', function() {
+            if (this.value === 'product') {
+                document.getElementById('productSelect').style.display = 'block';
+                document.getElementById('categorySelect').style.display = 'none';
+            } else {
+                document.getElementById('productSelect').style.display = 'none';
+                document.getElementById('categorySelect').style.display = 'block';
+            }
+        });
+    });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

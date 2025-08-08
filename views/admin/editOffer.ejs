@@ -23,6 +23,11 @@
 
     <link rel="stylesheet" href="/admin-assets/css/bootstrap.min.css" />
 
+    <link
+      rel="stylesheet"
+      href="/admin-assets/css/bootstrap-datetimepicker.min.css"
+    />
+
     <link rel="stylesheet" href="/admin-assets/css/animate.css" />
 
     <link
@@ -45,8 +50,20 @@
     />
 
     <link rel="stylesheet" href="/admin-assets/css/style.css" />
-  </head>
+    <!-- Flatpickr CSS -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css"
+    />
 
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <link rel="stylesheet" href="/admin-assets/css/addOffer.css" />
+
+  </head>
   <body>
     <div id="global-loader">
       <div class="whirly-loader"></div>
@@ -347,13 +364,13 @@
               <li class="">
                 <a href="/admin/category"><span> Category</span> </a>
               </li>
-              <li >
+              <li class="">
                 <a href="/admin/orderList"><span> Orders</span> </a>
               </li>
-              <li class="active">
+              <li class="">
                 <a href="/admin/coupon"><span> Coupon</span> </a>
               </li>
-              <li class="">
+              <li class="active">
                 <a href="/admin/offer"><span> Offer</span> </a>
               </li>
               <li class="">
@@ -372,182 +389,164 @@
         <div class="content">
           <div class="page-header">
             <div class="page-title">
-              <h4>Coupon List</h4>
-              <h6>Manage your coupons</h6>
-            </div>
-            <div class="page-btn">
-                        <a href="/admin/coupon/add-coupon" class="btn btn-added"><img src="/admin-assets/img/icons/plus.svg" alt="img"
-                                class="me-1">Add New Coupon</a>
+              <h4>Edit Offer</h4>
+              <h6>Update Offer Details</h6>
             </div>
           </div>
-
           <div class="card">
             <div class="card-body">
-              <div class="table-top">
-                <div class="search-set">
-                  <div class="search-path">
-                    <a class="btn btn-filter" id="filter_search">
-                      <img src="/admin-assets/img/icons/filter.svg" alt="img" />
-                      <span
-                        ><img
-                          src="/admin-assets/img/icons/closes.svg"
-                          alt="img"
-                      /></span>
-                    </a>
-                  </div>
-                  <div class="search-input">
-                    <a class="btn btn-searchset"
-                      ><img
-                        src="/admin-assets/img/icons/search-white.svg"
-                        alt="img"
-                    /></a>
+              <form
+                id="offerForm"
+                action="/admin/offer/edit-offer/<%= offer._id %>"
+                method="PUT"
+                novalidate
+              >
+                <!-- Offer Type Selection -->
+                <div class="row mb-4">
+                  <div class="col-12">
+                    <label class="form-label d-block">Offer Type</label>
+                    <div class="form-check form-check-inline">
+                      <input
+                        class="form-check-input"
+                        type="radio"
+                        name="offerType"
+                        id="productOffer"
+                        value="product"
+                        <%= offer.offerType === "product" ? 'checked' : '' %>
+                      />
+                      <label class="form-check-label" for="productOffer"
+                        >Product Offer</label
+                      >
+                    </div>
+                    <div class="form-check form-check-inline">
+                      <input
+                        class="form-check-input"
+                        type="radio"
+                        name="offerType"
+                        id="categoryOffer"
+                        value="category"
+                        <%= offer.offerType === "category"? 'checked' : '' %>
+                      />
+                      <label class="form-check-label" for="categoryOffer"
+                        >Category Offer</label
+                      >
+                    </div>
+                    <small class="text-danger" id="offerType-error"></small>
                   </div>
                 </div>
-                <div class="wordset">
-                  <ul>
-                    <li>
-                      <a
-                        data-bs-toggle="tooltip"
-                        data-bs-placement="top"
-                        title="pdf"
-                        ><img src="/admin-assets/img/icons/pdf.svg" alt="img"
-                      /></a>
-                    </li>
-                    <li>
-                      <a
-                        data-bs-toggle="tooltip"
-                        data-bs-placement="top"
-                        title="excel"
-                        ><img src="/admin-assets/img/icons/excel.svg" alt="img"
-                      /></a>
-                    </li>
-                    <li>
-                      <a
-                        data-bs-toggle="tooltip"
-                        data-bs-placement="top"
-                        title="print"
-                        ><img
-                          src="/admin-assets/img/icons/printer.svg"
-                          alt="img"
-                      /></a>
-                    </li>
-                  </ul>
+
+
+                <div class="row ">
+                  <!-- Product Dropdown -->
+                  <div class="col-lg-3 col-sm-6 col-12">
+                    <div id="productWrapper" style="<%= offer.offerType === 'product' ? '' : 'display:none;' %>">
+                    <label for="productSelect" class="form-label">Select Product</label>
+                    <select class="form-select" name="productId" id="productSelect">
+                      <option value="">Choose Product...</option>
+                      <% products.forEach(product => { %>
+                         <option value="<%= product._id %>" <%= offer.productId?.toString() === product._id?.toString() ? 'selected' : '' %>><%= product.name %></option>
+                      <% }) %>
+                    </select>
+                    <small class="text-danger" id="productId-error"></small>
+                  </div>
+
+                  <!-- Category Dropdown -->
+                  <div id="categoryWrapper" style="<%= offer.offerType === 'category' ? '' : 'display:none;' %>">
+                    <label for="categorySelect" class="form-label">Select category</label>
+                    <select class="form-select" name="categoryId" id="categorySelect">
+                    <option value="" >Choose Category...</option>
+                      <% categories.forEach(category => { %>
+                        <option value="<%= category._id %>" <%= offer.categoryId?.toString() === category._id.toString() ? 'selected' : '' %>><%= category.name %></option>
+                    <% }) %>
+                    </select>
+                    <small class="text-danger" id="categoryId-error"></small>
+                  </div>
                 </div>
-              </div>
 
-              <!-- <div class="card mb-0" id="filter_inputs">
-                <div class="card-body pb-0">
-                  <div class="row">
-                    <div class="col-lg-12 col-sm-12">
-                      <div class="row">
-                        <div class="col-lg col-sm-6 col-12">
-                          <div class="form-group">
-                            <select class="select">
-                              <option>Choose Product</option>
-                              <option>Macbook pro</option>
-                              <option>Orange</option>
-                            </select>
-                          </div>
-                        </div>
-                        <div class="col-lg col-sm-6 col-12">
-                          <div class="form-group">
-                            <select class="select">
-                              <option>Choose Category</option>
-                              <option>Computers</option>
-                              <option>Fruits</option>
-                            </select>
-                          </div>
-                        </div>
-
-                        <div class="col-lg col-sm-6 col-12">
-                          <div class="form-group">
-                            <select class="select">
-                              <option>Price</option>
-                              <option>Low to high</option>
-                              <option>high to low</option>
-                            </select>
-                          </div>
-                        </div>
-                        <div class="col-lg col-sm-6 col-12">
-                          <div class="form-group">
-                            <select class="select">
-                              <option>Others</option>
-                              <option>Average Ratings</option>
-                              <option>Featured/option></option>
-                              <option>New Arrivals</option>
-                              <option>150.00</option>
-                              <option>150.00</option>
-                            </select>
-                          </div>
-                        </div>
-                        <div class="col-lg-1 col-sm-6 col-12">
-                          <div class="form-group">
-                            <a class="btn btn-filters ms-auto"
-                              ><img
-                                src="/admin-assets/img/icons/search-whites.svg"
-                                alt="img"
-                            /></a>
-                          </div>
-                        </div>
+                <div class="col-lg-3 col-sm-6 col-12">
+                  <div class="form-group">
+                    <label>Discount type</label>
+                    <div class="row">
+                      <div class="col-lg-10 col-sm-10 col-10">
+                        <select class="select form-control" name="discountType">
+                          <option value="">Select</option>
+                          <option value="percentage" <%= offer.discountType === 'percentage'? 'selected' : '' %>>Percentage</option>
+                          <option value="flat" <%= offer.discountType === 'flat' ? 'selected' : '' %>>Flat</option>
+                        </select>
+                        <small
+                          class="text-danger"
+                          id="discountType-error"
+                        ></small>
                       </div>
                     </div>
                   </div>
                 </div>
-              </div> -->
 
-              <div class="table-responsive">
-                <table class="table datanew">
-                  <thead>
-                    <tr>
-                      <th>Coupon Name</th>
-                      <th>Coupon Code</th>
+                <div class="col-lg-3 col-sm-6 col-12">
+                  <div class="form-group">
+                    <label>Discount Amount</label>
+                    <input
+                      type="number"
+                      name="discountAmount"
+                      class="form-control"
+                      min="500"
+                      max="3000"
+                      value="<%= offer.discountAmount %>"
+                    />
+                    <small
+                      class="text-danger"
+                      id="discountAmount-error"
+                    ></small>
+                  </div>
+                </div>
+                
 
-                      <th>Expiry Date</th>
+                <div class="row">
+                  <div class="col-lg-3 col-sm-6 col-12">
+                    <div class="form-group">
+                      <label>Start Date</label>
+                      <div class="input-groupicon">
+                        <input
+                          id="StartDatePicker"
+                          type="text"
+                          placeholder="YYYY-MM-DD"
+                          class="form-control"
+                          name="startDate"
+                          value="<%= offer.startDate.toISOString().split('T')[0] %>"
+                        />
+                      </div>
+                      <small class="text-danger" id="startDate-error"></small>
+                    </div>
+                  </div>
 
-                      <th>Discount Type</th>
-                      <th>Discount Amount</th>
-                      <th>Min. Purchase Amount</th>
-                      <th>Status</th>
+                  <div class="col-lg-3 col-sm-6 col-12">
+                    <div class="form-group">
+                      <label>End Date</label>
+                      <div class="input-groupicon">
+                        <input
+                          id="endDatePicker"
+                          type="text"
+                          placeholder="YYYY-MM-DD"
+                          class="form-control"
+                          name="endDate"
+                          value="<%= offer.endDate.toISOString().split('T')[0] %>"
+                        />
+                      </div>
+                      <small class="text-danger" id="endDate-error"></small>
+                    </div>
+                  </div>
+                </div>
+                <!-- second row end-->
 
-                      <th>Action</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <% coupons.forEach((coupon) =>{%>
-                    <tr>
-                      <td><%= coupon.name %></td>
-                      <td>
-                        <%= coupon.code %> <br />
-                        
-                      </td>
-                      <td>
-                        <%= new Date(coupon.expiresOn).toLocaleDateString() %>
-                      </td>
-                      <td><%= coupon.discountType%></td>
-                      <td><%= coupon.discountAmount %></td>
-                      <td><%= coupon.minPurchaseAmount %></td>
-                      <td><%= coupon.isActive? 'Active' : 'Inactive' %></td>
-
-                      <td>
-                        <a
-                          class="me-3"
-                          href="/admin/coupon/edit-coupon/<%= coupon._id %>"
-                        >
-                          <img
-                            src="/admin-assets/img/icons/edit.svg"
-                            alt="img"
-                          />
-                        </a>
-                        <button class="btn btn-sm <%= coupon.isActive ? 'btn-danger' : 'btn-success' %> toggle-status"
-                            data-id="<%= coupon._id %>">
-                            <%= coupon.isActive ? 'Deactivate' : 'Activate' %>
-                        </button>
-                      </td>
-                    </tr>
-                    <%})%>
-                  </tbody>
-                </table>
-              </div>
+                <div class="row">
+                  <div class="col-lg-12">
+                    <button type="submit" class="btn btn-submit me-2">
+                      Submit
+                    </button>
+                    <a href="/admin/offer" class="btn btn-cancel">Cancel</a>
+                  </div>
+                </div>
+              </form>
             </div>
           </div>
         </div>
@@ -567,42 +566,229 @@
 
     <script src="/admin-assets/plugins/select2/js/select2.min.js"></script>
 
+    <script src="/admin-assets/js/moment.min.js"></script>
+    <script src="/admin-assets/js/bootstrap-datetimepicker.min.js"></script>
+
     <script src="/admin-assets/plugins/sweetalert/sweetalert2.all.min.js"></script>
     <script src="/admin-assets/plugins/sweetalert/sweetalerts.min.js"></script>
 
     <script src="/admin-assets/js/script.js"></script>
 
-    <script>
-        $(document).ready(function () {
-           $(document).on('click', '.toggle-status', function () {
-                const button = $(this);
-                const couponId = button.data('id');
+    <!-- Flatpickr JS -->
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-                Swal.fire({
-                    title: 'Are you Sure?',
-                    text: 'Do you want to change the coupon status?',
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonText: 'Yes, change it!'
-                }).then((result) => {
-                    if(result.isConfirmed) {
-                       $.ajax({
-                        url: `/admin/coupons/toggle/${couponId}`,
-                        method: 'PATCH',
-                        success: function (response) {
-                            Swal.fire('Success', response.message, 'success').then(() => {
-                                location.reload();
-                            });
-                        },
-                        error: function () {
-                            Swal.fire('Error', 'Something went wrong', 'error');
-                        }
-                       });
-                    }
-                });
-            });
-        });
+    <script>
+      flatpickr("#StartDatePicker", {
+        dateFormat: "Y-m-d",
+        minDate: "today",
+      });
+
+      flatpickr("#endDatePicker", {
+        dateFormat: "Y-m-d",
+        minDate: "today",
+      });
     </script>
 
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        
+          const productRadio = document.getElementById('productOffer');
+        const categoryRadio = document.getElementById('categoryOffer');
+        const productWrapper = document.getElementById('productWrapper');
+        const categoryWrapper = document.getElementById('categoryWrapper');
+
+        console.log(productRadio, categoryRadio, productWrapper, categoryWrapper);
+        
+        
+
+        function toggleOfferType(){
+          if (productRadio.checked) {
+            categoryRadio.checked = false;
+            productWrapper.style.display = 'block';
+            categoryWrapper.style.display = 'none';
+            document.getElementById('categorySelect').value = '';
+          } else if (categoryRadio.checked) {
+            productRadio.checked = false;
+            productWrapper.style.display = 'none';
+            categoryWrapper.style.display = 'block';
+            document.getElementById('productSelect').value = '';
+          }
+        }
+
+        toggleOfferType();
+
+        productRadio.addEventListener('change', function(){
+          if (this.checked) { 
+                    toggleOfferType();
+                }
+        });
+        categoryRadio.addEventListener('change', function() {
+                if (this.checked) {
+                    toggleOfferType();
+                }
+            });
+      
+    const form = document.getElementById("offerForm");
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();
+          let isValid = true;
+
+          // Clear all errors first
+          document.querySelectorAll(".text-danger").forEach((el) => (el.innerText = ""));
+
+          const offerType = document.querySelector('input[name="offerType"]:checked')?.value;
+          const productId = document.getElementById("productSelect").value.trim();
+          const categoryId = document.getElementById("categorySelect").value.trim();
+          const discountType = document.querySelector('select[name="discountType"]').value.trim();
+          const discountAmount = document.querySelector('input[name="discountAmount"]').value.trim();
+          const startDate = document.getElementById("StartDatePicker").value.trim();
+          const endDate = document.getElementById("endDatePicker").value.trim();
+          console.log("all inputs", offerType, productId, categoryId, discountAmount, discountType, startDate, endDate);
+          
+
+          // Regex patterns
+          const discountRegex = /^[0-9]+(\.[0-9]{1,2})?$/;
+          const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+
+          // Offer type specific validation
+          if (offerType === "product" && !productId) {
+            document.getElementById("productId-error").innerText ="Please select a product";
+            isValid = false;
+          }
+          if (offerType === "category" && !categoryId) {
+            console.log("category");
+            
+            document.getElementById("categoryId-error").innerText ="Please select a category";
+            isValid = false;
+          }
+
+          // Discount type
+          if (!discountType) {
+            document.getElementById("discountType-error").innerText ="Select a discount type";
+            isValid = false;
+          }
+
+          // Discount amount
+          if (!discountAmount) {
+            document.getElementById("discountAmount-error").innerText ="Enter a discount amount";
+            isValid = false;
+          } else if (
+            !discountRegex.test(discountAmount) ||
+            Number(discountAmount) <= 0
+          ) {
+            document.getElementById("discountAmount-error").innerText ="Enter a valid numeric discount (up to 2 decimals)";
+            isValid = false;
+          }
+
+          // Start date
+          if (!startDate) {
+            document.getElementById("startDate-error").innerText ="Please select a start date";
+            isValid = false;
+          } else if (!dateRegex.test(startDate)) {
+            document.getElementById("startDate-error").innerText ="Start date must be in YYYY-MM-DD format";
+            isValid = false;
+          }
+
+          // End date
+          if (!endDate) {
+            document.getElementById("endDate-error").innerText ="Please select an end date";
+            isValid = false;
+          } else if (!dateRegex.test(endDate)) {
+            document.getElementById("endDate-error").innerText ="End date must be in YYYY-MM-DD format";
+            isValid = false;
+          }
+
+          // Date comparison
+          if (
+            dateRegex.test(startDate) &&
+            dateRegex.test(endDate) &&
+            new Date(endDate) <= new Date(startDate)
+          ) {
+            document.getElementById("endDate-error").innerText ="End date must be after start date";
+            isValid = false;
+          }
+          console.log("validation completed");
+          
+
+          // Show SweetAlert if errors exist
+          if (!isValid) {
+            
+            Swal.fire({
+              icon: "error",
+              title: "Please fix the errors",
+              text: "Some fields are missing or invalid. Check the highlighted errors and try again.",
+              confirmButtonColor: "#ff6f00",
+            });
+            return;
+          }
+        
+
+        const data = {
+          offerType,
+          productId,
+          categoryId,
+          discountAmount,
+          discountType,
+          startDate,
+          endDate
+        };
+       
+
+        console.log("data", data);
+        
+
+        //create AJAX request
+        const xhr = new XMLHttpRequest();
+        xhr.open("PUT", form.action);
+        xhr.setRequestHeader("Content-Type", "application/json");
+
+        xhr.onload = function () {
+          if (xhr.status === 200) {
+
+              const response = JSON.parse(xhr.responseText);
+              if(response.success) {
+                window.location.href = "/admin/offer";
+              } else {
+                // show backend validation errors
+                for (const key in response.errors) {
+                  const el = document.getElementById(`${key}-error`);
+                  if(el) {
+                    el.innerText = response.errors[key];
+                  }
+                }
+                Swal.fire({
+                  icon: "error",
+                  title: "Server Validation Failed",
+                  text: "Please check the highlighted errors.",
+                  confirmButtonColor: "#ff6f00"
+                });
+              }
+
+          } else {
+            Swal.fire({
+              icon: "error",
+              title: "Unexpected Error",
+              text: "Something went wrong. Please try again later.",          // this is in case server responded with error
+              confirmButtonColor: "#ff6f00"
+            });
+          }
+        };
+
+        xhr.onerror = function () {
+          Swal.fire({
+            icon: "error",
+            title: "Network Error",
+            text: "Failed to connect to the server",                // this is in case server didn't respond at all, or user is offline
+            confirmButtonColor: "#ff6f00"
+          });
+        };
+
+        xhr.send(JSON.stringify(data));
+
+        });
+
+        });
+    </script>
   </body>
 </html>
