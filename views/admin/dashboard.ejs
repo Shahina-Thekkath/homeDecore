@@ -372,8 +372,8 @@
                 </div>
                 <div class="dash-widgetcontent">
                   <h5>
-                    $<span class="counters" data-count="307144.00"
-                      >$307,144.00</span
+                    ₹<span class="counters" data-count="0.00"
+                      >₹0.00</span
                     >
                   </h5>
                   <h6>Total Purchase Due</h6>
@@ -389,8 +389,8 @@
                 </div>
                 <div class="dash-widgetcontent">
                   <h5>
-                    $<span class="counters" data-count="4385.00"
-                      >$4,385.00</span
+                    ₹<span class="counters" data-count="<%= totalSalesDue %>"
+                      >₹<%= totalSalesDue.toLocaleString() %></span
                     >
                   </h5>
                   <h6>Total Sales Due</h6>
@@ -406,8 +406,8 @@
                 </div>
                 <div class="dash-widgetcontent">
                   <h5>
-                    $<span class="counters" data-count="385656.50"
-                      >385,656.50</span
+                    ₹<span class="counters" data-count="<%= salesDecrease %>"
+                      ><%= salesDecrease.toLocaleString() %></span
                     >
                   </h5>
                   <h6>Total Sale Amount</h6>
@@ -423,7 +423,7 @@
                 </div>
                 <div class="dash-widgetcontent">
                   <h5>
-                    $<span class="counters" data-count="40000.00">400.00</span>
+                    ₹<span class="counters" data-count="<%= salesIncrease %>"><%= salesIncrease.toLocaleString() %></span>
                   </h5>
                   <h6>Total Sale Amount</h6>
                 </div>
@@ -745,6 +745,7 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     
 
+  
 
     <script>
           function message(msg){
