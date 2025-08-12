@@ -1317,7 +1317,7 @@
                                                     <a class="dash-active" href="/orders">My Orders</a></li>
                                                 <li>
 
-                                                    <a href="/userWallet">My Wallet</a></li>
+                                                    <a href="/wallet">My Wallet</a></li>
                                                 <li>
 
                                                     <a href="/logout">Logout</a></li>
@@ -1466,7 +1466,7 @@
                                                                         </span>
 
                                                                     <% } else { %>
-                                                                        <% if(order.paymentMethod === "Cash on Delivery"){ %>
+                                                                      
                                                                             <% if (product.isCancellable && product.status !== "Delivered") { %>
                                                                         <button 
                                                                             class="dash__custom-link btn--e-transparent-brand-b-2 u-s-m-t-10"
@@ -1474,7 +1474,7 @@
                                                                             Cancel Order
                                                                         </button>
                                                                         <% } %>
-                                                                        <% } %>
+                                                                      
 
                                                                         
 

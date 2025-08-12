@@ -3,7 +3,7 @@ const {Schema} = mongoose;
 const {model} = mongoose;
 
 const wishlistSchema = new Schema({
-    UserId:{
+    userId:{
         type: Schema.Types.ObjectId,
         ref: "User",
         required: true

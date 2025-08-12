@@ -2,6 +2,8 @@ const Cart = require("../../models/cartSchema");
 const Product = require("../../models/productSchema");
 const User = require("../../models/userSchma");
 const Category = require('../../models/categorySchema');
+const CategoryOffer = require('../../models/categoryOfferSchema');
+const ProductOffer = require('../../models/productOfferSchema');
 
 
 const loadProductDetails = async (req, res) =>{
@@ -21,14 +23,17 @@ const loadProductDetails = async (req, res) =>{
              cart = await Cart.findOne({userId: user._id}).populate({path:"items.productId"});
             
              const cartItems = cart && cart.items && cart.items.length > 0
-                ? cart.items.map((item) => ({
+                ? cart.items.map((item) => {
+                  const priceToUse = item.discountAmount && item.discountAmount > 0 ? item.discountedPrice : item.price;
+                  return {
                     _id: item._id,
                     productId: item.productId._id,
                     name: item.productId.name,
                     price: item.price,
                     quantity: item.quantity,
-                    subtotal: item.price * item.quantity
-                }))
+                    subtotal: priceToUse * item.quantity
+                }
+        })
                 : [];
     
             grandTotal = cartItems.reduce((total, item) => total + item.subtotal, 0);
@@ -39,23 +44,102 @@ const loadProductDetails = async (req, res) =>{
         }
 
         
-        const currentProduct = await Product.findById(productId);
+        const currentProduct = await Product.findById(productId).populate("categoryId").lean();
        
 
-        const relatedProduct = await Product.find({
-            _id:{$ne:productId},
-            categoryId:currentProduct.categoryId
-        }).limit(8);
-      
+        const getBestDiscount = async (product) => {
+        const basePrice = product.price;
+
+        // Get product offer
+        const productOffer = await ProductOffer.findOne({
+            productId: product._id,
+            isActive: true,
+            startDate: { $lte: new Date() },
+            endDate: { $gte: new Date() }
+        });
+
+      let productDiscountValue = 0;
+      if (productOffer) {
+        productDiscountValue = productOffer.discountType === "percentage"
+          ? (basePrice * productOffer.discountAmount) / 100
+          : productOffer.discountAmount;
+      }
+
+      // Get category offer
+      const categoryOffer = await CategoryOffer.findOne({
+        categoryId: product.categoryId,
+        isActive: true,
+        startDate: { $lte: new Date() },
+        endDate: { $gte: new Date() }
+      });
+
+      let categoryDiscountValue = 0;
+      if (categoryOffer) {
+        categoryDiscountValue = categoryOffer.discountType === "percentage"
+          ? (basePrice * categoryOffer.discountAmount) / 100
+          : categoryOffer.discountAmount;
+      }
+
+      // Pick greater discount
+      if (productDiscountValue > categoryDiscountValue) {
+        return {
+          discountType: productOffer.discountType,
+          discountAmount: productOffer.discountAmount,
+          finalPrice: Math.max(basePrice - productDiscountValue, 0),
+          basePrice
+        };
+      } else if (categoryDiscountValue > 0) {
+        return {
+          discountType: categoryOffer.discountType,
+          discountAmount: categoryOffer.discountAmount,
+          finalPrice: Math.max(basePrice - categoryDiscountValue, 0),
+          basePrice
+        };
+      } else {
+        return {
+          discountType: null,
+          discountAmount: 0,
+          finalPrice: basePrice,
+          basePrice
+        };
+      }
+    };
+
+    // Get best discount for current product
+    const currentProductOffer = await getBestDiscount(currentProduct);
+
+    // Get related products
+    const relatedProductsRaw = await Product.find({
+      _id: { $ne: productId },
+      categoryId: currentProduct.categoryId
+    }).populate("categoryId").lean().limit(8);
+
+    // Map related products with their best discount
+    const relatedProducts = await Promise.all(
+      relatedProductsRaw.map(async (prod) => {
+        const offerData = await getBestDiscount(prod);
+        return { ...prod, ...offerData };
+      })
+    );
+
+    // Render
+    res.render("productDetails", {
+      currentProduct: { ...currentProduct, ...currentProductOffer },
+      relatedProducts,
+      cart,
+      grandTotal,
+      user
+    });
         
         
-        res.render('productDetails',{currentProduct, relatedProduct, cart, grandTotal, user});
+        
+        
     } catch (error) {
        console.error("Error while rendering the product details page: ", error);
        
         res.redirect("/PageNotFound");
     }
-}
+};
 
 const getUserProductList = async(req, res) =>{
     try {

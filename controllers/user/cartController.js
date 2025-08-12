@@ -3,6 +3,8 @@ const session = require("express-session");
 const User = require("../../models/userSchma");
 const Product = require("../../models/productSchema");
 const mongoose = require("mongoose");
+const ProductOffer = require('../../models/productOfferSchema');
+const CategoryOffer = require('../../models/categoryOfferSchema');
 
 const loadCart = async(req, res) =>{
     try {
@@ -17,19 +19,26 @@ const loadCart = async(req, res) =>{
             return res.render("emptyCart", {user});
            }
 
-           const cartItems = cart.items.map((item) =>({
-                _id : item._id,
-                productId: item.productId,
-                name: item.productId.name,
-                price: item.price,
-                quantity: item.quantity,
-                subtotal: item.price*item.quantity
-           }));
+            const cartItems = cart && cart.items && cart.items.length > 0
+                ? cart.items.map((item) => {
+                  const priceToUse = item.discountAmount && item.discountAmount > 0 ? item.discountedPrice : item.price;
+                  return {
+                    _id: item._id,
+                    productId: item.productId,
+                    name: item.productId.name,
+                    price: item.price,
+                    discountedPrice: item.discountedPrice,
+                    quantity: item.quantity,
+                    subtotal: priceToUse * item.quantity
+                }
+            }) : [];
            
 
            const grandTotal = cartItems.reduce((total, item) => total + item.subtotal, 0);
+           console.log("grandtotal", grandTotal);
+           
 
-           res.render("cart", { cartItems, grandTotal, user});
+           res.render("cart", { cart, cartItems, grandTotal, user});
 
     } catch (error) {
         console.error("Error loading cart page:", error);
@@ -106,6 +115,67 @@ const addToCart = async(req, res) =>{
             return res.status(400).json({error: "Requested quantity exceeds stock"});
         }
 
+        const basePrice = product.price;
+
+        // ====== OFFER CHECK START ======
+      
+        let discountAmount = 0;
+        let finalPrice = basePrice;
+
+        // Product offer
+        const productOffer = await ProductOffer.findOne({
+            productId: product._id,
+            isActive: true,
+            startDate: { $lte: new Date() },
+            endDate: { $gte: new Date() }
+        });
+
+        // Category offer
+        const categoryOffer = await CategoryOffer.findOne({
+            categoryId: product.categoryId,
+            isActive: true,
+            startDate: { $lte: new Date() },
+            endDate: { $gte: new Date() }
+        });
+
+        let productDiscountValue = 0;
+        if (productOffer) {
+            if (productOffer.discountType === "percentage") {
+                productDiscountValue = (basePrice * productOffer.discountAmount) / 100;
+            } else {
+                productDiscountValue = productOffer.discountAmount;
+            }
+        }
+
+        let categoryDiscountValue = 0;
+        if (categoryOffer) {
+            if (categoryOffer.discountType === "percentage") {
+                categoryDiscountValue = (basePrice * categoryOffer.discountAmount) / 100;
+            } else {
+                categoryDiscountValue = categoryOffer.discountAmount;
+            }
+        }
+
+        // Choose better discount
+        discountAmount = Math.max(productDiscountValue, categoryDiscountValue);
+        console.log(discountAmount);
+   // Ensure finalPrice is always set
+
+        if (discountAmount === 0) {
+    finalPrice = product.price * quantity;
+}
+
+        finalPrice = basePrice - discountAmount;
+        if (finalPrice < 0) {
+            console.log("final price is less than zero");
+            
+            finalPrice = 0;} // prevent negative price
+        console.log("addtoCart", finalPrice);
+
+        console.log("Base Price:", basePrice);
+        console.log("Discount Amount:", discountAmount);
+        console.log("Total Final Price:", finalPrice);
+
         
         
         //find or create the user's cart
@@ -119,14 +189,22 @@ const addToCart = async(req, res) =>{
         if(itemIndex > -1){
             //update quantity if product already exists in cart
             cart.items[itemIndex].quantity += quantity;
+            cart.items[itemIndex].price = basePrice;
+            cart.items[itemIndex].discountAmount = discountAmount;
+            cart.items[itemIndex].discountedPrice = finalPrice;
 
         }else{
-            const price = product.price;
-            //add new product to the cart
-            cart.items.push({productId, quantity, price});
+              cart.items.push({
+                productId,
+                quantity,
+                price: basePrice,
+                discountAmount: discountAmount,
+                discountedPrice: finalPrice
+            });
         }
 
         await cart.save();
+
 
         return res.status(200).json({message: "Product added to cart", cart});
      

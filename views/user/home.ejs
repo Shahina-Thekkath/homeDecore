@@ -230,14 +230,14 @@
                 <div class="section__content">
                     <div class="container">
                         <div class="row">
-                            <%for(let i = product.length-1;i>=0;i--){%>
+                            <%for(let i = products.length-1;i>=0;i--){%>
                             <div class="col-lg-3 col-md-4 col-sm-6 u-s-m-b-30">
                                 <div class="product-r u-h-100">
                                     <div class="product-r__container">
 
-                                        <a class="aspect aspect--bg-grey aspect--square u-d-block" href="/product-details/<%=product[i]._id%>">
+                                        <a class="aspect aspect--bg-grey aspect--square u-d-block" href="/product-details/<%=products[i]._id%>">
 
-                                            <img class="aspect__img" src="/admin-assets/product2/<%=product[i].image[0]%>" alt="" ></a>
+                                            <img class="aspect__img" src="/admin-assets/product2/<%=products[i].image[0]%>" alt="" ></a>
                                         <div class="product-r__action-wrap">
                                             <ul class="product-r__action-list">
                                                 <li>
@@ -259,16 +259,32 @@
 
                                         <span class="product-r__category">
 
-                                            <a href="shop-side-version-2.html"><%=product[i].name%></a></span>
+                                            <a href="shop-side-version-2.html"><%=products[i].name%></a></span>
                                         <div class="product-r__n-p-wrap">
 
                                             <span class="product-r__name">
 
                                                
 
-                                            <span class="product-r__price">₹<%=product[i].price%></span></div>
+                                            <% if(products[i].discountInfo){ %>
+                                                <span class="product-r__price">₹<%=products[i].finalPrice%>
 
-                                        <!-- <span class="product-r__description"><%=product[i].description%></span> -->
+                                                    <span class="product-o__discount">₹<%=products[i].originalPrice%></span> </span>
+                                                 <% if(products[i].discountInfo.type === 'percentage'){ %>
+                                                        <span class="offer-badge"><%=products[i].discountInfo.amount%>% OFF</span>
+                                                    <% } %>
+                                                
+                                               
+
+                                                   
+                                            <% } else { %>
+                                                <span class="product-r__price">₹<%=products[i].originalPrice%></span>
+                                            <% } %>
+                                            
+                                        
+                                        </div>
+
+                                        
                                     </div>
                                 </div>
                             </div>

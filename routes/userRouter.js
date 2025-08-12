@@ -14,6 +14,8 @@ const cartController = require("../controllers/user/cartController");
 const checkoutController = require("../controllers/user/checkoutController");
 const orderController = require("../controllers/user/orderController");
 const couponController = require("../controllers/user/couponController");
+const wishlistController = require("../controllers/user/wishlistController");
+const walletController = require("../controllers/user/walletController")
 
 // const GoogleStrategy = require('passport-google-oauth20').Strategy;
 
@@ -106,6 +108,14 @@ userRouter.get('/retry/payment-failed', auth.sessionVerify, orderController.getR
 
 userRouter.post('/apply-coupon', auth.sessionVerify, couponController.applyCoupon);
 userRouter.post('/remove-coupon', auth.sessionVerify, couponController.removeCoupon);
+
+userRouter.get('/wishlist', auth.sessionVerify, wishlistController.getWishlist);
+userRouter.post('/add-to-wishlist', auth.sessionVerify, wishlistController.addToWishlist);
+userRouter.delete('/wishlist/clear', auth.sessionVerify, wishlistController.clearWishlist);
+userRouter.delete('/wishlist/remove/:id', auth.sessionVerify, wishlistController.removeProductFromWishlist);
+userRouter.get('/wishlist/empty', auth.sessionVerify, wishlistController.getEmptyWishlist);
+
+userRouter.get('/wallet', auth.sessionVerify, walletController.getWallet);
 
 
 

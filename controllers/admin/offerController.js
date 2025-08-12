@@ -2,6 +2,7 @@ const Product = require('../../models/productSchema');
 const Category = require('../../models/categorySchema');
 const ProductOffer = require('../../models/productOfferSchema');
 const CategoryOffer = require('../../models/categoryOfferSchema');
+const mongoose = require('mongoose');
 
 const getAddOffer = async (req, res) => {
     try {
@@ -30,6 +31,8 @@ const postAddOffer = async (req, res) => {
         const {offerType, productId, categoryId, discountType, discountAmount, startDate, endDate} = req.body;
 
         console.log("postOffer", offerType, productId, categoryId, discountType, discountAmount, startDate, endDate);
+        console.log(typeof categoryId);
+    
         
 
         let errors = {};
@@ -39,13 +42,16 @@ const postAddOffer = async (req, res) => {
             errors.offerType = 'Invalid offer type';
         }
 
-        if(offerType === 'category' && !categoryId) {
+       if (offerType === 'category' && (!categoryId || categoryId === 'undefined' || categoryId === 'null' || 
+                    categoryId.trim() === '')) {
             errors.categoryId = 'Please select a category';
-        }
+            }
 
-        if (offerType === "product" && !productId) {
-      errors.productId = "Please select a product";
-    }
+            if (offerType === 'product' &&
+        (!productId || productId === 'undefined' || productId === 'null' || productId.trim() === '')) {
+                errors.productId = 'Please select a product';
+                }
+
 
         if(!discountType || !['percentage', 'flat'].includes(discountType)) {
             errors.discountType = 'Invalid discount type';
@@ -67,6 +73,9 @@ const postAddOffer = async (req, res) => {
         if(Object.keys(errors).length > 0) {
             return res.status(200).json({ success: false, errors });
         }
+
+        console.log("finish validation");
+        
 
         if (offerType === 'product') {
             await ProductOffer.create({

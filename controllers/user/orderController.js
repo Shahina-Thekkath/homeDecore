@@ -9,6 +9,7 @@ const crypto = require("crypto");
 const qs = require("qs");
 const Coupon = require("../../models/couponSchema");
 const { log } = require("console");
+const Wallet = require('../../models/walletSchema');
 
 const saveOrderFromSerializedData = async (
   formData,
@@ -277,6 +278,57 @@ const getOrderDetails = async (req, res) => {
   }
 };
 
+const generateTransactionId = () => {
+  const timestamp = Date.now().toString(); // current time in ms
+  const randomPart = Math.floor(1000 + Math.random() * 9000); // 4-digit random
+  return `TXN${timestamp}${randomPart}`;
+};
+
+
+const handleRefundToWallet = async (userId, amount, reason) => {
+  const transactionId = generateTransactionId();
+  console.log("transactionId", transactionId);
+  
+
+
+  const wallet = await Wallet.findOne({ userId });
+
+  if (wallet) {
+    // Ensure transactions array exists
+    if (!Array.isArray(wallet.transactions)) {
+      wallet.transactions = [];
+    }
+
+    wallet.balance += amount;
+    wallet.transactions.push({
+      transactionId,
+      type: "credit",
+      amount,
+      reason,
+      date: new Date()
+    });
+
+    await wallet.save();
+    
+  } else {
+    await Wallet.create({
+      userId,
+      balance: amount,
+      transactions: [
+        {
+          transactionId,
+          type: "credit",
+          amount,
+          reason,
+          date: new Date()
+        },
+      ],
+    });
+  }
+};
+
+// cancel for a single product in an order
+//here the product which has been cancelled, its stock is updated, amount is also refunded
 const cancelOrder = async (req, res) => {
   const { orderId, productId } = req.params;
   try {
@@ -314,6 +366,13 @@ const cancelOrder = async (req, res) => {
       await dbProduct.save();
     }
 
+    const refundAmount = product.price * product.quantity;
+
+    const userId = order.userId._id;
+    if (order.isPaid) {
+      await handleRefundToWallet(userId, refundAmount, "Order cancel Refund");     // for razor pay
+    }
+
     product.status = "Cancelled";
     console.log("new Order:", order);
     await order.save();
@@ -323,6 +382,13 @@ const cancelOrder = async (req, res) => {
     res.status(500).json({ success: false, message: "Failed to cancel order" });
   }
 };
+
+// here finally return is requested now it should be 
+// approved from the admin then only will the status be returned 
+// here the stock updation and refunding is not done , 
+// it is only done after the admin has approved ie the status which
+//  would be 'return requested' is changed to 'returned'
+
 
 const returnOrder = async (req, res) => {
   const { orderId, productId } = req.params;
@@ -348,13 +414,6 @@ const returnOrder = async (req, res) => {
       return res
         .status(400)
         .json({ success: false, message: "Product cannot be returned" });
-    }
-
-    // Update product stock
-    const dbProduct = await Product.findById(productId);
-    if (dbProduct) {
-      dbProduct.quantity += product.quantity;
-      await dbProduct.save();
     }
 
     product.status = "Return Requested";

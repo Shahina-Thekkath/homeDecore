@@ -1230,7 +1230,7 @@
                                         <a href="/"><i class="fas fa-home"></i></a></li>
                                     <li>
 
-                                        <a href="wishlist.html"><i class="far fa-heart"></i></a></li>
+                                        <a href="/wishlist"><i class="far fa-heart"></i></a></li>
                                     <li class="has-dropdown">
 
                                         <a class="mini-cart-shop-link" href="/cart"><i class="fas fa-shopping-bag"></i>
@@ -1313,7 +1313,7 @@
                                                     <a class="dash-active" href="/orders">My Orders</a></li>
                                                 <li>
 
-                                                    <a href="/userWallet">My Wallet</a></li>
+                                                    <a href="/wallet">My Wallet</a></li>
                                                 <li>
 
                                                     <a href="/logout">Logout</a></li>
@@ -1379,6 +1379,7 @@
                                                     <div class="manage-o__header u-s-m-b-30">
                                                         <div class="dash-l-r">
                                                             <div>
+                                                                <p>debug:<%= order.paymentMethod %></p>
                                                                 <div class="manage-o__text-2 u-c-secondary">Order #<%= order._id %></div>
                                                                 <div class="manage-o__text u-c-silver">Placed on <%= new Date(order.createdAt).toLocaleString("en-US", { dateStyle: "medium", timeStyle: "short" }) %></div>
                                                             </div>

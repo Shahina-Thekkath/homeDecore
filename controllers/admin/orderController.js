@@ -36,11 +36,9 @@ const getOrderById = async (req, res) => {
       .populate("products.productId", "name image");
     if (!order) return res.status(404).json({ message: "Order not found" });
 
-    const grandTotal = order.products.reduce((total, product) => {
-      return product.status !== "Cancelled"
-        ? total + product.price * product.quantity
-        : total;
-    }, 0);
+    // need to check
+    const grandTotal = order.products.reduce((total, product) => 
+      total + product.price * product.quantity, 0);
 
     res.render("orderDetails", { order, grandTotal });
   } catch (error) {
@@ -51,38 +49,64 @@ const getOrderById = async (req, res) => {
   }
 };
 
+const generateTransactionId = () => {
+  const timestamp = Date.now().toString(); // current time in ms
+  const randomPart = Math.floor(1000 + Math.random() * 9000); // 4-digit random
+  return `TXN${timestamp}${randomPart}`;
+};
+
+
 const handleRefundToWallet = async (userId, amount, reason) => {
+  const transactionId = generateTransactionId();
+  console.log("transactionId", transactionId);
+  
+
+
   const wallet = await Wallet.findOne({ userId });
 
   if (wallet) {
+    // Ensure transactions array exists
+    if (!Array.isArray(wallet.transactions)) {
+      wallet.transactions = [];
+    }
+
     wallet.balance += amount;
     wallet.transactions.push({
+      transactionId,
       type: "credit",
       amount,
       reason,
+      date: new Date()
     });
+
     await wallet.save();
+
   } else {
     await Wallet.create({
       userId,
       balance: amount,
       transactions: [
         {
+          transactionId,
           type: "credit",
           amount,
           reason,
+          date: new Date()
         },
       ],
     });
   }
 };
 
-//this is using ajax
+//when order is cancelled the total amount of the order is refunded and the of each product in the order is incremented
 const cancelOrder = async (req, res) => {
   try {
     const order = await Order.findById(req.params.id)
       .populate("userId")
       .populate("products.productId");
+
+      console.log("cancelOrder", order);
+      
 
     if (!order) {
       return res
@@ -108,11 +132,15 @@ const cancelOrder = async (req, res) => {
         $inc: { quantity: item.quantity },
       });
     }
+    console.log("cancelOrder , incremented");
+    
 
     const refundAmount = order.totalAmount;
+    console.log(refundAmount);
+    
     const userId = order.userId._id;
     if (order.isPaid) {
-      await handleRefundToWallet(userId, refundAmount, "Order Refund");
+      await handleRefundToWallet(userId, refundAmount, "Order Refund");     // for razor pay
     }
 
     order.orderStatus = "Cancelled";
@@ -143,6 +171,12 @@ const cancelOrder = async (req, res) => {
   }
 };
 
+// in the case of update if status is changed to delivered the the status is updated to delivered and the delivered date is dipslayed
+// In the case of changing the status to returned or cancelled the refund is done for each product in the order according to the quantity
+// and the stock is updated
+
+// need to set condition if the product status not pending or processing product cannot be cancelled
+
 const updateProductStatus = async (req, res) => {
   try {
     const { orderId, productIndex, newStatus } = req.body;
@@ -172,6 +206,14 @@ const updateProductStatus = async (req, res) => {
         $inc: { quantity: product.quantity },
       });
 
+      const cancellableStatuses = ["Pending Payment", "Processing"];
+      if (!cancellableStatuses.includes(product.status)) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Cannot be cancelled at this stage order at this stage" });
+    }
+
+
       const refundAmount = product.price * product.quantity;
 
       if (order.isPaid) {
@@ -184,7 +226,7 @@ const updateProductStatus = async (req, res) => {
     }
 
     await order.save();
-    console.log("update Product status;", order);
+    console.log("update Product status", order);
     res.json({ message: "Product status updated successfully" });
   } catch (error) {
     console.error("Error updating status:", error);

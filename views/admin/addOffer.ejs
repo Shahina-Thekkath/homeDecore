@@ -723,7 +723,7 @@
 
         //create AJAX request
         const xhr = new XMLHttpRequest();
-        xhr.open("PUT", "/admin/offer/edit-offer");
+        xhr.open("POST", "/admin/offer/add-offer");
         xhr.setRequestHeader("Content-Type", "application/json");
 
         xhr.onload = function () {

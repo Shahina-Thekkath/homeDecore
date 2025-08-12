@@ -4,15 +4,17 @@ const { model } = mongoose;
 
 
 const CartSchema = new Schema({
-    userId: { type: Schema.Types.ObjectId, ref: 'User'},
-    items:[
+    userId: { type: Schema.Types.ObjectId, ref: 'User' },
+    items: [
         {
-            productId: {type: Schema.Types.ObjectId, ref: 'Product'},
-            quantity: Number,
-            price: Number
+            productId: { type: Schema.Types.ObjectId, ref: 'Product' },
+            quantity: { type: Number, required: true },
+            price: { type: Number, required: true }, // Original price (without offer)
+            discountAmount: { type: Number, default: 0 }, // Discount amount applied
+            discountedPrice: { type: Number } // Final price after discount
         }
     ],
-    createdAt: {type: Date, default: Date.now}
+    createdAt: { type: Date, default: Date.now }
    });
 
    const Cart = model('Cart', CartSchema);

@@ -7,9 +7,13 @@ const walletSchema = new Schema({
     balance: {type: Number, default: 0},
     transactions: [
         {
+            transactionId: {
+                type: String, // Generated unique ID (e.g., "TXN202508110001")
+                required: true
+            },
             type:{
             type: String,
-            enum: ['credit', 'debit']
+            enum: ['credit', 'debit', 'refund']
         },
         amount: Number,
         reason: String,

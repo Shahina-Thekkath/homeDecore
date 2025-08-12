@@ -53,14 +53,19 @@ console.log("expired coupons", expiredCoupons);
 
 
 
-    const cartItems = cart.items.map((item) => ({
-      _id: item._id,
-      productId: item.productId,
-      name: item.productId.name,
-      price: item.price,
-      quantity: item.quantity,
-      subtotal: item.quantity * item.price,
-    }));
+    const cartItems = cart && cart.items && cart.items.length > 0
+                ? cart.items.map((item) => {
+                  const priceToUse = item.discountAmount && item.discountAmount > 0 ? item.discountedPrice : item.price;
+                  return {
+                    _id: item._id,
+                    productId: item.productId,
+                    name: item.productId.name,
+                    price: item.price,
+                    discountedPrice: item.discountedPrice,
+                    quantity: item.quantity,
+                    subtotal: priceToUse * item.quantity
+                }
+            }) : [];
 
     const grandTotal = cartItems.reduce(
       (total, item) => total + item.subtotal,
