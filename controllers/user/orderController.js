@@ -47,6 +47,7 @@ const saveOrderFromSerializedData = async (
       createdAt: new Date(),
       discountAmount: parseFloat(discountAmount) || 0,
       couponCode: couponCode || null,
+      couponDiscount: discountAmount
     });
 
     console.log("new order", newOrder);
@@ -96,7 +97,7 @@ const saveOrderFromSerializedData = async (
 const saveOrderInSession = async (req, res) => {
   try {
     const userId = req.session.user._id;
-    const { cartItems, grandTotal, shippingAddress, payment } = req.body;
+    const { cartItems, grandTotal, shippingAddress, payment } = req.body;   // here the grandTotal is the amount after the  discount is applied if any but in cartSchema the discountedPrice and price are stored seperately
     
 
     const itemsArray = Array.isArray(cartItems)
@@ -124,6 +125,7 @@ const saveOrderInSession = async (req, res) => {
       createdAt: new Date(),
       discountAmount: parseFloat(discountAmount) || 0,
       couponCode: req.session.coupon?.code || null,
+      couponDiscount: discountAmount
     };
 
     req.session.order = order;
@@ -580,7 +582,8 @@ const razorPaymentFailed = async (req, res) => {
       orderStatus: "Pending",
       createdAt: new Date(),
       discountAmount: parseFloat(discountAmount) || 0,
-      couponCode: req.session.coupon?.code || null
+      couponCode: req.session.coupon?.code || null,
+      couponDiscount: discountAmount
     };
     console.log("failure", order);
 

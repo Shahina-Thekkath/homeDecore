@@ -41,6 +41,17 @@
     />
 
     <link rel="stylesheet" href="/admin-assets/css/style.css" />
+    <style>
+  .dash-count {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    cursor: pointer;
+  }
+
+  .dash-count:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+  }
+</style>
   </head>
 
   <body>
@@ -353,6 +364,9 @@
                 <a href="/admin/offer"><span> Offer</span> </a>
               </li>
               <li class="">
+                <a href="/admin/salesReport"><span> Sales Report</span> </a>
+              </li>
+              <li class="">
                 <a onclick="message(successMessage= 'Logout Successfully')" href ="/admin/logout"><span> Logout</span> </a>
               </li>
             </ul>
@@ -463,17 +477,17 @@
               </div>
             </div>
             <div class="col-lg-3 col-sm-6 col-12 d-flex">
-              <div class="dash-count das3">
-                <div class="dash-counts">
-                  <h4>105</h4>
-                  <h5>Sales Invoice</h5>
-                </div>
-                <div class="dash-imgs">
-                  <i data-feather="file"></i>
-                </div>
+          
+            <div class="dash-count das3">
+              <div class="dash-counts">
+                <h4>105</h4>
+                <h5>Sales Invoice</h5>
+              </div>
+             <div class="dash-imgs">
+                <i data-feather="file"></i>
               </div>
             </div>
-          </div>
+        </div>
 
           <div class="row">
             <div class="col-lg-7 col-sm-12 col-12 d-flex">

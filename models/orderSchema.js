@@ -71,11 +71,12 @@ const OrderSchema = new Schema(
     discountAmount: {
       type: Number,
       default: 0,
-    },
+    },                    // this is the amount in rs whether percent or flat , offerDiscount
     couponCode: {
       type: String,
       default: null,
     },
+    couponDiscount: { type: Number, default: 0 }                                            
   },
   { timestamps: true }
 );

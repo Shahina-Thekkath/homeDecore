@@ -1,0 +1,9 @@
+.btn-blue {
+  background-color: #110f7de0; /* Pick your blue shade */
+  color: white; /* Ensure text is visible */
+  border: none;
+}
+
+.btn-blue:hover {
+  background-color: #060668; /* Darker on hover */
+}

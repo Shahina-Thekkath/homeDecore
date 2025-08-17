@@ -170,11 +170,11 @@ const addToCart = async(req, res) =>{
             console.log("final price is less than zero");
             
             finalPrice = 0;} // prevent negative price
-        console.log("addtoCart", finalPrice);
+                                                                    // console.log("addtoCart", finalPrice);
 
-        console.log("Base Price:", basePrice);
-        console.log("Discount Amount:", discountAmount);
-        console.log("Total Final Price:", finalPrice);
+                                                                    // console.log("Base Price:", basePrice);
+                                                                    // console.log("Discount Amount:", discountAmount);
+                                                                    // console.log("Total Final Price:", finalPrice);
 
         
         
@@ -199,7 +199,7 @@ const addToCart = async(req, res) =>{
                 quantity,
                 price: basePrice,
                 discountAmount: discountAmount,
-                discountedPrice: finalPrice
+                discountedPrice: finalPrice    // here discountedAmount would be the amount after discount if there is a discount or else will be the amount without discount if there is no discount
             });
         }
 

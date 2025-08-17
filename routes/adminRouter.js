@@ -13,6 +13,7 @@ const logoutController = require("../controllers/admin/logoutController");
 const orderController = require("../controllers/admin/orderController");
 const couponController = require("../controllers/admin/couponController");
 const offerController = require('../controllers/admin/offerController');
+const salesController = require('../controllers/admin/salesController');
 
 adminRouter.get("/", adminAuth.isLogout, loginController.loadLogin);
 adminRouter.post("/", adminAuth.isLogout, loginController.login);
@@ -73,6 +74,13 @@ adminRouter.post('/offer/add-offer', offerController.postAddOffer);
 adminRouter.patch('/offer/toggle/:id', offerController.toggleOfferStatus);
 adminRouter.get('/offer/edit-offer/:id', offerController.getEditOffer);
 adminRouter.put('/offer/edit-offer/:id', offerController.updateOffer);
+
+adminRouter.get("/salesReport", salesController.getSalesReport);     
+adminRouter.get("/sales-report/data", salesController.getSalesReportData); 
+adminRouter.post("/sales-report/pdf", salesController.generateSalesPDF); 
+adminRouter.post("/sales-report/excel", salesController.generateSalesExcel);
+
+
 
 
 
