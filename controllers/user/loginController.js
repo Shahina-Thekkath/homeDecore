@@ -7,7 +7,8 @@ const session = require("express-session");
 
 const loadLogin = async(req, res) =>{
     try{
-        if(!req.session.user){
+        const user = req.session.user || req.session.passport;
+        if(!user){
             return res.render("login");
         }
         else{

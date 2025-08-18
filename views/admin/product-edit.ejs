@@ -392,6 +392,9 @@
                 <a href="/admin/offer"><span> Offer</span> </a>
               </li>
               <li class="">
+                <a href="/admin/salesReport"><span> Sales Report</span> </a>
+              </li>
+              <li class="">
                 <a onclick="message(successMessage= 'Logout Successfully')" href="/admin/logout"><span> Logout</span> </a>
               </li>
             </ul>
@@ -549,7 +552,6 @@
         let specificationCount = $('#specificationsContainer .specification-group').length;
         let variantCount = $('#variantsContainer .variant-group').length;
 
-        $(document).ready(function() {
           $('input[type="file"][data-index]').on('change', function (event) {
               const index = $(this).data('index');
               handleNewImage(event, parseInt(index));
@@ -572,7 +574,7 @@
             $(this).parent().remove();
         })
 
-        })
+        
         
         
         
@@ -978,6 +980,7 @@ $('.remove-button').on('click', function (event) {
                   })
             }
           }
+        })
           
     </script>
 </body>

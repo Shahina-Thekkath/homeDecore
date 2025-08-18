@@ -238,30 +238,28 @@ const getFilteredProductList = async (req, res) =>{
           if(trimmedSearch && trimmedSearch.length > 0){
             const searchRegex =  new RegExp(trimmedSearch, 'i');
 
-            // returns all the categories which starts with the searchRegex
-            const catDocs = await Category.find({ name: searchRegex });
-            const catIds = catDocs.map(cat => cat._id);
-
-            const parsedPrice = parseFloat(trimmedSearch);
+             const parsedPrice = parseInt(search, 10);
             const isValidPrice = !isNaN(parsedPrice);
 
-            query.$or = [
-                {name: searchRegex},
-                ...(isValidPrice
-                        ? [{
-                            $expr: {
-                            $regexMatch: {
-                                input: { $toString: "$price" },
-                                regex: `^${parsedPrice}`
-                            }
-                            }
-                        }]
-                        : []),      // The ... spreads the contents of either array (the [ { price: parsedPrice } ] or the empty []) into the $or array.
-                { categoryId: { $in: catIds } }
-            ];
 
+            // returns all the categories which starts with the searchRegex
+            const matchedCategory = await Category.findOne({ name: searchRegex });
 
-          }
+              if (matchedCategory) {
+                //  If a category name matches exactly → only search products by that category
+                query.categoryId = matchedCategory._id;
+               } else if (isValidPrice) {
+                  //  If numeric → treat as price range (±10%)
+                  const minPrice = parsedPrice - parsedPrice * 0.1; // -10%
+                  const maxPrice = parsedPrice + parsedPrice * 0.1; // +10%
+
+                  query.price = { $gte: minPrice, $lte: maxPrice };
+
+                } else {
+                  //  Otherwise search by name
+                  query.name = searchRegex;
+                }
+              }
 
           const totalProducts = await Product.countDocuments(query);
             const totalPages = Math.ceil(totalProducts / limit);

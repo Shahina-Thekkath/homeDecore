@@ -7,7 +7,7 @@ const Coupon = require("../../models/couponSchema");
 
 const loadCheckout = async (req, res) => {
   try {
-    const userId = req.session.user._id;
+    const userId = req.session.user._id || req.session.passport._id;
     const cart = await Cart.findOne({ userId }).populate("items.productId");
     console.log("cart", cart);
     console.log("cart2", cart.items[0].productId._id);
@@ -111,7 +111,7 @@ console.log("expired coupons", expiredCoupons);
 
 const saveSelectedAddress = async (req, res) => {
   try {
-    const userId = req.session.user._id; // Get user ID from session
+    const userId = req.session.user._id || req.session.passport._id; // Get user ID from session
     const { selectedAddress } = req.body; // Extract selected address ID from request body
 
     if (!selectedAddress) {

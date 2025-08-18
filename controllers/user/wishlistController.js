@@ -124,7 +124,7 @@ const addToWishlist = async (req, res) => {
         );
 
         if(alreadyExists){
-            return res.status(400).json({ error: "Product already in wishlist" });
+            return res.status(200).json({ error: "Product already in wishlist" });
         }
 
         wishlist.products.push({productId});

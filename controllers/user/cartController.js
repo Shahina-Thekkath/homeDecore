@@ -11,7 +11,7 @@ const loadCart = async(req, res) =>{
            console.log("req.body cart",req.body);
            
        
-           const userId = req.session.user?._id;
+           const userId = req.session.user?._id || req.session.passport._id;
            const user = await User.findById(userId);
            const cart = await Cart.findOne({userId}).populate("items.productId");
 
@@ -55,7 +55,7 @@ const updateCartTotals = async (req, res) =>{
             return res.status(400).json({ error: "Invalid request"});
         }
 
-        const userId = req.session.user._id;    
+        const userId = req.session.user._id || req.session.passport._id;    
         const cart = await Cart.findOne({ userId }).populate("items.productId");
         
         if(!cart){
@@ -179,9 +179,16 @@ const addToCart = async(req, res) =>{
         
         
         //find or create the user's cart
-        let cart = await Cart.findOne({ userId: req.session.user._id});
+        let userId = req.session.user?._id || req.session.passport?.user?._id ;
+        
+        if (!userId) {
+      return res.status(401).json({ message: "User not logged in" });
+    }
+        
+        
+        let cart = await Cart.findOne({ userId});
         if(!cart){
-           cart = new Cart({userId: req.session.user._id, items: []});
+           cart = new Cart({userId, items: []});
         }
 
         //check if product already exists in the cart
@@ -217,7 +224,7 @@ const addToCart = async(req, res) =>{
 
 const getCartItemCount = async (req, res) => {
     try {
-        const userId = req.session.user._id;
+        const userId = req.session.user._id || req.session.passport.user;
 
         const cart = await Cart.findOne({ userId });
         if (!cart) {
@@ -237,7 +244,7 @@ const getCartItemCount = async (req, res) => {
 const deleteCartItem = async(req, res) =>{
     try {
 
-        const userId = req.session.user._id;
+        const userId = req.session.user._id || req.session.passport._id;
      
         const itemId = req.params.id;
         const cart = await Cart.findOne({userId}).populate("items.productId");

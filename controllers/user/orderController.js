@@ -96,7 +96,7 @@ const saveOrderFromSerializedData = async (
 
 const saveOrderInSession = async (req, res) => {
   try {
-    const userId = req.session.user._id;
+    const userId = req.session.user._id || req.session.passport._id;
     const { cartItems, grandTotal, shippingAddress, payment } = req.body;   // here the grandTotal is the amount after the  discount is applied if any but in cartSchema the discountedPrice and price are stored seperately
     
 
@@ -110,7 +110,7 @@ const saveOrderInSession = async (req, res) => {
     // Format the order details
 
     const order = {
-      userId: req.session.user._id,
+      userId: req.session.user._id || req.session.passport._id,
 
       products: itemsArray.map((item) => ({
         productId: item.id,
@@ -160,7 +160,7 @@ const saveOrderInSession = async (req, res) => {
     }
 
     await Cart.findOneAndUpdate(
-      { userId: req.session.user._id },
+      { userId: req.session.user._id || req.session.passport._id},
       { $set: { items: [] } }
     );
 

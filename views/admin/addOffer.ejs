@@ -374,6 +374,9 @@
                 <a href="/admin/offer"><span> Offer</span> </a>
               </li>
               <li class="">
+                <a href="/admin/salesReport"><span> Sales Report</span> </a>
+              </li>
+              <li class="">
                 <a
                   onclick="message(successMessage= 'Logout Successfully')"
                   href="/admin/logout"
@@ -584,6 +587,22 @@
         dateFormat: "Y-m-d",
         minDate: "today",
       });
+    </script>
+    <script>
+          function message(msg){
+            if(msg){
+                  Swal.fire({
+                    positition: "center",
+                    icon: "success",
+                    title: msg,
+                    showConfirmButton: false,
+                    timer: 3000
+                  }).then(() =>{
+                    window.location.href = "/admin";
+                  })
+            }
+          }
+
     </script>
 
     <script>

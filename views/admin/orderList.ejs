@@ -291,7 +291,11 @@
                             
                                
                             
-                        </li>                        
+                        </li>  
+                        
+                        <li class="">
+                            <a href="/admin/salesReport"><span> Sales Report</span> </a>
+                        </li>
                         <li class="">
                             <a onclick="message(successMessage= 'Logout Successfully')" href="/admin/logout"><span>
                                     Logout</span> </a>
@@ -494,50 +498,22 @@
     <script src="/admin-assets/plugins/sweetalert/sweetalerts.min.js"></script>
 
     <script src="/admin-assets/js/script.js"></script>
-   
-    <!-- <script>
-       function updateOrderStatus(orderId, newStatus){
-        Swal.fire({
-            title: "Are you sure?",
-            text: `Change status to "${newStatus}"?`,
-            icon: "question",
-            showCancelButton: true,
-            confirmButtonColor: "#ff8800",
-            cancelButtonColor: "#d33",
-            confirmButtonText: "Yes, update it!"
-        }).then((result) =>{
-            if(result.isConfirmed) {
-                $.ajax({
-                    url: `/admin/orders/updateStatus/${orderId}`,
-                    method: "POST",
-                    contentType: "application/json",
-                    data: JSON.stringify({status: newStatus}),
-                    success: function(response){
-                        Swal.fire({
-                            icon: "success",
-                            title: "Status Updated",
-                            text: response.message || "Order status updated successfully!",
-                            timer: 1500,
-                            showConfirmButton: false
-                    }).then(()=>{
-                        location.reload();
-                    });
-            },
-            error: function(err){
-                Swal.fire({
-                    icon: "error",
-                    title: "Update Failed",
-                    text: "Something went wrong. Please try again."
-                });
+    <script>
+          function message(msg){
+            if(msg){
+                  Swal.fire({
+                    positition: "center",
+                    icon: "success",
+                    title: msg,
+                    showConfirmButton: false,
+                    timer: 3000
+                  }).then(() =>{
+                    window.location.href = "/admin";
+                  })
             }
-        });
-       }
-    });
-}
+          }
 
-    </script> -->
-
-
+    </script>
 
 </body>
 
