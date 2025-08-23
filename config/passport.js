@@ -11,7 +11,7 @@ const googleStrategy = require("passport-google-oauth2").Strategy;
 
 
 passport.serializeUser((user,done)=>{
-    done(null, user);
+    done(null, user);                    // This tells Passport that authentication was successful and passes the user back into the session.
 })
 
 passport.deserializeUser((user,done)=>{

@@ -170,6 +170,84 @@ const getUserProductList = async(req, res) =>{
             .limit(limit)
             .lean();
 
+            const currentDate = new Date();
+
+            //Apply offers for each product 
+
+            const updatedProducts = await Promise.all(
+              products.map(async (product) => {
+                const originalPrice = product.price;
+                let bestPrice = originalPrice;
+                let discountInfo = null;
+
+                let productDiscountPrice, categoryDiscountPrice;
+
+                //check product offer
+                const productOffer = await ProductOffer.findOne({
+                  productId: product._id,
+                  isActive: true,
+                  startDate: { $lte: currentDate },
+                  endDate: { $gte: currentDate }
+                });
+
+                if(productOffer) {
+                  if (productOffer.discountType === 'percentage') {
+                    productDiscountPrice = originalPrice - (originalPrice * productOffer.discountAmount) / 100;
+                  } else if (productOffer.discountType === 'flat') {
+                    productDiscountPrice = originalPrice - productOffer.discountAmount;
+                  }
+                }
+
+                //check category offer
+                const categoryOffer = await CategoryOffer.findOne({
+                  categoryId: product.categoryId._id,
+                  isActive: true,
+                  startDate: {$lte: currentDate},
+                  endDate: { $gte: currentDate }
+                });
+
+                if(categoryOffer) {
+                  if(categoryOffer.discountType === 'percentage') {
+                    categoryDiscountPrice = originalPrice - (originalPrice * categoryOffer.discountAmount) / 100;
+                  } else if (categoryOffer.discountType === 'flat') {
+                    categoryDiscountPrice = originalPrice - categoryOffer.discountAmount;
+                  }
+                }
+
+                if(productDiscountPrice !== undefined &&
+                  (categoryDiscountPrice === undefined || productDiscountPrice < categoryDiscountPrice) &&
+                  productDiscountPrice < bestPrice
+                ) {
+                  bestPrice = productDiscountPrice;
+                  discountInfo = {
+                    type: productOffer.discountType,
+                    amount: productOffer.discountAmount,
+                    source: "product"
+                  };
+                } else if ( categoryDiscountPrice !== undefined && 
+                  categoryDiscountPrice < bestPrice
+                ) {
+                  bestPrice = categoryDiscountPrice;
+                  discountInfo = {
+                    type: categoryOffer.discountType,
+                    amount: categoryOffer.discountAmount,
+                    source: "category"
+                  };
+                }
+
+                bestPrice = Math.max(bestPrice, 0);
+
+                return{
+                  ...product,
+                  originalPrice,
+                  finalPrice: bestPrice,
+                  discountInfo
+                };
+              })
+            );
+
+            
+
             //  Aggregate product count by category
         const categoryCounts = await Product.aggregate([
             { $match: { isBlocked: false } },
@@ -193,7 +271,7 @@ const getUserProductList = async(req, res) =>{
 
        
         res.render('userProductList', {
-            products,
+            products: updatedProducts,
             user,
             sort,
             limit,
@@ -271,10 +349,86 @@ const getFilteredProductList = async (req, res) =>{
           const products = await Product.find(query).populate("categoryId", "name").sort(sortOption).skip(skip)
             .limit(limit).lean();
 
+            const currentDate = new Date();
+
+            //Apply offers for each product 
+
+            const updatedProducts = await Promise.all(
+              products.map(async (product) => {
+                const originalPrice = product.price;
+                let bestPrice = originalPrice;
+                let discountInfo = null;
+
+                let productDiscountPrice, categoryDiscountPrice;
+
+                //check product offer
+                const productOffer = await ProductOffer.findOne({
+                  productId: product._id,
+                  isActive: true,
+                  startDate: { $lte: currentDate },
+                  endDate: { $gte: currentDate }
+                });
+
+                if(productOffer) {
+                  if (productOffer.discountType === 'percentage') {
+                    productDiscountPrice = originalPrice - (originalPrice * productOffer.discountAmount) / 100;
+                  } else if (productOffer.discountType === 'flat') {
+                    productDiscountPrice = originalPrice - productOffer.discountAmount;
+                  }
+                }
+
+                //check category offer
+                const categoryOffer = await CategoryOffer.findOne({
+                  categoryId: product.categoryId._id,
+                  isActive: true,
+                  startDate: {$lte: currentDate},
+                  endDate: { $gte: currentDate }
+                });
+
+                if(categoryOffer) {
+                  if(categoryOffer.discountType === 'percentage') {
+                    categoryDiscountPrice = originalPrice - (originalPrice * categoryOffer.discountAmount) / 100;
+                  } else if (categoryOffer.discountType === 'flat') {
+                    categoryDiscountPrice = originalPrice - categoryOffer.discountAmount;
+                  }
+                }
+
+                if(productDiscountPrice !== undefined &&
+                  (categoryDiscountPrice === undefined || productDiscountPrice < categoryDiscountPrice) &&
+                  productDiscountPrice < bestPrice
+                ) {
+                  bestPrice = productDiscountPrice;
+                  discountInfo = {
+                    type: productOffer.discountType,
+                    amount: productOffer.discountAmount,
+                    source: "product"
+                  };
+                } else if ( categoryDiscountPrice !== undefined && 
+                  categoryDiscountPrice < bestPrice
+                ) {
+                  bestPrice = categoryDiscountPrice;
+                  discountInfo = {
+                    type: categoryOffer.discountType,
+                    amount: categoryOffer.discountAmount,
+                    source: "category"
+                  };
+                }
+
+                bestPrice = Math.max(bestPrice, 0);
+
+                return{
+                  ...product,
+                  originalPrice,
+                  finalPrice: bestPrice,
+                  discountInfo
+                };
+              })
+            );
+
             
 
 
-          res.render('user/productListPartial', {products, totalPages, currentPage: safePage, limit});
+          res.render('user/productListPartial', {products: updatedProducts, totalPages, currentPage: safePage, limit});
 
     } catch (error) {
          console.error("Error fetching products while using filter:", error);

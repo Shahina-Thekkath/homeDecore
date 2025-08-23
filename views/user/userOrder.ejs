@@ -1443,7 +1443,39 @@
                                             
                                         </div>
                                     </div>
-                                </div>
+
+
+
+                                        
+                                 <% if(totalPages > 1) { %>
+                                      <div class="u-s-p-y-60">
+                                        <ul class="shop-p__pagination">
+                                            <% if (currentPage > 1) { %>
+                                            <li>
+                                                <a class="fas fa-angle-left" href="/orders?page=<%= currentPage - 1 %>&filter=<%= filter %>"></a>
+                                            </li>
+                                            <% } %>
+
+                                            <% for (let i = 1; i <= totalPages; i++) { %>
+                                            <li class="<%= i === currentPage ? 'is-active' : '' %>">
+                                                <a href="/orders?page=<%= i %>&filter=<%= filter %>"><%= i %></a>
+                                            </li>
+                                            <% } %>
+
+                                            <% if (currentPage < totalPages) { %>
+                                            <li>
+                                                <a class="fas fa-angle-right" href="/orders?page=<%= currentPage + 1 %>&filter=<%= filter %>"></a>
+                                            </li>
+                                            <% } %>
+                                        </ul>
+                                        </div>
+                                 <% } %>
+                                    <!--====== Pagination ======-->
+                                    
+
+                                
+                                    
+                                
                             </div>
                         </div>
                     </div>

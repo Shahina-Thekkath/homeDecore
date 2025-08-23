@@ -227,11 +227,22 @@ const getOrdersPage = async (req, res) => {
       }; // Last 6 months
     }
 
+    //pagination
+
+    const page = parseInt(req.query.page) || 1;
+    const limit = 5;
+    const skip = (page - 1) * limit;
+
+    const totalOrders = await Order.countDocuments(query);
+    const totalPages = Math.ceil(totalOrders / limit);
+
     const orders = await Order.find(query)
       .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
       .populate("products.productId", "name image price");
 
-    res.render("userOrder", { orders, user, filter });
+    res.render("userOrder", { orders, user, filter, currentPage: page, totalPages });
   } catch (error) {
     console.error("Error fetching orders:", error);
     res.status(500).send("Failed to load orders");

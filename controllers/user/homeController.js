@@ -29,24 +29,7 @@ const loadHomepage = async(req, res) =>{
                     endDate: { $gte: currentDate }
                 });
 
-                if(productOffer) {
-                    let tempPrice
-                    const { discountType, discountAmount } = productOffer;
-                    if(discountType === 'percentage') {
-                        tempPrice = originalPrice - (originalPrice * discountAmount) / 100;
-                    } else if (discountType === 'flat') {
-                        tempPrice = originalPrice - discountAmount;
-                    }
-                    if (tempPrice < bestPrice) {
-                        bestPrice = tempPrice;
-                    }
-                    discountInfo = {
-                        type: discountType,
-                        amount: discountAmount,
-                        source: "product"
-                    };
-    
-                } else {
+                
                     // get valid category offer if no Product offer
                     const categoryOffer = await CategoryOffer.findOne({
                         categoryId: product.categoryId._id,
@@ -55,32 +38,58 @@ const loadHomepage = async(req, res) =>{
                         endDate: { $gte: currentDate }
                     });
 
-                    if(categoryOffer) {
-                        let tempPrice
-                        const { discountType, discountAmount } = categoryOffer;
-                        if( discountType === "percentage" ) {
-                            tempPrice = originalPrice - (originalPrice * discountAmount) / 100;
-                        } else if (discountType === 'flat') {
-                            tempPrice = originalPrice - discountAmount;
+                    let productDiscountPrice = originalPrice;
+                    let categoryDiscountPrice = originalPrice;
+
+                    // ----Calculate product offer discount
+
+                    if(productOffer) {
+                        if(productOffer.discountType === "percentage") {
+                            productDiscountPrice = originalPrice - (originalPrice * productOffer.discountAmount) / 100;
+                        } else if(productOffer.discountType === 'flat') {
+                            productDiscountPrice = originalPrice - productOffer.discountAmount;
                         }
-                        if (tempPrice < bestPrice) {
-                            bestPrice = tempPrice;
-                        }
-                        discountInfo = {
-                            type: discountType,
-                            amount: discountAmount,
-                            source: "category"
-                        };
                     }
-                }
+
+                    //---Calculate category offer
+
+                    if(categoryOffer) {
+                        if(categoryOffer.discountType === 'percentage') {
+                            categoryDiscountPrice = originalPrice - (originalPrice * categoryOffer.discountAmount) / 100;
+                        } else if (categoryOffer.discountType === 'flat') {
+                            categoryDiscountPrice = originalPrice - categoryOffer.discountAmount;
+                        }
+                    }
+
+                    // choose the better discount 
+
+                    if (productDiscountPrice !== undefined && 
+                        productDiscountPrice < categoryDiscountPrice && 
+                        productDiscountPrice < bestPrice) {
+                            bestPrice = productDiscountPrice;
+                            discountInfo = {
+                                type: productOffer?.discountType || null,
+                                amount: productOffer?.discountAmount || 0,
+                                source: "product"
+                            };
+                        } else if (categoryDiscountPrice !== undefined &&
+                            categoryDiscountPrice < bestPrice
+                        ) {
+                            bestPrice = categoryDiscountPrice;
+                            discountInfo = {
+                                type: categoryOffer?.discountType || null,
+                                amount: categoryOffer?.discountAmount || 0,
+                                source: "category"
+                            };
+                        }
 
                 // prevent negative price
-                finalPrice = Math.max(bestPrice, 0);
+                bestPrice = Math.max(bestPrice, 0);
 
                 return {
                     ...product,
                     originalPrice,
-                    finalPrice: finalPrice.toFixed(2),
+                    finalPrice: bestPrice.toFixed(2),
                     discountInfo
                 };
             })

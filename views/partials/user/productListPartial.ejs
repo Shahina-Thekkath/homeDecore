@@ -40,7 +40,20 @@
 
             <span class="product-m__review">(23)</span>
           </div>
-          <div class="product-m__price">₹<%= product.price.toFixed(2) %></div>
+              <% if(product.discountInfo) { %>
+                      <div class="product-m__price">₹<%= product.finalPrice.toFixed(2) %>
+
+                          <span class="product-m__discount">₹<%= product.originalPrice.toFixed(2) %></span></div>
+                        <% if(product.discountInfo.type === 'percentage'){ %>
+                          <span class="offer-badge"><%=product.discountInfo.amount%>% OFF</span>
+                      <% } %>
+                        
+                        
+              <% } else { %>
+                    <div class="product-m__price">₹<%= product.originalPrice.toFixed(2) %></div>
+              <% } %>
+
+          
           <div class="product-m__hover">
             <div class="product-m__preview-description">
               <span><%= product.description %></span>
