@@ -7,7 +7,7 @@ const adminAuth = require("../middleware/adminAuth");
 const admin404Controller = require("../controllers/admin/404Controller");
 const productController = require("../controllers/admin/productController");
 const multer = require("multer");
-const uploads = require("../middleware/productUpload");
+const { uploads } = require("../middleware/cloudinary");
 const categoryController = require("../controllers/admin/categoryController");
 const logoutController = require("../controllers/admin/logoutController");
 const orderController = require("../controllers/admin/orderController");
@@ -30,14 +30,14 @@ adminRouter.get("/pageerror", admin404Controller.pageError);
 adminRouter.get("/products/addProducts", productController.getProductAddPage);
 adminRouter.post(
   "/products/addProducts",
-  uploads.any(),
+  uploads.array("images", 4),
   productController.addProducts
 );
 adminRouter.get("/productList", productController.getAllProducts);
 adminRouter.get("/products/editProduct/:id", productController.getEditProduct);
 adminRouter.post(
   "/products/updateProduct",
-  uploads.any(),
+  uploads.array("images", 5),
   productController.updateProduct
 );
 adminRouter.post(

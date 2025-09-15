@@ -7,7 +7,7 @@ const mongoose = require('mongoose');
 const getAddOffer = async (req, res) => {
     try {
         const products = await Product.find({}, 'name');         // {} -> all fields are selected and then   'name' -> filters to select only the name field
-        const categories = await Category.find({}, 'name');                                //[
+        const categories = await Category.find({ isBlocked: false }, 'name');                                //[
                                                                                           // { name: "iPhone 15" },
                                                                                           // { name: "Samsung Galaxy S23" },
                                                                                           //...
@@ -76,23 +76,29 @@ const postAddOffer = async (req, res) => {
 
         console.log("finish validation");
         
-
+        let newOffer;
         if (offerType === 'product') {
-            await ProductOffer.create({
+            newOffer = await ProductOffer.create({
                 productId,
                 discountAmount,
                 startDate,
                 endDate,
                 discountType
             });
+
+            // link it to Product
+            await Product.findByIdAndUpdate(productId, { productOffer: newOffer._id });
         } else {
-            await CategoryOffer.create({
+            newOffer = await CategoryOffer.create({
                 categoryId,
                 discountType,
                 discountAmount,
                 startDate,
                 endDate
             });
+
+            // link it to category
+            await Category.findByIdAndUpdate(categoryId, { categoryOffer: newOffer._id });
         }
 
         return res.status(200).json({ success: true });
@@ -130,7 +136,11 @@ const getOfferList = async (req, res) => {
         ];
 
         //sort by start date 
-        offers.sort((a,b) => new Date(b.startDate) - new Date(a.startDate));
+        // offers.sort((a,b) => new Date(b.startDate) - new Date(a.startDate));
+
+        offers.sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+        
 
         res.render('offerList', {offers: offers || []});
 
@@ -164,6 +174,14 @@ const toggleOfferStatus = async (req, res) => {
     // Toggle the isActive flag
     offer.isActive = !offer.isActive;
     await offer.save();
+
+    if(!offer.isActive) {
+        if (offerType === "product") {
+            await Product.findByIdAndUpdate(offer.productId, { $unset: {productOffer: 1 } })
+        } else {
+            await Category.findByIdAndUpdate(offer.categoryId, { $unset: { categoryOffer: 1 } });
+        }
+    }
 
     res.status(200).json({ message: `${offerType === 'product' ? 'Product' : 'Category'} offer ${offer.isActive ? 'activated' : 'deactivated'} successfully` });
   } catch (error) {
@@ -248,9 +266,7 @@ const updateOffer = async (req, res) => {
 
         let updated = null;
         if(offerType === "product") {
-            if(!productId) {
-                return res.status(400).json({ success: false, message: "Product ID is is required for product Offer." });
-            }
+            const oldOffer = await ProductOffer.findById(offerId);
 
               updated = await ProductOffer.findByIdAndUpdate(
                 offerId,
@@ -267,10 +283,18 @@ const updateOffer = async (req, res) => {
             if(!updated) {
                 return res.status(404).json({ success: false, message: "Product offer not found." });
             }
-        } else if (offerType === "category") {
-            if(!categoryId) {
-                return res.status(400).json({ success: false, message: "Category Id required for category offer." });
+
+            // unlink from old product if product changes
+            if (oldOffer && oldOffer.productId.toString() !== productId) {
+                await Product.findByIdAndUpdate(oldOffer.productId, { $unset: {productOffer: 1} });
             }
+
+            // link to new product
+            await Product.findByIdAndUpdate(productId, { productOffer: updated._id });
+
+        } else if (offerType === "category") {
+          
+                const oldOffer = await CategoryOffer.findById(offerId);
 
              updated = await CategoryOffer.findByIdAndUpdate(
                 offerId,
@@ -288,6 +312,14 @@ const updateOffer = async (req, res) => {
             if(!updated) {
                 return res.status(400).json({ success: false, message: "Invalid offer type." });
             }
+
+            // unlink from old category if changed
+            if(oldOffer && oldOffer.categoryId.toString() !== categoryId) {
+                await Category.findByIdAndUpdate(oldOffer.categoryId, { $unset: { categoryOffer: 1 } });
+            }
+
+            // link to new category
+            await Category.findByIdAndUpdate(categoryId,  { categoryOffer: updated._id });
         } else {
             return res.status(400).json({ success: false, message: "Invalid offer type."});
         }

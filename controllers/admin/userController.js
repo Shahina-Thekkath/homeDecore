@@ -8,7 +8,7 @@ const getAllUsers = async (req,res)=>{
 
         const currentPage = parseInt(req.query.page) || 1;
         const search = req.query.search || '';
-        const limit = 10; 
+        const limit = 5; 
         const skip = (currentPage - 1) * limit;
 
         const searchQuery = search ? {

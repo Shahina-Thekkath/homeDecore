@@ -7,8 +7,6 @@ const userProfile = async(req, res) =>{
         
         const user = req.session.user || req.session.passport;
         const userData = await User.findById(user._id);
-
-         console.log("userData", userData);
          
 
         res.render('userProfile',{user: userData});
@@ -21,14 +19,12 @@ const userProfile = async(req, res) =>{
 
 const getEditProfile = async(req, res) =>{
     try {
-        console.log("req.body", req.body);
-        
         const userId = req.session.user._id;
         const user = await User.findById(userId);
 
         if (!user) {
             console.log("User not found");
-            res.status(404).send('user not found');
+            return res.status(404).send('user not found');
         }
         
         console.log(user);
@@ -41,45 +37,59 @@ const getEditProfile = async(req, res) =>{
     }
 };
 
-const updateProfile = async(req,res) =>{
-   try {
-         console.log("req.body:",req.body);
-         
-          const{name, gender, email, phone} = req.body;
-          const userId = req.session.user._id;
-          const user = await User.findById(userId);
+const updateProfile = async (req, res) => {
+  try {
+    if (!req.session.user) {
+      return res.status(401).json({
+        success: false,
+        message: "Unauthorized. Please login again."
+      });
+    }
 
-         if(!user){
-            console.log("User not found");
-            res.status(404).send('user not found');
-         }
-         
-         const updatedData ={
-            name : name,
-            email : email,
-            phone : phone,
-            gender: gender
-         }
-        
+    const { name, gender, email, phone } = req.body;
+    const userId = req.session.user._id;
 
-         await User.findByIdAndUpdate(userId, 
-              {$set: updatedData},
-              {new: true});
+    console.log("updated:", req.body, userId);
+    
 
-        // Fetch the updated user to ensure it reflects in the template
-         const updatedUser = await User.findById(userId);
+    const errors = {};
+    if (!name || !name.trim()) errors.name = "Name is required.";
+    if (!email || !email.trim()) errors.email = "Email is required.";
+    if (!phone || !phone.trim()) errors.phone = "Phone number is required.";
+    if (!gender || !gender.trim()) errors.gender = "Gender is required.";
 
-        console.log("updatedUser",updatedUser);
-        
+    if (Object.keys(errors).length > 0) {
+      return res.json({ success: false, errors });
+    }
 
-        res.redirect('/profile?success=true');
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found."
+      });
+    }
 
+    console.log("updateProfile:", name, email, phone, gender);
+    
 
-   } catch (error) {
-      console.error('Internal server Error', error);
-      res.render('/pageNotFound');
-      
-   }
+    //  Update data
+    await User.findByIdAndUpdate(userId, {
+      $set: { name, email, phone, gender }
+    });
+
+    return res.json({
+      success: true,
+      message: "Profile updated successfully!"
+    });
+
+  } catch (error) {
+    console.error("Internal Server Error", error);
+    res.status(500).json({
+      success: false,
+      message: "Internal Server Error. Please try again later."
+    });
+  }
 };
 
 module.exports = {userProfile,

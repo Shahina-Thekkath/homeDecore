@@ -91,12 +91,10 @@
                                         <ul style="width:120px">
                                             <li>
                                                     <%if(locals.user){%>
-                                                        <a href="/profile"><i><%=locals.user.name%></i>
+                                                        <a href="/profile"><i class="far fa-user-circle"></i>
+                                                            <span ><%=locals.user.name%></span></a>
 
-                                                            </a></li> 
-                                                            <%}%>
-                                                   
-                                                        <%if(locals.user){%>
+                                                           
                                                             <li>
 
                                                                 <a href="/logout"><i class="fas fa-lock-open u-s-m-r-6"></i>

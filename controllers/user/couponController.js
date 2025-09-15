@@ -73,7 +73,7 @@ const applyCoupon = async (req, res) => {
             return res.status(400).json({ success: false, message: "Your cart is empty." });
         }
 
-        const subtotal = cart.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+        const subtotal = cart.items.reduce((sum, item) => sum + (item.discountedPrice * item.quantity), 0);
 
         if (subtotal < coupon.minPurchaseAmount) {
             return res.status(400).json({
@@ -131,7 +131,7 @@ const removeCoupon = async (req, res) => {
       return res.status(400).json({ success: false, message: "Cart is empty." });
     }
 
-    const subtotal = cart.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    const subtotal = cart.items.reduce((sum, item) => sum + (item.discountedPrice * item.quantity), 0);
     const grandTotal = subtotal; // No discount after removal
 
     return res.status(200).json({

@@ -5,8 +5,7 @@ const productOfferSchema = new mongoose.Schema({
   productId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Product",
-    required: true,
-    unique: true // One offer per product
+    required: true
   },
   discountType: {
     type: String,

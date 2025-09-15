@@ -1478,22 +1478,23 @@
                                         <div class="dash__pad-2">
                                             <h1 class="dash__h1 u-s-m-b-14">Edit Profile</h1>
 
-                                            <span class="dash__text u-s-m-b-30">Looks like you haven't update your profile</span>
+                                            <!-- <span class="dash__text u-s-m-b-30">Looks like you haven't update your profile</span> -->
                                             <div class="dash__link dash__link--secondary u-s-m-b-30">
 
-                                                <a data-modal="modal" data-modal-id="#dash-newsletter">Subscribe Newsletter</a></div>
+                                                <!-- <a data-modal="modal" data-modal-id="#dash-newsletter">Subscribe Newsletter</a></div> -->
 
                                              
                                             <div class="row">
                                                 <div class="col-lg-12">
-                                                    <form class="dash-edit-p" action="/updateProfile" method="POST" onsubmit="return validateForm(event)">
+                                                    <form class="dash-edit-p" id="editProfileForm" action="/updateProfile" method="POST" onsubmit="return validateForm(event)">
                                                         <div class="gl-inline">
-                                                            <div class="u-s-m-b-30">
+                                                            <div class="u-s-m-b-30 form-group">
 
                                                                 <label class="gl-label" for="name">FULL NAME *</label>
 
-                                                                <input class="input-text input-text--primary-style" type="text" id="name" value="<%=user.name %>" name="name"></div>
+                                                                <input class="input-text input-text--primary-style" type="text" id="name" value="<%=user.name %>" name="name">
                                                                 <p style="color: red" id="name-error" class="error-message"></p>
+                                                            </div>
 
                                                         </div>
                                                         <!-- <div class="gl-inline">
@@ -1523,17 +1524,20 @@
                                                                     </select></div> -->
                                                                 <!--====== End - Date of Birth Select-Box ======-->
                                                             <!-- </div> -->
-                                                            <div class="u-s-m-b-30">
+                                                             <div class="gl-inline">
+                                                            <div class="u-s-m-b-30 form-group">
 
                                                                   <label class="gl-label" for="gender">GENDER</label>
                                                                   <select class="select-box select-box--primary-style u-w-100" id="gender" name="gender">
-                                                                    <option value="" <%= user.gender ? '': 'selected' %>>Select</option>
+                                                                    <option value="">Select</option>
                                                                     <option value="male" <%= user.gender === 'male' ? 'selected' : ''%>>Male</option>
                                                                     <option value="female" <%= user.gender === 'female' ? 'selected' : ''%>>Female</option>
-                                                                </select></div>
+                                                                </select>
                                                                 <p style="color: red" id="gender-error" class="error-message"></p>
+                                                                </div>
 
                                                         </div> 
+                                                        
                                                         <div class="gl-inline">
                                                             <div class="u-s-m-b-30">
                                                                 <h2 class="dash__h2 u-s-m-b-8">E-mail</h2> 
@@ -1563,7 +1567,7 @@
 
                                                        <!-- Button Section -->
                                                      
-                                                               <div class="u-s-m-b-30" style="margin-top: 30px; margin-left: 150px;">
+                                                               <div class="u-s-m-b-30" style="margin-top: 30px; margin-left: 520px;">
                                                                 <button
                                                                     class="dash__custom-link btn--e-brand-b-2"
                                                                     type="submit"
@@ -1799,97 +1803,108 @@
 
     <!--====== App ======-->
     <script src="js/app.js"></script>
+    <!-- CSS (optional, for animations) -->
+<link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
 
-    <script>
+<!-- JS -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-         function clearErrorMessages(){
-            const errorElements = document.getElementsByClassName('error-message');
-            Array.from(errorElements).forEach((element) =>{
-               element.textContent = '';
-               element.style.display = none;
+
+   <script>
+document.querySelector('#editProfileForm').addEventListener('submit', async function (e) {
+    e.preventDefault();
+
+    // Validation rules
+    const rules = [
+        { name: 'name', regex: /^[a-zA-Z\s.]+$/, message: 'Name must contain only letters, spaces, or dot.' },
+        { name: 'email', regex: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: 'Enter a valid email address.' },
+        { name: 'phone', regex: /^[6-9]\d{9}$/, message: 'Phone must be a valid 10-digit number starting with 6-9.' },
+        { name: 'gender', regex: /^(male|female)$/, message: 'Please select your gender.' }
+    ];
+
+    const form = this;
+    const formData = new FormData(form);
+    const data = Object.fromEntries(formData.entries());
+
+    // Clear previous error messages
+    rules.forEach(rule => {
+        const errorField = document.getElementById(`${rule.name}-error`);
+        if (errorField) errorField.innerText = '';
+    });
+
+    let isValid = true;
+
+    // Frontend validation
+    rules.forEach(rule => {
+        const value = data[rule.name]?.trim();
+        const errorField = document.getElementById(`${rule.name}-error`);
+
+        if (!rule.regex.test(value || '')) {
+            isValid = false;
+            if (errorField) errorField.innerText = rule.message;
+        }
+    });
+
+    if (!isValid) {
+        Swal.fire('Validation Error', 'Please correct the highlighted fields.', 'warning');
+        return;
+    }
+
+    try {
+        const res = await fetch(form.action, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        });
+
+        const result = await res.json();
+        console.log("editProfile:", result);
+
+        if (res.ok && result.success) {
+            Swal.fire({
+                title: 'Success',
+                text: result.message || 'Profile updated successfully!',
+                icon: 'success',
+                confirmButtonText: 'OK'
+            }).then(() => {
+                window.location.href = '/profile';
             });
-         }
-
-         function validateForm(event){
-            clearErrorMessages();
-            let isValid = true;
-
-            const name = document.getElementById('name');
-            const email = document.getElementById('email');
-            const phone = document.getElementById('phone');
-            const gender = document.getElementsByName('gender');
-
-            const nameError = document.getElementById('name-error');
-            const emailError = document.getElementById('email-error');
-            const phoneError = document.getElementById('phone-error');
-            const genderError = document.getElementById('gender-error');
-             
-            const namePattern = /^[a-zA-Z\s.]+$/;
-            if(name.trim() === ''){
-               nameError.textContent = 'Name is required.';
-               isValid = false;
-            }else if(!namePattern.test(name.value)){
-                nameError.textContent = "Name should'nt include special Characters or number";
-                isValid = false;
-            }else if(name.value.length < 3){
-                nameError.textContent = "Name have atleast 3 character";
-            }else{
-                nameError.textContent = '';
-            }
-
-
-            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if(email.trim() === ''){
-                emailError.textContent = 'email is required';
-                isValid = false;
-            }else if(!email.test(emailPattern)){
-                emailError.textContent ='Give a valid email';
-                isValid = false;
-            }else{
-                emailError.textContent = '';
-            }
-
-            const phonePattern = /^\+?[0-9]{10,15}$/;
-            if(phone.trim() === ''){
-                emailError.textContent = 'phone number is required';
-                isValid = false;
-            }else if(!phone.test(phonePattern)){
-                phoneError.textContent = 'Invlid Phone number';
-                isValid = false;
-            }else{
-                emailError.textContent = '';
-            }
-
-            if(!gender){
-                genderError.textContent = "Please select gender";
-                isValid = false;
-            }  
-
-          return isValid;
-         }
-
-         function validateAndSubmit() {
-            if (validateForm()) {
-                document.forms[0].submit();
-            }
+        } else if (result.errors) {
+            // Backend validation errors
+            Object.entries(result.errors).forEach(([field, message]) => {
+                const errorField = document.getElementById(`${field}-error`);
+                if (errorField) errorField.innerText = message;
+            });
+            Swal.fire('Submission Failed', 'Please fix the errors and try again.', 'error');
+        } else {
+            Swal.fire('Failed', result.message || 'Unknown error occurred.', 'error');
         }
 
+    } catch (error) {
+        console.error("Error:", error);
+        Swal.fire('Server Error', 'Something went wrong. Please try again later.', 'error');
+    }
+});
+</script>
 
-         function message(msg){
-            if(msg){
-                  Swal.fire({
-                    positition: "center",
-                    icon: "success",
-                    title: msg,
-                    showConfirmButton: false,
-                    timer: 3000
-                  }).then(() =>{
-                    window.location.href = "/admin";
-                  })
-            }
-          }
+<script>
+ function message(msg) {
+        if (msg) {
+            Swal.fire({
+                position: "center",
+                icon: "success",
+                title: msg,
+                showConfirmButton: false,
+                timer: 3000
+            }).then(() => {
+                window.location.href = "/admin";
+            });
+        }
+    }
+</script>
 
-    </script>
 
     <!--====== Noscript ======-->
     <noscript>

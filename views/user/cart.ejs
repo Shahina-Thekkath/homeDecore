@@ -1350,8 +1350,8 @@
                                                 <td>
                                                     <div class="table-p__box">
                                                         <div class="table-p__img-wrap">
-
-                                                            <img class="u-img-fluid" src="/admin-assets/product2/<%=item.productId.image[0]%>" alt=""></div>
+                                                            <% let img = item.productId.image[0] %> 
+                                                            <img class="u-img-fluid" src="<%= img.startsWith('http') ? img : '/admin-assets/product2/' + img %>" alt=""></div>
                                                         <div class="table-p__info">
 
                                                             <span class="table-p__name">
@@ -1736,7 +1736,7 @@
                 const max = parseInt(input.dataset.max, 10); // Maximum quantity (product stock)
                 const productId = input.dataset.productId; 
                 const quantity = parseInt(input.value, 10); // User-entered quantity
-                const stock = parseInt(input.dataset.quantity, 10);
+                const stock = parseInt(input.dataset.productStock, 10);
                 console.log(min, max, productId, quantity);
 
                 
@@ -1749,7 +1749,7 @@
                         text: `Quantity must be between ${min} and ${max}.`,
                         confirmButtonText: "OK",
                         });
-                    input.value = Math.max(min, Math.min(quantity, max)); // Reset to valid value
+                    input.value = Math.max(min, Math.min(max, quantity)); // Reset to valid value
                     return;
                 }
 
@@ -1779,7 +1779,7 @@
                     // Update the grand total dynamically
                     const grandTotalField = document.querySelector("#grand-total");
                     if (grandTotalField) {
-                        grandTotalField.textContent = `₹${result.grandTotal.toFixed(2)}`;
+                        grandTotalField.textContent = `${result.grandTotal.toFixed(2)}`;
                     }
 
                     } else {

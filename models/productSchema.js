@@ -7,17 +7,22 @@ const ProductSchema = new Schema(
   {
     name: { type: String, required: true },
     description: { type: String, required: true },
-    // stock: { type: Number, default: 0 },
     price: { type: Number, required: true },
-    // salePrice: { type: Number },
     categoryId: { type: Types.ObjectId, ref: "Category", required: true },
    
 
     quantity: { type: Number, required: true },
     image: [String],
+     specification: [
+      {
+        key: { type: String, required: true },
+        value: { type: String, required: true }
+      }
+    ],
     rating: { type: Number, default: 0 },
     isFeatured: { type: Boolean, default: false },
     discounts: { type: String, default: null },
+    productOffer: { type: Types.ObjectId, ref: "ProductOffer", default: null },
     reviews: [
       {
         users: { type: Types.ObjectId, ref: "User", required: true },

@@ -50,6 +50,9 @@
     />
 
     <link rel="stylesheet" href="/admin-assets/css/style.css" />
+    <link rel="stylesheet" href="/admin-assets/css/logo.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" />
+
     <style>
         .thumbnails-container {
             display: flex;
@@ -90,13 +93,9 @@
     <div class="main-wrapper">
       <div class="header">
         <div class="header-left active">
-          <a href="index.html" class="logo">
-            <img src="/admin-assets/img/logo.png" alt="" />
+          <a href="/admin/dashboard" class="logo">
+              <%- include('../../views/partials/icons/icon-logo') %>
           </a>
-          <a href="index.html" class="logo-small">
-            <img src="/admin-assets/img/logo-small.png" alt="" />
-          </a>
-          <a id="toggle_btn" href="javascript:void(0);"> </a>
         </div>
 
         <a id="mobile_btn" class="mobile_btn" href="#sidebar">
@@ -411,123 +410,205 @@
             </div>
             <div class="card">
                 <div class="card-body">
-                    <form action="/admin/products/updateProduct" method="POST" enctype="multipart/form-data" onsubmit="return validateForm()">
+                    <form
+                        action="/admin/products/updateProduct"
+                        method="POST"
+                        enctype="multipart/form-data"
+                        onsubmit="return validateForm()"
+                      >
+                        <!-- Hidden fields -->
                         <input type="hidden" name="productId" value="<%= product._id %>" />
                         <input type="hidden" name="deletedImages" id="deletedImages" value="" />
 
                         <div class="row">
-                            <div class="col-lg-4 col-sm-6 col-12">
-                                <div class="form-group">
-                                    <label>Product Name</label>
-                                    <input type="text" class="form-control" name="productName" value="<%= product.name %>" placeholder="Enter product name" />
-                                    <p id="productName-error" class="error-message"></p>
-                                </div>
+                          <!-- Product Name -->
+                          <div class="col-lg-4 col-sm-6 col-12">
+                            <div class="form-group">
+                              <label>Product Name</label>
+                              <input
+                                type="text"
+                                class="form-control"
+                                name="productName"
+                                value="<%= product.name %>"
+                                placeholder="Enter product name"
+                              />
+                              <p id="productName-error" class="error-message"></p>
                             </div>
+                          </div>
 
-                            <div class="col-lg-4 col-sm-6 col-12">
-                                <div class="form-group">
-                                    <label>Category</label>
-                                    <select class="select" name="categoryId" id="categoryId">
-                                        <% category.forEach((category) => { %>
-                                            <option value="<%= category._id %>" <%= category._id === product.categoryId ? 'selected' : '' %>><%= category.name %></option>
-                                        <% }) %>
-                                    </select>
-                                    <div id="category-error" class="error-message"></div>
-                                </div>
+                          <!-- Category -->
+                          <div class="col-lg-4 col-sm-6 col-12">
+                            <div class="form-group">
+                              <label>Category</label>
+                              <select class="select" name="categoryId" id="categoryId">
+                                <% category.forEach((cat) => { %>
+                                  <option
+                                    value="<%= cat._id %>"
+                                    <%= cat._id.toString() === product.categoryId.toString() ? "selected" : "" %>
+                                  >
+                                    <%= cat.name %>
+                                  </option>
+                                <% }) %>
+                              </select>
+                              <div id="category-error" class="error-message"></div>
                             </div>
+                          </div>
 
-                            <div class="col-lg-4 col-sm-6 col-12">
-                                <div class="form-group">
-                                    <label>Price</label>
-                                    <input type="number" class="form-control" name="price" value="<%= product.price %>" placeholder="Enter product price" />
-                                    <p id="regularPrice-error" class="error-message"></p>
-                                </div>
+                          <!-- Price -->
+                          <div class="col-lg-4 col-sm-6 col-12">
+                            <div class="form-group">
+                              <label>Price</label>
+                              <input
+                                type="number"
+                                class="form-control"
+                                name="price"
+                                value="<%= product.price %>"
+                                placeholder="Enter product price"
+                              />
+                              <p id="regularPrice-error" class="error-message"></p>
                             </div>
+                          </div>
 
-                            <div class="col-lg-4 col-sm-6 col-12">
-                                <div class="form-group">
-                                    <label>Quantity</label>
-                                    <input type="number" class="form-control" name="quantity" value="<%= product.quantity %>" />
-                                    <p id="quantity-error" class="error-message"></p>
-                                </div>
+                          <!-- Quantity -->
+                          <div class="col-lg-4 col-sm-6 col-12">
+                            <div class="form-group">
+                              <label>Quantity</label>
+                              <input
+                                type="number"
+                                class="form-control"
+                                name="quantity"
+                                value="<%= product.quantity %>"
+                              />
+                              <p id="quantity-error" class="error-message"></p>
                             </div>
+                          </div>
 
-                            <div class="col-lg-12">
-                                <div class="form-group">
-                                    <label for="descriptionid">Description</label>
-                                    <textarea class="form-control" name="description" id="descriptionid"><%= product.description %></textarea>
-                                    <p style="color: red" id="description-error" class="error-message"></p>
-                                </div>
+                          <!-- Description -->
+                          <div class="col-lg-12">
+                            <div class="form-group">
+                              <label for="descriptionid">Description</label>
+                              <textarea
+                                class="form-control"
+                                name="description"
+                                id="descriptionid"
+                              ><%= product.description %></textarea>
+                              <p style="color: red" id="description-error" class="error-message"></p>
                             </div>
+                          </div>
 
-                            <div class="col-lg-12">
-                              <div class="form-group">
-                                <label for="productSpecifications">Specifications</label>
-                                <div id="specificationsContainer">
-                                    <% if (product.specification && product.specification.length > 0) { %>
-                                        <% product.specification.forEach((spec, index) => { %>
-                                            <div class="specification-group">
-                                                <input type="text" name="specifications[<%= index %>][key]" class="form-control" placeholder="Key" value="<%= spec.key %>" >
-                                                <p class="error-message spec-key-error" style="color: red;"></p>
-                                                <input type="text" name="specifications[<%= index %>][value]" class="form-control mt-2" placeholder="Value" value="<%= spec.value %>" >
-                                                <p class="error-message spec-value-error" style="color: red;"></p>
-                                                <button class="remove-btn btn-danger">Remove</button>
-                                            </div>
-                                        <% }); %>
-                                    <% } else { %>
-                                        <div class="specification-group">
-                                            <input type="text" name="specifications[0][key]" class="form-control" placeholder="Key" >
-                                            <p class="error-message spec-key-error" style="color: red;"></p>
-                                            <input type="text" name="specifications[0][value]" class="form-control mt-2" placeholder="Value" >
-                                            <p class="error-message spec-value-error" style="color: red;"></p>
-                                        </div>
-                                    <% } %>
-                                </div>
-                                <button type="button" id="addSpecification" class="btn btn-secondary mt-2">Add Specification</button>
-                            </div>
-                
-                            </div>
-
-
-                            <div class="card mb-2">
-                                <div class="card-header"><h4>Existing Images</h4></div>
-                                <div class="border row">
-                                    <div id="addedImagesContainer" class="thumbnails-container">
-                                        <% product.image.forEach((image, index) => { %>
-                                            <div class="image-wrapper" data-index="<%= index %>" style="margin-bottom: 20px;">
-                                                <img src="/admin-assets/product2/<%= image %>" alt="Existing Image <%= index + 1 %>" style="width: 300px; height: 300px; object-fit: cover;" id="existingImg<%= index %>" />
-                                                <div class="image-cropper" style="display: none; margin-top: 10px;">
-                                                    <img id="croppedImg<%= index %>" />
-                                                    <button type="button" class="btn btn-primary btn-sm save-button" id="saveButton<%= index %>">Crop</button>
-                                                </div>
-                                                <!-- <input type="file" class="form-control" id="inputFile<%= index %>" accept="image/png, image/jpeg, image/jpg" onchange="handleNewImage(event, <%= index %>)" > -->
-                                                <input type="file" class="form-control" id="inputFile<%= index %>" accept="image/png, image/jpeg, image/jpg" data-index="<%= index %>" />
-
-                                                <p id="image-error<%= index %>" class="error-message"></p>
-                                                <!-- <button type="button" class="btn btn-danger btn-sm remove-button" style="margin-top: 10px;" onclick="deleteImage(<%= index %>)">Delete</button> -->
-                                                <button type="button" class="btn btn-danger btn-sm remove-button" style="margin-top: 10px;" data-index="<%= index %>">Delete</button>
-
-                                            </div>
-                                        <% }) %>
+                          <!-- Specifications -->
+                          <div class="col-lg-12">
+                            <div class="form-group">
+                              <label for="productSpecificationid">Product Specification</label>
+                              <div id="specificationsContainer">
+                                <% if (product.specification && product.specification.length > 0) { %>
+                                  <% product.specification.forEach((spec, index) => { %>
+                                    <div class="specification-group mb-2">
+                                      <input
+                                        type="text"
+                                        name="specifications[<%= index %>][key]"
+                                        value="<%= spec.key %>"
+                                        class="form-control"
+                                        placeholder="Key"
+                                      />
+                                      <input
+                                        type="text"
+                                        name="specifications[<%= index %>][value]"
+                                        value="<%= spec.value %>"
+                                        class="form-control mt-2"
+                                        placeholder="Value"
+                                      />
+                                      <button
+                                        type="button"
+                                        class="btn btn-danger mt-2 remove-btn"
+                                      >
+                                        Remove
+                                      </button>
                                     </div>
-                                </div>
-                                
-                                <div class="row">
-                                    <div class="card-body align-items-center" style="margin-bottom: 20px">
-                                        <input type="file" class="form-control" name="images" id="inputFiles" accept="image/png, image/jpeg, image/jpg" multiple onchange="handleFileSelect(event)" />
-                                        <p id="image-error" class="error-message"></p>
-                                    </div>
-                                </div>
+                                  <% }) %>
+                                <% } %>
+                              </div>
+                              <button
+                                type="button"
+                                id="addSpecification"
+                                class="btn btn-secondary mt-2"
+                              >
+                                Add Specification
+                              </button>
                             </div>
-                            <button type="submit" class="btn btn-primary">Update</button>
+                          </div>
+
+                          <!-- Images -->
+                          <div class="card mb-2">
+                            <div class="card-header"><h4>Product Images</h4></div>
+                            <div class="border row">
+                              <div id="addedImagesContainer" class="thumbnails-container">
+                                <% if (product.image && product.image.length > 0) { %>
+                                  <% product.image.forEach((img, index) => { %>
+                                    <div class="image-wrapper m-2" data-index="<%= index %>">
+                                      <img
+                                        src="<%= img.url ? img.url : (img.startsWith('http') ? img : '/admin-assets/product2/' + img) %>"
+                                        alt="Product Image"
+                                        class="img-thumbnail"
+                                        style="width: 150px; height: 150px; object-fit: cover;"
+                                      />
+                                      <button
+                                        type="button"
+                                        class="btn btn-danger btn-sm mt-2"
+                                        onclick="deleteImage('<%= index %>')"
+                                      >
+                                        Delete
+                                      </button>
+                                    </div>
+                                  <% }) %>
+                                <% } %>
+                              </div>
+                            </div>
+
+                            <div class="row">
+                              <div
+                                class="card-body align-items-center"
+                                style="margin-bottom: 20px"
+                              >
+                                <input
+                                  type="file"
+                                  class="form-control"
+                                  name="images"
+                                  id="inputFiles"
+                                  accept="image/png, image/jpeg, image/jpg"
+                                  multiple
+                                  onchange="handleFileSelect(event)"
+                                />
+                                <p id="image-error" class="error-message"></p>
+                              </div>
+                            </div>
+                          </div>
+
+                          <!-- Update button -->
+                          <button
+                            type="submit"
+                            class="btn btn-update btn-md rounded font-sm hover-up"
+                          >
+                            Update Product
+                          </button>
                         </div>
-                    </form>
+                      </form>
+
                 </div>
             </div>
         </div>
     </div>
 </div>
    <script src="https://cdn.jsdelivr.net/npm/cropperjs/dist/cropper.min.js"></script>
+   <!-- Cropper.js CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" />
+
+<!-- Cropper.js JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+
+<!-- Your custom script that uses Cropper -->
+<script src="your-script.js"></script>
+
 
     <script src="/admin-assets/js/jquery-3.6.0.min.js"></script>
 
@@ -548,248 +629,131 @@
     <script src="/admin-assets/js/script.js"></script>
     <script>
         
-        $(document).ready(function() {
-        let specificationCount = $('#specificationsContainer .specification-group').length;
-        let variantCount = $('#variantsContainer .variant-group').length;
+        $(document).ready(function () {
+    let specificationCount = $("#specificationsContainer .specification-group").length;
 
-          $('input[type="file"][data-index]').on('change', function (event) {
-              const index = $(this).data('index');
-              handleNewImage(event, parseInt(index));
-          });
-    
-        // Add new specification input fields
-        $('#addSpecification').click(function() {
-            $('#specificationsContainer').append(`
-                <div class="specification-group">
-                    <input type="text" name="specifications[${specificationCount}][key]" class="form-control" placeholder="Key" >
-                    <input type="text" name="specifications[${specificationCount}][value]" class="form-control mt-2" placeholder="Value" >
-                    <button type="button" class="btn btn-danger mt-2 remove-btn">Remove Specification</button>
-                </div>
-            `);
-            specificationCount++;
+    // Add new specification
+    $("#addSpecification").click(function () {
+      $("#specificationsContainer").append(`
+        <div class="specification-group mb-2">
+          <input type="text" name="specifications[${specificationCount}][key]" class="form-control" placeholder="Key">
+          <input type="text" name="specifications[${specificationCount}][value]" class="form-control mt-2" placeholder="Value">
+          <button type="button" class="btn btn-danger mt-2 remove-btn">Remove Specification</button>
+        </div>
+      `);
+      specificationCount++;
+    });
+
+    // Remove specification
+    $("#specificationsContainer").on("click", ".remove-btn", function () {
+      $(this).parent().remove();
+    });
+  });
+
+  // ================= IMAGE HANDLING ===================
+  let selectedImages = [];
+  let deletedImages = [];
+
+  // Delete existing images
+  function deleteImage(index) {
+    deletedImages.push(index);
+    document.getElementById("deletedImages").value = deletedImages.join(",");
+
+    const wrapper = document.querySelector(`.image-wrapper[data-index="${index}"]`);
+    if (wrapper) wrapper.remove();
+  }
+
+  // Handle adding new images (with cropper)
+  function handleFileSelect(event) {
+    const files = event.target.files;
+    const container = document.getElementById("addedImagesContainer");
+
+    selectedImages = [];
+    Array.from(files).forEach((file, index) => {
+      if (!file.type.startsWith("image/")) return;
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const wrapper = document.createElement("div");
+        wrapper.classList.add("image-wrapper", "m-2");
+        wrapper.dataset.index = index;
+
+        const img = document.createElement("img");
+        img.src = e.target.result;
+        img.style.width = "150px";
+        img.style.height = "150px";
+        img.style.objectFit = "cover";
+        img.id = `imgView${index}`;
+
+        const cropperContainer = document.createElement("div");
+        cropperContainer.style.display = "none";
+        cropperContainer.classList.add("image-cropper");
+        const croppedImg = document.createElement("img");
+        croppedImg.id = `croppedImg${index}`;
+        cropperContainer.appendChild(croppedImg);
+
+        const saveButton = document.createElement("button");
+        saveButton.type = "button";
+        saveButton.textContent = "Crop";
+        saveButton.classList.add("btn", "btn-primary", "btn-sm", "mt-2");
+        saveButton.id = `saveButton${index}`;
+        cropperContainer.appendChild(saveButton);
+
+        const removeButton = document.createElement("button");
+        removeButton.type = "button";
+        removeButton.textContent = "Remove";
+        removeButton.classList.add("btn", "btn-danger", "btn-sm", "mt-2", "ml-2");
+
+        wrapper.appendChild(img);
+        wrapper.appendChild(cropperContainer);
+        wrapper.appendChild(removeButton);
+        container.appendChild(wrapper);
+
+        selectedImages.push(file);
+
+        // Initialize cropper on image click
+        img.addEventListener("click", () =>
+          initializeCropper(img, croppedImg, saveButton, cropperContainer, file, index)
+        );
+
+        // Remove newly selected image
+        removeButton.addEventListener("click", () => {
+          wrapper.remove();
+          selectedImages.splice(index, 1);
+
+          const dt = new DataTransfer();
+          selectedImages.forEach((f) => dt.items.add(f));
+          document.getElementById("inputFiles").files = dt.files;
         });
-    
-        // Remove specification input fields
-        $('#specificationsContainer').on('click', '.remove-btn', function() {
-            $(this).parent().remove();
-        })
+      };
+      reader.readAsDataURL(file);
+    });
+  }
 
-        
-        
-        
-        
-        let selectedImages = [];
+  function initializeCropper(img, cropperImg, saveButton, cropperContainer, file, index) {
+    const cropper = new Cropper(img, { aspectRatio: 1, viewMode: 1 });
+    cropperContainer.style.display = "block";
 
+    saveButton.onclick = () => {
+      const cropperCanvas = cropper.getCroppedCanvas({ width: 400, height: 400 });
+      img.src = cropperCanvas.toDataURL("image/png");
+      cropperImg.src = cropperCanvas.toDataURL("image/png");
 
-        //new images
-        function handleFileSelect(event) {
-        const files = event.target.files;
-        const imageErrorElement = document.getElementById("image-error");
-        imageErrorElement.textContent = ""; // Clear previous error messages
+      cropperCanvas.toBlob((blob) => {
+        const croppedFile = new File([blob], `cropped_img_${index}.png`, { type: "image/png" });
+        selectedImages[index] = croppedFile;
 
-        // Clear existing selected images
-        selectedImages = [];
+        const dt = new DataTransfer();
+        selectedImages.forEach((f) => dt.items.add(f));
+        document.getElementById("inputFiles").files = dt.files;
 
-        // Process each selected file
-        Array.from(files).forEach((file, index) => {
-            if (file && file.type.startsWith("image/")) {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    // Create a new image element for cropping
-                    const img = document.createElement("img");
-                    img.src = e.target.result; // Set the image source to the file data
-                    img.id = `newImg${index}`; // Give a unique ID to the image
-
-                    // Create a cropper container
-                    const cropperContainer = document.createElement("div");
-                    cropperContainer.classList.add("image-cropper");
-                    cropperContainer.style.display = "block"; // Show cropper container
-
-                    // Append the image and cropper container to the DOM
-                    const addedImagesContainer = document.getElementById("addedImagesContainer");
-                    const imageWrapper = document.createElement("div");
-                    imageWrapper.classList.add("image-wrapper");
-                    imageWrapper.appendChild(img);
-                    imageWrapper.appendChild(cropperContainer);
-                    addedImagesContainer.appendChild(imageWrapper);
-
-                    // Initialize the cropper
-                    const cropper = new Cropper(img, {
-                        aspectRatio: 1,
-                        viewMode: 1,
-                    });
-
-                    // Create a save button for cropping
-                    const saveButton = document.createElement("button");
-                    saveButton.type = "button";
-                    saveButton.className = "btn btn-primary btn-sm save-button";
-                    saveButton.textContent = "Crop";
-                    cropperContainer.appendChild(saveButton);
-
-                    saveButton.onclick = () => {
-                        const cropperCanvas = cropper.getCroppedCanvas({
-                            width: 400,
-                            height: 400,
-                        });
-
-                        img.src = cropperCanvas.toDataURL("image/png");
-
-                        cropperCanvas.toBlob((blob) => {
-                            const croppedFile = new File([blob], `cropped_img_${index}.png`, { type: "image/png" });
-                            selectedImages[index] = croppedFile;
-
-                            const dataTransfer = new DataTransfer();
-                            selectedImages.forEach((file) => {
-                                if (file) {
-                                    dataTransfer.items.add(file);
-                                }
-                            });
-                            document.getElementById("inputFiles").files = dataTransfer.files;
-
-                            cropper.destroy(); // Destroy the cropper after use
-                            cropperContainer.style.display = "none"; // Hide the cropper container
-                            saveButton.textContent = "Cropped"; // Change button text
-                            saveButton.disabled = true; // Disable the button after cropping
-                        }, "image/png");
-                    };
-                };
-
-                reader.readAsDataURL(file);
-            } else {
-                imageErrorElement.textContent = "Please select a valid image.";
-                imageErrorElement.style.display = "block";
-            }
-        });
-    }
-
-
-
-
-
-
-
-
-
-
-    //replace images
-        function handleNewImage(event, index) {
-    const file = event.target.files[0];
-    const imageErrorElement = document.getElementById(`image-error${index}`);
-    if (imageErrorElement) {
-        imageErrorElement.textContent = "";
-    }
-
-    if (file && file.type.startsWith("image/")) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            const img = document.getElementById(`existingImg${index}`);
-            img.src = e.target.result; // Update the existing image with the new one
-
-            const cropperContainer = document.querySelector(`.image-wrapper[data-index="${index}"] .image-cropper`);
-            const croppedImg = document.getElementById(`croppedImg${index}`);
-            cropperContainer.style.display = "block"; // Show cropper container
-
-            // Initialize the cropper
-            const cropper = new Cropper(img, {
-                aspectRatio: 1,
-                viewMode: 1,
-                ready() {
-                    // Optional: You can do something when the cropper is ready
-                },
-            });
-
-            const saveButton = document.getElementById(`saveButton${index}`);
-            saveButton.onclick = () => {
-                const cropperCanvas = cropper.getCroppedCanvas({
-                    width: 200,
-                    height: 200,
-                });
-
-                img.src = cropperCanvas.toDataURL("image/png");
-                croppedImg.src = cropperCanvas.toDataURL("image/png");
-
-                cropperCanvas.toBlob((blob) => {
-                    const croppedFile = new File([blob], `cropped_img_${index}.png`, { type: "image/png" });
-                    selectedImages[index] = croppedFile;
-
-                    const dataTransfer = new DataTransfer();
-                    selectedImages.forEach((file) => {
-                        if (file) {
-                            dataTransfer.items.add(file);
-                        }
-                    });
-                    document.getElementById("inputFiles").files = dataTransfer.files;
-
-                    // Create and append the replaceImageIndex input
-                    let replaceImageInput = document.querySelector(`input[name="replaceImageIndex"][data-index="${index}"]`);
-                    if (!replaceImageInput) {
-                        replaceImageInput = document.createElement('input');
-                        replaceImageInput.type = 'hidden';
-                        replaceImageInput.name = 'replaceImageIndex';
-                        replaceImageInput.dataset.index = index; // Store the index in a data attribute
-                        document.forms[0].appendChild(replaceImageInput);
-                    }
-                    replaceImageInput.value = index; // Set the value to the current index
-
-                    cropper.destroy(); // Destroy the cropper after use
-                    cropperContainer.style.display = "none"; // Hide the cropper container
-                    saveButton.textContent = "Cropped"; // Change button text
-                    saveButton.disabled = true; // Disable the button after cropping
-                }, "image/png");
-            };
-        };
-        
-        reader.readAsDataURL(file);
-    } else {
-        imageErrorElement.textContent = "Please select a valid image.";
-        imageErrorElement.style.display = "block";
-    }
-}
-
-$('input[type="file"]').on('change', function (event) {
-  const index = $(this).data('index');
-  handleNewImage(event, parseInt(index));
-});
-
-
-
-
-
-        function clearErrorMessages() {
-            const errorElements = document.getElementsByClassName("error-message");
-            Array.from(errorElements).forEach((element) => {
-                element.textContent = "";
-                element.style.display = "none";
-            });
-        }
-
-
-
-//delete image
-        function deleteImage(index) {
-     const imageWrapper = document.querySelector(`.image-wrapper[data-index="${index}"]`);
-     if (imageWrapper) {
-         imageWrapper.remove();
-     }
-
-     if (selectedImages[index]) {
-         selectedImages[index] = null;
-     }
-
-     let deletedImageInput = document.getElementById('deletedImages');
-     const deletedImages = deletedImageInput.value ? deletedImageInput.value.split(',') : [];
-
-     if (!deletedImages.includes(index.toString())) {
-         deletedImages.push(index);
-         deletedImageInput.value = deletedImages.join(',');
-     }
-}
-
-
-$('.remove-button').on('click', function (event) {
-  const index = $(this).data('index');
-  deleteImage(parseInt(index));
-});
+        cropper.destroy();
+        cropperContainer.style.display = "none";
+        saveButton.textContent = "Cropped";
+        saveButton.disabled = true;
+      }, "image/png");
+    };
+  }
 
 
 
@@ -980,7 +944,7 @@ $('.remove-button').on('click', function (event) {
                   })
             }
           }
-        })
+       
           
     </script>
 </body>

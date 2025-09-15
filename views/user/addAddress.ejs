@@ -150,12 +150,13 @@
 
                                                         <!--====== Select Box ======-->
 
-                                                        <label class="gl-label" for="address-country">COUNTRY *</label><select class="select-box select-box--primary-style" id="address-country" name="country">
-                                                            <option selected value="" <%= address.country? '': 'selected' %>>Choose Country</option>
-                                                            <option value="uae" <%= address.country === 'uae' ? 'selected' : '' %>>United Arab Emirate (UAE)</option>
-                                                            <option value="uk" <%= address.country === 'us' ? 'selsected' : '' %>>United States (US)</option>
-                                                            <option value="india" <%= address.country === 'india' ? 'selected' : '' %>>India </option>
-                                                            <option value="pakisthan" <%= address.country === 'pakistan' ? 'selected' : '' %>>Pakisthan </option>
+                                                        <label class="gl-label" for="address-country">COUNTRY *</label>
+                                                        <select class="select-box select-box--primary-style" id="address-country" name="country">
+                                                            <option selected value="">Choose Country</option>
+                                                            <option value="uae">United Arab Emirate (UAE)</option>
+                                                            <option value="uk">United States (US)</option>
+                                                            <option value="india">India </option>
+                                                            <option value="pakisthan">Pakisthan </option>
                                                         </select>
                                                         <p id="country-error" class="error-message" style="color: red; display: none;"></p>
                                                         <!--====== End - Select Box ======-->
@@ -164,12 +165,13 @@
 
                                                         <!--====== Select Box ======-->
 
-                                                        <label class="gl-label" for="address-state">STATE/PROVINCE *</label><select class="select-box select-box--primary-style" id="address-state" name="state">
-                                                            <option selected value="" <%= address.state? '': 'selected' %>>Choose State/Province</option>
-                                                            <option value="Assam" <%= address.state === 'Assam' ? 'selected' : '' %>>Assam</option>
-                                                            <option value="Utter Pradesh" <%= address.state === 'Utter Pradesh' ? 'selected' : '' %>>Utter Pradesh</option>
-                                                            <option value="Kerala" <%= address.state === 'Kerala' ? 'selected' : '' %>>Kerala</option>
-                                                            <option value="Tamil Nadu" <%= address.state === 'Tamil Nadu' ? 'selected' : '' %>>Tamil Nadu</option>
+                                                        <label class="gl-label" for="address-state">STATE/PROVINCE *</label>
+                                                        <select class="select-box select-box--primary-style" id="address-state" name="state">
+                                                            <option selected value="">Choose State/Province</option>
+                                                            <option value="Assam" >Assam</option>
+                                                            <option value="Utter Pradesh">Utter Pradesh</option>
+                                                            <option value="Kerala">Kerala</option>
+                                                            <option value="Tamil Nadu">Tamil Nadu</option>
                                                         </select>
                                                         <p id="state-error" class="error-message" style="color: red; display: none;"></p>
                                                         <!--====== End - Select Box ======-->
@@ -420,7 +422,7 @@
     const namePattern = /^[a-zA-Z.\s,]+$/;
     const phonePattern = /^[6-9]\d{9}$/;
     const pincodePattern = /^\d{5,6}$/;
-    const addressPattern = /^[a-zA-Z0-9., ]+$/;
+    const addressPattern = /^[a-zA-Z0-9\s.,\-\/#()]+$/;
     const locationPattern = /^[a-zA-Z0-9\s.,\-\/]+$/;
 
 
@@ -451,7 +453,7 @@
         showError("phone-error", "Phone number is required.");
         isValid = false;
     } else if (!phonePattern.test(phone)) {
-        showError("phone-error", "Should be 11 digits.");
+        showError("phone-error", "Mobile number must be exactly 10 digits and start with 6–9 (e.g., 9876543210).");
         isValid = false;
     }
 
@@ -471,7 +473,7 @@
     if (locality === "") {
         showError("locality-error", " locality is required.");
         isValid = false;
-    } else if (!locationPattern.test(name)) {
+    } else if (!locationPattern.test(locality)) {
         showError("locality-error", "Should contain only alphabets.");
         isValid = false;
     } else if (locality.length < 3) {
@@ -528,8 +530,11 @@
       country,
       state,
       city,
-      pincode,
+      pincode
     };
+
+    console.log(formData);
+    
 
     try {
       // Use fetch API to send data
@@ -595,13 +600,13 @@ function hideError(elementId) {
         function message(msg){
           if(msg){
                 Swal.fire({
-                  positition: "center",
+                  position: "center",
                   icon: "success",
                   title: msg,
                   showConfirmButton: false,
                   timer: 3000
                 }).then(() =>{
-                  window.location.href = "/admin";
+                  window.location.href = "/";
                 })
           }
         }

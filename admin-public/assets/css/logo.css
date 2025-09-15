@@ -1,0 +1,16 @@
+.logo svg {
+    width: 258px;
+    height: auto;
+     margin-left: -18px;
+    position: relative;
+    filter: drop-shadow(2px 2px 4px rgba(224, 210, 169, 0.8)); /* Silver shadow */
+}
+
+.logo svg text,
+.logo svg path {
+    fill: #860117; /* Coral orange */
+    stroke: #f43100aa; /* Blue stroke */
+    stroke-width: 0.2px;
+    font-weight: bold;
+    letter-spacing: 0.5px;
+}

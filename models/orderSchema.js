@@ -9,6 +9,7 @@ const OrderSchema = new Schema(
         productId: { type: Types.ObjectId, ref: "Product", required: true },
         quantity: { type: Number, required: true },
         price: { type: Number, required: true }, // Price per product at the time of the order
+        discountedPrice: { type: Number, required: true },
         status: {
           type: String,
           enum: [
@@ -23,6 +24,8 @@ const OrderSchema = new Schema(
           default: "Processing",
         },
         deliveredAt: { type: Date },
+        cancellationReason: { type: String, default: null },  // reason for cancellation
+        returnReason: { type: String, default: null },  // reason for return
       },
     ],
     totalAmount: { type: Number, required: true }, // Total amount for the order
@@ -54,6 +57,7 @@ const OrderSchema = new Schema(
         "Cancelled",
         "Return Requested",
         "Returned",
+        "Completed"
       ],
       default: "Processing",
     },

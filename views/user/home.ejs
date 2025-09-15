@@ -236,8 +236,8 @@
                                     <div class="product-r__container">
 
                                         <a class="aspect aspect--bg-grey aspect--square u-d-block" href="/product-details/<%=products[i]._id%>">
-
-                                            <img class="aspect__img" src="/admin-assets/product2/<%=products[i].image[0]%>" alt="" ></a>
+                                            <% let img = products[i].image[0] %>
+                                            <img class="aspect__img" src="<%= img.startsWith('http') ? img : '/admin-assets/product2/' + img %>" " alt="" ></a>
                                         <div class="product-r__action-wrap">
                                             <ul class="product-r__action-list">
                                                 <li>

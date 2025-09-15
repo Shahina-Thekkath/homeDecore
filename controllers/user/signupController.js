@@ -216,6 +216,8 @@ const forgotVerify = async(req,res) =>{
     try {
         const email = req.body.email;
         const user = await User.findOne({email});
+        console.log("changePassword", user, email);
+        
 
         if(user){
             const randomString = randomstring.generate();

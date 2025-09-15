@@ -4,8 +4,7 @@ const categoryOfferSchema = new mongoose.Schema({
   categoryId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Category",
-    required: true,
-    unique: true // One offer per category
+    required: true
   },
   discountType: {
     type: String,

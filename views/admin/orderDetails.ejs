@@ -25,6 +25,8 @@
     <link rel="stylesheet" href="/admin-assets/plugins/fontawesome/css/all.min.css">
 
     <link rel="stylesheet" href="/admin-assets/css/style.css">
+     <link rel="stylesheet" href="/admin-assets/css/logo.css" />
+
 </head>
 
 <body>
@@ -37,13 +39,8 @@
         <div class="header"> 
 
             <div class="header-left active">
-                <a href="index.html" class="logo">
-                    <img src="/admin-assets/img/logo.png" alt="">
-                </a>
-                <a href="index.html" class="logo-small">
-                    <img src="/admin-assets/img/logo-small.png" alt="">
-                </a>
-                <a id="toggle_btn" href="javascript:void(0);">
+                <a href="/admin/dashboard" class="logo">
+                    <%- include('../../views/partials/icons/icon-logo') %>
                 </a>
             </div>
 
@@ -444,17 +441,35 @@
                                                 <%= product.quantity %>
                                             </td>
                                             <td style="padding: 10px;vertical-align: top; ">
-                                                <%= product.price %>
+                                                <%= product.discountedPrice %>
                                             </td>
                                             <td style="padding: 10px;vertical-align: top; ">
-                                                <%= (product.quantity * product.price).toFixed(2) %>
+                                                <%= (product.quantity * product.discountedPrice).toFixed(2) %>
                                             </td>
                                             <td style="padding: 10px;vertical-align: top; ">
                                                 <div><%=product.status %></div>
                                                 
                                                 <% if(product.status === 'Delivered' && product.deliveredAt){ %>
-                                                    <div style="color: green; font-size: 0.9rem; margin-top: 4px;">
+                                                    <div style="color: green; font-size: 0.8rem; margin-top: 4px;">
                                                         Delivered on: <%= new Date(product.deliveredAt).toLocaleDateString('en-IN') %>
+                                                    </div>
+                                                <% } %>
+
+                                                <% if (product.status === 'Cancelled' && product.cancellationReason) { %>
+                                                    <div style="color: red; font-size: 0.8rem; margin-top: 4px;">
+                                                    Reason: <%= product.cancellationReason %>
+                                                    </div>
+                                                <% } %>
+
+                                                <% if (product.status === 'Return Requested' && product.returnReason) { %>
+                                                    <div style="color: orange; font-size: 0.8rem; margin-top: 4px;">
+                                                    Return Requested: <%= product.returnReason %>
+                                                    </div>
+                                                <% } %>
+
+                                                <% if (product.status === 'Returned' && product.returnReason) { %>
+                                                    <div style="color: purple; font-size: 0.8rem; margin-top: 4px;">
+                                                    Returned: <%= product.returnReason %>
                                                     </div>
                                                 <% } %>
 
@@ -468,7 +483,7 @@
                                                 <input type="hidden" class="product-index" value="<%= index %>">
 
                                                 <select class="status-dropdown form-select mb-2" data-order-id="<%= order._id %>" data-index="<%= index %>">
-                                                    <% const statusOptions = ["Pending", "Processing", "Shipped", "Delivered", "Cancelled", "Return Requested", "Returned"]; %>
+                                                    <% const statusOptions = ["Pending", "Processing", "Shipped", "Delivered", "Cancelled", "Returned"]; %>
                                                     <% statusOptions.forEach(opt => { %>
                                                     <option value="<%= opt %>" <%= product.status === opt ? 'selected' : '' %>><%= opt %></option>
                                                     <% }) %>
@@ -536,7 +551,7 @@
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-    <script data-cfasync="false" src="../../cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
     <script src="/admin-assets/js/jquery-3.6.0.min.js"></script>
 
     <script src="/admin-assets/js/feather.min.js"></script>
@@ -605,36 +620,61 @@
 
     //status update AJAX (dropdown)
 
-    $('.status-dropdown').on('change', function() {
-        const orderId = $(this).data('order-id');
-        const index = $(this).data('index');
-        const newStatus = $(this).val();
+   $('.status-dropdown').each(function () {
+    // Save the initial value for each dropdown
+    $(this).data('previous', $(this).val());
+});
 
-        $.ajax({
-            url: '/admin/orders/update-status',
-            method: 'POST',
-            contentType: 'application/json',
-            data: JSON.stringify({orderId, productIndex: index, newStatus}),
-            success: function (res){
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Status Updated',
-                    text: res.message,
-                    timer: 1500,
-                    showConfirmButton: false
-                }).then(() => {
-                    location.reload();
-                })
-            },
-            error: function (err){
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Update Failed',
-                    text: 'There was an error updating the product status.'
-                });
+$('.status-dropdown').on('focus', function () {
+    // Update previous value when dropdown is focused
+    $(this).data('previous', $(this).val());
+});
+
+$('.status-dropdown').on('change', function () {
+    const dropdown = $(this);
+    const orderId = dropdown.data('order-id');
+    const index = dropdown.data('index');
+    const newStatus = dropdown.val();
+    const previousStatus = dropdown.data('previous'); // old value
+
+    console.log("updateStatus", orderId, index, newStatus);
+
+    $.ajax({
+        url: '/admin/orders/update-status',
+        method: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({ orderId, productIndex: index, newStatus }),
+        success: function (res) {
+            Swal.fire({
+                icon: 'success',
+                title: 'Status Updated',
+                text: res.message,
+                timer: 1500,
+                showConfirmButton: false
+            }).then(() => {
+                location.reload();
+            })
+        },
+        error: function (err) {
+            console.log("error", err);
+
+            let msg = 'There was an error updating the product status.';
+            if (err.responseJSON && err.responseJSON.message) {
+                msg = err.responseJSON.message; // backend reason
             }
-        });
+
+            Swal.fire({
+                icon: 'error',
+                title: 'Update Failed',
+                text: msg
+            });
+
+            // Revert dropdown back to previous value
+            dropdown.val(previousStatus);
+        }
     });
+});
+
 
     $('.cancel-product-btn').on('click', function(){
         const orderId = $(this).data('order-id');

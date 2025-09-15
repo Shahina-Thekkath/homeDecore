@@ -37,9 +37,11 @@ const isLogout = async (req,res,next)=>{
 const sessionVerify = async (req, res, next) =>{
     try {
         const user = req.session.user
-        const passport = req.session.passport
+        const passport = req.session.passport || req.session.passport?.user;
 
         if(user||passport){
+            console.log("passport", passport);
+            
             next();
         }else{
             res.redirect('/login');

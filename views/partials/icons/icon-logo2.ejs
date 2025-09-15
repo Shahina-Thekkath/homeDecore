@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 100" width="400" height="100">
+
+  
+  <!-- Bold dramatic text with sunset gradient and shadow effects -->
+  <defs>
+    <!-- Sunset gradient - deep orange to pink to purple -->
+    <linearGradient id="sunsetGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#FF4500;stop-opacity:1" />
+      <stop offset="30%" style="stop-color:#FF6347;stop-opacity:1" />
+      <stop offset="60%" style="stop-color:#FF69B4;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#8A2BE2;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- Warm sunset gradient for "THE" - soft yellows to coral -->
+    <linearGradient id="warmSunsetGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#FFE4B5;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#FFA07A;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#FF7F50;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- Evening sky gradient - purple to deep blue -->
+    <linearGradient id="eveningGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#9370DB;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#4B0082;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- Golden hour gradient -->
+    <linearGradient id="goldenGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#FFD700;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#FF8C00;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#DC143C;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- Glow filter with warm tones -->
+    <filter id="sunsetGlow">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge> 
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <g id="full-text">
+    <!-- Shadow for "THE" in deep purple -->
+    <text x="50" y="30" font-family="'Playfair Display', 'Crimson Text', 'Georgia', serif" 
+          font-size="18" font-weight="500" letter-spacing="4px" 
+          fill="#4B0082" opacity="0.4">
+      THE
+    </text>
+    
+    <!-- THE with warm sunset gradient -->
+    <text x="48" y="28" font-family="'Playfair Display', 'Crimson Text', 'Georgia', serif" 
+          font-size="18" font-weight="500" letter-spacing="4px" 
+          fill="url(#warmSunsetGradient)" filter="url(#sunsetGlow)">
+      THE
+    </text>
+    
+    <!-- Shadow for main text in deep evening color -->
+    <text x="50" y="62" font-family="'Playfair Display', 'Crimson Text', 'Georgia', serif" 
+          font-size="34" font-weight="600" letter-spacing="1px" 
+          fill="#2F1B69" opacity="0.3">
+      ELEGANT ADOBE
+    </text>
+    
+    <!-- ELEGANT ADOBE with vibrant sunset gradient -->
+    <text x="48" y="60" font-family="'Playfair Display', 'Crimson Text', 'Georgia', serif" 
+          font-size="34" font-weight="600" letter-spacing="1px" 
+          fill="url(#sunsetGradient)" filter="url(#sunsetGlow)">
+      ELEGANT ADOBE
+    </text>
+    
+    <!-- Simple elegant underline -->
+    <rect x="48" y="70" width="200" height="2" fill="url(#goldenGradient)" rx="1" opacity="0.7"/>
+  </g>
+</svg>

@@ -1266,7 +1266,8 @@
                                                     <div class="mini-product">
                                                         <div class="mini-product__image-wrapper">
                                                             <a class="mini-product__link" href="/product/<%=item.productId._id%>">
-                                                                <img class="u-img-fluid" src="/admin-assets/product2/<%=item.productId.image[0]%>" alt="<%=item.productId.name%>">
+                                                                <% let img = item.productId.image[0] %>
+                                                                <img class="u-img-fluid" src="<%= img.startsWith('http') ? img : '/admin-assets/product2/' + img %>" alt="<%=item.productId.name%>">
                                                             </a>
                                                         </div>
                                                         <div class="mini-product__info-wrapper">
@@ -1369,9 +1370,16 @@
                                             
                                             <div class="pd-o-img-wrap" data-src="/admin-assets/product2/<%=img%>">
 
-                                                <img class="u-img-fluid" src="/admin-assets/product2/<%=img%>" data-zoom-image="/admin-assets/product2/<%=img%>" alt=""></div>
-                                                
-                                            
+                                                <img class="u-img-fluid" 
+                                                <% if(img.startsWith('http')){ %>
+                                                   src="<%=img%>"
+                                                   data-zoom-image="<%=img%>"
+                                                <% } else { %>
+                                                    src="/admin-assets/product2/<%=img%>" 
+                                                data-zoom-image="/admin-assets/product2/<%=img%>" 
+                                                <% } %>
+                            
+                                                alt=""></div> 
                                         <%})%>
 
                                         
@@ -1387,7 +1395,10 @@
                                             <%currentProduct.image.forEach((img) =>{%>
                                                 <div>
 
-                                                    <img class="u-img-fluid" src="/admin-assets/product2/<%=img%>" alt=""></div>
+                                                    <img class="u-img-fluid" 
+                                                    src="<%= img.startsWith('http') ? img : '/admin-assets/product2/' + img %>"  
+                                                    alt="">
+                                                </div>
                                                 
                                             <%})%>
 
@@ -1946,7 +1957,8 @@
                                     <div class="product-o product-o--hover-on">
                                         <div class="product-o__wrap">
                                             <a class="aspect aspect--bg-grey aspect--square u-d-block" href="/product-details/<%= relatedProducts[i]._id %>">
-                                            <img class="aspect__img" src="/admin-assets/product2/<%= relatedProducts[i].image[0] %>" alt="<%= relatedProducts[i].name %>">
+                                                <% let img = relatedProducts[i].image[0] %>
+                                            <img class="aspect__img" src="<%= img.startsWith('http') ? img : '/admin-assets/product2/' + img %>" alt="<%= relatedProducts[i].name %>">
                                             </a>
                                             
                                             <div class="product-o__action-wrap">
@@ -2477,6 +2489,7 @@
                 method: 'POST',
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ productId, quantity: selectedQuantity }),
+                credentials: "include" 
             });
 
             const data = await response.json();

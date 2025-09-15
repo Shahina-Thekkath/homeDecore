@@ -29,7 +29,7 @@ const loadCheckout = async (req, res) => {
         coupon.usageLimit > 0 &&
         !coupon.usersUsed.includes(userId)
     );
-    console.log("valid coupons", validCoupons);
+   
     
 
     const flatCoupons = validCoupons.filter(
@@ -40,7 +40,7 @@ const loadCheckout = async (req, res) => {
     const percentageCoupons = validCoupons.filter(
       (coupon) => coupon.discountType === "percentage"
     );
-    console.log("percentage coupons",percentageCoupons);
+   
     
 
     const expiredCoupons = allCoupons.filter(
@@ -49,7 +49,7 @@ const loadCheckout = async (req, res) => {
         coupon.usageLimit <= 0 ||
         coupon.usersUsed.includes(userId)
     );
-console.log("expired coupons", expiredCoupons);
+
 
 
 
@@ -75,7 +75,7 @@ console.log("expired coupons", expiredCoupons);
     let discountAmount = 0;
 
     if(req.session.coupon){
-      discountAmount = req.session.coupon.discount || 0;
+      discountAmount = req.session.coupon.discount || 0;   // coupon discount
     }
 
     // Use the default address or fallback to the first address
@@ -94,7 +94,7 @@ console.log("expired coupons", expiredCoupons);
 
     res.render("checkout", {
       user,
-      discountAmount,
+      discountAmount,   // here the discountAmount is coupon discount
       cartItems,
       grandTotal,
       addresses: user.addresses,

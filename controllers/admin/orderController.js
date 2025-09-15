@@ -2,6 +2,7 @@ const Product = require("../../models/productSchema");
 const Order = require("../../models/orderSchema");
 const Wallet = require("../../models/walletSchema");
 const mongoose = require("mongoose");
+const Coupon = require("../../models/couponSchema");
 
 const getAdminOrders = async (req, res) => {
   try {
@@ -37,8 +38,7 @@ const getOrderById = async (req, res) => {
     if (!order) return res.status(404).json({ message: "Order not found" });
 
     // need to check
-    const grandTotal = order.products.reduce((total, product) => 
-      total + product.price * product.quantity, 0);
+    const grandTotal = order.totalAmount;
 
     res.render("orderDetails", { order, grandTotal });
   } catch (error) {
@@ -171,11 +171,29 @@ const cancelOrder = async (req, res) => {
   }
 };
 
-// in the case of update if status is changed to delivered the the status is updated to delivered and the delivered date is dipslayed
+// in the case of update if status is changed to delivered the the status is updated to delivered and the delivered date is displayed
 // In the case of changing the status to returned or cancelled the refund is done for each product in the order according to the quantity
 // and the stock is updated
 
 // need to set condition if the product status not pending or processing product cannot be cancelled
+
+function updateOverallOrderStatus(order) {
+  const statuses = order.products.map(p => p.status);
+
+  if (statuses.every(s => s === "Cancelled")) {
+    order.orderStatus = "Cancelled";
+  } else if (statuses.every(s => s === "Returned")) {
+    order.orderStatus = "Returned";
+  } else if (statuses.every(s => s === "Delivered")) {
+    order.orderStatus = "Completed";
+  } else if (statuses.includes("Processing") || statuses.includes("Shipped")) {
+    order.orderStatus = "Processing";
+  } else {
+    order.orderStatus = "Pending";
+  }
+
+  return order.orderStatus;
+}
 
 const updateProductStatus = async (req, res) => {
   try {
@@ -184,46 +202,170 @@ const updateProductStatus = async (req, res) => {
     const order = await Order.findById(orderId)
       .populate("userId")
       .populate("products.productId");
-    if (!order) return res.status(404).json({ message: "Order not found" });
+    if (!order) {
+      console.log("Order not found");
+      return res.status(404).json({ message: "Order not found" });
+    }
 
     const product = order.products[productIndex];
-    if (!product)
+    if (!product) {
+      console.log("Invalid product Index");
       return res.status(400).json({ message: "Invalid product Index" });
+    }
 
-    if (["Returned", "Cancelled"].includes(product.status)) {
+    const currentStatus = product.status;
+
+    //  Already final states
+    if (["Returned", "Cancelled"].includes(currentStatus)) {
       return res
         .status(400)
         .json({ message: "Product already returned or cancelled" });
     }
 
-    product.status = newStatus;
-    if (newStatus === "Delivered") {
-      product.deliveredAt = new Date();
-    }
 
-    if (["Returned", "Cancelled"].includes(newStatus)) {
+    //  Handle Cancellation by Admin
+    if (newStatus === "Cancelled") {
+      const cancellableStatuses = ["Pending", "Processing"];
+      if (!cancellableStatuses.includes(currentStatus)) {
+        return res.status(400).json({
+          success: false,
+          message: "Cannot cancel at this stage",
+        });
+      }
+
+      // Restore stock
       await Product.findByIdAndUpdate(product.productId._id, {
         $inc: { quantity: product.quantity },
       });
 
-      const cancellableStatuses = ["Pending Payment", "Processing"];
-      if (!cancellableStatuses.includes(product.status)) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Cannot be cancelled at this stage order at this stage" });
+      product.status = "Cancelled";
+
+      // Refund calculation
+      let refundAmount = product.discountedPrice * product.quantity;
+
+      //  If this is the last product in the order → refund full amount
+    const activeProducts = order.products.filter(
+      p => !["Cancelled", "Returned"].includes(p.status)
+    );
+
+    if (activeProducts.length === 1 && activeProducts[0]._id.equals(product._id)) {
+      // last product being cancelled/returned → refund full amount (before coupon)
+      refundAmount = order.totalAmount; 
+    } 
+    //  Handle coupon adjustments
+    else if (order.couponDiscount > 0 && order.couponCode) {
+      const coupon = await Coupon.findOne({ code: order.couponCode });
+
+      if (coupon) {
+        // Remaining subtotal excluding cancelled product
+        const remainingSubtotal = order.products.reduce((sum, p, idx) => {
+          if (idx === productIndex || ["Cancelled", "Returned"].includes(p.status)) return sum;
+          return sum + (p.discountedPrice * p.quantity);
+        }, 0);
+
+        if (remainingSubtotal >= coupon.minPurchaseAmount) {
+          // Coupon still valid → deduct proportional coupon discount
+          const subtotalBeforeCoupon = order.products.reduce((sum, p) => {
+            if (["Cancelled", "Returned"].includes(p.status)) return sum;
+            return sum + (p.discountedPrice * p.quantity);
+          }, 0);
+
+          const productShare = refundAmount / subtotalBeforeCoupon;
+          const discountShare = productShare * order.couponDiscount;
+          refundAmount -= discountShare;
+        } else {
+          // Coupon invalid after cancellation → refund full discounted price
+          refundAmount = product.discountedPrice * product.quantity;
+        }
+      }
     }
-
-
-      const refundAmount = product.price * product.quantity;
 
       if (order.isPaid) {
         await handleRefundToWallet(
           order.userId._id,
           refundAmount,
-          `${newStatus} Refund`
+          "Cancelled Refund"
         );
       }
     }
+
+    // Handle Returned (only after Return Requested)
+    else if (newStatus === "Returned") {
+      if (currentStatus !== "Return Requested") {
+        return res.status(400).json({
+          message: "Product must be in Return Requested state before Returned",
+        });
+      }
+
+      product.status = "Returned";
+
+      let refundAmount = product.discountedPrice * product.quantity;
+
+       const activeProducts = order.products.filter(
+      p => !["Cancelled", "Returned"].includes(p.status)
+    );
+
+    if (activeProducts.length === 1 && activeProducts[0]._id.equals(product._id)) {
+      // last product being cancelled/returned → refund full amount (before coupon)
+      refundAmount = order.totalAmount; 
+    } 
+    //  Handle coupon adjustments
+    else if (order.couponDiscount > 0 && order.couponCode) {
+      const coupon = await Coupon.findOne({ code: order.couponCode });
+
+      if (coupon) {
+        // Remaining subtotal excluding cancelled product
+        const remainingSubtotal = order.products.reduce((sum, p, idx) => {
+          if (idx === productIndex || ["Cancelled", "Returned"].includes(p.status)) return sum;
+          return sum + (p.discountedPrice * p.quantity);
+        }, 0);
+
+        if (remainingSubtotal >= coupon.minPurchaseAmount) {
+          // Coupon still valid → deduct proportional coupon discount
+          const subtotalBeforeCoupon = order.products.reduce((sum, p) => {
+            if (["Cancelled", "Returned"].includes(p.status)) return sum;
+            return sum + (p.discountedPrice * p.quantity);
+          }, 0);
+
+          if (subtotalBeforeCoupon > 0) {
+            const productShare = refundAmount / subtotalBeforeCoupon;
+            const discountShare = productShare * order.couponDiscount;
+            refundAmount -= discountShare;
+          }
+
+        } else {
+          // Coupon invalid after cancellation → refund full discounted price
+          refundAmount = product.discountedPrice * product.quantity;
+        }
+      }
+    }
+
+      if (order.isPaid) {
+        await handleRefundToWallet(
+          order.userId._id,
+          refundAmount,
+          "Return Refund"
+        );
+      }
+
+      //  Restore stock since returned
+      await Product.findByIdAndUpdate(product.productId._id, {
+        $inc: { quantity: product.quantity },
+      });
+    }
+
+    //  Delivered case
+    else if (newStatus === "Delivered") {
+      product.status = "Delivered";
+      product.deliveredAt = new Date();
+    }
+
+    // Other normal transitions (Processing → Shipped etc.)
+    else {
+      product.status = newStatus;
+    }
+
+    updateOverallOrderStatus(order);
 
     await order.save();
     console.log("update Product status", order);
@@ -233,6 +375,7 @@ const updateProductStatus = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
 
 const cancelProductByIndex = async (req, res) => {
   try {
@@ -244,21 +387,63 @@ const cancelProductByIndex = async (req, res) => {
     if (!order) return res.status(404).json({ message: "Order not found" });
 
     const product = order.products[productIndex];
+    if (!product) return res.status(400).json({ message: "Invalid product index" });
 
-    //check if cancellable
+    //  Only allow user to cancel if Pending or Processing
     if (!["Pending", "Processing"].includes(product.status)) {
       return res
         .status(400)
         .json({ message: "Cannot cancel this product at this stage" });
     }
 
+    // Mark as cancelled
     product.status = "Cancelled";
-    await Product.findByIdAndUpdate(product.productId, {
+
+    // Restore stock
+    await Product.findByIdAndUpdate(product.productId._id, {
       $inc: { quantity: product.quantity },
     });
 
-    const refundAmount = product.price * product.quantity;
+    // Base refund
+    let refundAmount = product.discountedPrice * product.quantity;
 
+     const activeProducts = order.products.filter(
+      p => !["Cancelled", "Returned"].includes(p.status)
+    );
+
+    if (activeProducts.length === 1 && activeProducts[0]._id.equals(product._id)) {
+      // last product being cancelled/returned → refund full amount (before coupon)
+      refundAmount = order.totalAmount; 
+    } 
+    //  Handle coupon adjustments
+    else if (order.couponDiscount > 0 && order.couponCode) {
+      const coupon = await Coupon.findOne({ code: order.couponCode });
+
+      if (coupon) {
+        // Remaining subtotal excluding cancelled product
+        const remainingSubtotal = order.products.reduce((sum, p, idx) => {
+          if (idx === productIndex || ["Cancelled", "Returned"].includes(p.status)) return sum;
+          return sum + (p.discountedPrice * p.quantity);
+        }, 0);
+
+        if (remainingSubtotal >= coupon.minPurchaseAmount) {
+          // Coupon still valid → deduct proportional coupon discount
+          const subtotalBeforeCoupon = order.products.reduce((sum, p) => {
+            if (["Cancelled", "Returned"].includes(p.status)) return sum;
+            return sum + (p.discountedPrice * p.quantity);
+          }, 0);
+
+          const productShare = refundAmount / subtotalBeforeCoupon;
+          const discountShare = productShare * order.couponDiscount;
+          refundAmount -= discountShare;
+        } else {
+          // Coupon invalid after cancellation → refund full discounted price
+          refundAmount = product.discountedPrice * product.quantity;
+        }
+      }
+    }
+
+    //  Refund if prepaid
     if (order.isPaid) {
       await handleRefundToWallet(
         order.userId._id,
@@ -267,8 +452,11 @@ const cancelProductByIndex = async (req, res) => {
       );
     }
 
+    updateOverallOrderStatus(order);
+    
     await order.save();
     res.json({ message: "Product cancelled and refunded." });
+
   } catch (error) {
     console.error("Cancel product error:", error);
     res.status(500).json({ message: "Server error" });

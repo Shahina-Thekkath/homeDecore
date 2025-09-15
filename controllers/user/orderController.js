@@ -16,23 +16,30 @@ const saveOrderFromSerializedData = async (
   userId,
   isPaid = false,
   couponCode = null,
-  discount = 0
+  couponDiscount = 0
 ) => {
   try {
     const parsedFormData = qs.parse(formData);
 
     const { cartItems, shippingAddress, payment, grandTotal } = parsedFormData;
 
+    
+
     const orderItems = cartItems.map((item) => ({
       productId: item.id,
       name: item.name,
       price: parseFloat(item.price),
+      discountedPrice: parseFloat(item.discountedPrice),
       quantity: parseInt(item.quantity),
       subtotal: parseFloat(item.subtotal),
     }));
 
-    const discountAmount = discount || 0;
-      const finalTotal = parseFloat(grandTotal) - parseFloat(discountAmount);
+    // Calculate offer discount (sum of original - discounted per product) 
+      const offerDiscountTotal = orderItems.reduce((sum, item) => {
+        return sum + (parseFloat(item.price) - parseFloat(item.discountedPrice)) * item.quantity;
+      }, 0);
+
+      const finalTotal = parseFloat(grandTotal) - parseFloat(couponDiscount) || 0;   // the coupon discount is being reduced
 
 
     // console.log("orderItems", orderItems);
@@ -42,12 +49,12 @@ const saveOrderFromSerializedData = async (
       products: orderItems,
       shippingAddress,
       paymentMethod: payment,
-      totalAmount: finalTotal,
+      totalAmount: parseFloat(finalTotal),
       isPaid: true,
       createdAt: new Date(),
-      discountAmount: parseFloat(discountAmount) || 0,
+      discountAmount: parseFloat(offerDiscountTotal) || 0,
       couponCode: couponCode || null,
-      couponDiscount: discountAmount
+      couponDiscount: couponDiscount || 0
     });
 
     console.log("new order", newOrder);
@@ -83,10 +90,11 @@ const saveOrderFromSerializedData = async (
       shippingAddress,
       paymentMethod: payment,
       totalAmount: parseFloat(finalTotal),
-      status: isPaid,
+      isPaid: true,
       createdAt: new Date(),
-      discountAmount: parseFloat(discountAmount) || 0,
+      discountAmount: parseFloat(offerDiscountTotal) || 0,
       couponCode: couponCode || null,
+      couponDiscount: couponDiscount || 0
     };
   } catch (error) {
     console.error("Error Deserializing:", error);
@@ -104,8 +112,14 @@ const saveOrderInSession = async (req, res) => {
       ? cartItems
       : Object.values(cartItems);
 
-      const discountAmount = req.session.coupon?.discount || 0;
-      const finalTotal = parseFloat(grandTotal) - parseFloat(discountAmount);
+      // Calculate offer discount (sum of original - discounted per product) 
+      const offerDiscountTotal = itemsArray.reduce((sum, item) => {
+        return sum + (parseFloat(item.price) - parseFloat(item.discountedPrice)) * item.quantity;
+      }, 0);
+
+      // coupon discount from session (if applied)
+      const couponDiscount = req.session.coupon?.discount || 0;
+      const finalTotal = parseFloat(grandTotal) - parseFloat(couponDiscount);    // grandTotal <= checkout.ejs = #orderForm <= cartItems = checkoutController
 
     // Format the order details
 
@@ -116,6 +130,7 @@ const saveOrderInSession = async (req, res) => {
         productId: item.id,
         name: item.name,
         price: parseFloat(item.price),
+        discountedPrice: parseFloat(item.discountedPrice),
         quantity: parseInt(item.quantity, 10),
         subtotal: parseFloat(item.subtotal),
       })),
@@ -123,9 +138,9 @@ const saveOrderInSession = async (req, res) => {
       shippingAddress: shippingAddress, // Parse the selected address if passed as JSON
       paymentMethod: payment,
       createdAt: new Date(),
-      discountAmount: parseFloat(discountAmount) || 0,
+      discountAmount: parseFloat(offerDiscountTotal) || 0,  // req.session.coupon?.discount || 0;  ==> need to be checked
       couponCode: req.session.coupon?.code || null,
-      couponDiscount: discountAmount
+      couponDiscount: parseFloat(couponDiscount)
     };
 
     req.session.order = order;
@@ -188,7 +203,7 @@ const getOrderSuccess = (req, res) => {
     req.session.paymentMethod = null;
     req.session.coupon = null;
 
-    const grandTotal = order.products.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    const grandTotal = order.products.reduce((sum, item) => sum + (item.discountedPrice * item.quantity), 0);
 
 
 
@@ -275,6 +290,7 @@ const getOrderDetails = async (req, res) => {
     order.products = order.products.map((product) => {
       return {
         ...product,
+        originalProductId: product.productId._id,
         isCancellable: ["Pending", "Processing"].includes(product.status),
         isReturnable: product.status === "Delivered",
       };
@@ -340,10 +356,30 @@ const handleRefundToWallet = async (userId, amount, reason) => {
   }
 };
 
+function updateOverallOrderStatus(order) {
+  const statuses = order.products.map(p => p.status);
+
+  if (statuses.every(s => s === "Cancelled")) {
+    order.orderStatus = "Cancelled";
+  } else if (statuses.every(s => s === "Returned")) {
+    order.orderStatus = "Returned";
+  } else if (statuses.every(s => s === "Delivered")) {
+    order.orderStatus = "Completed";
+  } else if (statuses.includes("Processing") || statuses.includes("Shipped")) {
+    order.orderStatus = "Processing";
+  } else {
+    order.orderStatus = "Pending";
+  }
+
+  return order.orderStatus;
+}
+
+
 // cancel for a single product in an order
 //here the product which has been cancelled, its stock is updated, amount is also refunded
 const cancelOrder = async (req, res) => {
   const { orderId, productId } = req.params;
+  const { reason } = req.body;
   try {
     const order = await Order.findById(orderId);
 
@@ -372,6 +408,22 @@ const cancelOrder = async (req, res) => {
         });
     }
 
+    if (product.status === "Cancelled") {
+      return res.status(400).json({success: false, message: 'Product already cancelled'});
+    }
+
+     // Enhanced cancellation reason validation
+    const validationResult = validateOrderReason(reason, "cancel");
+    if (!validationResult.isValid) {
+      return res.status(400).json({
+        success: false,
+        message: validationResult.message
+      });
+    }
+
+    // Clean the reason after validation
+    const cleanedReason = validationResult.cleanedReason;
+
     // Update product stock
     const dbProduct = await Product.findById(productId);
     if (dbProduct) {
@@ -379,7 +431,46 @@ const cancelOrder = async (req, res) => {
       await dbProduct.save();
     }
 
-    const refundAmount = product.price * product.quantity;
+    let refundAmount = product.discountedPrice * product.quantity;
+
+     const activeProducts = order.products.filter(
+      p => !["Cancelled", "Returned"].includes(p.status)
+    );
+
+    if (activeProducts.length === 1 && activeProducts[0]._id.equals(product._id)) {
+      // last product being cancelled/returned → refund full amount (before coupon)
+      refundAmount = order.totalAmount; 
+    } 
+    //  Handle coupon adjustments
+    else if (order.couponDiscount > 0 && order.couponCode) {
+      const coupon = await Coupon.findOne({ code: order.couponCode });
+
+      if (coupon) {
+        // remaining subtotal excluding this product and already cancelled/ returned ones
+        const remainingSubtotal = order.products.reduce((sum, p) => {
+          if(p.productId.toString === productId || ["Cancelled", "Returned"].includes(p.status)) {
+            return sum;
+          }
+          return sum + p.discountedPrice * p.quantity;
+        }, 0);
+
+        if (remainingSubtotal >= coupon.minPurchaseAmount) {
+          // Coupon still valid → deduct proportional share of discount
+          const subtotalBeforeCoupon = order.products.reduce((sum, p) => {
+            if(["Cancelled", "Returned"].includes(p.status)) return sum;
+            return sum + p.discountedPrice * p.quantity;
+          }, 0);
+        
+
+        const productShare = refundAmount / subtotalBeforeCoupon;
+        const discountShare = productShare * order.couponDiscount;
+        refundAmount -= discountShare;
+      } else {
+        // coupon becomes invalid → refund full product discounted price
+        refundAmount = product.discountedPrice * product.quantity;
+      }
+    }
+  }
 
     const userId = order.userId._id;
     if (order.isPaid) {
@@ -387,7 +478,10 @@ const cancelOrder = async (req, res) => {
     }
 
     product.status = "Cancelled";
+    product.cancellationReason = cleanedReason;
+    
     console.log("new Order:", order);
+    updateOverallOrderStatus(order);
     await order.save();
     return res.json({ success: true });
   } catch (error) {
@@ -395,6 +489,105 @@ const cancelOrder = async (req, res) => {
     res.status(500).json({ success: false, message: "Failed to cancel order" });
   }
 };
+
+// Comprehensive validation function for cancellation reason
+function validateOrderReason(reason, type = 'general') {
+  // This can be shared between cancellation and return validation
+  // Just change the error messages based on the type parameter
+  const MIN_LENGTH = 10;
+  const MAX_LENGTH = 500;
+  const actionType = type === 'cancel' ? 'Cancellation' : 'Return';
+  
+  if (!reason) {
+    return {
+      isValid: false,
+      message: `${actionType} reason is required`
+    };
+  }
+
+  const cleanedReason = reason.trim().replace(/\s+/g, ' ');
+  
+  if (cleanedReason.length === 0) {
+    return {
+      isValid: false,
+      message: `${actionType} reason cannot be empty`
+    };
+  }
+
+  if (cleanedReason.length < MIN_LENGTH) {
+    return {
+      isValid: false,
+      message: `${actionType} reason must be at least ${MIN_LENGTH} characters long`
+    };
+  }
+
+  if (cleanedReason.length > MAX_LENGTH) {
+    return {
+      isValid: false,
+      message: `${actionType} reason cannot exceed ${MAX_LENGTH} characters`
+    };
+  }
+
+  const uniqueChars = new Set(cleanedReason.toLowerCase().replace(/\s/g, ''));
+  if (uniqueChars.size < 3) {
+    return {
+      isValid: false,
+      message: `Please provide a meaningful ${actionType.toLowerCase()} reason`
+    };
+  }
+
+  const inappropriateWords = ['damn', 'shit', 'fuck', 'bitch', 'asshole', 'bastard'];
+  const lowerReason = cleanedReason.toLowerCase();
+  const hasProfanity = inappropriateWords.some(word => 
+    lowerReason.includes(word.toLowerCase())
+  );
+  
+  if (hasProfanity) {
+    return {
+      isValid: false,
+      message: `Please use appropriate language in your ${actionType.toLowerCase()} reason`
+    };
+  }
+
+  const words = cleanedReason.toLowerCase().split(' ');
+  const wordCount = {};
+  let maxRepeats = 0;
+  
+  words.forEach(word => {
+    if (word.length > 2) {
+      wordCount[word] = (wordCount[word] || 0) + 1;
+      maxRepeats = Math.max(maxRepeats, wordCount[word]);
+    }
+  });
+  
+  if (maxRepeats > 5) {
+    return {
+      isValid: false,
+      message: `Please provide a more descriptive ${actionType.toLowerCase()} reason`
+    };
+  }
+
+  const hasLetters = /[a-zA-Z]/.test(cleanedReason);
+  if (!hasLetters) {
+    return {
+      isValid: false,
+      message: `${actionType} reason must contain descriptive text`
+    };
+  }
+
+  const meaningfulWords = words.filter(word => word.length > 2);
+  if (meaningfulWords.length < 2) {
+    return {
+      isValid: false,
+      message: `Please provide a more detailed ${actionType.toLowerCase()} reason`
+    };
+  }
+
+  return {
+    isValid: true,
+    cleanedReason: cleanedReason
+  };
+}
 
 // here finally return is requested now it should be 
 // approved from the admin then only will the status be returned 
@@ -405,6 +598,7 @@ const cancelOrder = async (req, res) => {
 
 const returnOrder = async (req, res) => {
   const { orderId, productId } = req.params;
+  const { reason } = req.body;
 
   try {
     const order = await Order.findById(orderId);
@@ -429,7 +623,27 @@ const returnOrder = async (req, res) => {
         .json({ success: false, message: "Product cannot be returned" });
     }
 
+    if (product.status === "Return Requested" || product.status === "Returned") {
+      return res.status(400).json({
+        success: false, 
+        message: 'Return already requested or processed for this product'
+      });
+    }
+
+    // Enhanced return reason validation (reusing the same function)
+    const validationResult = validateOrderReason(reason, "return");
+    if (!validationResult.isValid) {
+      return res.status(400).json({
+        success: false,
+        message: validationResult.message
+      });
+    }
+
+    // Clean the reason after validation
+    const cleanedReason = validationResult.cleanedReason;
+
     product.status = "Return Requested";
+    product.returnReason = cleanedReason;
     await order.save();
 
     return res.json({ success: true });
@@ -445,9 +659,9 @@ const returnOrder = async (req, res) => {
 
 const createRazorpayOrder = async (req, res) => {
   try {
-    const { grandTotal, discountAmount = 0 } = req.body;
+    const { grandTotal, discountAmount = 0 } = req.body;      // here grandTotal is amount after the offer is being applied(not coupon), discountAmount => coupon discount
 
-    const finalAmount = (grandTotal - discountAmount) * 100; // Convert to paise
+    const finalAmount = (grandTotal - discountAmount) * 100; // Convert to paise  -here the discountAmount is the couponDiscount
 
     if (finalAmount <= 0) {
       return res.status(400).json({ success: false, message: "Invalid payment amount" });
@@ -574,7 +788,11 @@ const razorPaymentFailed = async (req, res) => {
       ? cartItems
       : Object.values(cartItems);
 
-      const discountAmount = req.session.coupon?.discount || 0;
+      const offerDiscountTotal = itemsArray.reduce((sum, item) => {
+      return sum + (parseFloat(item.price) - parseFloat(item.discountedPrice)) * item.quantity;
+    }, 0);
+
+      const couponDiscount  = req.session.coupon?.discount || 0;
       const finalTotal = parseFloat(grandTotal) - parseFloat(discountAmount);
 
 
@@ -584,6 +802,7 @@ const razorPaymentFailed = async (req, res) => {
         productId: item.id,
         name: item.name,
         price: parseFloat(item.price),
+        discountedPrice: parseFloat(item.discountedPrice),
         quantity: parseInt(item.quantity),
         subtotal: parseFloat(item.subtotal),
       })),
@@ -592,9 +811,9 @@ const razorPaymentFailed = async (req, res) => {
       totalAmount: parseFloat(finalTotal),
       orderStatus: "Pending",
       createdAt: new Date(),
-      discountAmount: parseFloat(discountAmount) || 0,
+      discountAmount: parseFloat(offerDiscountTotal) || 0,
       couponCode: req.session.coupon?.code || null,
-      couponDiscount: discountAmount
+      couponDiscount: couponDiscount
     };
     console.log("failure", order);
 
@@ -620,7 +839,7 @@ const getOrderFailurePage = async (req, res) => {
 
     if (!order) return res.redirect("/checkout");
 
-    const grandTotal = order.products.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    const grandTotal = order.products.reduce((sum, item) => sum + (item.discountedPrice * item.quantity), 0);
 
     req.session.failedOrder = null;
 
@@ -652,8 +871,8 @@ const retryPayment = async (req, res) => {
         .json({ success: false, message: "Invalid retry request" });
     }
 
-    const grandTotal = order.products.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-    const totalAmount = parseFloat(grandTotal) - parseFloat(order.discountAmount);
+    const grandTotal = order.products.reduce((sum, item) => sum + (item.discountedPrice * item.quantity), 0);
+    const totalAmount = parseFloat(grandTotal) - parseFloat(order.couponDiscount);
 
     const amount = totalAmount * 100;
 
@@ -706,7 +925,7 @@ const getRetryRazorpayFailurePage = async (req, res) => {
     if (!failedOrderId) return res.redirect("/checkout");
 
     const failedOrder = await Order.findById(failedOrderId).populate("products.productId").lean();
-    const grandTotal = failedOrder.products.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    const grandTotal = failedOrder.products.reduce((sum, item) => sum + (item.discountedPrice * item.quantity), 0);
 
     req.session.failedOrderId = null; // clear it after use
 

@@ -21,7 +21,7 @@ const loadCart = async(req, res) =>{
 
             const cartItems = cart && cart.items && cart.items.length > 0
                 ? cart.items.map((item) => {
-                  const priceToUse = item.discountAmount && item.discountAmount > 0 ? item.discountedPrice : item.price;
+                  const priceToUse = item.discountedPrice;
                   return {
                     _id: item._id,
                     productId: item.productId,
@@ -72,12 +72,15 @@ const updateCartTotals = async (req, res) =>{
        let updatedQuantity = parseInt(quantity, 10);
        if (updatedQuantity > item.productId.quantity) {
         updatedQuantity = item.productId.quantity; // Reset to maximum available stock
-        return res.status(400).json({ error: "Requested quantity exceeds available stock" });
     }
+
+    if (updatedQuantity < 1) {
+        updatedQuantity = 1;
+        }
 
         
         item.quantity = updatedQuantity;
-        const subtotal = item.productId.price * item.quantity;
+        const subtotal = item.discountedPrice * item.quantity;
 
 
      
@@ -85,7 +88,7 @@ const updateCartTotals = async (req, res) =>{
 
         // Recalculate the grand total
             const grandTotal = cart.items.reduce(
-            (total, item) => total + item.price * item.quantity, 0);
+            (total, item) => total + item.discountedPrice * item.quantity, 0);
 
 
             await cart.save();
@@ -205,7 +208,7 @@ const addToCart = async(req, res) =>{
                 productId,
                 quantity,
                 price: basePrice,
-                discountAmount: discountAmount,
+                discountAmount: discountAmount,  // offer 
                 discountedPrice: finalPrice    // here discountedAmount would be the amount after discount if there is a discount or else will be the amount without discount if there is no discount
             });
         }

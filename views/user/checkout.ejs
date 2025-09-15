@@ -127,6 +127,9 @@
             border-radius: 8px;
             border: 1px solid #e0e0e0;
         }
+        .discount-amount {
+            padding-right: 12px; /* Moves text away from right edge */
+        }
     </style>
 
 </head>
@@ -1520,6 +1523,7 @@
 
                                                    <input type="hidden" name="cartItems[<%= index %>][name]" value="<%= item.productId.name %>">
                                                    <input type="hidden" name="cartItems[<%= index %>][price]" value="<%= item.price %>">
+                                                   <input type="hidden" name="cartItems[<%= index %>][discountedPrice]" value="<%= item.discountedPrice %>">
                                                    <input type="hidden" name="cartItems[<%= index %>][quantity]" value="<%= item.quantity %>">
                                                    <input type="hidden" name="cartItems[<%= index %>][subtotal]" value="<%= item.subtotal %>">
                 
@@ -1619,8 +1623,8 @@
                                                 <div class="o-card">
                                                     <div class="o-card__flex">
                                                         <div class="o-card__img-wrap">
-
-                                                            <img class="u-img-fluid" src="/admin-assets/product2/<%=item.productId.image[0]%>" alt=""></div>
+                                                            <% let img = item.productId.image[0] %>   
+                                                            <img class="u-img-fluid" src="<%= img.startsWith('http') ? img : '/admin-assets/product2/' + img %>" alt=""></div>
                                                         <div class="o-card__info-wrap">
 
                                                             <span class="o-card__name">
@@ -2312,7 +2316,19 @@
 
                 const paymentMethod = $('input[name ="payment"]:checked').val();
                 const formData = $(this).serialize();   // to make it urlencoded
-               
+
+                //  Check if shipping address exists
+                if (!$('input[name="shippingAddress[name]"]').length) {
+                    Swal.fire('Missing Address', 'Please select a shipping address before placing the order.', 'warning');
+                    return;
+                }
+
+                //  Check if payment method is selected
+                if (!paymentMethod) {
+                    Swal.fire('Missing Payment', 'Please select a payment method to continue.', 'warning');
+                    return;
+                }
+                        
 
                 
     if (paymentMethod === 'Razorpay') {
@@ -2322,6 +2338,11 @@
             url: '/create-razorpay-order',
             data: formData,
             success: function (orderData) {
+                if (orderData.success === false) {
+                    //  If backend sent validation error
+                    Swal.fire('Error', orderData.message || 'Invalid order data', 'error');
+                    return;
+                }
                 const options = {
                     key: orderData.key_id,
                     amount: orderData.amount,
@@ -2478,7 +2499,7 @@ $(document).ready(function() {
     function showSuccess() {
     swal.fire({
         title: "Copied!",
-        text: "Coupon code has been applied to your order",
+        text: "Coupon code has been coppied",
         icon: "success",
         timer: 2000,           // Auto close after 2 seconds
         buttons: false,        // No buttons needed
@@ -2604,7 +2625,7 @@ $(document).ready(function() {
             summaryTable.append(`
                 <tr class="discount-row">
                     <td>DISCOUNT (${appliedDiscount})</td>
-                    <td class="discount-amount">-₹${discountAmount.toFixed(2)}</td>
+                    <td class="discount-amount" style="padding-right:12px;">-₹${discountAmount.toFixed(2)}</td>
                 </tr>
             `);
         }

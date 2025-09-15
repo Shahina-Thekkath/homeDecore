@@ -41,6 +41,7 @@
     />
 
     <link rel="stylesheet" href="/admin-assets/css/style.css" />
+    <link rel="stylesheet" href="/admin-assets/css/logo.css" />
     <style>
   .dash-count {
     transition: transform 0.2s ease, box-shadow 0.2s ease;
@@ -49,8 +50,9 @@
 
   .dash-count:hover {
     transform: translateY(-3px);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 4px 15px rgba(37, 37, 36, 0.15);
   }
+
 </style>
   </head>
 
@@ -62,13 +64,9 @@
     <div class="main-wrapper">
       <div class="header">
         <div class="header-left active">
-          <a href="index.html" class="logo">
-            <img src="/admin-assets/img/logo.png" alt="" />
+          <a href="/admin/dashboard" class="logo">
+             <%- include('../../views/partials/icons/icon-logo2') %>
           </a>
-          <a href="index.html" class="logo-small">
-            <img src="/admin-assets/img/logo-small.png" alt="" />
-          </a>
-          <a id="toggle_btn" href="javascript:void(0);"> </a>
         </div>
 
         <a id="mobile_btn" class="mobile_btn" href="#sidebar">

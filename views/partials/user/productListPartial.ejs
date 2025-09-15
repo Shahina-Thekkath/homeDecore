@@ -10,7 +10,12 @@
           >
             <img
               class="aspect__img"
-              src="/admin-assets/product2/<%= product.image[0] %>"
+              <% let imgSrc = product.image[0]; %>
+              <% if (imgSrc.startsWith('http')) { %>
+                src="<%= imgSrc %>"
+              <% } else { %>
+                  src="/admin-assets/product2/<%= imgSrc %>" 
+                <% } %>
               alt=""
           /></a>
           <div class="product-m__quick-look">

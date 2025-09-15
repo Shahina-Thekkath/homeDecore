@@ -11,7 +11,7 @@ const CartSchema = new Schema({
             quantity: { type: Number, required: true },
             price: { type: Number, required: true }, // Original price (without offer)
             discountAmount: { type: Number, default: 0 }, // Discount amount applied
-            discountedPrice: { type: Number } // Final price after discount
+            discountedPrice: { type: Number } // Final price after discount, if no discount the normal price without discount is saved
         }
     ],
     createdAt: { type: Date, default: Date.now }

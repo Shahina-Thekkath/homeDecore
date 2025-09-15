@@ -52,7 +52,7 @@
                                 <tr>
                                     <td><%= product.name %></td>
                                     <td><%= product.quantity %></td>
-                                    <td class="price-text">₹<%= product.price.toFixed(2) %></td>
+                                    <td class="price-text">₹<%= product.discountedPrice.toFixed(2) %></td>
                                 </tr>
                             <% }) %>
                         </tbody>
@@ -61,12 +61,12 @@
                                 <td colspan="2" class="fw-bold">Subtotal</td>
                                 <td class="price-text">₹<%= grandTotal.toFixed(2) %></td>
                             </tr>
-                            <% if (order.discountAmount && order.discountAmount > 0) { %>
+                            <% if (order.couponDiscount && order.couponDiscount > 0) { %>
                                 <tr>
                                 <td colspan="2" class="fw-bold">
                                     Discount <% if (order.couponCode) { %> (<%= order.couponCode %>) <% } %>
                                 </td>
-                                <td class="price-text text-danger">-₹<%= order.discountAmount.toFixed(2) %></td>
+                                <td class="price-text text-danger">-₹<%= order.couponDiscount.toFixed(2) %></td>
                                 </tr>
                             <% } %>
                             <tr>

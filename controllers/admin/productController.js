@@ -20,6 +20,8 @@ const addProducts = async (req, res) => {
     
 
     const products = req.body;
+    console.log("addProduct", products);
+    
 
    
 
@@ -27,7 +29,7 @@ const addProducts = async (req, res) => {
 
     if (req.files && req.files.length > 0) {
       for (let i = 0; i < req.files.length; i++) {
-        images.push(req.files[i].filename);
+       images.push(req.files[i].path);
       }
     }
 
@@ -39,12 +41,11 @@ const addProducts = async (req, res) => {
       price: products.price,
       createdOn: new Date(),
       quantity: products.quantity,
-
       image: images,
-
-      status: "Available",
-
+      status: "Available"
     });
+    console.log("new Product",newProduct);
+    
 
     await newProduct.save();
     return res.redirect(
@@ -114,10 +115,11 @@ const updateProduct = async (req, res) => {
       price,
       quantity,
       description,
-      specifications,
+      specifications = [] ,
       replaceImageIndex,
       deletedImages,
     } = req.body;
+    
 
     let filteredSpecifications = specifications.filter(spec => spec && spec.key && spec.value);
 
@@ -131,36 +133,34 @@ const updateProduct = async (req, res) => {
     product.price = price;
     product.quantity = quantity;
     product.description = description;
-    product.specification = filteredSpecifications;
+    product.specification = filteredSpecifications ;
 
     if (req.files && req.files.length > 0) {
-      const newImagePaths = req.files.map((file) => file.filename);
+     const newImages = req.files.map(file => file.path );
 
-      if (
-        replaceImageIndex !== undefined &&
-        replaceImageIndex >= 0 &&
-        replaceImageIndex < product.image.length
-      ) {
-        product.image[replaceImageIndex] = newImagePaths[0];
+      if (replaceImageIndex !== undefined && replaceImageIndex >= 0 && replaceImageIndex < product.image.length) {
+        // Delete old image from Cloudinary
+        await cloudinary.uploader.destroy(product.image[replaceImageIndex].public_id);
+        product.image[replaceImageIndex] = newImages[0];
       } else {
-        product.image = product.image
-          ? [...product.image, ...newImagePaths]
-          : newImagePaths;
+        product.image = product.image ? [...product.image, ...newImages] : newImages;
       }
     }
+    // Handle deleted images
     if (deletedImages) {
-      // Ensure deletedImages is a string before splitting
       const deletedIndices = Array.isArray(deletedImages)
         ? deletedImages
-        : deletedImages
-            .split(",")
-            .map(Number)
-            .filter((index) => !isNaN(index));
-      deletedIndices.forEach((index) => {
+        : deletedImages.split(",").map(Number).filter(index => !isNaN(index));
+
+      for (const index of deletedIndices) {
         if (index >= 0 && index < product.image.length) {
+          const imageToDelete = product.image[index];
+          // Delete from Cloudinary
+          await cloudinary.uploader.destroy(imageToDelete.public_id);
+          // Remove from DB
           product.image.splice(index, 1);
         }
-      });
+      }
     }
 
     await product.save();

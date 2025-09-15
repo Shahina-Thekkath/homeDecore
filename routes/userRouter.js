@@ -64,7 +64,7 @@ userRouter.get("/success",signupController.successGoogleLogin)
 userRouter.get("/failure",signupController.failureGoogleLogin)
 
 userRouter.get('/product-details/:id', auth.isLogin, productController.loadProductDetails);
-userRouter.get('/productList', auth.isLogin, productController.getUserProductList);
+userRouter.get('/productList', auth.sessionVerify, productController.getUserProductList);
 userRouter.get('/user/products/filter', auth.isLogin, productController.getFilteredProductList)
 
 userRouter.get('/profile',auth.isLogin, profileController.userProfile);
