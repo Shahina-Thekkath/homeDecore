@@ -19,7 +19,7 @@ const userProfile = async(req, res) =>{
 
 const getEditProfile = async(req, res) =>{
     try {
-        const userId = req.session.user._id;
+        const userId = req.session.user._id || req.session.passport._id;
         const user = await User.findById(userId);
 
         if (!user) {
@@ -39,7 +39,7 @@ const getEditProfile = async(req, res) =>{
 
 const updateProfile = async (req, res) => {
   try {
-    if (!req.session.user) {
+    if (!req.session.user && !req.session.passport) {
       return res.status(401).json({
         success: false,
         message: "Unauthorized. Please login again."
@@ -47,7 +47,7 @@ const updateProfile = async (req, res) => {
     }
 
     const { name, gender, email, phone } = req.body;
-    const userId = req.session.user._id;
+    const userId = req.session.user._id || req.session.passport._id;
 
     console.log("updated:", req.body, userId);
     

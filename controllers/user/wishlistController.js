@@ -6,8 +6,8 @@ const CategoryOffer = require('../../models/categoryOfferSchema');
 
 const getWishlist = async (req, res) => {
     try {
-        const user = req.session.user;
-        const userId = req.session.user._id;
+        const user = req.session.user || req.session.passport;
+        const userId = user._id;
         const wishlist = await Wishlist.findOne({ userId })
             .populate({
                 path: 'products.productId',
@@ -100,7 +100,7 @@ const getWishlist = async (req, res) => {
 const addToWishlist = async (req, res) => {
     try {
         const { productId } = req.body;
-        const userId = req.session.user._id;
+        const userId = req.session.user._id || req.session.passport;
 
         const product = await Product.findById(productId);
         if(!product){
@@ -140,7 +140,7 @@ const addToWishlist = async (req, res) => {
 
 const clearWishlist = async (req, res) => {
   try {
-    const userId = req.session.user?._id;
+    const userId = req.session.user?._id || req.session.passport._id;
 
     await Wishlist.findOneAndUpdate(
       { userId },
@@ -156,7 +156,7 @@ const clearWishlist = async (req, res) => {
 
 const removeProductFromWishlist = async (req, res) => {
   try {
-    const userId = req.session.user?._id;
+    const userId = req.session.user?._id || req.session.passport._id;
     const { id } = req.params; // assuming productId comes from URL
 
     await Wishlist.findOneAndUpdate(

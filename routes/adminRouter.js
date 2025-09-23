@@ -59,7 +59,7 @@ adminRouter.get("/orderList", orderController.getAdminOrders);
 adminRouter.get("/orders/:orderId", orderController.getOrderById);
 adminRouter.post("/orders/:id/cancel", orderController.cancelOrder);
 adminRouter.post('/orders/update-status', orderController.updateProductStatus);
-adminRouter.post('/orders/cancel-product', orderController.cancelProductByIndex);
+adminRouter.post('/order/cancel-product', orderController.cancelProductByIndex);
 
 adminRouter.get("/coupon", couponController.getCouponList);
 adminRouter.get("/coupon/add-coupon", couponController.renderAddCouponPage);
@@ -81,7 +81,7 @@ adminRouter.post("/sales-report/pdf", salesController.generateSalesPDF);
 adminRouter.post("/sales-report/excel", salesController.generateSalesExcel);
 
 
-
+adminRouter.get("/sales", dashboardController.getSalesData);
 
 
 

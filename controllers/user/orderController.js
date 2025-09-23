@@ -104,7 +104,7 @@ const saveOrderFromSerializedData = async (
 
 const saveOrderInSession = async (req, res) => {
   try {
-    const userId = req.session.user._id || req.session.passport._id;
+    const userId = req.session.user?._id || req.session.passport._id;
     const { cartItems, grandTotal, shippingAddress, payment } = req.body;   // here the grandTotal is the amount after the  discount is applied if any but in cartSchema the discountedPrice and price are stored seperately
     
 
@@ -121,10 +121,18 @@ const saveOrderInSession = async (req, res) => {
       const couponDiscount = req.session.coupon?.discount || 0;
       const finalTotal = parseFloat(grandTotal) - parseFloat(couponDiscount);    // grandTotal <= checkout.ejs = #orderForm <= cartItems = checkoutController
 
+      //  COD Restriction: if total > 1000, block COD
+    if (payment === "Cash on Delivery" && finalTotal > 1000) {
+      return res.json({
+        success: false,
+        message: "Cash on Delivery is not available for orders above ₹1000.",
+      });
+    }
+
     // Format the order details
 
     const order = {
-      userId: req.session.user._id || req.session.passport._id,
+      userId: req.session.user?._id || req.session.passport._id,
 
       products: itemsArray.map((item) => ({
         productId: item.id,
@@ -175,7 +183,7 @@ const saveOrderInSession = async (req, res) => {
     }
 
     await Cart.findOneAndUpdate(
-      { userId: req.session.user._id || req.session.passport._id},
+      { userId: req.session.user?._id || req.session.passport._id},
       { $set: { items: [] } }
     );
 
@@ -217,7 +225,7 @@ const getOrderSuccess = (req, res) => {
 
 const getOrdersPage = async (req, res) => {
   try {
-    const userId = req.session.user?._id;
+    const userId = req.session.user?._id || req.session.passport._id;
 
     const user = await User.findById(userId);
     const filter = req.query.filter || "all"; // Default to 'all' if no filter is selected
@@ -266,7 +274,7 @@ const getOrdersPage = async (req, res) => {
 
 const getOrderDetails = async (req, res) => {
   try {
-    const userId = req.session.user?._id;
+    const userId = req.session.user?._id || req.session.passport._id;
     const user = await User.findById(userId);
     const { orderId } = req.params;
 
@@ -380,13 +388,11 @@ function updateOverallOrderStatus(order) {
 const cancelOrder = async (req, res) => {
   const { orderId, productId } = req.params;
   const { reason } = req.body;
-  try {
-    const order = await Order.findById(orderId);
 
+  try {
+    const order = await Order.findById(orderId).populate("userId");
     if (!order) {
-      return res
-        .status(404)
-        .json({ success: false, message: "Order not found" });
+      return res.status(404).json({ success: false, message: "Order not found" });
     }
 
     const product = order.products.find(
@@ -394,101 +400,104 @@ const cancelOrder = async (req, res) => {
     );
 
     if (!product) {
-      return res
-        .status(404)
-        .json({ success: false, message: "Product not found in this order" });
+      return res.status(404).json({ success: false, message: "Product not found in this order" });
     }
 
     if (!["Pending", "Processing"].includes(product.status)) {
-      return res
-        .status(400)
-        .json({
-          success: false,
-          message: `Cannot cancel a ${product.status.toLowerCase()} item`,
-        });
+      return res.status(400).json({
+        success: false,
+        message: `Cannot cancel a ${product.status.toLowerCase()} item`,
+      });
     }
 
     if (product.status === "Cancelled") {
-      return res.status(400).json({success: false, message: 'Product already cancelled'});
+      return res.status(400).json({ success: false, message: "Product already cancelled" });
     }
 
-     // Enhanced cancellation reason validation
+    // Enhanced cancellation reason validation
     const validationResult = validateOrderReason(reason, "cancel");
     if (!validationResult.isValid) {
       return res.status(400).json({
         success: false,
-        message: validationResult.message
+        message: validationResult.message,
       });
     }
-
-    // Clean the reason after validation
     const cleanedReason = validationResult.cleanedReason;
 
-    // Update product stock
+    // Restore stock
     const dbProduct = await Product.findById(productId);
     if (dbProduct) {
       dbProduct.quantity += product.quantity;
       await dbProduct.save();
     }
 
+    // Refund calculation
     let refundAmount = product.discountedPrice * product.quantity;
 
-     const activeProducts = order.products.filter(
-      p => !["Cancelled", "Returned"].includes(p.status)
+    const activeProducts = order.products.filter(
+      (p) => !["Cancelled", "Returned"].includes(p.status)
     );
 
     if (activeProducts.length === 1 && activeProducts[0]._id.equals(product._id)) {
-      // last product being cancelled/returned → refund full amount (before coupon)
-      refundAmount = order.totalAmount; 
-    } 
-    //  Handle coupon adjustments
-    else if (order.couponDiscount > 0 && order.couponCode) {
+      // Last product cancelled → refund full order total
+      refundAmount = order.totalAmount;
+    } else if (order.couponDiscount > 0 && order.couponCode) {
       const coupon = await Coupon.findOne({ code: order.couponCode });
-
       if (coupon) {
-        // remaining subtotal excluding this product and already cancelled/ returned ones
         const remainingSubtotal = order.products.reduce((sum, p) => {
-          if(p.productId.toString === productId || ["Cancelled", "Returned"].includes(p.status)) {
+          if (p.productId.toString() === productId || ["Cancelled", "Returned"].includes(p.status)) {
             return sum;
           }
           return sum + p.discountedPrice * p.quantity;
         }, 0);
 
         if (remainingSubtotal >= coupon.minPurchaseAmount) {
-          // Coupon still valid → deduct proportional share of discount
+          // Coupon still valid → deduct proportional discount
           const subtotalBeforeCoupon = order.products.reduce((sum, p) => {
-            if(["Cancelled", "Returned"].includes(p.status)) return sum;
+            if (["Cancelled", "Returned"].includes(p.status)) return sum;
             return sum + p.discountedPrice * p.quantity;
           }, 0);
-        
 
-        const productShare = refundAmount / subtotalBeforeCoupon;
-        const discountShare = productShare * order.couponDiscount;
-        refundAmount -= discountShare;
-      } else {
-        // coupon becomes invalid → refund full product discounted price
-        refundAmount = product.discountedPrice * product.quantity;
+          if (subtotalBeforeCoupon > 0) {
+            const productShare = refundAmount / subtotalBeforeCoupon;
+            const discountShare = productShare * order.couponDiscount;
+            refundAmount -= discountShare;
+          }
+        } else {
+          
+           // Coupon becomes invalid → restore its full discount for this refund
+          refundAmount = product.discountedPrice * product.quantity + order.couponDiscount;
+
+          // Remove coupon from the order & reset totals
+          order.couponCode = null;
+          order.couponDiscount = 0;
+          order.totalAmount = remainingSubtotal; // set to remaining subtotal only
+        }
       }
     }
-  }
 
-    const userId = order.userId._id;
+    // Wallet refund for paid orders
     if (order.isPaid) {
-      await handleRefundToWallet(userId, refundAmount, "Order cancel Refund");     // for razor pay
+      await handleRefundToWallet(
+        order.userId._id,
+        refundAmount,
+        "Order Cancel Refund"
+      );
     }
 
     product.status = "Cancelled";
     product.cancellationReason = cleanedReason;
-    
-    console.log("new Order:", order);
+
     updateOverallOrderStatus(order);
     await order.save();
+
     return res.json({ success: true });
   } catch (error) {
     console.error("Error cancelling order:", error);
     res.status(500).json({ success: false, message: "Failed to cancel order" });
   }
 };
+
 
 // Comprehensive validation function for cancellation reason
 function validateOrderReason(reason, type = 'general') {
@@ -749,7 +758,7 @@ const verifyRazorpayPayment = async (req, res) => {
       //  Save the order in DB
       savedOrder = await saveOrderFromSerializedData(
         formData,
-        req.session.user?._id,
+        req.session.user?._id || req.session.passport._id,
         true,
         req.session?.coupon?.code,
         req.session?.coupon?.discount
@@ -781,7 +790,7 @@ const verifyRazorpayPayment = async (req, res) => {
 
 const razorPaymentFailed = async (req, res) => {
   try {
-    const userId = req.session.user._id;
+    const userId = req.session.user?._id || req.session.passport._id;
     const { cartItems, grandTotal, shippingAddress } = req.body;
 
     const itemsArray = Array.isArray(cartItems)
@@ -897,7 +906,7 @@ const retryPayment = async (req, res) => {
 
 const retryRazorPaymentFailed = async (req, res) => {
   try {
-    const userId = req.session.user._id;
+    const userId = req.session.user?._id || req.session.passport._id;
 
     // You can also validate or fetch the order directly if you're passing orderId from frontend
     const { orderId } = req.body;

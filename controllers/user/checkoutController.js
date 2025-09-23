@@ -7,7 +7,7 @@ const Coupon = require("../../models/couponSchema");
 
 const loadCheckout = async (req, res) => {
   try {
-    const userId = req.session.user._id || req.session.passport._id;
+    const userId = req.session.user?._id || req.session.passport._id;
     const cart = await Cart.findOne({ userId }).populate("items.productId");
     console.log("cart", cart);
     console.log("cart2", cart.items[0].productId._id);
@@ -55,7 +55,7 @@ const loadCheckout = async (req, res) => {
 
     const cartItems = cart && cart.items && cart.items.length > 0
                 ? cart.items.map((item) => {
-                  const priceToUse = item.discountAmount && item.discountAmount > 0 ? item.discountedPrice : item.price;
+                  const priceToUse =  item.discountedPrice;
                   return {
                     _id: item._id,
                     productId: item.productId,
@@ -111,7 +111,7 @@ const loadCheckout = async (req, res) => {
 
 const saveSelectedAddress = async (req, res) => {
   try {
-    const userId = req.session.user._id || req.session.passport._id; // Get user ID from session
+    const userId = req.session.user?._id || req.session.passport._id; // Get user ID from session
     const { selectedAddress } = req.body; // Extract selected address ID from request body
 
     if (!selectedAddress) {

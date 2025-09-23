@@ -144,7 +144,7 @@ const loadProductDetails = async (req, res) =>{
 const getUserProductList = async(req, res) =>{
     try {
 
-        const userId = req.session.user?._id;
+        const userId = req.session.user?._id || req.session.passport._id;
         const user = await User.findById(userId);
 
         const sort = req.query.sort || 'newest';

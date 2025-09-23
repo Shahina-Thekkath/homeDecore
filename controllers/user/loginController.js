@@ -66,7 +66,12 @@ const login = async (req, res) => {
             }
         
         // Set user session
+        if (req.session.user !== undefined) {
         req.session.user = findUser;
+        } else {
+        req.session.passport = { user: findUser };
+        }
+
      
        
 

@@ -3,7 +3,7 @@ const User = require('../../models/userSchma');
 
 const getWallet = async (req, res) => {
     try {
-        const user = req.session.user;
+        const user = req.session.user || req.session.passport;
         const userId = user._id;
 
         let wallet = await Wallet.findOne({ userId })

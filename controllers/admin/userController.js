@@ -59,7 +59,14 @@ const blockUser = async (req, res) => {
            console.log("block",req.params.id);
     try {
         const userId = req.params.id;
-        delete req.session.user;
+        if(req.session) {
+            if(req.session.user){
+                delete req.session.user;
+            } else if(req.session.passport) {
+                delete req.session.passport;
+            }
+        }
+        
         const user = await User.findByIdAndUpdate(userId, { isBlocked: true });
         
 

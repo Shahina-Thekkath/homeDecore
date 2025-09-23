@@ -39,7 +39,7 @@ const User = require("../../models/userSchma");
 
 const applyCoupon = async (req, res) => {
   try {
-        const userId = req.session.user._id || req.session.passport._id;
+        const userId = req.session.user?._id || req.session.passport._id;
         const { couponCode } = req.body;
 
         if (!couponCode) {
@@ -120,7 +120,7 @@ const applyCoupon = async (req, res) => {
 
 const removeCoupon = async (req, res) => {
   try {
-    const userId = req.session.user._id || req.session.passport._id;
+    const userId = req.session.user?._id || req.session.passport._id;
 
     
     req.session.coupon = null;

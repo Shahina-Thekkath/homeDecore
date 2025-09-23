@@ -1,0 +1,15 @@
+.custom-sales-filter {
+    background-color: #f8f9fa;  /* lighter background */
+    color: #6c757d;             /* muted text color */
+    border: 1px solid #ced4da;  /* soft border */
+  }
+
+  .custom-sales-filter:focus {
+    border-color: #a29bfe;      /* soft purple focus */
+    box-shadow: 0 0 0 0.2rem rgba(111, 66, 193, 0.25);
+  }
+
+  #topProductsChart, #topCategoriesChart {
+  height: 300px !important; /* same height */
+  width: 100% !important;   /* take full card width */
+}

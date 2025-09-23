@@ -55,7 +55,7 @@ const updateCartTotals = async (req, res) =>{
             return res.status(400).json({ error: "Invalid request"});
         }
 
-        const userId = req.session.user._id || req.session.passport._id;    
+        const userId = req.session.user?._id || req.session.passport._id;    
         const cart = await Cart.findOne({ userId }).populate("items.productId");
         
         if(!cart){
@@ -182,7 +182,10 @@ const addToCart = async(req, res) =>{
         
         
         //find or create the user's cart
-        let userId = req.session.user?._id || req.session.passport?.user?._id ;
+        let userId = req.session.user?._id || req.session.passport?._id ;
+
+        console.log("add to cart session", req.session.passport?._id);
+        
         
         if (!userId) {
       return res.status(401).json({ message: "User not logged in" });
@@ -227,7 +230,7 @@ const addToCart = async(req, res) =>{
 
 const getCartItemCount = async (req, res) => {
     try {
-        const userId = req.session.user._id || req.session.passport.user;
+        const userId = req.session.user._id || req.session.passport._id;
 
         const cart = await Cart.findOne({ userId });
         if (!cart) {

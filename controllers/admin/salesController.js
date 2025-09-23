@@ -138,17 +138,16 @@ const generateSalesPDF = async (req, res) => {
   try {
     const { type, startDate, endDate } = req.body;
 
-    //  Build query using helper
     const match = buildMatchQuery(type, startDate, endDate);
-
-    //  Fetch orders from DB
-    const orders = await Order.find(match).sort({ createdAt: 1 });
+    const orders = await Order.find(match)
+      .populate("products.productId") 
+      .sort({ createdAt: 1 });
 
     if (!orders || orders.length === 0) {
       return res.status(404).json({ success: false, message: "No sales data found" });
     }
 
-    //  Format data for the PDF
+    // 🔹 Format data
     const data = {
       range:
         type === "custom"
@@ -159,15 +158,20 @@ const generateSalesPDF = async (req, res) => {
         const offer = o.discountAmount || 0;
         const net = o.totalAmount || 0;
         const gross = net + offer + coupon;
-        return{
-            date: o.createdAt.toISOString().split("T")[0],
-        orderId: o._id.toString(),
-        salesAmount: net ,
-        discount: o.discountAmount || 0,
-        coupon: o.couponDiscount || 0,
-        netSales: gross ,
-        }
-        
+        return {
+          date: o.createdAt.toISOString().split("T")[0],
+          orderId: o._id.toString(),
+          salesAmount: gross,
+          discount: o.discountAmount || 0,
+          coupon: o.couponDiscount || 0,
+          netSales: net,
+          products: o.products.map((p) => ({
+            name: p.productId?.name || "Unknown",
+            qty: p.quantity,
+            price: p.discountedPrice,
+            subtotal: p.discountedPrice * p.quantity,
+          })),
+        };
       }),
     };
 
@@ -178,8 +182,8 @@ const generateSalesPDF = async (req, res) => {
       totalCount: data.orders.length,
     };
 
-    // 🖋️ Font setup
-    const fonts = {
+    // Fonts
+     const fonts = {
       Roboto: {
         normal: path.join(__dirname, "../../admin-public/assets/fonts/Noto_Serif,Roboto/Roboto/static/Roboto_SemiCondensed-Regular.ttf"),
         bold: path.join(__dirname, "../../admin-public/assets/fonts/Noto_Serif,Roboto/Roboto/static/Roboto_SemiCondensed-Bold.ttf"),
@@ -187,15 +191,37 @@ const generateSalesPDF = async (req, res) => {
         bolditalics: path.join(__dirname, "../../admin-public/assets/fonts/Noto_Serif,Roboto/Roboto/static/Roboto_Condensed-BlackItalic.ttf")
       },
     };
-
     const printer = new pdfPrinter(fonts);
 
+    // 🔹 Build doc definition
     const docDefinition = {
+      background: function () {
+        return {
+          text: "THE ELEGANT ADOBE",
+          color: "gray",
+          opacity: 0.1,
+          bold: true,
+          italics: true,
+          fontSize: 60,
+          alignment: "center",
+          margin: [0, 300, 0, 0],
+        };
+      },
       content: [
-        { text: `Sales Report (${type.toUpperCase()})`, style: "header" },
+        // Logo + title
+        {
+          columns: [
+            {
+              image: path.join(__dirname, "../../admin-public/assets/The Elegant Adobe-(Compressify.io)-1.png"),
+              width: 100,
+            },
+            { text: `Sales Report (${type.toUpperCase()})`, style: "header", alignment: "right" },
+          ],
+        },
         { text: `Date Range: ${data.range}`, style: "subheader" },
         "\n",
 
+        // Order-level table
         {
           table: {
             headerRows: 1,
@@ -205,16 +231,42 @@ const generateSalesPDF = async (req, res) => {
               ...data.orders.map((o) => [
                 o.date,
                 o.orderId,
-                o.salesAmount.toFixed(2),
-                o.discount.toFixed(2),
-                o.coupon.toFixed(2),
-                o.netSales.toFixed(2),
+                `₹ ${o.salesAmount.toFixed(2)}`,
+                `₹ ${o.discount.toFixed(2)}`,
+                `₹ ${o.coupon.toFixed(2)}`,
+                `₹ ${o.netSales.toFixed(2)}`,
               ]),
             ],
           },
+          layout: "lightHorizontalLines",
         },
-        "\n",
 
+        "\n",
+        { text: "Order Details", style: "subheader" },
+
+        // 🔹 Each order with products
+        ...data.orders.map((o) => ([
+          { text: `Order: ${o.orderId} (${o.date})`, style: "tableHeader", margin: [0, 5, 0, 3] },
+          {
+            table: {
+              headerRows: 1,
+              widths: ["*", "auto", "auto", "auto"],
+              body: [
+                ["Product", "Qty", "Price", "Subtotal"],
+                ...o.products.map((p) => [
+                  p.name,
+                  p.qty,
+                  `₹ ${p.price .toFixed(2)}`,
+                  `₹ ${p.subtotal.toFixed(2)}`,
+                ]),
+              ],
+            },
+            layout: "lightHorizontalLines",
+            margin: [0, 0, 0, 10],
+          },
+        ])),
+
+        "\n",
         { text: "Sales Summary", style: "subheader" },
         {
           table: {
@@ -230,19 +282,20 @@ const generateSalesPDF = async (req, res) => {
         },
       ],
       styles: {
-        header: { fontSize: 18, bold: true, alignment: "center", margin: [0, 0, 0, 20] },
-        subheader: { fontSize: 14, margin: [0, 10, 0, 5] },
-        tableHeader: { bold: true, fontSize: 12, alignment: "center" },
+        header: { fontSize: 18, bold: true, margin: [0, 0, 0, 20] },
+        subheader: { fontSize: 14, bold: true, margin: [0, 10, 0, 5] },
+        tableHeader: { bold: true, fontSize: 12, fillColor: "#eeeeee" },
       },
       defaultStyle: { font: "Roboto" },
     };
 
-    // Send PDF as response
+    // Generate & send
     const pdfDoc = printer.createPdfKitDocument(docDefinition);
     res.setHeader("Content-Type", "application/pdf");
     res.setHeader("Content-Disposition", 'attachment; filename="sales_report.pdf"');
     pdfDoc.pipe(res);
     pdfDoc.end();
+
   } catch (error) {
     console.error("Error generating PDF:", error);
     res.status(500).json({
@@ -252,6 +305,7 @@ const generateSalesPDF = async (req, res) => {
     });
   }
 };
+
 
 const generateSalesExcel = async (req, res) => {
   try {

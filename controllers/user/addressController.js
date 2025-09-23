@@ -8,28 +8,12 @@ const mongoose = require("mongoose");
 
 const getAddress = async(req, res) =>{
     try {
-        const userId = req.session.user._id;
+        console.log("getAddress", req.session);
+        
+        const userId = req.session.user?._id || req.session.passport?._id;
+        console.log("getAddress", req.session.passport._id);
+        
         const user = await User.findById(userId).populate('addresses');
-       
-        // const cart = await Cart.findOne({userId});
-
-        
-
-        // const cartItems = cart && cart.items && cart.items.length > 0
-        // ? cart.items.map(item => ({
-        //     _id: item._id,
-        //     productId: item.productId,
-        //     name: item.productId?.name || "Product Removed",
-        //     price: item.price,
-        //     quantity: item.quantity,
-        //     subtotal: item.quantity * item.price
-        // })) : [];
-
-        
-        
-        
-
-        // const grandTotal = cartItems.reduce((total, item) => total + item.subtotal, 0);
         
 
         res.render('addressBook', {user:user,addresses:user.addresses.sort((a,b) => new Date(b.createdAt)- new Date(a.createdAt)) || []});
@@ -41,7 +25,7 @@ const getAddress = async(req, res) =>{
 
 const loadAddAddress = async(req, res)=>{
     try {
-        const userId = req.session.user._id;
+        const userId = req.session.user?._id || req.session.passport?._id;
         
         const user = await User.findById(userId);
         const {from} = req.query;
@@ -66,7 +50,7 @@ const addAddress = async(req, res) =>{
     try {
        
         
-        const userId = req.session.user._id;
+        const userId = req.session.user?._id || req.session.passport?._id;
         const {name, address, city, state, locality, pincode, country, phone} = req.body;
 
         if (!name || !address || !city || !state || !pincode || !country || !phone) {
@@ -105,7 +89,7 @@ const addAddress = async(req, res) =>{
 
 const loadEditAddress = async(req,res) =>{
     try {
-        const userId = req.session.user._id;
+        const userId = req.session.user?._id || req.session.passport?._id;
         const addressId = req.params.addressId;
         const user = await User.findById(userId);
         const from = req.query.from; // Get the origin page
@@ -135,7 +119,7 @@ const editAddress = async(req, res) =>{
     
     
     
-    const userId = req.session.user._id;
+    const userId = req.session.user?._id || req.session.passport?._id;
     const addressId = req.params.addressId;
     
     
@@ -182,7 +166,7 @@ const editAddress = async(req, res) =>{
 
 const deleteAddress = async(req, res) =>{
     try {
-        const userId = req.session.user._id
+        const userId = req.session.user?._id || req.session.passport?._id;
         const addressId = req.params.id;
     
         const user = await User.findById(userId);

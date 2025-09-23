@@ -433,7 +433,9 @@
                                         <tr class="details" style="border-bottom:1px solid #E9ECEF ;">
                                             <td
                                                 style="padding: 10px;vertical-align: top; display: flex;align-items: center;">
-                                                <img src="/admin-assets/product2/<%= product.productId.image[0] %>" alt="img" class="me-2"
+                                                <% let img = product.productId.image[0] %>
+                                                <img src="<%= img.startsWith('http') ? img : '/admin-assets/product2/' + img %>" 
+                                                    alt="img" class="me-2"
                                                     style="width:40px;height:40px;">
                                                 <%= product.productId.name %>
                                             </td>
@@ -679,6 +681,8 @@ $('.status-dropdown').on('change', function () {
     $('.cancel-product-btn').on('click', function(){
         const orderId = $(this).data('order-id');
         const index = $(this).data('index');
+        console.log("cancelProduct", orderId, index);
+        
 
         Swal.fire({
             title: 'Are you sure?',
@@ -697,6 +701,8 @@ $('.status-dropdown').on('change', function () {
                     contentType: 'application/json',
                     data: JSON.stringify({ orderId, productIndex: index}),
                     success: function (res) {
+                        console.log("res", res);
+                        
                         Swal.fire({
                             icon: 'success',
                             title: 'Cancelled',

@@ -2418,7 +2418,7 @@
                     Swal.fire('Success', 'Order Placed Successfully!', 'success')
                         .then(() => window.location.href = '/order-success');
                 } else {
-                    Swal.fire('Error', 'Order placement failed', 'error');
+                    Swal.fire('Error', res.message || 'Order placement failed', 'error');
                 }
             },
             error: function () {
@@ -2427,7 +2427,7 @@
         });
     }
 
-             });
+});
 
     </script>
     <script>

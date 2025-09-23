@@ -37,8 +37,7 @@ const ProductSchema = new Schema(
     status: {
       type: String,
       enum: ["Available", "Out of stock", "Discontinued"],
-    },
-    productOffer: { type: Types.ObjectId, ref: "offer" },
+    }
   },
   { timestamps: true }
 );
