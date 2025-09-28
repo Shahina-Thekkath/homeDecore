@@ -195,6 +195,38 @@ function updateOverallOrderStatus(order) {
   return order.orderStatus;
 }
 
+const calculateRefund = (order, product) => {
+  // Total refunded so far
+  const totalRefundedSoFar = order.products.reduce(
+    (sum, p) => sum + (p.refundedAmount || 0),
+    0
+  );
+
+  // Active (non-cancelled/returned) products
+  const activeProducts = order.products.filter(
+    (p) => !["Cancelled", "Returned"].includes(p.status)
+  );
+
+  let refundAmount;
+
+  if (activeProducts.length === 1 && activeProducts[0]._id.equals(product._id)) {
+    // Last product → refund remaining amount (actual paid)
+    refundAmount = order.totalAmount - totalRefundedSoFar;
+  } else {
+    // Proportional refund from amount actually paid
+    const subtotal = order.products.reduce(
+      (sum, p) => sum + p.discountedPrice * p.quantity,
+      0
+    );
+    const productPrice = product.discountedPrice * product.quantity;
+
+    refundAmount = (productPrice / subtotal) * order.totalAmount;
+  }
+
+  return refundAmount;
+};
+
+
 const updateProductStatus = async (req, res) => {
   try {
     const { orderId, productIndex, newStatus } = req.body;
@@ -237,51 +269,8 @@ const updateProductStatus = async (req, res) => {
       product.status = "Cancelled";
 
       // Base refund
-      let refundAmount = product.discountedPrice * product.quantity;
-
-      // Find remaining active products
-      const activeProducts = order.products.filter(
-        (p) => !["Cancelled", "Returned"].includes(p.status)
-      );
-
-      // If this is the last product -> refund whole totalAmount
-      if (
-        activeProducts.length === 1 &&
-        activeProducts[0]._id.equals(product._id)
-      ) {
-        refundAmount = order.totalAmount;
-      } else if (order.couponDiscount > 0 && order.couponCode) {
-        const coupon = await Coupon.findOne({ code: order.couponCode });
-        if (coupon) {
-          // Remaining subtotal excluding this cancelled product
-          const remainingSubtotal = order.products.reduce((sum, p, idx) => {
-            if (idx === productIndex || ["Cancelled", "Returned"].includes(p.status)) return sum;
-            return sum + p.discountedPrice * p.quantity;
-          }, 0);
-
-          if (remainingSubtotal >= coupon.minPurchaseAmount) {
-            // Coupon still valid -> deduct proportional discount
-            const subtotalBeforeCoupon = order.products.reduce((sum, p) => {
-              if (["Cancelled", "Returned"].includes(p.status)) return sum;
-              return sum + p.discountedPrice * p.quantity;
-            }, 0);
-
-            if (subtotalBeforeCoupon > 0) {
-              const productShare = refundAmount / subtotalBeforeCoupon;
-              const discountShare = productShare * order.couponDiscount;
-              refundAmount -= discountShare;
-            }
-          } else {
-            // Coupon becomes invalid → restore its full discount for this refund
-          refundAmount = product.discountedPrice * product.quantity + order.couponDiscount;
-
-          // Remove coupon from the order & reset totals
-          order.couponCode = null;
-          order.couponDiscount = 0;
-          order.totalAmount = remainingSubtotal; // set to remaining subtotal only
-          }
-        }
-      }
+      const refundAmount = calculateRefund(order, product);
+      product.refundedAmount = refundAmount;
 
       if (order.isPaid) {
         await handleRefundToWallet(
@@ -302,47 +291,9 @@ const updateProductStatus = async (req, res) => {
       }
 
       product.status = "Returned";
-      let refundAmount = product.discountedPrice * product.quantity;
 
-      const activeProducts = order.products.filter(
-        (p) => !["Cancelled", "Returned"].includes(p.status)
-      );
-
-      if (
-        activeProducts.length === 1 &&
-        activeProducts[0]._id.equals(product._id)
-      ) {
-        refundAmount = order.totalAmount;
-      } else if (order.couponDiscount > 0 && order.couponCode) {
-        const coupon = await Coupon.findOne({ code: order.couponCode });
-        if (coupon) {
-          const remainingSubtotal = order.products.reduce((sum, p, idx) => {
-            if (idx === productIndex || ["Cancelled", "Returned"].includes(p.status)) return sum;
-            return sum + p.discountedPrice * p.quantity;
-          }, 0);
-
-          if (remainingSubtotal >= coupon.minPurchaseAmount) {
-            const subtotalBeforeCoupon = order.products.reduce((sum, p) => {
-              if (["Cancelled", "Returned"].includes(p.status)) return sum;
-              return sum + p.discountedPrice * p.quantity;
-            }, 0);
-
-            if (subtotalBeforeCoupon > 0) {
-              const productShare = refundAmount / subtotalBeforeCoupon;
-              const discountShare = productShare * order.couponDiscount;
-              refundAmount -= discountShare;
-            }
-          } else {
-            // Coupon becomes invalid → restore its full discount for this refund
-          refundAmount = product.discountedPrice * product.quantity + order.couponDiscount;
-
-          // Remove coupon from the order & reset totals
-          order.couponCode = null;
-          order.couponDiscount = 0;
-          order.totalAmount = remainingSubtotal; // set to remaining subtotal only
-          }
-        }
-      }
+      const refundAmount = calculateRefund(order, product);
+      product.refundedAmount = refundAmount;
 
       if (order.isPaid) {
         await handleRefundToWallet(
@@ -408,59 +359,8 @@ const cancelProductByIndex = async (req, res) => {
     });
 
     // Base refund = cancelled product price * qty
-    let refundAmount = product.discountedPrice * product.quantity;
-
-    // Active products left after cancellation
-    const activeProducts = order.products.filter(
-      p => !["Cancelled", "Returned"].includes(p.status)
-    );
-
-    // --- COUPON LOGIC ---
-    if (order.couponDiscount > 0 && order.couponCode) {
-      const coupon = await Coupon.findOne({ code: order.couponCode });
-
-      if (coupon) {
-        const remainingSubtotal = activeProducts.reduce(
-          (sum, p) => sum + p.discountedPrice * p.quantity,
-          0
-        );
-
-        if (remainingSubtotal === 0) {
-          // All products cancelled → refund totalAmount
-          refundAmount = order.totalAmount;
-        } else if (remainingSubtotal >= coupon.minPurchaseAmount) {
-          // Coupon still valid → deduct proportional share
-          const subtotalBeforeCoupon = activeProducts.reduce(
-            (sum, p) => sum + p.discountedPrice * p.quantity,
-            0
-          );
-          const productShare = refundAmount / subtotalBeforeCoupon;
-          const discountShare = productShare * order.couponDiscount;
-          refundAmount -= discountShare;
-        } else {
-          // Coupon invalid after this cancellation
-          refundAmount = product.discountedPrice * product.quantity + order.couponDiscount;
-
-          // Remove coupon from order and reset totals
-          order.couponCode = null;
-          order.couponDiscount = 0;
-          order.totalAmount = remainingSubtotal; // remaining products total
-        }
-      }
-    } else {
-      // No coupon case
-      if (activeProducts.length === 0) {
-        refundAmount = order.totalAmount;
-      } else {
-        // Update order total for remaining products
-        order.totalAmount = activeProducts.reduce(
-          (sum, p) => sum + p.discountedPrice * p.quantity,
-          0
-        );
-      }
-    }
-
-    console.log("Final Refund Amount:", refundAmount);
+    const refundAmount = calculateRefund(order, product);
+    product.refundedAmount = refundAmount;
 
     // Refund if prepaid
     if (order.isPaid) {
@@ -484,11 +384,12 @@ const cancelProductByIndex = async (req, res) => {
 };
 
 
-
 module.exports = {
   getAdminOrders,
   getOrderById,
   cancelOrder,
   cancelProductByIndex,
   updateProductStatus,
+  calculateRefund
+
 };

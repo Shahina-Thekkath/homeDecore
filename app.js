@@ -51,6 +51,14 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use((req, res, next) => {
+  if (req.isAuthenticated() && !req.session.user) {
+    req.session.user = req.user; //  Copy passport user into req.session.user
+  }
+  next();
+});
+
+
+app.use((req, res, next) => {
   res.set("cache-control", "no-store");
   next();
 });

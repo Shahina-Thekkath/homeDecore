@@ -76,6 +76,8 @@ const loadCheckout = async (req, res) => {
 
     if(req.session.coupon){
       discountAmount = req.session.coupon.discount || 0;   // coupon discount
+      console.log("checkout", discountAmount);
+      
     }
 
     // Use the default address or fallback to the first address

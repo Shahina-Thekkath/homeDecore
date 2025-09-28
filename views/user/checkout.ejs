@@ -2333,6 +2333,9 @@
                 
     if (paymentMethod === 'Razorpay') {
 
+        console.log("ifRazorpay", formData);
+        
+
         $.ajax({
             method: 'POST',
             url: '/create-razorpay-order',

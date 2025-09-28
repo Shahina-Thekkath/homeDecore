@@ -12,7 +12,12 @@ const ProductSchema = new Schema(
    
 
     quantity: { type: Number, required: true },
-    image: [String],
+    image: [
+            {
+              public_id: { type: String },
+              url: { type: String }
+            }
+          ],
      specification: [
       {
         key: { type: String, required: true },

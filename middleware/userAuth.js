@@ -1,17 +1,18 @@
-const isLogin = async (req,res,next)=>{
-    try {
-        const user = req.session.user
-        const passport = req.session.passport
-
-        if(user||passport){
-            next();
-        }else{
-            res.redirect('/');
-        }
-    } catch (error) {
-        console.log("IsLogin middleware error",error.message);
+const isLogin = (req, res, next) => {
+  try {
+    if (req.session.user) {
+      return next();
+    } else {
+      return res.redirect('/');
     }
-}
+  } catch (error) {
+    console.log("IsLogin middleware error", error.message);
+    res.redirect('/');
+  }
+};
+
+module.exports = { isLogin };
+
 
 
 

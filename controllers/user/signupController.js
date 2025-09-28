@@ -28,7 +28,8 @@ async function sendVerificationEmail(email, otp){
                 user:process.env.NODEMAILER_EMAIL,
                 pass: process.env.NODEMAILER_PASSWORD
             }
-        })
+        });
+        
 
         const info = await transporter.sendMail({
             from:process.env.NODEMAILER_EMAIL,
@@ -37,6 +38,9 @@ async function sendVerificationEmail(email, otp){
             text: `Your OTP is ${otp}`,
             html: `<b>Your OTP: ${otp}</b>`,
         })
+
+        console.log("info", info);
+        
 
         return info.accepted.length > 0    // info.accepted contains an array of email addresses which accepted the mail
     } catch (error) {
@@ -75,7 +79,7 @@ const signup = async(req, res) =>{
        console.error("signup error", error);
        res.redirect("/pageNotFound")
     }
-}
+};
 
 const securePassword = async (password) =>{
     try {
@@ -122,7 +126,7 @@ const verifyOtp = async (req, res) =>{
         
     } catch (error) {
         console.error("Error Verifying OTP", error);
-        res.status(500).json({success: false, message: "An error occured"});
+        res.status(500).json({success: false, message: "An error occurred"});
     }
 }
 
@@ -160,18 +164,12 @@ const failureGoogleLogin = (req,res)=>{
     res.send("error")
 }
 
-// const showOtp = async (req, res) =>{
-//     try {
-//         res.render("signup");
-//         const otp = generateOtp();
-//         console.log()
-//     } catch (error) {
-        
-//     }
-// }
+
 
 const sendResetPasswordEmail = async(name,email,token) =>{
     try {
+        console.log("sendResetPasswordEmail",token);
+        
         const transporter = nodemailer.createTransport({
             service:"gmail",
             port:587,
@@ -240,33 +238,58 @@ const forgotVerify = async(req,res) =>{
 
 const changePassword = async(req,res)=>{
     try {
-        res.render("changePassword",{message:""});
+        const errors = {};
+        res.render("changePassword", { errors });
     } catch (error) {
-        console.log("Forgot password logic error",error.message);
+        console.log("change password logic error",error);
         return res.status(404).redirect("/pageNotFound");
     }
 }
 
 const changeVerify = async(req,res) =>{
     try {
-        const email = req.body.email;
-        const user = await User.findOne({email});
+        const { email, oldPassword, newPassword, cpassword } = req.body;
+        const errors = {};
 
-        if(user){
-            const randomString = randomstring.generate();
-            await User.updateOne({email},{$set:{token:randomString}});
-
-            sendResetPasswordEmail(user.name, user.email, randomString);
-
-            res.render("forgotPassword", {message:"Please check your mail to  reset your password"});
-
-
-        }else{
-            res.render("changePassword",{message:"User Email is incorrect"});
-
+        //Email validation with regex
+        const emailPattern = /^([a-zA-Z0-9._-]+)@([a-zA-Z0-9]+)\.([a-zA-Z]{2,4})$/;
+        if (!emailPattern.test(email)) {
+          errors.email = "Please enter a valid email address";
         }
+        const user = await User.findOne({ email });
+
+        if(!user) {
+            errors.email = "User email is incorrect";
+        } else {
+            // Old password check
+            const isMatch = await bcrypt.compare(oldPassword, user.password);
+            if(!isMatch) {
+                errors.oldPassword = "Old password is incorrect";
+            }
+
+            // Password Regex check
+            const passwordPattern = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
+            if(!passwordPattern.test(newPassword)) {
+                errors.newPassword = "Password must be at least 8 characters and contain both letters and numbers";
+            }
+
+            if(newPassword !== cpassword){
+                errors.cpassword = "Password do not match";
+            }
+        }
+
+        if (Object.keys(errors).length > 0) {
+            return res.render("changePassword", { errors, oldData: req.body });
+        }
+
+        //update password
+        const hashedPassword = await securePassword(newPassword);
+        await User.updateOne({ email }, { $set: { password: hashedPassword, token: "" } });
+        
+
+        res.redirect("/login");
     } catch (error) {
-        console.log("Forgot verify error", error.message);
+        console.log("change verify error", error);
         return res.status(404).redirect("/pageNotFound")
     }
 }

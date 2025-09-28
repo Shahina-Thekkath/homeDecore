@@ -5,8 +5,12 @@ const User = require("../../models/userSchma");
 const userProfile = async(req, res) =>{
     try {
         
-        const user = req.session.user || req.session.passport;
+        const user = req.session.user || req.session.passport?.user;
         const userData = await User.findById(user._id);
+       
+        console.log("userProfile", userData);
+        console.log("userProfile1", req.session);
+        
          
 
         res.render('userProfile',{user: userData});
@@ -19,8 +23,10 @@ const userProfile = async(req, res) =>{
 
 const getEditProfile = async(req, res) =>{
     try {
-        const userId = req.session.user._id || req.session.passport._id;
+        const userId = req.session.user?._id || req.session.passport?.user?._id;
         const user = await User.findById(userId);
+        console.log("getEditProfile", user);
+        
 
         if (!user) {
             console.log("User not found");
@@ -32,7 +38,7 @@ const getEditProfile = async(req, res) =>{
 
         
     } catch (error) {
-        console.error("Internal Server Error");
+        console.error("Error getting Edit Profile page", error);
         res.status(404).send('Internal Server Error');
     }
 };

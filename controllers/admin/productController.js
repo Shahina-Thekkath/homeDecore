@@ -2,6 +2,7 @@ const Product = require("../../models/productSchema");
 const Category = require("../../models/categorySchema");
 const fs = require("fs");
 const mongoose = require("mongoose");
+const cloudinary = require('cloudinary');
 
 const getProductAddPage = async (req, res) => {
   try {
@@ -15,22 +16,47 @@ const getProductAddPage = async (req, res) => {
 
 const addProducts = async (req, res) => {
   try {
-      
-    console.log(req.body);
-    
 
     const products = req.body;
     console.log("addProduct", products);
+
+    const errors = {};
+    const oldData = req.body; // keep old input values
+
+    if (!products.productName || products.productName.trim().length < 3) {
+      return res.status(400).send("Product name must be at least 3 characters long.");
+    }
+    if (!categoryId) {
+      return res.status(400).send("Category is required.");
+    }
+    if (!products.price || isNaN(products.price) || Number(products.price) <= 0) {
+      return res.status(400).send("Price must be a valid number greater than 0.");
+    }
+    if (!products.quantity || isNaN(products.quantity) || Number(products.quantity) < 0) {
+      return res.status(400).send("Quantity must be a non-negative number.");
+    }
+    if (products.description && products.description.length < 10 || products.description.length > 1000) {
+      return res.status(400).send("Description should be between 10 - 1000 characters");
+    }
+
+    if (!req.files || req.files.length <= 3) {
+      return res.status(400).send("At least three product images required.");
+    }
+
     
-
-   
-
-    const images = [];
-
+    let uploadedImages = [];
     if (req.files && req.files.length > 0) {
-      for (let i = 0; i < req.files.length; i++) {
-       images.push(req.files[i].path);
-      }
+      const uploadResults = await Promise.all(
+        req.files.map((file) => {
+          cloudinary.uploader.upload(file.path, {folder: 'products'})
+        })
+      );
+     
+      uploadedImages = uploadResults.map((r) => ({
+        public_id: r.public_id,
+        url: r.secure_url
+      }));
+
     }
 
     const newProduct = new Product({
@@ -41,7 +67,7 @@ const addProducts = async (req, res) => {
       price: products.price,
       createdOn: new Date(),
       quantity: products.quantity,
-      image: images,
+      image: uploadedImages,
       status: "Available"
     });
     console.log("new Product",newProduct);
@@ -136,14 +162,25 @@ const updateProduct = async (req, res) => {
     product.specification = filteredSpecifications ;
 
     if (req.files && req.files.length > 0) {
-     const newImages = req.files.map(file => file.path );
+      const newImages = req.files.map((file) => ({
+        url: file.path,
+        public_id: file.filename || null, // store cloudinary ID if available
+      }));
 
-      if (replaceImageIndex !== undefined && replaceImageIndex >= 0 && replaceImageIndex < product.image.length) {
-        // Delete old image from Cloudinary
-        await cloudinary.uploader.destroy(product.image[replaceImageIndex].public_id);
+     if (
+        replaceImageIndex !== undefined &&
+        replaceImageIndex >= 0 &&
+        replaceImageIndex < product.image.length
+      ) {
+        // Replace existing image
+        const oldImage = product.image[replaceImageIndex];
+        if (oldImage.public_id) {
+          await cloudinary.uploader.destroy(oldImage.public_id);
+        }
         product.image[replaceImageIndex] = newImages[0];
       } else {
-        product.image = product.image ? [...product.image, ...newImages] : newImages;
+        // Append new images
+        product.image.push(...newImages);
       }
     }
     // Handle deleted images
@@ -156,7 +193,9 @@ const updateProduct = async (req, res) => {
         if (index >= 0 && index < product.image.length) {
           const imageToDelete = product.image[index];
           // Delete from Cloudinary
-          await cloudinary.uploader.destroy(imageToDelete.public_id);
+          if (imageToDelete.public_id) {
+            await cloudinary.uploader.destroy(imageToDelete.public_id);
+          }
           // Remove from DB
           product.image.splice(index, 1);
         }

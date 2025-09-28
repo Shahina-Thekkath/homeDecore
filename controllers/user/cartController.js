@@ -118,6 +118,11 @@ const addToCart = async(req, res) =>{
             return res.status(400).json({error: "Requested quantity exceeds stock"});
         }
 
+        if (quantity > 5) {
+         return res.status(400).json({ error: "You can’t add more than 5 items per product" });
+        }
+
+
         const basePrice = product.price;
 
         // ====== OFFER CHECK START ======

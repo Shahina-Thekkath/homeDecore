@@ -97,6 +97,9 @@ const loadHomepage = async(req, res) =>{
             })
          );
 
+         console.log("hom", user);
+         
+
          if(user){
             return res.render('home', {user,products:updatedProducts})
          }else{

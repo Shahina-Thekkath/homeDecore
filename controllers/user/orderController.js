@@ -11,6 +11,7 @@ const Coupon = require("../../models/couponSchema");
 const { log } = require("console");
 const Wallet = require('../../models/walletSchema');
 
+
 const saveOrderFromSerializedData = async (
   formData,
   userId,
@@ -382,6 +383,45 @@ function updateOverallOrderStatus(order) {
   return order.orderStatus;
 }
 
+     const calculateRefund = (order, product) => {
+      // Total refunded so far
+      const totalRefundedSoFar = order.products.reduce(
+        (sum, p) => sum + (p.refundedAmount || 0),
+        0
+      );
+
+      console.log("Cancel order", totalRefundedSoFar);
+      
+
+      // Active (non-cancelled/returned) products
+      const activeProducts = order.products.filter(
+        (p) => !["Cancelled", "Returned"].includes(p.status)
+      );
+
+      let refundAmount;
+
+      if (activeProducts.length === 1 && activeProducts[0]._id.equals(product._id)) {
+        // Last product → refund remaining amount
+        refundAmount = order.totalAmount - totalRefundedSoFar;
+      } else {
+        // Proportional refund
+        const subtotalActive = activeProducts.reduce(
+          (sum, p) => sum + p.discountedPrice * p.quantity,
+          0
+        );
+        const productPrice = product.discountedPrice * product.quantity;
+
+        let couponShare = 0;
+        if (order.couponDiscount > 0 && order.couponCode && subtotalActive > 0) {
+          couponShare = (productPrice / subtotalActive) * order.couponDiscount;
+        }
+
+        refundAmount = productPrice - couponShare;
+      }
+
+      return refundAmount;
+    };
+
 
 // cancel for a single product in an order
 //here the product which has been cancelled, its stock is updated, amount is also refunded
@@ -432,49 +472,10 @@ const cancelOrder = async (req, res) => {
     }
 
     // Refund calculation
-    let refundAmount = product.discountedPrice * product.quantity;
+    const refundAmount = calculateRefund(order, product);
+    product.refundedAmount = refundAmount;
+    
 
-    const activeProducts = order.products.filter(
-      (p) => !["Cancelled", "Returned"].includes(p.status)
-    );
-
-    if (activeProducts.length === 1 && activeProducts[0]._id.equals(product._id)) {
-      // Last product cancelled → refund full order total
-      refundAmount = order.totalAmount;
-    } else if (order.couponDiscount > 0 && order.couponCode) {
-      const coupon = await Coupon.findOne({ code: order.couponCode });
-      if (coupon) {
-        const remainingSubtotal = order.products.reduce((sum, p) => {
-          if (p.productId.toString() === productId || ["Cancelled", "Returned"].includes(p.status)) {
-            return sum;
-          }
-          return sum + p.discountedPrice * p.quantity;
-        }, 0);
-
-        if (remainingSubtotal >= coupon.minPurchaseAmount) {
-          // Coupon still valid → deduct proportional discount
-          const subtotalBeforeCoupon = order.products.reduce((sum, p) => {
-            if (["Cancelled", "Returned"].includes(p.status)) return sum;
-            return sum + p.discountedPrice * p.quantity;
-          }, 0);
-
-          if (subtotalBeforeCoupon > 0) {
-            const productShare = refundAmount / subtotalBeforeCoupon;
-            const discountShare = productShare * order.couponDiscount;
-            refundAmount -= discountShare;
-          }
-        } else {
-          
-           // Coupon becomes invalid → restore its full discount for this refund
-          refundAmount = product.discountedPrice * product.quantity + order.couponDiscount;
-
-          // Remove coupon from the order & reset totals
-          order.couponCode = null;
-          order.couponDiscount = 0;
-          order.totalAmount = remainingSubtotal; // set to remaining subtotal only
-        }
-      }
-    }
 
     // Wallet refund for paid orders
     if (order.isPaid) {
@@ -668,9 +669,15 @@ const returnOrder = async (req, res) => {
 
 const createRazorpayOrder = async (req, res) => {
   try {
-    const { grandTotal, discountAmount = 0 } = req.body;      // here grandTotal is amount after the offer is being applied(not coupon), discountAmount => coupon discount
+    const { grandTotal } = req.body;      // here grandTotal is amount after the offer is being applied(not coupon), discountAmount => coupon discount
 
-    const finalAmount = (grandTotal - discountAmount) * 100; // Convert to paise  -here the discountAmount is the couponDiscount
+    let couponDiscount = 0
+     couponDiscount = req.session.coupon?.discount || 0;
+
+    console.log("createRazorpayOrder", grandTotal, couponDiscount);
+    
+
+    const finalAmount = (grandTotal - couponDiscount) * 100; // Convert to paise 
 
     if (finalAmount <= 0) {
       return res.status(400).json({ success: false, message: "Invalid payment amount" });
@@ -802,7 +809,7 @@ const razorPaymentFailed = async (req, res) => {
     }, 0);
 
       const couponDiscount  = req.session.coupon?.discount || 0;
-      const finalTotal = parseFloat(grandTotal) - parseFloat(discountAmount);
+      const finalTotal = parseFloat(grandTotal) - parseFloat(couponDiscount);
 
 
     const order = {

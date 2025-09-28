@@ -100,7 +100,7 @@ const getWishlist = async (req, res) => {
 const addToWishlist = async (req, res) => {
     try {
         const { productId } = req.body;
-        const userId = req.session.user._id || req.session.passport;
+        const userId = req.session.user?._id || req.session.passport;
 
         const product = await Product.findById(productId);
         if(!product){

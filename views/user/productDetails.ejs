@@ -1513,14 +1513,14 @@
                                                 <!--====== Input Counter ======-->
                                                 <div class="input-counter">
 
-                                                    <span class="input-counter__minus fas fa-minus"></span>
+                                                    <span class="input-counter__minus fas fa-minus" id="minus"></span>
 
                                                     <input class="input-counter__text input-counter--text-primary-style" 
                                                            data-product-id="<%= currentProduct._id %>" 
                                                            data-stock="<%= currentProduct.quantity %>"
                                                            type="text" value="1" data-min="1" data-max="5">
 
-                                                    <span class="input-counter__plus fas fa-plus"></span></div>
+                                                    <span class="input-counter__plus fas fa-plus" id="plus"></span></div>
                                                 <!--====== End - Input Counter ======-->
                                             </div>
                                             <div class="u-s-m-b-15">
@@ -2443,78 +2443,95 @@
     <script src="/js/app.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-    
-<!-- <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            document.querySelectorAll('.product-link').forEach(link => {
-        link.addEventListener('click', function (e) {
-        e.stopImmediatePropagation(); // stops other listeners
-        window.location.href = this.href;
-      });
-   });
-        })
-        
-
-    </script> -->
-
 
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
-          
-          // Attach event listener to the form
-    document.querySelector("#add-to-cart-form").addEventListener("submit", async (event) => {
-        event.preventDefault(); // Prevent default form submission
+      // Attach event listener to the form
+    document.addEventListener("DOMContentLoaded", () => {
+  const form = document.querySelector("#add-to-cart-form");
+  const input = document.querySelector(".input-counter__text");
+  const plus = document.querySelector("#plus");
+  const minus = document.querySelector("#minus");
 
-        const input = document.querySelector(".input-counter__text");
-        const productId = input.dataset.productId;
-        const selectedQuantity = parseInt(input.value);
-        const stock = parseInt(input.dataset.stock);
+  const productId = input.dataset.productId;
+  const stock = parseInt(input.dataset.stock, 10);
+  const maxAllowed = Math.min(stock, 5); // max between stock and 5
 
-        // Validate selected quantity against stock
-        if (selectedQuantity > stock) {
-            console.log(selectedQuantity, stock);
-            
-            Swal.fire({
-                icon: "error",
-                title: "Quantity Exceeded",
-                text: `You can't select more than ${stock} items`,
-            });
-            input.value = stock; // Reset the input value to stock
-            return;
-        }
+  // Plus button
+  plus.addEventListener("click", () => {
+    let value = parseInt(input.value, 10) || 1;
+    if (value < maxAllowed) {
+      input.value = value + 1;
+    } else {
+      Swal.fire({
+        icon: "error",
+        title: "Quantity Limit",
+        text: `You can only select up to ${maxAllowed} items.`,
+      });
+      input.value = maxAllowed;
+    }
+  });
 
-        // Send selected quantity to the backend via fetch
-        try {
-            const response = await fetch('/add-to-cart', {
-                method: 'POST',
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ productId, quantity: selectedQuantity }),
-                credentials: "include" 
-            });
+  // Minus button
+  minus.addEventListener("click", () => {
+    let value = parseInt(input.value, 10) || 1;
+    if (value > 1) {
+      input.value = value - 1;
+    }
+  });
 
-            const data = await response.json();
+  // Manual input validation
+  input.addEventListener("input", () => {
+    let value = parseInt(input.value, 10) || 1;
+    if (value < 1) {
+      input.value = 1;
+    } else if (value > maxAllowed) {
+        input.value = maxAllowed;
+      Swal.fire({
+        icon: "error",
+        title: "Quantity Exceeded",
+        text: `You can’t select more than ${maxAllowed} items.`,
+      });
+      
+    }
+  });
 
-            if (response.ok) {
-                Swal.fire({
-                    icon: "success",
-                    title: "Added to Cart",
-                    text: data.message,
-                }).then(() => {
-                    window.location.reload();
-                });
+  // Handle submit
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
 
-                // Update UI if needed (e.g., cart count or dropdown)
-            } else {
-                Swal.fire({
-                    icon: "error",
-                    title: "Error",
-                    text: data.error || "Failed to add to cart.",
-                });
-            }
-        } catch (error) {
-            window.location.href = "/login";
-        }
-    });
+    const selectedQuantity = parseInt(input.value, 10);
+
+    try {
+      const response = await fetch("/add-to-cart", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ productId, quantity: selectedQuantity }),
+        credentials: "include",
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        Swal.fire({
+          icon: "success",
+          title: "Added to Cart",
+          text: data.message,
+        }).then(() => {
+          window.location.reload();
+        });
+      } else {
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: data.error || "Failed to add to cart.",
+        });
+      }
+    } catch (error) {
+      window.location.href = "/login";
+    }
+  });
+
+
 
 
     

@@ -26,6 +26,8 @@ const OrderSchema = new Schema(
         deliveredAt: { type: Date },
         cancellationReason: { type: String, default: null },  // reason for cancellation
         returnReason: { type: String, default: null },  // reason for return
+        refundedAmount: { type: Number, default: 0 } // track refund for each product
+
       },
     ],
     totalAmount: { type: Number, required: true }, // Total amount for the order
