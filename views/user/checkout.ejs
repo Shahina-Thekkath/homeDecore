@@ -1624,7 +1624,7 @@
                                                     <div class="o-card__flex">
                                                         <div class="o-card__img-wrap">
                                                             <% let img = item.productId.image[0] %>   
-                                                            <img class="u-img-fluid" src="<%= img.startsWith('http') ? img : '/admin-assets/product2/' + img %>" alt=""></div>
+                                                            <img class="u-img-fluid" src="<%= img.url %>" alt=""></div>
                                                         <div class="o-card__info-wrap">
 
                                                             <span class="o-card__name">

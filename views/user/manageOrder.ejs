@@ -1846,7 +1846,7 @@
                                 <% let img = product.productId.image[0] %>
                                 <img
                                   class="u-img-fluid"
-                                  src="<%= img.startsWith('http') ? img : '/admin-assets/product2/' + img %>"
+                                  src="<%= img.url %>"
                                   alt="<%= product.productId.name %>"
                                 />
                               </div>

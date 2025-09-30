@@ -4,7 +4,6 @@ const bcrypt = require("bcrypt");
 
 const loadLogin = (req, res) =>{
     try {
-        console.log("Hhi");
         res.render("adminlogin")
 
     } catch (error) {
@@ -52,7 +51,7 @@ const login = async (req, res) =>{
             return res.render("adminlogin", {message: "Email and password is incorrect"})
            }
     } catch (error) {
-        console.log("login error", error);
+        console.error("login error", error);
         return res.redirect("/pageerror");
         
     }

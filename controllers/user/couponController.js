@@ -2,41 +2,6 @@ const Coupon = require("../../models/couponSchema");
 const Cart = require("../../models/cartSchema");
 const User = require("../../models/userSchma");
 
-// const getCoupons = async (req, res) => {
-//   try {
-//     const coupons = await Coupon.find().sort({ createdAt: -1 });
-//     const currentDate = new Date();
-
-//     const processedCoupons = coupons.map(coupon => {
-//       const expiryDate = new Date(coupon.expiresOn);
-//       const isExpired = expiryDate < currentDate;
-//       const isExpiringSoon = expiryDate <= new Date(Date.now() + 3 * 24 * 60 * 60 * 1000); // next 3 days
-
-//       const usedCount = coupon.usedCount || 0;
-//       const usageLimit = coupon.usageLimit || 1; // prevent divide by zero
-//       const usagePercentage = Math.min((usedCount / usageLimit) * 100, 100).toFixed(2); // rounded to 2 decimals
-
-//       const discountText =
-//         coupon.discountType === "percentage"
-//           ? `${coupon.discountAmount}% OFF`
-//           : `₹${coupon.discountAmount} OFF`;
-
-//       return {
-//         ...coupon.toObject(),
-//         isExpired,
-//         isExpiringSoon,
-//         usagePercentage,
-//         discountText,
-//       };
-//     });
-
-//     res.render("coupons", { coupons: processedCoupons });
-//   } catch (error) {
-//     console.error("Error fetching coupons:", error);
-//     res.status(500).send("Something went wrong while fetching coupons.");
-//   }
-// };
-
 const applyCoupon = async (req, res) => {
   try {
         const userId = req.session.user?._id || req.session.passport._id;

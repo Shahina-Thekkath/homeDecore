@@ -1267,7 +1267,7 @@
                                                         <div class="mini-product__image-wrapper">
                                                             <a class="mini-product__link" href="/product/<%=item.productId._id%>">
                                                                 <% let img = item.productId.image[0] %>
-                                                                <img class="u-img-fluid" src="<%= img.startsWith('http') ? img : '/admin-assets/product2/' + img %>" alt="<%=item.productId.name%>">
+                                                                <img class="u-img-fluid" src="<%= img.url %>" alt="<%=item.productId.name%>">
                                                             </a>
                                                         </div>
                                                         <div class="mini-product__info-wrapper">
@@ -1368,18 +1368,9 @@
                                     <div id="pd-o-initiate">
                                         <%currentProduct.image.forEach((img) =>{%>
                                             
-                                            <div class="pd-o-img-wrap" data-src="/admin-assets/product2/<%=img%>">
+                                            <div class="pd-o-img-wrap" data-src="<%=img.url%>">
 
-                                                <img class="u-img-fluid" 
-                                                <% if(img.startsWith('http')){ %>
-                                                   src="<%=img%>"
-                                                   data-zoom-image="<%=img%>"
-                                                <% } else { %>
-                                                    src="/admin-assets/product2/<%=img%>" 
-                                                data-zoom-image="/admin-assets/product2/<%=img%>" 
-                                                <% } %>
-                            
-                                                alt=""></div> 
+                                                <img class="u-img-fluid" src="<%=img.url%>" data-zoom-image="<%=img.url%>" alt=""></div> 
                                         <%})%>
 
                                         
@@ -1396,7 +1387,7 @@
                                                 <div>
 
                                                     <img class="u-img-fluid" 
-                                                    src="<%= img.startsWith('http') ? img : '/admin-assets/product2/' + img %>"  
+                                                    src="<%= img.url %>"  
                                                     alt="">
                                                 </div>
                                                 
@@ -1934,9 +1925,9 @@
                         <div class="row">
                             <div class="col-lg-12">
                                 <div class="section__text-wrap">
-                                    <h1 class="section__heading u-c-secondary u-s-m-b-12">CUSTOMER ALSO VIEWED</h1>
+                                    <h1 class="section__heading u-c-secondary u-s-m-b-12">RELATED PRODUCTS</h1>
 
-                                    <span class="section__span u-c-grey">PRODUCTS THAT CUSTOMER VIEWED</span>
+                                    <span class="section__span u-c-grey">PRODUCTS THAT ARE RELATED</span>
                                 </div>
                             </div>
                         </div>
@@ -1958,7 +1949,7 @@
                                         <div class="product-o__wrap">
                                             <a class="aspect aspect--bg-grey aspect--square u-d-block" href="/product-details/<%= relatedProducts[i]._id %>">
                                                 <% let img = relatedProducts[i].image[0] %>
-                                            <img class="aspect__img" src="<%= img.startsWith('http') ? img : '/admin-assets/product2/' + img %>" alt="<%= relatedProducts[i].name %>">
+                                            <img class="aspect__img" src="<%= img.url %>" alt="<%= relatedProducts[i].name %>">
                                             </a>
                                             
                                             <div class="product-o__action-wrap">
@@ -1981,7 +1972,7 @@
 
                                         <span class="product-o__category">
 
-                                            <a href="shop-side-version-2.html"><%=relatedProducts[i].categoryId.name%></a></span>
+                                            <a href="#"><%=relatedProducts[i].categoryId.name%></a></span>
 
 
                                            <span class="product-o__name">

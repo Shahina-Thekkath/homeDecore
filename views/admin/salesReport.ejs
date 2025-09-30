@@ -511,6 +511,11 @@
       </div>
     </div>
 
+    <nav aria-label="Page navigation">
+      <ul class="pagination justify-content-center" id="paginationContainer"></ul>
+    </nav>
+
+
     <script src="/admin-assets/js/jquery-3.6.0.min.js"></script>
 
     <script src="/admin-assets/js/feather.min.js"></script>
@@ -564,14 +569,14 @@
           $("#reportType").on("change", toggleDateInputs);
           toggleDateInputs(); //init
            
-          $("#generateReport").on("click", function () {
+          function loadReport(page = 1) {
             const type = $("#reportType").val();
             const startDate = $("#startDate").val();
             const endDate = $("#endDate").val();
             console.log("type, startDated, endDate",type, startDate,endDate);
             
 
-            let url = `/admin/sales-report/data?type=${encodeURIComponent(type)}`;
+            let url = `/admin/sales-report/data?type=${encodeURIComponent(type)}&page=${page}`;
              console.log("url", url);
             if(type === "custom") {
               if(!startDate || !endDate) {
@@ -635,6 +640,37 @@
                     $("#totalOfferDiscount").text(`₹ ${Number(data.report.totalOfferDiscount || 0).toFixed(2)}`);
                     $("#totalCouponDiscount").text(`₹ ${Number(data.report.totalCouponDiscount || 0).toFixed(2)}`);
                     $("#totalOrders").text(`${Number(data.report.totalOrders || 0)}`);
+
+                     // Pagination
+                // Pagination
+                  const $pagination = $("#paginationContainer");
+                  $pagination.empty();
+
+                  if (data.totalPages > 1) {
+                    // Previous
+                    $pagination.append(`
+                      <li class="page-item ${data.currentPage === 1 ? 'disabled' : ''}">
+                        <a class="page-link" href="#" data-page="${data.currentPage - 1}">Previous</a>
+                      </li>
+                    `);
+
+                    // Pages
+                    for (let i = 1; i <= data.totalPages; i++) {
+                      $pagination.append(`
+                        <li class="page-item ${i === data.currentPage ? 'active' : ''}">
+                          <a class="page-link" href="#" data-page="${i}">${i}</a>
+                        </li>
+                      `);
+                    }
+
+                    // Next
+                    $pagination.append(`
+                      <li class="page-item ${data.currentPage === data.totalPages ? 'disabled' : ''}">
+                        <a class="page-link" href="#" data-page="${data.currentPage + 1}">Next</a>
+                      </li>
+                    `);
+                  }
+
                 
               },
               error: function (xhr, status, err) {
@@ -646,6 +682,19 @@
                 });
               }
             });
+          }
+
+          // Generate Report button click
+          $("#generateReport").on("click", function () {
+            loadReport(1); // always start from page 1
+          });
+
+          // Pagination click (delegated)
+         // Pagination click (delegated)
+          $("#paginationContainer").on("click", "a.page-link", function (e) {
+              e.preventDefault();
+              const page = $(this).data("page");
+              if (page > 0) loadReport(page); // prevent negative pages
           });
 
 

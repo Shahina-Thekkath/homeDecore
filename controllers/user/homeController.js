@@ -7,7 +7,6 @@ const ProductOffer = require('../../models/productOfferSchema');
 const loadHomepage = async(req, res) =>{
     try{
          const user = req.session.user || req.session.passport;
-         console.log("home",user);
          
          let products = await Product.find({isBlocked:false}).populate("categoryId").limit(20).lean();
 
@@ -97,7 +96,6 @@ const loadHomepage = async(req, res) =>{
             })
          );
 
-         console.log("hom", user);
          
 
          if(user){

@@ -9,15 +9,9 @@ const ProductOffer = require('../../models/productOfferSchema');
 const loadProductDetails = async (req, res) =>{
     try {
         const productId = req.params.id;
-        console.log("loadProduct1", productId);
-
-        
-        
-
         const user = req.session.user || req.session.passport;
          let cart 
          let grandTotal;
-         console.log("loadProduct2", user);
 
         if(user){
              cart = await Cart.findOne({userId: user._id}).populate({path:"items.productId"});

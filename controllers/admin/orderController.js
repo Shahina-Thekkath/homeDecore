@@ -58,9 +58,6 @@ const generateTransactionId = () => {
 
 const handleRefundToWallet = async (userId, amount, reason) => {
   const transactionId = generateTransactionId();
-  console.log("transactionId", transactionId);
-  
-
 
   const wallet = await Wallet.findOne({ userId });
 
@@ -104,10 +101,7 @@ const cancelOrder = async (req, res) => {
     const order = await Order.findById(req.params.id)
       .populate("userId")
       .populate("products.productId");
-
-      console.log("cancelOrder", order);
       
-
     if (!order) {
       return res
         .status(404)
@@ -132,11 +126,8 @@ const cancelOrder = async (req, res) => {
         $inc: { quantity: item.quantity },
       });
     }
-    console.log("cancelOrder , incremented");
-    
-
+  
     const refundAmount = order.totalAmount;
-    console.log(refundAmount);
     
     const userId = order.userId._id;
     if (order.isPaid) {

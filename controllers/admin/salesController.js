@@ -6,7 +6,8 @@ const ExcelJS = require('exceljs');
 
 const getSalesReport = async (req, res) => {
     try {
-        return res.render('salesReport');
+        
+        return res.render('salesReport', {currentPage: 1, totalPages: 1, baseUrl: "/admin/salesReport"});
     } catch (error) {
         console.error("Error loading sales Report page", error);
         res.json(500).send("Internal Server Error");
@@ -35,7 +36,6 @@ function buildMatchQuery(type = "daily", startDate, endDate) {
     const e = new Date(now);
     e.setHours(23, 59, 59, 999);
     match.createdAt = { $gte: s, $lte: e };
-    console.log("daily", match);
     
   } else if (type === "weekly") {
     const e = new Date();
@@ -54,8 +54,6 @@ function buildMatchQuery(type = "daily", startDate, endDate) {
     e.setHours(23, 59, 59, 999); // include full end day
     match.createdAt = { $gte: s, $lte: e };
   }
-
-  console.log(match);
   return match;
 }
 
@@ -63,19 +61,25 @@ function buildMatchQuery(type = "daily", startDate, endDate) {
 const getSalesReportData = async (req, res) => {
     try {
     const { type = "daily", startDate, endDate } = req.query;
-    console.log("salesReport", type, startDate, endDate);
+
+    const currentPage = parseInt(req.query.page) || 1;
+    const limit = 5;
+    const skip = (currentPage - 1) * limit;
     
 
     const matchQuery = buildMatchQuery(type, startDate, endDate);
+
+    const totalOrdersCount = await Order.countDocuments(matchQuery);
+    const totalPages = Math.ceil(totalOrdersCount / limit);
 
     // list of orders for table rows
     const ordersPromise = await Order.find(matchQuery)
       .select("_id createdAt totalAmount discountAmount couponDiscount")
       .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
       .lean();
-      console.log("ordersPromise", ordersPromise);
       
-
     // summary aggregation
     const summaryPromise = Order.aggregate([
       { $match: matchQuery },
@@ -124,7 +128,7 @@ const getSalesReportData = async (req, res) => {
       };
     });
 
-    return res.json({ success: true, report: summary, orders });
+    return res.json({ success: true, report: summary, orders, currentPage, totalPages });
   } catch (err) {
     console.error("Error building sales report:", err);
     res.status(500).json({ success: false, message: "Internal Server Error" });

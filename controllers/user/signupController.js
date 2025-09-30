@@ -39,9 +39,6 @@ async function sendVerificationEmail(email, otp){
             html: `<b>Your OTP: ${otp}</b>`,
         })
 
-        console.log("info", info);
-        
-
         return info.accepted.length > 0    // info.accepted contains an array of email addresses which accepted the mail
     } catch (error) {
         console.error("Error sending email", error);
@@ -73,7 +70,6 @@ const signup = async(req, res) =>{
         req.session.userData = {name, phone, email, password};
         
         res.render("verify-otp");
-        console.log("OTP Sent", otp);
         
     } catch (error) {
        console.error("signup error", error);
@@ -97,7 +93,6 @@ const securePassword = async (password) =>{
 const verifyOtp = async (req, res) =>{
     try {
         const {otp} = req.body;
-        console.log("verifyOtp",otp);
 
         if(otp == req.session.userOtp){
             
@@ -142,7 +137,6 @@ const resendOtp = async (req, res) =>{
         const emailSent = await sendVerificationEmail(email, otp);        // using nodemailer send the user email and send otp to the user mail from the mail mentioned in nodemailer
 
         if(emailSent){
-            console.log("Resend OTP:", otp);
             res.status(200).json({success: true, message: "OTP Resend Successfully"})
         }else{
             res.status(500).json({success: false, message: "Failed to resend OTP. Please try again"});
@@ -167,9 +161,7 @@ const failureGoogleLogin = (req,res)=>{
 
 
 const sendResetPasswordEmail = async(name,email,token) =>{
-    try {
-        console.log("sendResetPasswordEmail",token);
-        
+    try { 
         const transporter = nodemailer.createTransport({
             service:"gmail",
             port:587,
@@ -186,14 +178,17 @@ const sendResetPasswordEmail = async(name,email,token) =>{
             to: email,
             subject:"For Reset Password",
             html:`<p>Hii ${name} please click here to 
-                           <a href="http://localhost:3000/resetPassword?token=${token}">Reset</a>
+                           <a href="http://localhost:${process.env.PORT}/resetPassword?token=${token}">Reset</a>
                         your password</p>`
         })
+
+        console.log("sendReset", info);
+        
 
         return info.accepted.length > 0              //an array of email addresses that the SMTP server accepted for delivery.
 
     } catch (error) {
-        console.log("Sent verification email error",error.message);
+        console.error("Sent verification email error",error.message);
         return false;
     }
 }
@@ -202,7 +197,7 @@ const forgotPassword = async(req,res)=>{
     try {
         res.render("forgotPassword",{message:""});
     } catch (error) {
-        console.log("Forgot password logic error",error.message);
+        console.error("Forgot password logic error",error.message);
         return res.status(404).redirect("/pageNotFound");
     }
 }
@@ -214,24 +209,31 @@ const forgotVerify = async(req,res) =>{
     try {
         const email = req.body.email;
         const user = await User.findOne({email});
-        console.log("changePassword", user, email);
-        
-
+   
         if(user){
             const randomString = randomstring.generate();
             await User.updateOne({email},{$set:{token:randomString}});
 
-            sendResetPasswordEmail(user.name, user.email, randomString);
+            const mailSent = await sendResetPasswordEmail(user.name, user.email, randomString);
 
-            res.render("forgotPassword", {message:"Please check your mail to  reset your password"});
-
+        if (mailSent) {
+                console.log(" Reset email sent successfully to:", user.email);
+                res.render("forgotPassword", {
+                message: "Please check your mail to reset your password",
+                });
+            } else {
+                console.error(" Reset email sending failed for:", user.email);
+                res.render("forgotPassword", {
+                message: "Failed to send reset email. Please try again later.",
+                });
+            }
 
         }else{
             res.render("forgotPassword",{message:"User Email is incorrect"});
 
         }
     } catch (error) {
-        console.log("Forgot verify error", error.message);
+        console.error("Forgot verify error", error.message);
         return res.status(404).redirect("/pageNotFound")
     }
 }
@@ -241,7 +243,7 @@ const changePassword = async(req,res)=>{
         const errors = {};
         res.render("changePassword", { errors });
     } catch (error) {
-        console.log("change password logic error",error);
+        console.error("change password logic error",error);
         return res.status(404).redirect("/pageNotFound");
     }
 }
@@ -289,7 +291,7 @@ const changeVerify = async(req,res) =>{
 
         res.redirect("/login");
     } catch (error) {
-        console.log("change verify error", error);
+        console.error("change verify error", error);
         return res.status(404).redirect("/pageNotFound")
     }
 }
@@ -298,8 +300,6 @@ const resetPasswordLoad = async(req, res) =>{
     try {
         const token = req.query.token;
         const tokenData = await User.findOne({token});
-        console.log("resetPassword",token);
-        console.log("resetPassword2",tokenData);
 
         if(tokenData){
             res.render("resetPassword",{user_id:tokenData._id} )
@@ -307,7 +307,7 @@ const resetPasswordLoad = async(req, res) =>{
             res.render("page-404",{message:"Token is invalid"});
         }
     } catch (error) {
-        console.log("forget password reset page load error", error.message);
+        console.error("forget password reset page load error", error.message);
         return res.status(404).redirect('/pageNotFound');
         
     }
@@ -323,7 +323,7 @@ const verifyResetPassword = async(req, res) =>{
 
         res.redirect("/login");
     } catch (error) {
-        console.log("verify reset password error", error.message);
+        console.error("verify reset password error", error.message);
 
         return res.status(404).redirect('/pageNotFound');
     }

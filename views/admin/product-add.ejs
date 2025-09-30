@@ -411,8 +411,9 @@
               <form
                 action="/admin/products/addProducts"
                 method="POST"
+                id="addProductForm"
                 enctype="multipart/form-data"
-                onsubmit="return validateForm()"
+                novalidate
               >
                 <div class="row">
                   <div class="col-lg-4 col-sm-6 col-12">
@@ -997,13 +998,77 @@
         return isValid;
       }
 
-      function validateAndSubmit() {
-        if (validateForm()) {
-          document.forms[0].submit();
-        }
-      }
+       $("#addProductForm").on("submit", function (e) {
+    e.preventDefault(); // stop normal form submission
 
-      function message(msg) {
+    const form = this;
+    const formData = new FormData(form);
+        if (validateForm()) {
+          
+        try {
+              $.ajax({
+              url: "/admin/products/addProducts",
+              type: "POST",
+              data: formData,
+              processData: false, // important for FormData
+              contentType: false, // important for FormData
+              success: function (response) {
+                Swal.fire({
+                  position: "center",
+                  icon: "success",
+                  title: response.message || "Product added successfully!",
+                  showConfirmButton: false,
+                  timer: 2000,
+                }).then(() => {
+                  window.location.href = "/admin/productList"; // redirect after success
+                });
+              },
+              error: function (xhr) {
+                if (xhr.responseJSON && xhr.responseJSON.errors) {
+                  const errors = xhr.responseJSON.errors;
+
+                  // Clear old errors
+                  $(".error-message").text("");
+
+                  if (errors.productName) {
+                    $("#productName-error").text(errors.productName);
+                  }
+                  if (errors.categoryId) {
+                    $("#category-error").text(errors.categoryId);
+                  }
+                  if (errors.price) {
+                    $("#regularPrice-error").text(errors.price);
+                  }
+                  if (errors.quantity) {
+                    $("#quantity-error").text(errors.quantity);
+                  }
+                  if (errors.description) {
+                    $("#description-error").text(errors.description);
+                  }
+                  if (errors.images) {
+                    $("#image-error").text(errors.images);
+                  }
+                } else {
+                  Swal.fire({
+                    icon: "error",
+                    title: "Something went wrong!",
+                  });
+                }
+              },
+            });
+
+        } catch (error) {
+            console.error(error);
+            Swal.fire('Server Error', 'Please try again later.', 'error');
+        }
+          
+        }
+        
+      })
+
+    </script>
+    <script>
+       function message(msg) {
         if (msg) {
           Swal.fire({
             positition: "center",

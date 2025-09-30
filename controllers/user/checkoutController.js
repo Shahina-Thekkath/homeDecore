@@ -9,20 +9,10 @@ const loadCheckout = async (req, res) => {
   try {
     const userId = req.session.user?._id || req.session.passport._id;
     const cart = await Cart.findOne({ userId }).populate("items.productId");
-    console.log("cart", cart);
-    console.log("cart2", cart.items[0].productId._id);
 
     const user = await User.findById(userId);
-    //    const coupons = await Coupon.find({
-    //         expiresOn: { $gte: new Date() },
-    //         usageLimit: { $gt: 0 },
-    //         usersUsed: { $ne: userId }, // Exclude already used
-    //     });
 
     const allCoupons = await Coupon.find();
-
-    console.log("all coupons", allCoupons);
-    
 
     const validCoupons = allCoupons.filter((coupon) => 
       new Date(coupon.expiresOn) >= new Date() &&
@@ -30,19 +20,14 @@ const loadCheckout = async (req, res) => {
         !coupon.usersUsed.includes(userId)
     );
    
-    
-
     const flatCoupons = validCoupons.filter(
       (coupon) => coupon.discountType === "flat"
     );
-    console.log("flat coupons", flatCoupons);
     
     const percentageCoupons = validCoupons.filter(
       (coupon) => coupon.discountType === "percentage"
     );
    
-    
-
     const expiredCoupons = allCoupons.filter(
       (coupon) =>
         new Date(coupon.expiresOn) < new Date() ||
@@ -76,7 +61,6 @@ const loadCheckout = async (req, res) => {
 
     if(req.session.coupon){
       discountAmount = req.session.coupon.discount || 0;   // coupon discount
-      console.log("checkout", discountAmount);
       
     }
 

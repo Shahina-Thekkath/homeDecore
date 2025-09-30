@@ -74,7 +74,7 @@ const getWishlist = async (req, res) => {
                     discountType = categoryOffer.discountType;
                 }
 
-                // 4️⃣ Final price
+                // 4 Final price
                 finalPrice = Math.max(product.price - discountAmount, 0);
 
                 return {

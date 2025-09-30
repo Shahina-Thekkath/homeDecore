@@ -124,7 +124,6 @@ const editCategory = async (req, res) => {
 };
 
 const blockCategory = async (req, res) => {
-    console.log("block",req.params.id);
 try {
  const categoryId = req.params.id;
 
@@ -143,7 +142,6 @@ try {
 
 
 const unblockCategory = async (req, res) => {
-  console.log("unblock",req.params.id);
 try {
  const categoryId = req.params.id;
  const category = await Category.findByIdAndUpdate(categoryId, { isBlocked: false });

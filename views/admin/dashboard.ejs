@@ -566,12 +566,16 @@
                           <td><%= index + 1 %></td>
                           <td class="productimgname">
                             <a href="/admin/productList" class="product-img">
-                              <% let img = product.image[0] %>
-
-                              <img
-                                src="<%= img.startsWith('http') ? img : '/admin-assets/product2/' + img %>"
-                                alt="product"
-                              />
+                              
+                              <% let img = product.image && product.image.length > 0 ? product.image[0] : null; %>
+                              <% if (img) { %>
+                                <img
+                                  src="<%= typeof img === 'string' 
+                                          ? (img.startsWith('http') ? img : '/admin-assets/product2/' + img) 
+                                          : img.url %>"
+                                  alt="product"
+                                />
+                              <% } %>
                             </a>
                             <a href="/admin/productList"><%= product.name %></a>
                           </td>
@@ -800,7 +804,7 @@
           function message(msg){
             if(msg){
                   Swal.fire({
-                    positition: "center",
+                    position: "center",
                     icon: "success",
                     title: msg,
                     showConfirmButton: false,

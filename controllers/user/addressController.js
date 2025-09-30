@@ -8,11 +8,7 @@ const mongoose = require("mongoose");
 
 const getAddress = async(req, res) =>{
     try {
-        console.log("getAddress", req.session);
-        
         const userId = req.session.user?._id || req.session.passport?._id;
-        console.log("getAddress", req.session.passport._id);
-        
         const user = await User.findById(userId).populate('addresses');
         
 
@@ -39,7 +35,7 @@ const loadAddAddress = async(req, res)=>{
 
          res.render('addAddress', {user, address, from})
     } catch (error) {
-        console.log("Error loading add Address page", error);
+        console.error("Error loading add Address page", error);
          res.status(500).send("Internal server error");
         
     }
@@ -109,7 +105,7 @@ const loadEditAddress = async(req,res) =>{
 
         res.render('editAddress',{user,address, from});
     } catch (error) {
-        console.log("Error Fetching Address",error);
+        console.error("Error Fetching Edit Address",error);
         res.status(500).render('pageNotFound');
     }
 }

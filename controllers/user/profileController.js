@@ -8,11 +8,6 @@ const userProfile = async(req, res) =>{
         const user = req.session.user || req.session.passport?.user;
         const userData = await User.findById(user._id);
        
-        console.log("userProfile", userData);
-        console.log("userProfile1", req.session);
-        
-         
-
         res.render('userProfile',{user: userData});
     } catch (error) {
         console.error('Internal Sever Error',error);
@@ -25,15 +20,10 @@ const getEditProfile = async(req, res) =>{
     try {
         const userId = req.session.user?._id || req.session.passport?.user?._id;
         const user = await User.findById(userId);
-        console.log("getEditProfile", user);
-        
 
         if (!user) {
-            console.log("User not found");
             return res.status(404).send('user not found');
         }
-        
-        console.log(user);
         res.render('editProfile', {user});
 
         
@@ -54,10 +44,7 @@ const updateProfile = async (req, res) => {
 
     const { name, gender, email, phone } = req.body;
     const userId = req.session.user._id || req.session.passport._id;
-
-    console.log("updated:", req.body, userId);
     
-
     const errors = {};
     if (!name || !name.trim()) errors.name = "Name is required.";
     if (!email || !email.trim()) errors.email = "Email is required.";
@@ -75,9 +62,6 @@ const updateProfile = async (req, res) => {
         message: "User not found."
       });
     }
-
-    console.log("updateProfile:", name, email, phone, gender);
-    
 
     //  Update data
     await User.findByIdAndUpdate(userId, {

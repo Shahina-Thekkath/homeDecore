@@ -22,9 +22,6 @@ const addCoupon = async (req, res) => {
       discountType,
     } = req.body;
 
-    console.log("CouponformData:", name, code, discountAmount, usageLimit, minPurchaseAmount, expiresOn, discountType);
-    
-
     const errors = {};
 
     // Required field checks

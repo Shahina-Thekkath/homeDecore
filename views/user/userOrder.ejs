@@ -1396,7 +1396,7 @@
                                                             <div class="description__container">
                                                                 <div class="description__img-wrap">
                                                                      <% let img = product.productId.image[0] %> 
-                                                                    <img class="u-img-fluid" src="<%= img.startsWith('http') ? img : '/admin-assets/product2/' + img %>" alt="<%= product.productId.name %>"></div>
+                                                                    <img class="u-img-fluid" src="<%= img.url %>" alt="<%= product.productId.name %>"></div>
                                                                 <div class="description-title"><%= product.productId.name %></div>
                                                             </div>
                                                             <div class="description__info-wrap ">

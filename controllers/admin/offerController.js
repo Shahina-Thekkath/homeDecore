@@ -20,7 +20,7 @@ const getAddOffer = async (req, res) => {
             errors: {}
         });
     } catch (error) {
-        console.log(("Error loading add offer page:", error));
+        console.error(("Error loading add offer page:", error));
         res.status(500).json({ success: false, message: "Internal Server Error" });
         
     }
@@ -29,12 +29,7 @@ const getAddOffer = async (req, res) => {
 const postAddOffer = async (req, res) => {
     try {
         const {offerType, productId, categoryId, discountType, discountAmount, startDate, endDate} = req.body;
-
-        console.log("postOffer", offerType, productId, categoryId, discountType, discountAmount, startDate, endDate);
-        console.log(typeof categoryId);
-    
         
-
         let errors = {};
         const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
 
@@ -73,8 +68,6 @@ const postAddOffer = async (req, res) => {
         if(Object.keys(errors).length > 0) {
             return res.status(200).json({ success: false, errors });
         }
-
-        console.log("finish validation");
         
         let newOffer;
         if (offerType === 'product') {
@@ -221,8 +214,6 @@ const updateOffer = async (req, res) => {
     try {
         const offerId = req.params.id;
          const {offerType, productId, categoryId, discountType, discountAmount, startDate, endDate} = req.body;
-
-        console.log("putOffer", offerType, productId, categoryId, discountType, discountAmount, startDate, endDate);
         
 
         let errors = {};
@@ -261,8 +252,6 @@ const updateOffer = async (req, res) => {
         if(Object.keys(errors).length > 0) {
             return res.status(200).json({ success: false, errors });
         }
-        console.log("validation in update completed");
-        
 
         let updated = null;
         if(offerType === "product") {

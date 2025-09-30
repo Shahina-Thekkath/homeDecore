@@ -46,7 +46,6 @@ userRouter.get('/forgotPassword',auth.isLogout, signupController.forgotPassword)
 userRouter.post('/forgotPassword',auth.isLogout, signupController.forgotVerify);
 userRouter.get('/resetPassword', auth.isLogout, signupController.resetPasswordLoad);
 userRouter.post('/resetPassword', auth.isLogout, signupController.verifyResetPassword);
-userRouter.post('/resetPassword', auth.isLogout, signupController.verifyResetPassword);
 userRouter.get('/changePassword',auth.isLogin, signupController.changePassword);
 userRouter.post('/changePassword',auth.isLogin, signupController.changeVerify);
 

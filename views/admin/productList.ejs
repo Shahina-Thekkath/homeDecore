@@ -442,14 +442,12 @@
                                             <td class="productimgname">
                                                 <a href="" class="product-img">
                                                      <% let imgSrc = data[i].image[0]; %>
-                                                    <% if (imgSrc.startsWith('http')) { %>
+                                                    <% if(typeof imgSrc === "object") { %>
+                                                        
                                                         <!-- Cloudinary URL -->
-                                                        <img src="<%= imgSrc %>" alt="product">
-                                                    <% } else { %>
-                                                        <!-- Local path -->
-                                                        <img src="/admin-assets/product2/<%= imgSrc %>" alt="product">
+                                                        <img src="<%= imgSrc.url %>" alt="product">
                                                     <% } %>
-                                    
+                                               
                                                 </a>
                                                
                                             </td>

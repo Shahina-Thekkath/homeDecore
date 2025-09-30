@@ -6,7 +6,7 @@ const cloudinary = require('cloudinary');
 
 const getProductAddPage = async (req, res) => {
   try {
-    const category = await Category.find();
+    const category = await Category.find({isBlocked: false});
 
     res.render("product-add", { category });
   } catch (error) {
@@ -16,31 +16,44 @@ const getProductAddPage = async (req, res) => {
 
 const addProducts = async (req, res) => {
   try {
-
     const products = req.body;
-    console.log("addProduct", products);
-
     const errors = {};
-    const oldData = req.body; // keep old input values
 
-    if (!products.productName || products.productName.trim().length < 3) {
-      return res.status(400).send("Product name must be at least 3 characters long.");
+     if (!products.productName || products.productName.trim().length < 3) {
+      errors.productName = "Product name must be at least 3 characters long.";
     }
-    if (!categoryId) {
-      return res.status(400).send("Category is required.");
+
+    // Category
+    if (!products.categoryId) {
+      errors.categoryId = "Category is required.";
     }
+
+    // Price
     if (!products.price || isNaN(products.price) || Number(products.price) <= 0) {
-      return res.status(400).send("Price must be a valid number greater than 0.");
-    }
-    if (!products.quantity || isNaN(products.quantity) || Number(products.quantity) < 0) {
-      return res.status(400).send("Quantity must be a non-negative number.");
-    }
-    if (products.description && products.description.length < 10 || products.description.length > 1000) {
-      return res.status(400).send("Description should be between 10 - 1000 characters");
+      errors.price = "Price must be a valid number greater than 0.";
     }
 
-    if (!req.files || req.files.length <= 3) {
-      return res.status(400).send("At least three product images required.");
+    // Quantity
+    if (!products.quantity || isNaN(products.quantity) || Number(products.quantity) < 0) {
+      errors.quantity = "Quantity must be a non-negative number.";
+    }
+
+    // Description
+    if (
+      !products.description ||
+      products.description.length < 10 ||
+      products.description.length > 1000
+    ) {
+      errors.description = "Description should be between 10 - 1000 characters.";
+    }
+
+    // Images
+    if (!req.files || req.files.length < 3) {
+      errors.images = "At least three product images required.";
+    }
+
+    if (Object.keys(errors).length > 0) {
+      return res.status(400).json({ errors });
     }
 
     
@@ -48,7 +61,7 @@ const addProducts = async (req, res) => {
     if (req.files && req.files.length > 0) {
       const uploadResults = await Promise.all(
         req.files.map((file) => {
-          cloudinary.uploader.upload(file.path, {folder: 'products'})
+          return cloudinary.uploader.upload(file.path, {folder: 'products'})
         })
       );
      
@@ -57,8 +70,10 @@ const addProducts = async (req, res) => {
         url: r.secure_url
       }));
 
-    }
 
+
+    }
+    
     const newProduct = new Product({
       name: products.productName,
       description: products.description,
@@ -70,13 +85,9 @@ const addProducts = async (req, res) => {
       image: uploadedImages,
       status: "Available"
     });
-    console.log("new Product",newProduct);
-    
-
+   
     await newProduct.save();
-    return res.redirect(
-      "/admin/productList/?success=Product added Successfully"
-    );
+    return res.json({ message: "Product added successfully!" });
   } catch (error) {
     console.error("Error saving product", error);
     return res.redirect("/admin/pageerror");
@@ -96,7 +107,7 @@ const getAllProducts = async (req, res) => {
                 productNames
      });
   } catch (error) {
-    console.log("Error loading productList: ", error);
+    console.error("Error loading productList: ", error);
     res.redirect("/pageerror");
   }
 };
@@ -104,14 +115,10 @@ const getAllProducts = async (req, res) => {
 const getEditProduct = async (req, res) => {
   try {
     const id = req.params.id;
-    console.log(req.params.id);
 
     const product = await Product.findOne({ _id: id });
     const category = await Category.find({});
-    console.log("productEdit", product, category);
-
-    
-
+  
     //when done normally
     res.render("product-edit", {
       category,
@@ -121,7 +128,7 @@ const getEditProduct = async (req, res) => {
     //when doing with fetch()
   } catch (error) {
     //     res.redirect("/pageerror");
-
+    console.error("Error editing product", error);
     res.status(500).json({
       success: false,
       message: "Failed to fetch product",
@@ -211,7 +218,6 @@ const updateProduct = async (req, res) => {
 };
 
 const removeProduct  = async (req, res) => {
-           console.log("block",req.params.id);
     try {
         const productId = req.params.id;
         

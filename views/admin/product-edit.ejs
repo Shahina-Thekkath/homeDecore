@@ -547,7 +547,7 @@
                                   <% product.image.forEach((img, index) => { %>
                                     <div class="image-wrapper m-2" data-index="<%= index %>">
                                       <img
-                                        src="<%= img.url ? img.url : (img.startsWith('http') ? img : '/admin-assets/product2/' + img) %>"
+                                        src="<%= img.url %>"
                                         alt="Product Image"
                                         class="img-thumbnail"
                                         style="width: 150px; height: 150px; object-fit: cover;"
@@ -562,6 +562,7 @@
                                     </div>
                                   <% }) %>
                                 <% } %>
+
                               </div>
                             </div>
 

@@ -3,7 +3,6 @@ const logout = async(req, res) =>{
         if(req.session) {
             req.session.destroy((err) => {
                 if(err) {
-                    console.log("Session destroy error", err);
                     res.redirect("/pageNotFound");
                 }
                 // Clear session cookie manually (optional but recommended)

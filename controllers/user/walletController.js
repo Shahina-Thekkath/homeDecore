@@ -21,10 +21,7 @@ const getWallet = async (req, res) => {
 
         // Sort transactions by latest date
         wallet.transactions = wallet.transactions.sort((a, b) => b.date - a.date);
-
         return res.render('wallet', { wallet,user });
-
-
     } catch (error) {
         console.error("Error fetching wallet:", error);
         return res.status(500).json({

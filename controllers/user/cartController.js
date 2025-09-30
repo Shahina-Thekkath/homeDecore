@@ -8,9 +8,6 @@ const CategoryOffer = require('../../models/categoryOfferSchema');
 
 const loadCart = async(req, res) =>{
     try {
-           console.log("req.body cart",req.body);
-           
-       
            const userId = req.session.user?._id || req.session.passport._id;
            const user = await User.findById(userId);
            const cart = await Cart.findOne({userId}).populate("items.productId");
@@ -35,9 +32,7 @@ const loadCart = async(req, res) =>{
            
 
            const grandTotal = cartItems.reduce((total, item) => total + item.subtotal, 0);
-           console.log("grandtotal", grandTotal);
            
-
            res.render("cart", { cart, cartItems, grandTotal, user});
 
     } catch (error) {
@@ -166,7 +161,6 @@ const addToCart = async(req, res) =>{
 
         // Choose better discount
         discountAmount = Math.max(productDiscountValue, categoryDiscountValue);
-        console.log(discountAmount);
    // Ensure finalPrice is always set
 
         if (discountAmount === 0) {
@@ -175,22 +169,11 @@ const addToCart = async(req, res) =>{
 
         finalPrice = basePrice - discountAmount;
         if (finalPrice < 0) {
-            console.log("final price is less than zero");
-            
-            finalPrice = 0;} // prevent negative price
-                                                                    // console.log("addtoCart", finalPrice);
-
-                                                                    // console.log("Base Price:", basePrice);
-                                                                    // console.log("Discount Amount:", discountAmount);
-                                                                    // console.log("Total Final Price:", finalPrice);
-
-        
+            finalPrice = 0;
+        } // prevent negative price
         
         //find or create the user's cart
         let userId = req.session.user?._id || req.session.passport?._id ;
-
-        console.log("add to cart session", req.session.passport?._id);
-        
         
         if (!userId) {
       return res.status(401).json({ message: "User not logged in" });
@@ -227,7 +210,7 @@ const addToCart = async(req, res) =>{
         return res.status(200).json({message: "Product added to cart", cart});
      
     } catch (error) {
-       console.error(error);
+       console.error("Error Loading Cart", error);
        return res.status(500).json({ error: "Server Error"}); 
     }
 };

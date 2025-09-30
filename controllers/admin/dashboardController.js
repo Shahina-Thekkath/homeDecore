@@ -45,8 +45,6 @@ const loadDashboard = async (req, res) =>{
          }
       }
 
-      console.log("dashboard", totalSalesDueValue, salesIncrease, salesDecrease, thisMonthSalesValue, lastMonthSalesValue);
-
       const recentProducts = await Product.find().sort({createdAt: -1}).limit(5);
 
       const topProducts = await Order.aggregate([

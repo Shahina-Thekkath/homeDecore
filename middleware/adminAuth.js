@@ -1,13 +1,13 @@
 const isLogin = async (req,res,next)=>{
     try {
         const admin = req.session.admin
-        
-
+       
         if(admin){
             next();
         }else{
             res.redirect('/admin');
         }
+        
     } catch (error) {
         console.log("Islogin middleware error",error.message);
     }

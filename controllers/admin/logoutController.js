@@ -9,17 +9,12 @@ try {
             res.redirect('/admin');
         },1500);
         
-       }
-   
-    
+       } 
     } catch (error) {
 
-        console.log("unexpected error during logout", error);
+        console.error("unexpected error during logout", error);
         res.redirect("/pageerror");
-        
-    }
-
-   
+    } 
 }
 
 module.exports = {logout}

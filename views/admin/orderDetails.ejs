@@ -434,7 +434,7 @@
                                             <td
                                                 style="padding: 10px;vertical-align: top; display: flex;align-items: center;">
                                                 <% let img = product.productId.image[0] %>
-                                                <img src="<%= img.startsWith('http') ? img : '/admin-assets/product2/' + img %>" 
+                                                <img src="<%= img.url %>" 
                                                     alt="img" class="me-2"
                                                     style="width:40px;height:40px;">
                                                 <%= product.productId.name %>
