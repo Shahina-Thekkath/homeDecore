@@ -1345,7 +1345,7 @@
                                         <a href="/"><i class="fas fa-home"></i></a></li>
                                     <li>
 
-                                        <a href="wishlist.html"><i class="far fa-heart"></i></a></li>
+                                        <a href="/wishlist"><i class="far fa-heart"></i></a></li>
                                     <li class="has-dropdown">
 
                                         <a class="mini-cart-shop-link" href="/cart"><i class="fas fa-shopping-bag"></i>
@@ -1547,7 +1547,7 @@
                                                     <!--====== Radio Box ======-->
                                                     <div class="radio-box">
 
-                                                        <input type="radio" id="cash-on-delivery" name="payment" value="Cash on Delivery" required>
+                                                        <input id='cod' type="radio" id="cash-on-delivery" name="payment" value="Cash on Delivery" required>
                                                         <div class="radio-box__state radio-box__state--primary">
 
                                                             <label class="radio-box__label" for="cash-on-delivery">Cash on Delivery</label></div>
@@ -1666,7 +1666,7 @@
                                                         </tr>
                                                         <tr>
                                                             <td>GRAND TOTAL</td>
-                                                            <td>₹<%= grandTotal.toFixed(2) %></td>
+                                                            <td id="grand-total">₹<%= grandTotal.toFixed(2) %></td>
                                                         </tr>
                                                     </tbody>
                                                 </table>
@@ -2220,6 +2220,20 @@
     
 
     <script>
+ function toggleCODBasedOnTotal() {
+    let grandTotalText = $('#grand-total').text().replace(/[₹,]/g, '');
+    let grandTotal = parseFloat(grandTotalText) || 0;
+
+    if(grandTotal > 1000) {
+        $('#cod').prop('disabled', true).prop('checked', false);
+    } else {
+        $('#cod').prop('disabled', false);
+    }
+ }
+
+$(document).ready(function() {
+
+    toggleCODBasedOnTotal();
 
    // Save Selected Address
 
@@ -2432,9 +2446,8 @@
 
 });
 
-    </script>
-    <script>
-$(document).ready(function() {
+ 
+
     
     // Handle copy button click
     $('.btn-copy').on('click', function() {
@@ -2511,12 +2524,11 @@ $(document).ready(function() {
     });
 }
     
-});
-</script>
 
-<script>
+
+
     // AJAX handler for coupon code application 
-$(document).ready(function() {
+
     // Handle coupon form submission - using the actual class from your HTML
     $('.c-f__form').on('submit', function(e) {
         e.preventDefault();
@@ -2643,6 +2655,8 @@ $(document).ready(function() {
         
         // Add animation effect
         // summaryTable.fadeOut(200).fadeIn(400);
+
+        toggleCODBasedOnTotal();
     }
     
     // Function to update buttons after coupon is applied
@@ -2771,9 +2785,7 @@ function showLoadingAlert() {
         }
     });
 }
-</script>
 
-<script>
  $(document).on('click', '#removeCouponBtn', function () {
     console.log("inside remove");
     
@@ -2786,6 +2798,8 @@ function showLoadingAlert() {
           $('.applied-coupon-info').remove(); // Remove coupon box
           $('.discount-row').remove();
           $('#grand-total').text(`₹${response.data.grandTotal}`);
+
+          toggleCODBasedOnTotal();
 
           //  Restore the coupon form to its original state
                 const buttonContainer = $('.c-f__form .u-s-m-b-15').last();

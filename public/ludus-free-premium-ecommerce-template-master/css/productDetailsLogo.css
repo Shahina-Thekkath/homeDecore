@@ -1,0 +1,13 @@
+.main-logo {
+    filter: drop-shadow(4px 4px 12px rgba(222, 222, 218, 0.067));
+    transform: scale(1.05);
+}
+
+.main-logo svg {
+    fill: #131200 !important; 
+    filter: brightness(1.3) contrast(1.2) drop-shadow(0 0 8px rgba(201, 168, 3, 0.8));
+}
+
+.main-logo svg path {
+    fill: #a30f0f !important;
+}

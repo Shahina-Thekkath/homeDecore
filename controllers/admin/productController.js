@@ -98,8 +98,8 @@ const getAllProducts = async (req, res) => {
   try {
     const productData =  await Product.find({isBlocked: false}).populate("categoryId", "name");
 
-    const categories = await Category.find({}, 'name');
-    const productNames = await Product.find({}, 'name');
+    const categories = await Category.find({isBlocked: false}, 'name');
+    const productNames = await Product.find({isBlocked: false}, 'name');
 
     res.render("productList", { 
                 data: productData,
@@ -220,13 +220,15 @@ const updateProduct = async (req, res) => {
 const removeProduct  = async (req, res) => {
     try {
         const productId = req.params.id;
+        console.log("removeProduct", productId);
         
-        const product = await Product.findByIdAndUpdate(productId, { isBlocked: true }, {new: true});
         
+        const product = await Product.findById(productId);
+        if (!product) return res.status(404).json({ success: false, message: 'Not found' });
 
-        if (!product) {
-            return res.status(404).json({ success: false, message: 'Product not found'});
-        }
+        product.isBlocked = !product.isBlocked; // toggle
+        await product.save();
+
         res.status(200).json({ success: true, message: 'Product successfully deleted' });
     } catch (error) {
         console.error('Internal server error', error);
@@ -238,11 +240,11 @@ const removeProduct  = async (req, res) => {
 const filterProducts = async (req, res) =>{
   try {
   
-         const {product = null, category = null, priceOrder, other} = req.query;
+         const {product = null, category = null, other} = req.query;
          
 
          const filter = {};
-         if(product) filter.name = product;
+         if(product) filter.name = { $regex: product, $options: 'i' };
          if(category) filter.categoryId = category;
          
 
@@ -252,45 +254,31 @@ const filterProducts = async (req, res) =>{
  
           let query = {};
            switch(other){
-            case 'asc':
+            case 'desc':
                     query = { price: 1 };
                     break;
-              case 'desc':
+              case 'asc':
                       query = { price: -1 };
                       break;
                           
              case 'alphabetical-asc':
-                               query = { name: 1 };
-                               break;
-             case 'alphabetical-desc':
                                query = { name: -1 };
                                break;
+             case 'alphabetical-desc':
+                               query = { name: 1 };
+                               break;
              case 'new-arrivals':
-                                 query = { createdAt: -1 };
+                                 query = { createdAt: 1 };
                                  break;
             default:
                     query = {};
                            
- }  
-         
+ }    
 
          let products = await Product.find(filter).sort(query).populate('categoryId');
-         
-        
-          
-                // const products = await query.exec();
                 
                 
                  res.status(200).json({success: true, data: products});
-
-                // res.render('partials/productRows', { data: products }, (err, html) => {
-                //   if (err) {
-                //     console.error('Partial render error:', err);
-                //     return res.status(500).send('Error rendering filtered products');
-                //   }
-                //   res.(html); // Send back only the rendered rows
-                // });
-      
 
   } catch (error) {
        console.error('Error filtering products: ', error);

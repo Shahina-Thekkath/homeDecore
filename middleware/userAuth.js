@@ -40,17 +40,24 @@ const sessionVerify = async (req, res, next) =>{
         const user = req.session.user
         const passport = req.session.passport || req.session.passport?.user;
 
+        console.log("sessionVerify", user, passport);
+        
+
         if(user||passport){
             console.log("passport", passport);
             
             next();
         }else{
-            res.redirect('/login');
+          if (req.xhr) {
+            return res.status(401).json({ success: false, error: "Please login first" });
+          }
+          // Otherwise, normal redirect
+          return res.redirect('/login');
         }
     } catch (error) {
-        console.log("IsLogin middleware error",error.message);
+        console.log("IsLogin middleware error",error);
     }
-}
+};
 
 
 

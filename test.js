@@ -1,76 +1,2851 @@
-// Reusable AJAX function
-function loadReport(page = 1) {
-  const fromDate = $("#fromDate").val();
-  const toDate = $("#toDate").val();
-  const filterType = $("#filterType").val();
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link href="images/favicon.png" rel="shortcut icon">
+    <title>Ludus - Electronics, Apparel, Computers, Books, DVDs & more</title>
 
-  $.ajax({
-    url: "/admin/sales-report/data",
-    method: "GET", // your controller is GET, not POST
-    data: { 
-      page: page,           // pagination page
-      type: filterType,     // daily/weekly/monthly/custom
-      startDate: fromDate,  // only used if custom
-      endDate: toDate 
-    },
-    success: function (data) {
-      if (!data.success) {
-        Swal.fire({ icon: "error", title: "Failed to load report" });
-        return;
-      }
+    <!--====== Google Font ======-->
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600,700,800" rel="stylesheet">
 
-      // 👉 1. Fill summary data
-      $("#totalOrders").text(data.report.totalOrders);
-      $("#totalAmount").text(data.report.totalAmount);
-      $("#totalOfferDiscount").text(data.report.totalOfferDiscount);
-      $("#totalCouponDiscount").text(data.report.totalCouponDiscount);
+    <!--====== Vendor Css ======-->
+    <link rel="stylesheet" href="css/vendor.css">
 
-      // 👉 2. Fill orders table
-      const tbody = $("#ordersTable tbody");
-      tbody.empty();
-      if (data.orders.length === 0) {
-        tbody.append(`<tr><td colspan="5" class="text-center">No orders found</td></tr>`);
-      } else {
-        data.orders.forEach((order) => {
-          tbody.append(`
-            <tr>
-              <td>${new Date(order.createdAt).toLocaleDateString()}</td>
-              <td>₹${order.salesAmount}</td>
-              <td>₹${order.discountAmount}</td>
-              <td>₹${order.couponDiscount}</td>
-              <td>₹${order.netSales}</td>
-            </tr>
-          `);
+    <!--====== Utility-Spacing ======-->
+    <link rel="stylesheet" href="css/utility.css">
+
+    <!--====== App ======-->
+    <link rel="stylesheet" href="css/app.css">
+
+    <!--====== coupon modal style ======-->
+    <link rel="stylesheet" href="css/couponModal.css">
+   
+    <!--====== find coupon css ======-->
+    <style>
+        .u-s-p-b-60 { padding-bottom: 60px; }
+        .u-s-m-b-16 { margin-bottom: 16px; }
+        .u-s-m-b-15 { margin-bottom: 15px; }
+        .msg { 
+            background: #fff8e1; 
+            padding: 20px; 
+            border-radius: 8px; 
+            margin-bottom: 15px;
+            border-left: 4px solid #ff6b35;
+            box-shadow: 0 2px 8px rgba(255, 107, 53, 0.1);
+        }
+        .msg__text { 
+            font-size: 16px; 
+            color: #333;
+            display: block;
+            margin-bottom: 10px;
+        }
+        .gl-link { 
+            color: #ff6b35; 
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .gl-link:hover { 
+            color: #e55a2b; 
+            text-decoration: underline;
+        }
+        .gl-text { 
+            color: #666; 
+            font-size: 14px;
+            display: block;
+        }
+        .input-text {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        .input-text--primary-style:focus {
+            border-color: #ff6b35;
+            outline: none;
+            box-shadow: 0 0 0 0.2rem rgba(255, 107, 53, 0.25);
+        }
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            font-weight: 600;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .btn--e-transparent-brand-b-2 {
+            background-color: #ff6b35;
+            color: white;
+            border: 2px solid #ff6b35;
+        }
+        .btn--e-transparent-brand-b-2:hover {
+            background-color: #e55a2b;
+            border-color: #e55a2b;
+        }
+        .coupon-finder {
+            background: linear-gradient(135deg, #ff6b35 0%, #ffa500 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);
+        }
+        .coupon-finder__text {
+            font-size: 16px;
+            margin-bottom: 12px;
+            display: block;
+            font-weight: 500;
+        }
+        .coupon-finder__link {
+            color: #ff6b35;
+            background: #fff;
+            padding: 10px 20px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-block;
+            transition: all 0.3s ease;
+            border: 2px solid #fff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .coupon-finder__link:hover {
+            background: #fff3e0;
+            color: #e55a2b;
+            text-decoration: none;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        .c-f {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+        }
+        .discount-amount {
+            padding-right: 12px; /* Moves text away from right edge */
+        }
+    </style>
+
+</head>
+<body class="config">
+    <div class="preloader is-active">
+        <div class="preloader__wrap">
+
+            <img class="preloader__img" src="images/preloader.png" alt=""></div>
+    </div>
+
+    <!--====== Main App ======-->
+    <div id="app">
+
+        <!--====== Main Header ======-->
+        <header class="header--style-1 header--box-shadow">
+
+            <!--====== Nav 1 ======-->
+            <nav class="primary-nav primary-nav-wrapper--border">
+                <div class="container">
+
+                    <!--====== Primary Nav ======-->
+                    <div class="primary-nav">
+
+                        <!--====== Main Logo ======-->
+
+                        <a class="main-logo" href="index.html">
+
+                            <img src="images/logo/logo-1.png" alt=""></a>
+                        <!--====== End - Main Logo ======-->
+
+
+                        <!--====== Search Form ======-->
+                        <form class="main-form">
+
+                            <label for="main-search"></label>
+
+                            <input class="input-text input-text--border-radius input-text--style-1" type="text" id="main-search" placeholder="Search">
+
+                            <button class="btn btn--icon fas fa-search main-search-button" type="submit"></button></form>
+                        <!--====== End - Search Form ======-->
+
+
+                        <!--====== Dropdown Main plugin ======-->
+                        <div class="menu-init" id="navigation">
+
+                            <button class="btn btn--icon toggle-button fas fa-cogs" type="button"></button>
+
+                            <!--====== Menu ======-->
+                            <div class="ah-lg-mode">
+
+                                <span class="ah-close">✕ Close</span>
+
+                                <!--====== List ======-->
+                               <ul class="ah-list ah-list--design1 ah-list--link-color-secondary">
+                                    <li class="has-dropdown" data-tooltip="tooltip" data-placement="left" title="Account">
+
+                                        <%if(locals.user){%>
+                                                <a href="/profile"><i ><%=locals.user.name%></i></a>
+
+                                            <%}else{%>
+
+                                                <a><i class="far fa-user-circle"></i></a>
+
+                                                <%}%>
+
+                                        <!--====== Dropdown ======-->
+
+                                        <span class="js-menu-toggle"></span>
+                                        <ul style="width:120px">
+
+                                           
+                                           
+                                                    <%if(locals.user){%>
+                                                        <li>
+                                                           <a href="/profile"><i><%=locals.user.name%></i>
+
+                                                            </a>
+                                                        </li> 
+                                                           
+                                                   
+                                                       
+                                                        <li>
+
+                                                            <a href="/logout"><i class="fas fa-lock-open u-s-m-r-6"></i>
+        
+                                                                <span>Logout</span></a>
+                                                        </li>
+                                                    <%}else{%>
+                                                        <li>
+
+                                                            <a href="/signup"><i class="fas fa-user-plus u-s-m-r-6"></i>
+        
+                                                                <span>Signup</span></a>
+                                                        </li>
+                                                        <li>
+
+                                                            <a href="/login"><i class="fas fa-lock u-s-m-r-6"></i>
+        
+                                                            <span>Login</span></a>
+                                                        </li>
+                                                    <%}%>
+                                        </ul>
+                                        <!--====== End - Dropdown ======-->
+                                    </li>
+                                    <li class="has-dropdown" data-tooltip="tooltip" data-placement="left" title="Settings">
+
+                                        <a><i class="fas fa-user-cog"></i></a>
+
+                                        <!--====== Dropdown ======-->
+
+                                        <span class="js-menu-toggle"></span>
+                                        <ul style="width:120px">
+                                            <li class="has-dropdown has-dropdown--ul-right-100">
+
+                                                <a>Language<i class="fas fa-angle-down u-s-m-l-6"></i></a>
+
+                                                <!--====== Dropdown ======-->
+
+                                                <span class="js-menu-toggle"></span>
+                                                <ul style="width:120px">
+                                                    <li>
+
+                                                        <a class="u-c-brand">ENGLISH</a></li>
+                                                    <li>
+
+                                                        <a>ARABIC</a></li>
+                                                    <li>
+
+                                                        <a>FRANCAIS</a></li>
+                                                    <li>
+
+                                                        <a>ESPANOL</a></li>
+                                                </ul>
+                                                <!--====== End - Dropdown ======-->
+                                            </li>
+                                            <li class="has-dropdown has-dropdown--ul-right-100">
+
+                                                <a>Currency<i class="fas fa-angle-down u-s-m-l-6"></i></a>
+
+                                                <!--====== Dropdown ======-->
+
+                                                <span class="js-menu-toggle"></span>
+                                                <ul style="width:225px">
+                                                    <li>
+
+                                                        <a class="u-c-brand">$ - US DOLLAR</a></li>
+                                                    <li>
+
+                                                        <a>£ - BRITISH POUND STERLING</a></li>
+                                                    <li>
+
+                                                        <a>€ - EURO</a></li>
+                                                </ul>
+                                                <!--====== End - Dropdown ======-->
+                                            </li>
+                                        </ul>
+                                        <!--====== End - Dropdown ======-->
+                                    </li>
+                                    <li data-tooltip="tooltip" data-placement="left" title="Contact">
+
+                                        <a href="tel:+0900901904"><i class="fas fa-phone-volume"></i></a></li>
+                                    <li data-tooltip="tooltip" data-placement="left" title="Mail">
+
+                                        <a href="mailto:contact@domain.com"><i class="far fa-envelope"></i></a></li>
+                                </ul>
+                                <!--====== End - List ======-->
+                            </div>
+                            <!--====== End - Menu ======-->
+                        </div>
+                        <!--====== End - Dropdown Main plugin ======-->
+                    </div>
+                    <!--====== End - Primary Nav ======-->
+                </div>
+            </nav>
+            <!--====== End - Nav 1 ======-->
+
+
+            <!--====== Nav 2 ======-->
+            <nav class="secondary-nav-wrapper">
+                <div class="container">
+
+                    <!--====== Secondary Nav ======-->
+                    <div class="secondary-nav">
+
+                        <!--====== Dropdown Main plugin ======-->
+                        <div class="menu-init" id="navigation1">
+
+                            <button class="btn btn--icon toggle-mega-text toggle-button" type="button">M</button>
+
+                            <!--====== Menu ======-->
+                            <div class="ah-lg-mode">
+
+                                <span class="ah-close">✕ Close</span>
+
+                                <!--====== List ======-->
+                                <ul class="ah-list">
+                                    <li class="has-dropdown">
+
+                                        <span class="mega-text">M</span>
+
+                                        <!--====== Mega Menu ======-->
+
+                                        <span class="js-menu-toggle"></span>
+                                        <div class="mega-menu">
+                                            <div class="mega-menu-wrap">
+                                                <div class="mega-menu-list">
+                                                    <ul>
+                                                        <li class="js-active">
+
+                                                            <a href="shop-side-version-2.html"><i class="fas fa-tv u-s-m-r-6"></i>
+
+                                                                <span>Electronics</span></a>
+
+                                                            <span class="js-menu-toggle js-toggle-mark"></span></li>
+                                                        <li>
+
+                                                            <a href="shop-side-version-2.html"><i class="fas fa-female u-s-m-r-6"></i>
+
+                                                                <span>Women's Clothing</span></a>
+
+                                                            <span class="js-menu-toggle"></span></li>
+                                                        <li>
+
+                                                            <a href="shop-side-version-2.html"><i class="fas fa-male u-s-m-r-6"></i>
+
+                                                                <span>Men's Clothing</span></a>
+
+                                                            <span class="js-menu-toggle"></span></li>
+                                                        <li>
+
+                                                            <a href="index.html"><i class="fas fa-utensils u-s-m-r-6"></i>
+
+                                                                <span>Food & Supplies</span></a>
+
+                                                            <span class="js-menu-toggle"></span></li>
+                                                        <li>
+
+                                                            <a href="index.html"><i class="fas fa-couch u-s-m-r-6"></i>
+
+                                                                <span>Furniture & Decor</span></a>
+
+                                                            <span class="js-menu-toggle"></span></li>
+                                                        <li>
+
+                                                            <a href="index.html"><i class="fas fa-football-ball u-s-m-r-6"></i>
+
+                                                                <span>Sports & Game</span></a>
+
+                                                            <span class="js-menu-toggle"></span></li>
+                                                        <li>
+
+                                                            <a href="index.html"><i class="fas fa-heartbeat u-s-m-r-6"></i>
+
+                                                                <span>Beauty & Health</span></a>
+
+                                                            <span class="js-menu-toggle"></span></li>
+                                                    </ul>
+                                                </div>
+
+                                                <!--====== Electronics ======-->
+                                                <div class="mega-menu-content js-active">
+
+                                                    <!--====== Mega Menu Row ======-->
+                                                    <div class="row">
+                                                        <div class="col-lg-3">
+                                                            <ul>
+                                                                <li class="mega-list-title">
+
+                                                                    <a href="shop-side-version-2.html">3D PRINTER & SUPPLIES</a></li>
+                                                                <li>
+
+                                                                    <a href="shop-side-version-2.html">3d Printer</a></li>
+                                                                <li>
+
+                                                                    <a href="shop-side-version-2.html">3d Printing Pen</a></li>
+                                                                <li>
+
+                                                                    <a href="shop-side-version-2.html">3d Printing Accessories</a></li>
+                                                                <li>
+
+                                                                    <a href="shop-side-version-2.html">3d Printer Module Board</a></li>
+                                                            </ul>
+                                                        </div>
+                                                        <div class="col-lg-3">
+                                                            <ul>
+                                                                <li class="mega-list-title">
+
+                                                                    <a href="shop-side-version-2.html">HOME AUDIO & VIDEO</a></li>
+                                                                <li>
+
+                                                                    <a href="shop-side-version-2.html">TV Boxes</a></li>
+                                                                <li>
+
+                                                                    <a href="shop-side-version-2.html">TC Receiver & Accessories</a></li>
+                                                                <li>
+
+                                                                    <a href="shop-side-version-2.html">Display Dongle</a></li>
+                                                                <li>
+
+                                                                    <a href="shop-side-version-2.html">Home Theater System</a></li>
+                                                            </ul>
+                                                        </div>
+                                                        <div class="col-lg-3">
+                                                            <ul>
+                                                                <li class="mega-list-title">
+
+                                                                    <a href="shop-side-version-2.html">MEDIA PLAYERS</a></li>
+                                                                <li>
+
+                                                                    <a href="shop-side-version-2.html">Earphones</a></li>
+                                                                <li>
+
+                                                                    <a href="shop-side-version-2.html">Mp3 Players</a></li>
+                                                                <li>
+
+                                                                    <a href="shop-side-version-2.html">Speakers & Radios</a></li>
+                                                                <li>
+
+                                                                    <a href="shop-side-version-2.html">Microphones</a></li>
+                                                            </ul>
+                                                        </div>
+                                                        <div class="col-lg-3">
+                                                            <ul>
+                                                                <li class="mega-list-title">
+
+                                                                    <a href="shop-side-version-2.html">VIDEO GAME ACCESSORIES</a></li>
+                                                                <li>
+
+                                                                    <a href="shop-side-version-2.html">Nintendo Video Games Accessories</a></li>
+                                                                <li>
+
+                                                                    <a href="shop-side-version-2.html">Sony Video Games Accessories</a></li>
+                                                                <li>
+
+                                                                    <a href="shop-side-version-2.html">Xbox Video Games Accessories</a></li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                    <!--====== End - Mega Menu Row ======-->
+                                                    <br>
+
+                                                    <!--====== Mega Menu Row ======-->
+                                                    <div class="row">
+                                                        <div class="col-lg-3">
+                                                            <ul>
+                                                                <li class="mega-list-title">
+
+                                                                    <a href="shop-side-version-2.html">SECURITY & PROTECTION</a></li>
+                                                                <li>
+
+                                                                    <a href="shop-side-version-2.html">Security Cameras</a></li>
+                                                                <li>
+
+                                                                    <a href="shop-side-version-2.html">Alarm System</a></li>
+                                                                <li>
+
+                                                                    <a href="shop-side-version-2.html">Security Gadgets</a></li>
+                                                                <li>
+
+                                                                    <a href="shop-side-version-2.html">CCTV Security & Accessories</a></li>
+                                                            </ul>
+                                                        </div>
+                                                        <div class="col-lg-3">
+                                                            <ul>
+                                                                <li class="mega-list-title">
+
+                                                                    <a href="shop-side-version-2.html">PHOTOGRAPHY & CAMERA</a></li>
+                                                                <li>
+
+                                                                    <a href="shop-side-version-2.html">Digital Cameras</a></li>
+                                                                <li>
+
+                                                                    <a href="shop-side-version-2.html">Sport Camera & Accessories</a></li>
+                                                                <li>
+
+                                                                    <a href="shop-side-version-2.html">Camera Accessories</a></li>
+                                                                <li>
+
+                                                                    <a href="shop-side-version-2.html">Lenses & Accessories</a></li>
+                                                            </ul>
+                                                        </div>
+                                                        <div class="col-lg-3">
+                                                            <ul>
+                                                                <li class="mega-list-title">
+
+                                                                    <a href="shop-side-version-2.html">ARDUINO COMPATIBLE</a></li>
+                                                                <li>
+
+                                                                    <a href="shop-side-version-2.html">Raspberry Pi & Orange Pi</a></li>
+                                                                <li>
+
+                                                                    <a href="shop-side-version-2.html">Module Board</a></li>
+                                                                <li>
+
+                                                                    <a href="shop-side-version-2.html">Smart Robot</a></li>
+                                                                <li>
+
+                                                                    <a href="shop-side-version-2.html">Board Kits</a></li>
+                                                            </ul>
+                                                        </div>
+                                                        <div class="col-lg-3">
+                                                            <ul>
+                                                                <li class="mega-list-title">
+
+                                                                    <a href="shop-side-version-2.html">DSLR Camera</a></li>
+                                                                <li>
+
+                                                                    <a href="shop-side-version-2.html">Nikon Cameras</a></li>
+                                                                <li>
+
+                                                                    <a href="shop-side-version-2.html">Canon Camera</a></li>
+                                                                <li>
+
+                                                                    <a href="shop-side-version-2.html">Sony Camera</a></li>
+                                                                <li>
+
+                                                                    <a href="shop-side-version-2.html">DSLR Lenses</a></li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                    <!--====== End - Mega Menu Row ======-->
+                                                    <br>
+
+                                                    <!--====== Mega Menu Row ======-->
+                                                    <div class="row">
+                                                        <div class="col-lg-3">
+                                                            <ul>
+                                                                <li class="mega-list-title">
+
+                                                                    <a href="shop-side-version-2.html">NECESSARY ACCESSORIES</a></li>
+                                                                <li>
+
+                                                                    <a href="shop-side-version-2.html">Flash Cards</a></li>
+                                                                <li>
+
+                                                                    <a href="shop-side-version-2.html">Memory Cards</a></li>
+                                                                <li>
+
+                                                                    <a href="shop-side-version-2.html">Flash Pins</a></li>
+                                                                <li>
+
+                                                                    <a href="shop-side-version-2.html">Compact Discs</a></li>
+                                                            </ul>
+                                                        </div>
+                                                        <div class="col-lg-9 mega-image">
+                                                            <div class="mega-banner">
+
+                                                                <a class="u-d-block" href="shop-side-version-2.html">
+
+                                                                    <img class="u-img-fluid u-d-block" src="images/banners/banner-mega-0.jpg" alt=""></a></div>
+                                                        </div>
+                                                    </div>
+                                                    <!--====== End - Mega Menu Row ======-->
+                                                </div>
+                                                <!--====== End - Electronics ======-->
+
+
+                                                <!--====== Women ======-->
+                                                <div class="mega-menu-content">
+
+                                                    <!--====== Mega Menu Row ======-->
+                                                    <div class="row">
+                                                        <div class="col-lg-6 mega-image">
+                                                            <div class="mega-banner">
+
+                                                                <a class="u-d-block" href="shop-side-version-2.html">
+
+                                                                    <img class="u-img-fluid u-d-block" src="images/banners/banner-mega-1.jpg" alt=""></a></div>
+                                                        </div>
+                                                        <div class="col-lg-6 mega-image">
+                                                            <div class="mega-banner">
+
+                                                                <a class="u-d-block" href="shop-side-version-2.html">
+
+                                                                    <img class="u-img-fluid u-d-block" src="images/banners/banner-mega-2.jpg" alt=""></a></div>
+                                                        </div>
+                                                    </div>
+                                                    <!--====== End - Mega Menu Row ======-->
+                                                    <br>
+
+                                                    <!--====== Mega Menu Row ======-->
+                                                    <div class="row">
+                                                        <div class="col-lg-3">
+                                                            <ul>
+                                                                <li class="mega-list-title">
+
+                                                                    <a href="shop-side-version-2.html">HOT CATEGORIES</a></li>
+                                                                <li>
+
+                                                                    <a href="shop-side-version-2.html">Dresses</a></li>
+                                                                <li>
+
+                                                                    <a href="shop-side-version-2.html">Blouses & Shirts</a></li>
+                                                                <li>
+
+                                                                    <a href="shop-side-version-2.html">T-shirts</a></li>
+                                                                <li>
+
+                                                                    <a href="shop-side-version-2.html">Rompers</a></li>
+                                                            </ul>
+                                                        </div>
+                                                        <div class="col-lg-3">
+                                                            <ul>
+                                                                <li class="mega-list-title">
+
+                                                                    <a href="shop-side-version-2.html">INTIMATES</a></li>
+                                                                <li>
+
+                                                                    <a href="shop-side-version-2.html">Bras</a></li>
+                                                                <li>
+
+                                                                    <a href="shop-side-version-2.html">Brief Sets</a></li>
+                                                                <li>
+
+                                                                    <a href="shop-side-version-2.html">Bustiers & Corsets</a></li>
+                                                                <li>
+
+                                                                    <a href="shop-side-version-2.html">Panties</a></li>
+                                                            </ul>
+                                                        </div>
+                                                        <div class="col-lg-3">
+                                                            <ul>
+                                                                <li class="mega-list-title">
+
+                                                                    <a href="shop-side-version-2.html">WEDDING & EVENTS</a></li>
+                                                                <li>
+
+                                                                    <a href="shop-side-version-2.html">Wedding Dresses</a></li>
+                                                                <li>
+
+                                                                    <a href="shop-side-version-2.html">Evening Dresses</a></li>
+                                                                <li>
+
+                                                                    <a href="shop-side-version-2.html">Prom Dresses</a></li>
+                                                                <li>
+
+                                                                    <a href="shop-side-version-2.html">Flower Dresses</a></li>
+                                                            </ul>
+                                                        </div>
+                                                        <div class="col-lg-3">
+                                                            <ul>
+                                                                <li class="mega-list-title">
+
+                                                                    <a href="shop-side-version-2.html">BOTTOMS</a></li>
+                                                                <li>
+
+                                                                    <a href="shop-side-version-2.html">Skirts</a></li>
+                                                                <li>
+
+                                                                    <a href="shop-side-version-2.html">Shorts</a></li>
+                                                                <li>
+
+                                                                    <a href="shop-side-version-2.html">Leggings</a></li>
+                                                                <li>
+
+                                                                    <a href="shop-side-version-2.html">Jeans</a></li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                    <!--====== End - Mega Menu Row ======-->
+                                                    <br>
+
+                                                    <!--====== Mega Menu Row ======-->
+                                                    <div class="row">
+                                                        <div class="col-lg-3">
+                                                            <ul>
+                                                                <li class="mega-list-title">
+
+                                                                    <a href="shop-side-version-2.html">OUTWEAR</a></li>
+                                                                <li>
+
+                                                                    <a href="shop-side-version-2.html">Blazers</a></li>
+                                                                <li>
+
+                                                                    <a href="shop-side-version-2.html">Basics Jackets</a></li>
+                                                                <li>
+
+                                                                    <a href="shop-side-version-2.html">Trench</a></li>
+                                                                <li>
+
+                                                                    <a href="shop-side-version-2.html">Leather & Suede</a></li>
+                                                            </ul>
+                                                        </div>
+                                                        <div class="col-lg-3">
+                                                            <ul>
+                                                                <li class="mega-list-title">
+
+                                                                    <a href="shop-side-version-2.html">JACKETS</a></li>
+                                                                <li>
+
+                                                                    <a href="shop-side-version-2.html">Denim Jackets</a></li>
+                                                                <li>
+
+                                                                    <a href="shop-side-version-2.html">Trucker Jackets</a></li>
+                                                                <li>
+
+                                                                    <a href="shop-side-version-2.html">Windbreaker Jackets</a></li>
+                                                                <li>
+
+                                                                    <a href="shop-side-version-2.html">Leather Jackets</a></li>
+                                                            </ul>
+                                                        </div>
+                                                        <div class="col-lg-3">
+                                                            <ul>
+                                                                <li class="mega-list-title">
+
+                                                                    <a href="shop-side-version-2.html">ACCESSORIES</a></li>
+                                                                <li>
+
+                                                                    <a href="shop-side-version-2.html">Tech Accessories</a></li>
+                                                                <li>
+
+                                                                    <a href="shop-side-version-2.html">Headwear</a></li>
+                                                                <li>
+
+                                                                    <a href="shop-side-version-2.html">Baseball Caps</a></li>
+                                                                <li>
+
+                                                                    <a href="shop-side-version-2.html">Belts</a></li>
+                                                            </ul>
+                                                        </div>
+                                                        <div class="col-lg-3">
+                                                            <ul>
+                                                                <li class="mega-list-title">
+
+                                                                    <a href="shop-side-version-2.html">OTHER ACCESSORIES</a></li>
+                                                                <li>
+
+                                                                    <a href="shop-side-version-2.html">Bags</a></li>
+                                                                <li>
+
+                                                                    <a href="shop-side-version-2.html">Wallets</a></li>
+                                                                <li>
+
+                                                                    <a href="shop-side-version-2.html">Watches</a></li>
+                                                                <li>
+
+                                                                    <a href="shop-side-version-2.html">Sunglasses</a></li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                    <!--====== End - Mega Menu Row ======-->
+                                                    <br>
+
+                                                    <!--====== Mega Menu Row ======-->
+                                                    <div class="row">
+                                                        <div class="col-lg-9 mega-image">
+                                                            <div class="mega-banner">
+
+                                                                <a class="u-d-block" href="shop-side-version-2.html">
+
+                                                                    <img class="u-img-fluid u-d-block" src="images/banners/banner-mega-3.jpg" alt=""></a></div>
+                                                        </div>
+                                                        <div class="col-lg-3 mega-image">
+                                                            <div class="mega-banner">
+
+                                                                <a class="u-d-block" href="shop-side-version-2.html">
+
+                                                                    <img class="u-img-fluid u-d-block" src="images/banners/banner-mega-4.jpg" alt=""></a></div>
+                                                        </div>
+                                                    </div>
+                                                    <!--====== End - Mega Menu Row ======-->
+                                                </div>
+                                                <!--====== End - Women ======-->
+
+
+                                                <!--====== Men ======-->
+                                                <div class="mega-menu-content">
+
+                                                    <!--====== Mega Menu Row ======-->
+                                                    <div class="row">
+                                                        <div class="col-lg-4 mega-image">
+                                                            <div class="mega-banner">
+
+                                                                <a class="u-d-block" href="shop-side-version-2.html">
+
+                                                                    <img class="u-img-fluid u-d-block" src="images/banners/banner-mega-5.jpg" alt=""></a></div>
+                                                        </div>
+                                                        <div class="col-lg-4 mega-image">
+                                                            <div class="mega-banner">
+
+                                                                <a class="u-d-block" href="shop-side-version-2.html">
+
+                                                                    <img class="u-img-fluid u-d-block" src="images/banners/banner-mega-6.jpg" alt=""></a></div>
+                                                        </div>
+                                                        <div class="col-lg-4 mega-image">
+                                                            <div class="mega-banner">
+
+                                                                <a class="u-d-block" href="shop-side-version-2.html">
+
+                                                                    <img class="u-img-fluid u-d-block" src="images/banners/banner-mega-7.jpg" alt=""></a></div>
+                                                        </div>
+                                                    </div>
+                                                    <!--====== End - Mega Menu Row ======-->
+                                                    <br>
+
+                                                    <!--====== Mega Menu Row ======-->
+                                                    <div class="row">
+                                                        <div class="col-lg-3">
+                                                            <ul>
+                                                                <li class="mega-list-title">
+
+                                                                    <a href="shop-side-version-2.html">HOT SALE</a></li>
+                                                                <li>
+
+                                                                    <a href="shop-side-version-2.html">T-Shirts</a></li>
+                                                                <li>
+
+                                                                    <a href="shop-side-version-2.html">Tank Tops</a></li>
+                                                                <li>
+
+                                                                    <a href="shop-side-version-2.html">Polo</a></li>
+                                                                <li>
+
+                                                                    <a href="shop-side-version-2.html">Shirts</a></li>
+                                                            </ul>
+                                                        </div>
+                                                        <div class="col-lg-3">
+                                                            <ul>
+                                                                <li class="mega-list-title">
+
+                                                                    <a href="shop-side-version-2.html">OUTWEAR</a></li>
+                                                                <li>
+
+                                                                    <a href="shop-side-version-2.html">Hoodies</a></li>
+                                                                <li>
+
+                                                                    <a href="shop-side-version-2.html">Trench</a></li>
+                                                                <li>
+
+                                                                    <a href="shop-side-version-2.html">Parkas</a></li>
+                                                                <li>
+
+                                                                    <a href="shop-side-version-2.html">Sweaters</a></li>
+                                                            </ul>
+                                                        </div>
+                                                        <div class="col-lg-3">
+                                                            <ul>
+                                                                <li class="mega-list-title">
+
+                                                                    <a href="shop-side-version-2.html">BOTTOMS</a></li>
+                                                                <li>
+
+                                                                    <a href="shop-side-version-2.html">Casual Pants</a></li>
+                                                                <li>
+
+                                                                    <a href="shop-side-version-2.html">Cargo Pants</a></li>
+                                                                <li>
+
+                                                                    <a href="shop-side-version-2.html">Jeans</a></li>
+                                                                <li>
+
+                                                                    <a href="shop-side-version-2.html">Shorts</a></li>
+                                                            </ul>
+                                                        </div>
+                                                        <div class="col-lg-3">
+                                                            <ul>
+                                                                <li class="mega-list-title">
+
+                                                                    <a href="shop-side-version-2.html">UNDERWEAR</a></li>
+                                                                <li>
+
+                                                                    <a href="shop-side-version-2.html">Boxers</a></li>
+                                                                <li>
+
+                                                                    <a href="shop-side-version-2.html">Briefs</a></li>
+                                                                <li>
+
+                                                                    <a href="shop-side-version-2.html">Robes</a></li>
+                                                                <li>
+
+                                                                    <a href="shop-side-version-2.html">Socks</a></li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                    <!--====== End - Mega Menu Row ======-->
+                                                    <br>
+
+                                                    <!--====== Mega Menu Row ======-->
+                                                    <div class="row">
+                                                        <div class="col-lg-3">
+                                                            <ul>
+                                                                <li class="mega-list-title">
+
+                                                                    <a href="shop-side-version-2.html">JACKETS</a></li>
+                                                                <li>
+
+                                                                    <a href="shop-side-version-2.html">Denim Jackets</a></li>
+                                                                <li>
+
+                                                                    <a href="shop-side-version-2.html">Trucker Jackets</a></li>
+                                                                <li>
+
+                                                                    <a href="shop-side-version-2.html">Windbreaker Jackets</a></li>
+                                                                <li>
+
+                                                                    <a href="shop-side-version-2.html">Leather Jackets</a></li>
+                                                            </ul>
+                                                        </div>
+                                                        <div class="col-lg-3">
+                                                            <ul>
+                                                                <li class="mega-list-title">
+
+                                                                    <a href="shop-side-version-2.html">SUNGLASSES</a></li>
+                                                                <li>
+
+                                                                    <a href="shop-side-version-2.html">Pilot</a></li>
+                                                                <li>
+
+                                                                    <a href="shop-side-version-2.html">Wayfarer</a></li>
+                                                                <li>
+
+                                                                    <a href="shop-side-version-2.html">Square</a></li>
+                                                                <li>
+
+                                                                    <a href="shop-side-version-2.html">Round</a></li>
+                                                            </ul>
+                                                        </div>
+                                                        <div class="col-lg-3">
+                                                            <ul>
+                                                                <li class="mega-list-title">
+
+                                                                    <a href="shop-side-version-2.html">ACCESSORIES</a></li>
+                                                                <li>
+
+                                                                    <a href="shop-side-version-2.html">Eyewear Frames</a></li>
+                                                                <li>
+
+                                                                    <a href="shop-side-version-2.html">Scarves</a></li>
+                                                                <li>
+
+                                                                    <a href="shop-side-version-2.html">Hats</a></li>
+                                                                <li>
+
+                                                                    <a href="shop-side-version-2.html">Belts</a></li>
+                                                            </ul>
+                                                        </div>
+                                                        <div class="col-lg-3">
+                                                            <ul>
+                                                                <li class="mega-list-title">
+
+                                                                    <a href="shop-side-version-2.html">OTHER ACCESSORIES</a></li>
+                                                                <li>
+
+                                                                    <a href="shop-side-version-2.html">Bags</a></li>
+                                                                <li>
+
+                                                                    <a href="shop-side-version-2.html">Wallets</a></li>
+                                                                <li>
+
+                                                                    <a href="shop-side-version-2.html">Watches</a></li>
+                                                                <li>
+
+                                                                    <a href="shop-side-version-2.html">Tech Accessories</a></li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                    <!--====== End - Mega Menu Row ======-->
+                                                    <br>
+
+                                                    <!--====== Mega Menu Row ======-->
+                                                    <div class="row">
+                                                        <div class="col-lg-6 mega-image">
+                                                            <div class="mega-banner">
+
+                                                                <a class="u-d-block" href="shop-side-version-2.html">
+
+                                                                    <img class="u-img-fluid u-d-block" src="images/banners/banner-mega-8.jpg" alt=""></a></div>
+                                                        </div>
+                                                        <div class="col-lg-6 mega-image">
+                                                            <div class="mega-banner">
+
+                                                                <a class="u-d-block" href="shop-side-version-2.html">
+
+                                                                    <img class="u-img-fluid u-d-block" src="images/banners/banner-mega-9.jpg" alt=""></a></div>
+                                                        </div>
+                                                    </div>
+                                                    <!--====== End - Mega Menu Row ======-->
+                                                </div>
+                                                <!--====== End - Men ======-->
+
+
+                                                <!--====== No Sub Categories ======-->
+                                                <div class="mega-menu-content">
+                                                    <h5>No Categories</h5>
+                                                </div>
+                                                <!--====== End - No Sub Categories ======-->
+
+
+                                                <!--====== No Sub Categories ======-->
+                                                <div class="mega-menu-content">
+                                                    <h5>No Categories</h5>
+                                                </div>
+                                                <!--====== End - No Sub Categories ======-->
+
+
+                                                <!--====== No Sub Categories ======-->
+                                                <div class="mega-menu-content">
+                                                    <h5>No Categories</h5>
+                                                </div>
+                                                <!--====== End - No Sub Categories ======-->
+
+
+                                                <!--====== No Sub Categories ======-->
+                                                <div class="mega-menu-content">
+                                                    <h5>No Categories</h5>
+                                                </div>
+                                                <!--====== End - No Sub Categories ======-->
+                                            </div>
+                                        </div>
+                                        <!--====== End - Mega Menu ======-->
+                                    </li>
+                                </ul>
+                                <!--====== End - List ======-->
+                            </div>
+                            <!--====== End - Menu ======-->
+                        </div>
+                        <!--====== End - Dropdown Main plugin ======-->
+
+
+                        <!--====== Dropdown Main plugin ======-->
+                        <div class="menu-init" id="navigation2">
+
+                            <button class="btn btn--icon toggle-button fas fa-cog" type="button"></button>
+
+                            <!--====== Menu ======-->
+                            <div class="ah-lg-mode">
+
+                                <span class="ah-close">✕ Close</span>
+
+                                <!--====== List ======-->
+                                <ul class="ah-list ah-list--design2 ah-list--link-color-secondary">
+                                    <li>
+
+                                        <a href="shop-side-version-2.html">NEW ARRIVALS</a></li>
+                                    <li class="has-dropdown">
+
+                                        <a>PAGES<i class="fas fa-angle-down u-s-m-l-6"></i></a>
+
+                                        <!--====== Dropdown ======-->
+
+                                        <span class="js-menu-toggle"></span>
+                                        <ul style="width:170px">
+                                            <li class="has-dropdown has-dropdown--ul-left-100">
+
+                                                <a>Home<i class="fas fa-angle-down i-state-right u-s-m-l-6"></i></a>
+
+                                                <!--====== Dropdown ======-->
+
+                                                <span class="js-menu-toggle"></span>
+                                                <ul style="width:118px">
+                                                    <li>
+
+                                                        <a href="index.html">Home 1</a></li>
+                                                    <li>
+
+                                                        <a href="index-2.html">Home 2</a></li>
+                                                    <li>
+
+                                                        <a href="index-3.html">Home 3</a></li>
+                                                </ul>
+                                                <!--====== End - Dropdown ======-->
+                                            </li>
+                                            <li class="has-dropdown has-dropdown--ul-left-100">
+
+                                                <a>Account<i class="fas fa-angle-down i-state-right u-s-m-l-6"></i></a>
+
+                                                <!--====== Dropdown ======-->
+
+                                                <span class="js-menu-toggle"></span>
+                                                <ul style="width:200px">
+                                                    <li>
+
+                                                        <a href="signin.html">Signin / Already Registered</a></li>
+                                                    <li>
+
+                                                        <a href="signup.html">Signup / Register</a></li>
+                                                    <li>
+
+                                                        <a href="lost-password.html">Lost Password</a></li>
+                                                </ul>
+                                                <!--====== End - Dropdown ======-->
+                                            </li>
+                                            <li class="has-dropdown has-dropdown--ul-left-100">
+
+                                                <a href="dashboard.html">Dashboard<i class="fas fa-angle-down i-state-right u-s-m-l-6"></i></a>
+
+                                                <!--====== Dropdown ======-->
+
+                                                <span class="js-menu-toggle"></span>
+                                                <ul style="width:200px">
+                                                    <li class="has-dropdown has-dropdown--ul-left-100">
+
+                                                        <a href="dashboard.html">Manage My Account<i class="fas fa-angle-down i-state-right u-s-m-l-6"></i></a>
+
+                                                        <!--====== Dropdown ======-->
+
+                                                        <span class="js-menu-toggle"></span>
+                                                        <ul style="width:180px">
+                                                            <li>
+
+                                                                <a href="dash-edit-profile.html">Edit Profile</a></li>
+                                                            <li>
+
+                                                                <a href="dash-address-book.html">Edit Address Book</a></li>
+                                                            <li>
+
+                                                                <a href="dash-manage-order.html">Manage Order</a></li>
+                                                        </ul>
+                                                        <!--====== End - Dropdown ======-->
+                                                    </li>
+                                                    <li>
+
+                                                        <a href="dash-my-profile.html">My Profile</a></li>
+                                                    <li class="has-dropdown has-dropdown--ul-left-100">
+
+                                                        <a href="dash-address-book.html">Address Book<i class="fas fa-angle-down i-state-right u-s-m-l-6"></i></a>
+
+                                                        <!--====== Dropdown ======-->
+
+                                                        <span class="js-menu-toggle"></span>
+                                                        <ul style="width:180px">
+                                                            <li>
+
+                                                                <a href="dash-address-make-default.html">Address Make Default</a></li>
+                                                            <li>
+
+                                                                <a href="dash-address-add.html">Add New Address</a></li>
+                                                            <li>
+
+                                                                <a href="dash-address-edit.html">Edit Address Book</a></li>
+                                                        </ul>
+                                                        <!--====== End - Dropdown ======-->
+                                                    </li>
+                                                    <li>
+
+                                                        <a href="dash-track-order.html">Track Order</a></li>
+                                                    <li>
+
+                                                        <a href="dash-my-order.html">My Orders</a></li>
+                                                    <li>
+
+                                                        <a href="dash-payment-option.html">My Payment Options</a></li>
+                                                    <li>
+
+                                                        <a href="dash-cancellation.html">My Returns & Cancellations</a></li>
+                                                </ul>
+                                                <!--====== End - Dropdown ======-->
+                                            </li>
+                                            <li class="has-dropdown has-dropdown--ul-left-100">
+
+                                                <a>Empty<i class="fas fa-angle-down i-state-right u-s-m-l-6"></i></a>
+
+                                                <!--====== Dropdown ======-->
+
+                                                <span class="js-menu-toggle"></span>
+                                                <ul style="width:200px">
+                                                    <li>
+
+                                                        <a href="empty-search.html">Empty Search</a></li>
+                                                    <li>
+
+                                                        <a href="empty-cart.html">Empty Cart</a></li>
+                                                    <li>
+
+                                                        <a href="empty-wishlist.html">Empty Wishlist</a></li>
+                                                </ul>
+                                                <!--====== End - Dropdown ======-->
+                                            </li>
+                                            <li class="has-dropdown has-dropdown--ul-left-100">
+
+                                                <a>Product Details<i class="fas fa-angle-down i-state-right u-s-m-l-6"></i></a>
+
+                                                <!--====== Dropdown ======-->
+
+                                                <span class="js-menu-toggle"></span>
+                                                <ul style="width:200px">
+                                                    <li>
+
+                                                        <a href="product-detail.html">Product Details</a></li>
+                                                    <li>
+
+                                                        <a href="product-detail-variable.html">Product Details Variable</a></li>
+                                                    <li>
+
+                                                        <a href="product-detail-affiliate.html">Product Details Affiliate</a></li>
+                                                </ul>
+                                                <!--====== End - Dropdown ======-->
+                                            </li>
+                                            <li class="has-dropdown has-dropdown--ul-left-100">
+
+                                                <a>Shop Grid Layout<i class="fas fa-angle-down i-state-right u-s-m-l-6"></i></a>
+
+                                                <!--====== Dropdown ======-->
+
+                                                <span class="js-menu-toggle"></span>
+                                                <ul style="width:200px">
+                                                    <li>
+
+                                                        <a href="shop-grid-left.html">Shop Grid Left Sidebar</a></li>
+                                                    <li>
+
+                                                        <a href="shop-grid-right.html">Shop Grid Right Sidebar</a></li>
+                                                    <li>
+
+                                                        <a href="shop-grid-full.html">Shop Grid Full Width</a></li>
+                                                    <li>
+
+                                                        <a href="shop-side-version-2.html">Shop Side Version 2</a></li>
+                                                </ul>
+                                                <!--====== End - Dropdown ======-->
+                                            </li>
+                                            <li class="has-dropdown has-dropdown--ul-left-100">
+
+                                                <a>Shop List Layout<i class="fas fa-angle-down i-state-right u-s-m-l-6"></i></a>
+
+                                                <!--====== Dropdown ======-->
+
+                                                <span class="js-menu-toggle"></span>
+                                                <ul style="width:200px">
+                                                    <li>
+
+                                                        <a href="shop-list-left.html">Shop List Left Sidebar</a></li>
+                                                    <li>
+
+                                                        <a href="shop-list-right.html">Shop List Right Sidebar</a></li>
+                                                    <li>
+
+                                                        <a href="shop-list-full.html">Shop List Full Width</a></li>
+                                                </ul>
+                                                <!--====== End - Dropdown ======-->
+                                            </li>
+                                            <li>
+
+                                                <a href="cart.html">Cart</a></li>
+                                            <li>
+
+                                                <a href="wishlist.html">Wishlist</a></li>
+                                            <li>
+
+                                                <a href="checkout.html">Checkout</a></li>
+                                            <li>
+
+                                                <a href="faq.html">FAQ</a></li>
+                                            <li>
+
+                                                <a href="about.html">About us</a></li>
+                                            <li>
+
+                                                <a href="contact.html">Contact</a></li>
+                                            <li>
+
+                                                <a href="404.html">404</a></li>
+                                        </ul>
+                                        <!--====== End - Dropdown ======-->
+                                    </li>
+                                    <li class="has-dropdown">
+
+                                        <a>BLOG<i class="fas fa-angle-down u-s-m-l-6"></i></a>
+
+                                        <!--====== Dropdown ======-->
+
+                                        <span class="js-menu-toggle"></span>
+                                        <ul style="width:200px">
+                                            <li>
+
+                                                <a href="blog-left-sidebar.html">Blog Left Sidebar</a></li>
+                                            <li>
+
+                                                <a href="blog-right-sidebar.html">Blog Right Sidebar</a></li>
+                                            <li>
+
+                                                <a href="blog-sidebar-none.html">Blog Sidebar None</a></li>
+                                            <li>
+
+                                                <a href="blog-masonry.html">Blog Masonry</a></li>
+                                            <li>
+
+                                                <a href="blog-detail.html">Blog Details</a></li>
+                                        </ul>
+                                        <!--====== End - Dropdown ======-->
+                                    </li>
+                                    <li>
+
+                                        <a href="shop-side-version-2.html">VALUE OF THE DAY</a></li>
+                                    <li>
+
+                                        <a href="shop-side-version-2.html">GIFT CARDS</a></li>
+                                </ul>
+                                <!--====== End - List ======-->
+                            </div>
+                            <!--====== End - Menu ======-->
+                        </div>
+                        <!--====== End - Dropdown Main plugin ======-->
+
+
+                        <!--====== Dropdown Main plugin ======-->
+                        <div class="menu-init" id="navigation3">
+
+                            <button class="btn btn--icon toggle-button fas fa-shopping-bag toggle-button-shop" type="button"></button>
+
+                            <span class="total-item-round">2</span>
+
+                            <!--====== Menu ======-->
+                            <div class="ah-lg-mode">
+
+                                <span class="ah-close">✕ Close</span>
+
+                                <!--====== List ======-->
+                                <ul class="ah-list ah-list--design1 ah-list--link-color-secondary">
+                                    <li>
+
+                                        <a href="/"><i class="fas fa-home"></i></a></li>
+                                    <li>
+
+                                        <a href="wishlist.html"><i class="far fa-heart"></i></a></li>
+                                    <li class="has-dropdown">
+
+                                        <a class="mini-cart-shop-link" href="/cart"><i class="fas fa-shopping-bag"></i>
+
+                                            <span class="total-item-round">2</span></a>
+
+                                        <!--====== Dropdown ======-->
+
+                                        <span class="js-menu-toggle"></span>
+                                        
+                                        <!--====== End - Dropdown ======-->
+                                    </li>
+                                </ul>
+                                <!--====== End - List ======-->
+                            </div>
+                            <!--====== End - Menu ======-->
+                        </div>
+                        <!--====== End - Dropdown Main plugin ======-->
+                    </div>
+                    <!--====== End - Secondary Nav ======-->
+                </div>
+            </nav>
+            <!--====== End - Nav 2 ======-->
+        </header>
+        <!--====== End - Main Header ======-->
+
+
+        <!--====== App Content ======-->
+        <div class="app-content">
+
+            <!--====== Section 1 ======-->
+            <div class="u-s-p-y-60">
+
+                <!--====== Section Content ======-->
+                <div class="section__content">
+                    <div class="container">
+                        <div class="breadcrumb">
+                            <div class="breadcrumb__wrap">
+                                <ul class="breadcrumb__list">
+                                    <li class="has-separator">
+
+                                        <a href="/">Home</a></li>
+                                    <li class="is-marked">
+
+                                        <a href="/checkout">Checkout</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--====== End - Section 1 ======-->
+
+
+            <!--====== Section 2 ======-->
+            <div class="u-s-p-b-60">
+
+                <!--====== Section Content ======-->
+                <div class="section__content">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div id="checkout-msg-group">
+                                    <!-- Find Coupons Section -->
+                                    <div class="coupon-finder">
+                                        <span class="coupon-finder__text">Looking for savings? Don't miss out on our latest deals!</span>
+                                        <a class="coupon-finder__link" href="#" data-toggle="modal" data-target="#couponModal" >
+                                            Browse Available Coupons & Offers
+                                        </a>
+                                    </div>
+                                    
+                                    <div class="msg">
+
+                                        <span class="msg__text">Have a coupon?
+
+                                            <a class="gl-link" href="#have-coupon" data-toggle="collapse">Click Here to enter your code</a></span>
+                                        <div class="collapse" id="have-coupon" data-parent="#checkout-msg-group">
+                                            <div class="c-f u-s-m-b-16">
+
+                                                <span class="gl-text u-s-m-b-16">Enter your coupon code if you have one.</span>
+                                                <form class="c-f__form">
+                                                    <div class="u-s-m-b-16">
+                                                        <div class="u-s-m-b-15">
+
+                                                            <label for="coupon"></label>
+
+                                                            <input class="input-text input-text--primary-style" type="text" id="coupon" placeholder="Coupon Code"></div>
+                                                        <div class="u-s-m-b-15">
+
+                                                            <button class="btn btn--e-transparent-brand-b-2" type="submit">APPLY</button></div>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--====== End - Section Content ======-->
+            </div>
+            <!--====== End - Section 2 ======-->
+            
+            
+           
+
+                
+
+               
+                 
+
+            <!--====== Section 3 ======-->
+            <div class="u-s-p-b-60">
+
+                <!--====== Section Content ======-->
+                <div class="section__content">
+                    <div class="container">
+                        <div class="checkout-f">
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    
+                                    <div class="o-summary__section u-s-m-b-30">
+                                        <div class="o-summary__box">
+                                            <h1 class="checkout-f__h1">SHIPPING & BILLING</h1>
+                                            <div class="ship-b">
+
+                                                <span class="ship-b__text">Ship to:</span>
+                                                    <div class="ship-b__box u-s-m-b-10" id="ship-to-address">
+                                                        <% if (selectedAddress) { %>
+                                                            <p class="ship-b__p">
+                                                                <%= selectedAddress.name %>, <%= selectedAddress.address %>,
+                                                                <%= selectedAddress.locality %>, <%= selectedAddress.state %>,
+                                                                <%= selectedAddress.country %>, <%= selectedAddress.pincode %>
+                                                            </p>
+                                                        <% } else { %>
+                                                            <p class="ship-b__p text-danger">No address selected or available.</p>
+                                                        <% } %>
+
+                                                        
+                                                        <% if (selectedAddress) { %>
+                                                            <a class="ship-b__edit btn--e-transparent-platinum-b-2" data-modal="modal"
+                                                                data-modal-id="#edit-ship-address"
+                                                                href="/editAddress/<%= selectedAddress._id %>?from=checkout">Edit</a>
+                                                        <% } %>
+                                                            
+
+                                                    </div>
+
+                                                <div class="ship-b__box">
+
+                                                    <a href="/addAddress?from=checkout">
+                                                        <button class="btn btn--e-brand-b-2 custom-button" type="button">
+                                                          ADD NEW ADDRESS
+                                                        </button>
+                                                      </a>
+
+                                                    <a class="ship-b__edit btn--e-transparent-platinum-b-2" data-modal="modal" data-modal-id="#edit-ship-address">Change</a></div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+
+                                    <div class="o-summary__section u-s-m-b-30">
+                                        <div class="o-summary__box">
+                                            <h1 class="checkout-f__h1">PAYMENT INFORMATION</h1>
+                                            <form class="checkout-f__payment" id="orderForm" action="/order-save" method="POST">
+
+
+                                                <input type="hidden" name="grandTotal" value="<%= grandTotal %>">
+                                                <input type="hidden" name="discountAmount" value="<%= discountAmount || 0 %>">
+                                                <% cartItems.forEach((item, index) =>{%>
+                                                    <input type="hidden" name="cartItems[<%= index %>][id]" value="<%= item.productId._id %>">
+
+                                                   <input type="hidden" name="cartItems[<%= index %>][name]" value="<%= item.productId.name %>">
+                                                   <input type="hidden" name="cartItems[<%= index %>][price]" value="<%= item.price %>">
+                                                   <input type="hidden" name="cartItems[<%= index %>][discountedPrice]" value="<%= item.discountedPrice %>">
+                                                   <input type="hidden" name="cartItems[<%= index %>][quantity]" value="<%= item.quantity %>">
+                                                   <input type="hidden" name="cartItems[<%= index %>][subtotal]" value="<%= item.subtotal %>">
+                
+                
+                                                <% }) %>
+
+                                                <% if(selectedAddress){ %>
+                                                <input type="hidden" name="shippingAddress[name]" value="<%= selectedAddress.name %>">
+                                                <input type="hidden" name="shippingAddress[address]" value="<%= selectedAddress.address %>">
+                                                <input type="hidden" name="shippingAddress[locality]" value="<%= selectedAddress.locality %>">
+                                                <input type="hidden" name="shippingAddress[state]" value="<%= selectedAddress.state %>">
+                                                <input type="hidden" name="shippingAddress[country]" value="<%= selectedAddress.country %>">
+                                                <input type="hidden" name="shippingAddress[pincode]" value="<%= selectedAddress.pincode %>">
+                                                <% } %>
+                                                
+
+                
+
+                                                <div class="u-s-m-b-10">
+
+                                                    <!--====== Radio Box ======-->
+                                                    <div class="radio-box">
+
+                                                        <input type="radio" id="cash-on-delivery" name="payment" value="Cash on Delivery" required>
+                                                        <div class="radio-box__state radio-box__state--primary">
+
+                                                            <label class="radio-box__label" for="cash-on-delivery">Cash on Delivery</label></div>
+                                                    </div>
+                                                    <!--====== End - Radio Box ======-->
+
+                                                    <span class="gl-text u-s-m-t-6">Pay Upon Cash on delivery. (This service is only available for some countries)</span>
+                                                </div>
+                                                <div class="u-s-m-b-10">
+
+                                                    <!--====== Radio Box ======-->
+                                                    <div class="radio-box">
+
+                                                        <input type="radio" id="direct-bank-transfer" name="payment" value="Bank Transfer" required>
+                                                        <div class="radio-box__state radio-box__state--primary">
+
+                                                            <label class="radio-box__label" for="direct-bank-transfer">Direct Bank Transfer</label></div>
+                                                    </div>
+                                                    <!--====== End - Radio Box ======-->
+
+                                                    <span class="gl-text u-s-m-t-6">Make your payment directly into our bank account. Please use your Order ID as the payment reference. Your order will not be shipped until the funds have cleared in our account.</span>
+                                                </div>
+                                                
+                                                <div class="u-s-m-b-10">
+
+                                                    <!--====== Radio Box ======-->
+                                                    <div class="radio-box">
+
+                                                        <input type="radio" id="pay-with-card" name="payment" value="Credit/Debit Card" required>
+                                                        <div class="radio-box__state radio-box__state--primary">
+
+                                                            <label class="radio-box__label" for="pay-with-card">Pay With Credit / Debit Card</label></div>
+                                                    </div>
+                                                    <!--====== End - Radio Box ======-->
+
+                                                    <span class="gl-text u-s-m-t-6">International Credit Cards must be eligible for use within the United States.</span>
+                                                </div>
+                                                <div class="u-s-m-b-10">
+
+                                                    <!--====== Radio Box ======-->
+                                                    <div class="radio-box">
+
+                                                        <input type="radio" id="razorpay" name="payment" value="Razorpay" required>
+                                                        <div class="radio-box__state radio-box__state--primary">
+
+                                                            <label class="radio-box__label" for="razorpay">Razorpay</label></div>
+                                                    </div>
+                                                    <!--====== End - Radio Box ======-->
+
+                                                    <span class="gl-text u-s-m-t-6">When you click "Place Order" below we'll take you to Razorpay's site to set up your billing information.</span>
+                                                </div>
+                                                
+                                                <div>
+
+                                                 <button class="btn btn--e-brand-b-2" id="placeOrderBtn" type="submit" >PLACE ORDER</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+
+
+
+                                </div>
+                                <div class="col-lg-6">
+                                    <h1 class="checkout-f__h1">ORDER SUMMARY</h1>
+
+                                    <!--====== Order Summary ======-->
+                                    <div class="o-summary">
+                                        <div class="o-summary__section u-s-m-b-30">
+                                            <div class="o-summary__item-wrap gl-scroll">
+
+                                                <%cartItems.forEach((item) =>{%> 
+                                                <div class="o-card">
+                                                    <div class="o-card__flex">
+                                                        <div class="o-card__img-wrap">
+                                                            <% let img = item.productId.image[0] %>   
+                                                            <img class="u-img-fluid" src="<%= img.url %>" alt=""></div>
+                                                        <div class="o-card__info-wrap">
+
+                                                            <span class="o-card__name">
+
+                                                                <a href="product-detail.html"><%=item.productId.name%></a></span>
+
+                                                            <span class="o-card__quantity">Quantity x <%=item.quantity%></span>
+
+                                                            <span class="o-card__price">₹<%=item.discountedPrice.toFixed(2)%></span></div>
+                                                    </div>
+                                                    <button 
+                                                            class="o-card__del" 
+                                                            onclick="deleteItem('<%=item._id%>')" 
+                                                            title="Delete Item" 
+                                                            style="background: none; border: none; padding: 0;"
+                                                            >
+                                                            <i class="far fa-trash-alt"></i>
+                                                            </button>
+                                                </div>
+                                                <%})%>
+                                                
+                                               
+
+
+                                            </div>
+                                        </div>
+                                       
+                                        <div class="o-summary__section u-s-m-b-30">
+                                            <div class="o-summary__box">
+                                                <table class="o-summary__table">
+                                                    <tbody>
+                                                        <tr>
+                                                            <td>SUBTOTAL</td>
+                                                            <td>₹<%= grandTotal.toFixed(2) %></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>SHIPPING</td>
+                                                            <td>₹0.00</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>GRAND TOTAL</td>
+                                                            <td>₹<%= grandTotal.toFixed(2) %></td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                        
+                                    </div>
+                                    <!--====== End - Order Summary ======-->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--====== End - Section Content ======-->
+            </div>
+            <!--====== End - Section 3 ======-->
+        </div>
+        <!--====== End - App Content ======-->
+
+
+        <!--====== Main Footer ======-->
+        <footer>
+            <div class="outer-footer">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-lg-4 col-md-6">
+                            <div class="outer-footer__content u-s-m-b-40">
+
+                                <span class="outer-footer__content-title">Contact Us</span>
+                                <div class="outer-footer__text-wrap"><i class="fas fa-home"></i>
+
+                                    <span>4247 Ashford Drive Virginia VA-20006 USA</span></div>
+                                <div class="outer-footer__text-wrap"><i class="fas fa-phone-volume"></i>
+
+                                    <span>(+0) 900 901 904</span></div>
+                                <div class="outer-footer__text-wrap"><i class="far fa-envelope"></i>
+
+                                    <span>contact@domain.com</span></div>
+                                <div class="outer-footer__social">
+                                    <ul>
+                                        <li>
+
+                                            <a class="s-fb--color-hover" href="#"><i class="fab fa-facebook-f"></i></a></li>
+                                        <li>
+
+                                            <a class="s-tw--color-hover" href="#"><i class="fab fa-twitter"></i></a></li>
+                                        <li>
+
+                                            <a class="s-youtube--color-hover" href="#"><i class="fab fa-youtube"></i></a></li>
+                                        <li>
+
+                                            <a class="s-insta--color-hover" href="#"><i class="fab fa-instagram"></i></a></li>
+                                        <li>
+
+                                            <a class="s-gplus--color-hover" href="#"><i class="fab fa-google-plus-g"></i></a></li>
+                                    </ul>
+                                </div>
+                            </div> 
+                        </div>
+                        <div class="col-lg-4 col-md-6">
+                            <div class="row">
+                                <div class="col-lg-6 col-md-6">
+                                    <div class="outer-footer__content u-s-m-b-40">
+
+                                        <span class="outer-footer__content-title">Information</span>
+                                        <div class="outer-footer__list-wrap">
+                                            <ul>
+                                                <li>
+
+                                                    <a href="cart.html">Cart</a></li>
+                                                <li>
+
+                                                    <a href="dashboard.html">Account</a></li>
+                                                <li>
+
+                                                    <a href="shop-side-version-2.html">Manufacturer</a></li>
+                                                <li>
+
+                                                    <a href="dash-payment-option.html">Finance</a></li>
+                                                <li>
+
+                                                    <a href="shop-side-version-2.html">Shop</a></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 col-md-6">
+                                    <div class="outer-footer__content u-s-m-b-40">
+                                        <div class="outer-footer__list-wrap">
+
+                                            <span class="outer-footer__content-title">Our Company</span>
+                                            <ul>
+                                                <li>
+
+                                                    <a href="about.html">About us</a></li>
+                                                <li>
+
+                                                    <a href="contact.html">Contact Us</a></li>
+                                                <li>
+
+                                                    <a href="index.html">Sitemap</a></li>
+                                                <li>
+
+                                                    <a href="dash-my-order.html">Delivery</a></li>
+                                                <li>
+
+                                                    <a href="shop-side-version-2.html">Store</a></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-4 col-md-12">
+                            <div class="outer-footer__content">
+
+                                <span class="outer-footer__content-title">Join our Newsletter</span>
+                                <form class="newsletter">
+                                    <div class="u-s-m-b-15">
+                                        <div class="radio-box newsletter__radio">
+
+                                            <input type="radio" id="male" name="gender">
+                                            <div class="radio-box__state radio-box__state--primary">
+
+                                                <label class="radio-box__label" for="male">Male</label></div>
+                                        </div>
+                                        <div class="radio-box newsletter__radio">
+
+                                            <input type="radio" id="female" name="gender">
+                                            <div class="radio-box__state radio-box__state--primary">
+
+                                                <label class="radio-box__label" for="female">Female</label></div>
+                                        </div>
+                                    </div>
+                                    <div class="newsletter__group">
+
+                                        <label for="newsletter"></label>
+
+                                        <input class="input-text input-text--only-white" type="text" id="newsletter" placeholder="Enter your Email">
+
+                                        <button class="btn btn--e-brand newsletter__btn" type="submit">SUBSCRIBE</button></div>
+
+                                    <span class="newsletter__text">Subscribe to the mailing list to receive updates on promotions, new arrivals, discount and coupons.</span>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="lower-footer">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="lower-footer__content">
+                                <div class="lower-footer__copyright">
+
+                                    <span>Copyright © 2018</span>
+
+                                    <a href="index.html">Reshop</a>
+
+                                    <span>All Right Reserved</span></div>
+                                <div class="lower-footer__payment">
+                                    <ul>
+                                        <li><i class="fab fa-cc-stripe"></i></li>
+                                        <li><i class="fab fa-cc-paypal"></i></li>
+                                        <li><i class="fab fa-cc-mastercard"></i></li>
+                                        <li><i class="fab fa-cc-visa"></i></li>
+                                        <li><i class="fab fa-cc-discover"></i></li>
+                                        <li><i class="fab fa-cc-amex"></i></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </footer>
+
+        <!--====== Modal Section ======-->
+
+
+        <!--====== Shipping Address Add Modal ======-->
+        <div class="modal fade" id="edit-ship-address">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <div class="checkout-modal2">
+                            <div class="u-s-m-b-30">
+                                <div class="dash-l-r">
+                                    <h1 class="gl-modal-h1">Shipping Address</h1>
+                                    <!-- <div class="dash__link dash__link--brand">
+
+                                        <a data-modal="modal" data-modal-id="#add-ship-address" data-dismiss="modal">Add new Address</a></div>
+                                </div> -->
+                            </div>
+                            <form class="checkout-modal2__form">
+                                <div class="dash__table-2-wrap u-s-m-b-30 gl-scroll">
+                                    <table class="dash__table-2">
+                                        <thead>
+                                            <tr>
+                                                <th>Action</th>
+                                                
+                                                <th>Address</th>
+
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <% addresses.forEach((address, index) => { %>
+                                            <tr>
+                                                <td>
+                                                    <!--====== Radio Box ======-->
+                                                    <div class="radio-box">
+                                                        <input 
+                                                            type="radio" 
+                                                            class="address-radio" 
+                                                            name="selectedAddress" 
+                                                            id="address<%= index %>" 
+                                                            value="<%= address._id %>" 
+                                                            data-address="<%= JSON.stringify(address) %>"
+                                                            <% if ((selectedAddress && address._id.toString() === selectedAddress._id.toString()) || (!selectedAddress && index === 0)) { %> checked <% } %>
+
+
+                                                        >
+                                                        <div class="radio-box__state radio-box__state--primary">
+                                                            <label class="radio-box__label" for="address<%= index %>"></label>
+                                                        </div>
+                                                    </div>
+                                                    <!--====== End - Radio Box ======-->
+                                                </td>
+                                                <td><%= address.name %></td>
+                                                <td><%= address.address %></td>
+                                            </tr>
+                                            <% }) %>
+                                        </tbody>
+                                        
+                                    </table>
+                                </div>
+                                <div class="gl-modal-btn-group">
+
+                                    <button class="btn btn--e-brand-b-2" type="submit">SAVE</button>
+
+                                    <button class="btn btn--e-grey-b-2" type="button" data-dismiss="modal">CANCEL</button></div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--====== End - Shipping Address Add Modal ======-->
+
+
+        <!--====== Shipping Address Add Modal ======-->
+        <div class="modal fade" id="add-ship-address">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <div class="checkout-modal1">
+                            <form class="checkout-modal1__form">
+                                <div class="u-s-m-b-30">
+                                    <h1 class="gl-modal-h1">Add new Shipping Address</h1>
+                                </div>
+
+                                
+                                <div class="gl-inline">
+                                    <div class="u-s-m-b-30">
+
+                                        <label class="gl-label" for="address-fname">FIRST NAME *</label>
+
+                                        <input class="input-text input-text--primary-style" type="text" id="address-fname" placeholder="First Name"></div>
+                                    <div class="u-s-m-b-30">
+
+                                        <label class="gl-label" for="address-lname">LAST NAME *</label>
+
+                                        <input class="input-text input-text--primary-style" type="text" id="address-lname" placeholder="Last Name"></div>
+                                </div>
+                                <div class="gl-inline">
+                                    <div class="u-s-m-b-30">
+
+                                        <label class="gl-label" for="address-phone">PHONE *</label>
+
+                                        <input class="input-text input-text--primary-style" type="text" id="address-phone"></div>
+                                    <div class="u-s-m-b-30">
+
+                                        <label class="gl-label" for="address-street">STREET ADDRESS *</label>
+
+                                        <input class="input-text input-text--primary-style" type="text" id="address-street" placeholder="House Name and Street"></div>
+                                </div>
+                                <div class="gl-inline">
+                                    <div class="u-s-m-b-30">
+
+                                        <!--====== Select Box ======-->
+
+                                        <label class="gl-label" for="address-country">COUNTRY *</label><select class="select-box select-box--primary-style" id="address-country">
+                                            <option selected value="">Choose Country</option>
+                                            <option value="uae">United Arab Emirate (UAE)</option>
+                                            <option value="uk">United Kingdom (UK)</option>
+                                            <option value="us">United States (US)</option>
+                                        </select>
+                                        <!--====== End - Select Box ======-->
+                                    </div>
+                                    <div class="u-s-m-b-30">
+
+                                        <!--====== Select Box ======-->
+
+                                        <label class="gl-label" for="address-state">STATE/PROVINCE *</label><select class="select-box select-box--primary-style" id="address-state">
+                                            <option selected value="">Choose State/Province</option>
+                                            <option value="al">Alabama</option>
+                                            <option value="al">Alaska</option>
+                                            <option value="ny">New York</option>
+                                        </select>
+                                        <!--====== End - Select Box ======-->
+                                    </div>
+                                </div>
+                                <div class="gl-inline">
+                                    <div class="u-s-m-b-30">
+
+                                        <label class="gl-label" for="address-city">TOWN/CITY *</label>
+
+                                        <input class="input-text input-text--primary-style" type="text" id="address-city"></div>
+                                    <div class="u-s-m-b-30">
+
+                                        <label class="gl-label" for="address-street">ZIP/POSTAL CODE *</label>
+
+                                        <input class="input-text input-text--primary-style" type="text" id="address-postal" placeholder="Zip/Postal Code"></div>
+                                </div>
+                                <div class="gl-modal-btn-group">
+
+                                    <button class="btn btn--e-brand-b-2" type="submit">SAVE</button>
+
+                                    <button class="btn btn--e-grey-b-2" type="button" data-dismiss="modal">CANCEL</button></div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--====== End - Shipping Address Add Modal ======-->
+        <!--====== End - Modal Section ======-->
+    </div>
+    <!--====== End - Main App ======-->
+
+    <div class="modal fade coupon-modal" id="couponModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-tags mr-2"></i>
+                    Available Coupons & Offers
+                </h5>
+                <button type="button" class="close" data-dismiss="modal">
+                    <span>&times;</span>
+                </button>
+            </div>
+            
+       
+            
+            <!-- Modal Body -->
+            <div class="modal-body">
+              
+                <% if(coupons && coupons.length > 0) { %>
+
+                   <% percentageCoupons.forEach(coupon => { %>
+
+                   <div class="coupon-card">
+                    <div class="coupon-header">
+                        <div class="coupon-code"><%= coupon.code %></div>
+                        <h6 class="coupon-name"><%= coupon.name %></h6>
+                    </div>
+                    <div class="coupon-body">
+                        <div class="coupon-details">
+                            <div class="detail-row">
+                                <span class="detail-label">
+                                    <i class="fas fa-percentage"></i>
+                                    Discount:
+                                </span>
+                                <span class="detail-value">
+                                    <span class="discount-amount"><%= coupon.discountAmount %>% OFF</span>
+                                </span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">
+                                    <i class="fas fa-shopping-cart"></i>
+                                    Min Purchase:
+                                </span>
+                                <span class="detail-value">₹<%= coupon.minPurchaseAmount %></span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">
+                                    <i class="fas fa-calendar"></i>
+                                    Valid Until:
+                                </span>
+                                <span class="detail-value"><%= coupon.expiresOn.toDateString() %></span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">
+                                    <i class="fas fa-users"></i>
+                                    Remaining Uses:
+                                </span>
+                                <span class="detail-value"><%= coupon.usedCount %> / <%= coupon.usageLimit %></span>
+                            </div>
+                        </div>
+                        <button class="btn btn-copy" data-coupon="<%= coupon.code %>">
+                            <i class="fas fa-copy mr-2"></i>
+                            Copy Code & Apply
+                        </button>
+                    </div>
+                </div>
+
+               <% }) %>
+                
+
+               <% flatCoupons.forEach( coupon => { %>
+
+               <div class="coupon-card">
+                    <div class="coupon-header">
+                        <div class="coupon-code"><%= coupon.code %></div>
+                        <h6 class="coupon-name"><%= coupon.name %></h6>
+                    </div>
+                    <div class="coupon-body">
+                        <div class="coupon-details">
+                            <div class="detail-row">
+                                <span class="detail-label">
+                                    <i class="fas fa-percentage"></i>
+                                    Discount:
+                                </span>
+                                <span class="detail-value">
+                                    <span class="discount-amount">₹<%= coupon.discountAmount %> OFF</span>
+                                </span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">
+                                    <i class="fas fa-shopping-cart"></i>
+                                    Min Purchase:
+                                </span>
+                                <span class="detail-value">₹<%= coupon.minPurchaseAmount %></span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">
+                                    <i class="fas fa-calendar"></i>
+                                    Valid Until:
+                                </span>
+                                <span class="detail-value"><%= coupon.expiresOn.toDateString() %></span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">
+                                    <i class="fas fa-users"></i>
+                                    Remaining Uses:
+                                </span>
+                                <span class="detail-value"><%= coupon.usedCount %>/<%= coupon.usageLimit %></span>
+                            </div>
+                        </div>
+                        <button class="btn btn-copy" data-coupon="<%= coupon.code %>">
+                            <i class="fas fa-copy mr-2"></i>
+                            Copy Code & Apply
+                        </button>
+                    </div>
+                </div>
+
+               <% }) %>
+
+               <% expiredCoupons.forEach(coupon => { %>
+        
+                 <div class="coupon-card coupon-expired">
+                    <div class="coupon-header">
+                        <div class="coupon-code"><%= coupon.code %></div>
+                        <h6 class="coupon-name"><%= coupon.name %></h6>
+                    </div>
+                    <div class="coupon-body">
+                        <div class="coupon-details">
+                            <div class="detail-row">
+                                <span class="detail-label">
+                                    <i class="fas fa-percentage"></i>
+                                    Discount:
+                                </span>
+                                <span class="detail-value">
+                                    <span class="discount-amount"><%= coupon.discountType === "percentage"? `${coupon.discountAmount} % OFF`:`₹${coupon.discountAmount}  OFF` %></span>
+                                </span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">
+                                    <i class="fas fa-shopping-cart"></i>
+                                    Min Purchase:
+                                </span>
+                                <span class="detail-value">₹<%= coupon.minPurchaseAmount %></span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">
+                                    <i class="fas fa-calendar"></i>
+                                    Valid Until:
+                                </span>
+                                <span class="detail-value"><%= coupon.expiresOn.toDateString() %></span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">
+                                    <i class="fas fa-users"></i>
+                                    Remaining Uses:
+                                </span>
+                                <span class="detail-value"><%= coupon.usedCount %>/<%= coupon.usageLimit %></span>
+                            </div>
+                        </div>
+                        <button class="btn btn-expired" disabled>
+                            <i class="fas fa-clock mr-2"></i>
+                            Expired
+                        </button>
+                    </div>
+                </div>
+
+               <% }) %>
+
+        <% } else { %>
+
+                   <div class="no-coupons">
+                    <i class="fas fa-tags"></i>
+                    <h5>No Coupons Available</h5>
+                    <p class="text-muted">Check back later for exciting offers and discounts!</p>
+                </div>
+
+            <% } %>
+
+
+
+    <!--====== Google Analytics: change UA-XXXXX-Y to be your site's ID ======-->
+    <script>
+        window.ga = function() {
+            ga.q.push(arguments)
+        };
+        ga.q = [];
+        ga.l = +new Date;
+        ga('create', 'UA-XXXXX-Y', 'auto');
+        ga('send', 'pageview')
+    </script>
+    <script src="https://www.google-analytics.com/analytics.js" async defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!--====== Vendor Js ======-->
+    <script src="js/vendor.js"></script>
+
+    <!--====== jQuery Shopnav plugin ======-->
+    <script src="js/jquery.shopnav.js"></script>
+
+    <!--====== App ======-->
+    <script src="js/app.js"></script>
+
+    <!--====== Razorpay ======-->
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.2/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+
+    <script>
+
+   // Save Selected Address
+
+      document.querySelector(".checkout-modal2__form").addEventListener("submit", async (event) => {
+    event.preventDefault(); // Prevent form submission and page reload
+
+    const selectedAddress = document.querySelector(".address-radio:checked").value;
+
+    try {
+        const response = await fetch("/saveSelectedAddress", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ selectedAddress }),
         });
-      }
 
-      // 👉 3. Build pagination
-      const pagination = $("#paginationContainer");
-      pagination.empty();
-      for (let i = 1; i <= data.totalPages; i++) {
-        pagination.append(`
-          <li class="page-item ${i === data.currentPage ? 'active' : ''}">
-            <a href="#" class="page-link" data-page="${i}">${i}</a>
-          </li>
-        `);
-      }
-    },
-    error: function () {
-      Swal.fire({ icon: "error", title: "Something went wrong!" });
+        if (response.ok) {
+            Swal.fire({
+                icon: "success",
+                title: "Address Saved!",
+                text: "Your selected address has been updated.",
+            }).then(() => {
+                window.location.reload(); // Reload the page to see the updated address
+            });
+        } else {
+            const result = await response.json();
+            Swal.fire({
+                icon: "error",
+                title: "Error",
+                text: result.message || "Failed to save the selected address. Please try again.",
+            });
+        }
+    } catch (error) {
+        console.error("Error saving selected address:", error);
+        Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: "An unexpected error occurred. Please try again later.",
+        });
     }
-  });
+});
+
+    
+        
+            // ----------------------
+            //   Delete Cart Item
+            // ----------------------
+
+        async function deleteItem(id){
+            try {
+
+                // Use fetch API to send data
+                const response = await fetch(`/deleteCartItem/${id}`, {
+                method: "DELETE",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+
+                });
+
+                const result = await response.json();  //parse the response (convert int normal from JSON)  ie it would like normal key value pair in an object
+
+                if (response.ok) {
+                Swal.fire({
+                    icon: "success",
+                    title: "Item Delete!",
+                    text: result.message || "The Item has been successfully deleted",
+                }).then(() => {
+                    window.location.href = "/checkout"
+                });
+            } else {
+                Swal.fire({
+                    icon: "error",
+                    title: "Error",
+                    text: result.message || "Failed to delete the item. Please try again.",
+                });
+                }
+            } catch (error) {
+                Swal.fire({
+                icon: "error",
+                title: "Error",
+                text: "An unexpected error occurred. Please try again later.",
+                });
+                }
+            }
+
+
+            // ----------------------
+            //    Handle Order Form Submission (Razorpay / COD)
+            // ----------------------
+
+    
+        $('#orderForm').submit(function (e) {
+                e.preventDefault();
+
+                const paymentMethod = $('input[name ="payment"]:checked').val();
+                const formData = $(this).serialize();   // to make it urlencoded
+
+                //  Check if shipping address exists
+                if (!$('input[name="shippingAddress[name]"]').length) {
+                    Swal.fire('Missing Address', 'Please select a shipping address before placing the order.', 'warning');
+                    return;
+                }
+
+                //  Check if payment method is selected
+                if (!paymentMethod) {
+                    Swal.fire('Missing Payment', 'Please select a payment method to continue.', 'warning');
+                    return;
+                }
+                        
+
+                
+    if (paymentMethod === 'Razorpay') {
+
+        console.log("ifRazorpay", formData);
+        
+
+        $.ajax({
+            method: 'POST',
+            url: '/create-razorpay-order',
+            data: formData,
+            success: function (orderData) {
+                if (orderData.success === false) {
+                    //  If backend sent validation error
+                    Swal.fire('Error', orderData.message || 'Invalid order data', 'error');
+                    return;
+                }
+                const options = {
+                    key: orderData.key_id,
+                    amount: orderData.amount,
+                    currency: "INR",
+                    name: "The Elegant Adobe",
+                    description: "Order Payment",
+                    order_id: orderData.razorpay_order_id,
+
+                    handler: function (response) {
+                        // Step 2: Payment succeeded, verify with server
+                        $.ajax({
+                            method: 'POST',
+                            url: '/verify-razorpay-payment',
+                            data: {
+                                ...response,
+                                formData: formData
+                            },
+                            success: function (res) {
+                                if (res.success) {
+                                    Swal.fire('Success', 'Order Placed Successfully!', 'success')
+                                        .then(() => window.location.href = '/order-success');
+                                } else {
+                                    Swal.fire('Error', 'Payment verification failed', 'error');
+                                }
+                            }
+                        });
+                    },
+
+                   modal: {
+                        ondismiss: function () {
+                            // Optional: handle manual close
+                            console.log("User dismissed Razorpay modal.");
+                             window.location.href = '/payment-failed';
+                        }
+                    },
+
+                    theme: {
+                        color: "#F37254"
+                    }
+                };
+
+                const rzp = new Razorpay(options);
+                rzp.on('payment.failed', function (response) {
+                    $.ajax({
+                        method: 'POST',
+                        url: '/razorpay-payment-failed',
+                        data: formData,
+                        success: function (res) {
+                            if (res.success) {
+                                window.location.href = '/payment-failed';
+                            } else {
+                                Swal.fire('Error', 'Failed to log failed payment.', 'error');
+                            }
+                        }
+                    });
+                });
+                rzp.open();
+            },
+            error: function () {
+                Swal.fire('Error', 'Failed to initialize payment', 'error');
+            }
+        });
+    } else {
+        // Cash on Delivery or other methods
+        $.ajax({
+            method: 'POST',
+            url: '/order-save',
+            data: formData,
+            success: function (res) {
+                console.log("formData", formData);
+                
+                if (res.success) {
+                    Swal.fire('Success', 'Order Placed Successfully!', 'success')
+                        .then(() => window.location.href = '/order-success');
+                } else {
+                    Swal.fire('Error', res.message || 'Order placement failed', 'error');
+                }
+            },
+            error: function () {
+                Swal.fire('Error', 'Server error during order placement.', 'error');
+            }
+        });
+    }
+
+});
+
+    </script>
+    <script>
+$(document).ready(function() {
+    
+    // Handle copy button click
+    $('.btn-copy').on('click', function() {
+        var couponCode = $(this).data('coupon');
+        
+        
+        
+        // Copy to clipboard
+        copyToClipboard(couponCode);
+        
+        $('#coupon').val(couponCode);
+        
+        // Show success message
+        showSuccess();
+
+        closeModalProperly();
+       
+    });
+
+     // Proper modal close function
+    function closeModalProperly() {
+        $('#couponModal').modal('hide');
+        
+        // Force remove backdrop and blur after modal hide
+        setTimeout(function() {
+            $('.modal-backdrop').remove();
+            $('body').removeClass('modal-open');
+            $('body').css('padding-right', '');
+        }, 300); // Wait for Bootstrap's animation to complete
+    }
+    
+    // Also handle when modal is manually closed
+    $('#couponModal').on('hidden.bs.modal', function() {
+        // Ensure backdrop is completely removed
+        $('.modal-backdrop').remove();
+        $('body').removeClass('modal-open');
+        $('body').css('padding-right', '');
+    });
+    
+    // Copy to clipboard function
+    function copyToClipboard(text) {
+        if (navigator.clipboard) {
+            navigator.clipboard.writeText(text).catch(function() {
+                console.log('❌ Failed to copy with modern method:', err);
+                fallbackCopy(text);
+            });
+        } else {
+            fallbackCopy(text);
+        }
+    }
+    
+    // Fallback copy method for older browsers
+    function fallbackCopy(text) {
+        var textArea = document.createElement('textarea');
+        textArea.value = text;
+        textArea.style.position = 'fixed';
+        textArea.style.left = '-9999px';
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+    }
+    
+    // Show success notification
+    function showSuccess() {
+    swal.fire({
+        title: "Copied!",
+        text: "Coupon code has been coppied",
+        icon: "success",
+        timer: 2000,           // Auto close after 2 seconds
+        buttons: false,        // No buttons needed
+        dangerMode: false,
+        className: "sweet-alert-custom"  // Optional: for custom styling
+    });
+}
+    
+});
+</script>
+
+<script>
+    // AJAX handler for coupon code application 
+$(document).ready(function() {
+    // Handle coupon form submission - using the actual class from your HTML
+    $('.c-f__form').on('submit', function(e) {
+        e.preventDefault();
+        
+        const couponCode = $('#coupon').val().trim();
+        
+        if (!couponCode) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Missing Coupon Code',
+                text: 'Please enter a coupon code',
+                confirmButtonColor: '#3085d6'
+            });
+            return;
+        }
+
+        // Show loading alert
+        showLoadingAlert();
+        
+        // Show loading state
+        const submitBtn = $(this).find('button[type="submit"]');
+        const originalText = submitBtn.text();
+        submitBtn.text('APPLYING...').prop('disabled', true);
+        
+        // AJAX request to apply coupon
+        $.ajax({
+            url: '/apply-coupon', 
+            method: 'POST',
+            data: {
+                couponCode: couponCode,
+                // Add any other required data like cart items, user ID, etc.
+            },
+            dataType: 'json',
+            success: function(response) {
+                Swal.close(); 
+                if (response.success) {
+                    // Update the UI with new values
+                    updateOrderSummary(response.data);
+
+                    //  Use the custom full modal with savings
+                    showCouponSuccess(response.message || 'Coupon applied successfully!', response.data.appliedDiscount);
+                    
+                    
+                    // Update button states after successful coupon application
+                    updateButtonsAfterCouponApply(response.data.appliedDiscount);
+                    console.log("coupon-frontend-one");
+                    
+                    
+                    // Disable the coupon input
+                    $('#coupon').prop('disabled', true);
+                    console.log("coupon-frontend-two");
+                    
+                } else {
+                    // Show error message with SweetAlert
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Invalid Coupon',
+                        text: response.message || 'Invalid coupon code',
+                        confirmButtonColor: '#d33'
+                    });
+                }
+            },
+            error: function(xhr, status, error) {
+                Swal.close(); 
+                console.error('AJAX Error:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Connection Error',
+                    text: 'Something went wrong. Please try again.',
+                    confirmButtonColor: '#d33'
+                });
+            },
+            complete: function() {
+                
+                // Reset button state
+                submitBtn.text(originalText).prop('disabled', false);
+            }
+        });
+    });
+    
+    // Function to update order summary with new values
+    function updateOrderSummary(data) {
+        const { grandTotal, subtotal, appliedDiscount, discountAmount } = data;
+        
+        
+        const summaryTable = $('.o-summary__table tbody');
+        
+        // Clear existing rows
+        summaryTable.empty();
+        
+        // Add SUBTOTAL row 
+        summaryTable.append(`
+            <tr>
+                <td>SUBTOTAL</td>
+                <td>₹${subtotal.toFixed(2)}</td>
+            </tr>
+        `);
+        
+        // Add SHIPPING row 
+        summaryTable.append(`
+            <tr>
+                <td>SHIPPING</td>
+                <td>₹0.00</td>
+            </tr>
+        `);
+        
+        // Add discount row if discount is applied 
+        if (appliedDiscount && discountAmount > 0) {
+            summaryTable.append(`
+                <tr class="discount-row">
+                    <td>DISCOUNT (${appliedDiscount})</td>
+                    <td class="discount-amount" style="padding-right:12px;">-₹${discountAmount.toFixed(2)}</td>
+                </tr>
+            `);
+        }
+        
+        // Add GRAND TOTAL row 
+        summaryTable.append(`
+            <tr>
+                <td>GRAND TOTAL</td>
+                <td id="grand-total">₹${grandTotal.toFixed(2)}</td>
+            </tr>
+        `);
+        
+        // Add animation effect
+        // summaryTable.fadeOut(200).fadeIn(400);
+    }
+    
+    // Function to update buttons after coupon is applied
+    function updateButtonsAfterCouponApply(appliedCouponCode) {
+        const buttonContainer = $('.c-f__form .u-s-m-b-15').last(); // Get the button container
+        
+        // Disable and update the Apply button
+        const applyBtn = buttonContainer.find('button[type="submit"]');
+        applyBtn.text('APPLIED').prop('disabled', true).addClass('btn-applied');
+        
+        // Add the Remove button next to Apply button
+        const removeBtn = `
+            <button id="removeCouponBtn" type="button" class="btn btn--e-brand-b-2 remove-coupon-btn u-s-m-l-10" style="margin-left: 10px;">
+                REMOVE
+            </button>
+        `;
+        
+        // Check if remove button doesn't already exist
+        if (!buttonContainer.find('.remove-coupon-btn').length) {
+            buttonContainer.append(removeBtn);
+        }
+        
+        // Show which coupon is applied
+        const couponInfo = `
+            <div class="applied-coupon-info u-s-m-t-10">
+                <small class="text-success">
+                    <i class="fas fa-check-circle"></i> 
+                    Coupon "${appliedCouponCode}" applied successfully
+                </small>
+            </div>
+        `;
+        
+        // Add coupon info if it doesn't exist
+        if (!$('.applied-coupon-info').length) {
+            $('.c-f').append(couponInfo);
+        }
+    }
+    
+    
+    function resetButtonsAfterCouponRemove() {
+        const buttonContainer = $('.c-f__form .u-s-m-b-15').last();
+        
+        // Reset the Apply button
+        const applyBtn = buttonContainer.find('button[type="submit"]');
+        applyBtn.text('APPLY').prop('disabled', false).removeClass('btn-applied');
+        
+        // Remove the Remove button
+        buttonContainer.find('.remove-coupon-btn').remove();
+        
+        // Remove coupon info
+        $('.applied-coupon-info').remove();
+        
+        // Enable the coupon input
+        $('#coupon').prop('disabled', false).val('');
+    }
+    
+    // Function to show messages to user
+    function showMessage(message, type) {
+        // Remove existing messages
+        $('.coupon-message').remove();
+        
+        const messageClass = type === 'success' ? 'alert-success' : 'alert-danger';
+        const messageHtml = `
+            <div class="alert ${messageClass} coupon-message" style="margin-top: 10px;">
+                ${message}
+                <button type="button" class="close" data-dismiss="alert">
+                    <span>&times;</span>
+                </button>
+            </div>
+        `;
+        
+        // Append to the form container - using your actual HTML structure
+        $('.c-f').append(messageHtml);
+        
+        // Auto hide success messages after 3 seconds
+        if (type === 'success') {
+            setTimeout(() => {
+                $('.coupon-message').fadeOut();
+            }, 3000);
+        }
+    }
+});
+
+function showSuccessToast(message) {
+    Swal.fire({
+        icon: 'success',
+        title: message,
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true
+    });
 }
 
-// --- Event bindings ---
+// 2. Full modal with custom styling
+function showCouponSuccess(message, savings) {
+    Swal.fire({
+        icon: 'success',
+        title: 'Coupon Applied Successfully!',
+        html: `
+            <p>${message}</p>
+            <p><strong>You saved: ₹${savings}</strong></p>
+        `,
+        confirmButtonText: 'Great!',
+        confirmButtonColor: '#28a745',
+        showClass: {
+            popup: 'animate__animated animate__fadeInDown'
+        },
+        hideClass: {
+            popup: 'animate__animated animate__fadeOutUp'
+        }
+    });
+}
 
-// Generate Report button
-$("#generateReport").on("click", function () {
-  loadReport(1); // always start from page 1
-});
+// 3. Loading state while processing
+function showLoadingAlert() {
+    Swal.fire({
+        title: 'Applying Coupon...',
+        text: 'Please wait while we process your coupon code.',
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        showConfirmButton: false,
+        didOpen: () => {
+            Swal.showLoading();
+        }
+    });
+}
+</script>
 
-// Pagination click
-$("#paginationContainer").on("click", "a", function (e) {
-  e.preventDefault();
-  const page = $(this).data("page");
-  loadReport(page); // load clicked page
-});
+<script>
+ $(document).on('click', '#removeCouponBtn', function () {
+    console.log("inside remove");
+    
+    $.ajax({
+      url: '/remove-coupon',
+      method: 'POST',
+      success: function (response) {
+        if (response.success) {
+          
+          $('.applied-coupon-info').remove(); // Remove coupon box
+          $('.discount-row').remove();
+          $('#grand-total').text(`₹${response.data.grandTotal}`);
+
+          //  Restore the coupon form to its original state
+                const buttonContainer = $('.c-f__form .u-s-m-b-15').last();
+
+                // Reset Apply button
+                const applyBtn = buttonContainer.find('button[type="submit"]');
+                applyBtn.text('APPLY').prop('disabled', false).removeClass('btn-applied');
+
+                // Remove the Remove button
+                buttonContainer.find('.remove-coupon-btn').remove();
+
+                // Enable and clear the coupon input
+                $('#coupon').prop('disabled', false).val('');
+
+          Swal.fire({
+                    icon: 'success',
+                    title: 'Coupon Removed',
+                    text: response.message || 'Coupon removed successfully!',
+                    timer: 2000,
+                    showConfirmButton: false,
+                    toast: true,
+                    position: 'top-end'
+                });
+        } else {
+          Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: response.message || 'Something went wrong.',
+                    confirmButtonColor: '#d33'
+                });
+        }
+      },
+      error: function () {
+        Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Failed to remove coupon. Try again later.',
+                confirmButtonColor: '#d33'
+            });
+      }
+    });
+  });
+</script>
+
+
+    <!--====== Noscript ======-->
+    <noscript>
+        <div class="app-setting">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="app-setting__wrap">
+                            <h1 class="app-setting__h1">JavaScript is disabled in your browser.</h1>
+
+                            <span class="app-setting__text">Please enable JavaScript in your browser or upgrade to a JavaScript-capable browser.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </noscript>
+</body>
+</html>

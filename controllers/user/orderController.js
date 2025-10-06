@@ -98,9 +98,10 @@ const saveOrderFromSerializedData = async (
   }
 };
 
+// cash on delivery
 const saveOrderInSession = async (req, res) => {
   try {
-    const userId = req.session.user?._id || req.session.passport._id;
+    const userId = req.session.user?._id;
     const { cartItems, grandTotal, shippingAddress, payment } = req.body;   // here the grandTotal is the amount after the  discount is applied if any but in cartSchema the discountedPrice and price are stored seperately
     
 
@@ -117,13 +118,6 @@ const saveOrderInSession = async (req, res) => {
       const couponDiscount = req.session.coupon?.discount || 0;
       const finalTotal = parseFloat(grandTotal) - parseFloat(couponDiscount);    // grandTotal <= checkout.ejs = #orderForm <= cartItems = checkoutController
 
-      //  COD Restriction: if total > 1000, block COD
-    if (payment === "Cash on Delivery" && finalTotal > 1000) {
-      return res.json({
-        success: false,
-        message: "Cash on Delivery is not available for orders above ₹1000.",
-      });
-    }
 
     // Format the order details
 

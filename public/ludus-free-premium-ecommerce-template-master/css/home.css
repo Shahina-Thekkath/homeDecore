@@ -1,0 +1,42 @@
+/* Enhanced text visibility with shadows */
+.slider-content .content-span-1,
+.slider-content .content-span-2,
+.slider-content .content-span-3,
+.slider-content .content-span-4 {
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.7);
+}
+
+/* Make the white text even more visible */
+.u-c-white {
+    color: #ffffff !important;
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.7);
+}
+
+/* Ensure brand color (price) is vibrant */
+.u-c-brand {
+    color: #FF5722 !important;
+    text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.6);
+    font-weight: 700;
+}
+
+/* Optional: Add a semi-transparent overlay to the slider for better text contrast */
+.hero-slide::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.2);
+    z-index: 1;
+}
+
+/* For icons - assuming they have a class like .header-icon or similar */
+.header-icon,
+.top-nav-icon,
+nav a i,
+.mini-product-shop-icons i {
+    color: #FF5722 !important;
+    filter: drop-shadow(1px 1px 3px rgba(0, 0, 0, 0.5));
+}
+

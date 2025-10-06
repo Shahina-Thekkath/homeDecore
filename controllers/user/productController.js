@@ -38,7 +38,13 @@ const loadProductDetails = async (req, res) =>{
         }
 
         
-        const currentProduct = await Product.findById(productId).populate("categoryId").lean();
+        const currentProduct = await Product.findOne({ 
+            _id: productId, 
+            isBlocked: false 
+        })
+        .populate("categoryId")
+        .lean();
+
        
 
         const getBestDiscount = async (product) => {
@@ -105,7 +111,8 @@ const loadProductDetails = async (req, res) =>{
     // Get related products
     const relatedProductsRaw = await Product.find({
       _id: { $ne: productId },
-      categoryId: currentProduct.categoryId
+      categoryId: currentProduct.categoryId,
+      isBlocked: false
     }).populate("categoryId").lean().limit(8);
 
     // Map related products with their best discount

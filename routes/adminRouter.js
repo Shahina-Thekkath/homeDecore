@@ -30,7 +30,7 @@ adminRouter.get("/pageerror", admin404Controller.pageError);
 adminRouter.get("/products/addProducts", productController.getProductAddPage);
 adminRouter.post(
   "/products/addProducts",
-  uploads.array("images", 4),
+  uploads.array("images", 5),
   productController.addProducts
 );
 adminRouter.get("/productList", productController.getAllProducts);
