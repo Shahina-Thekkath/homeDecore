@@ -100,7 +100,7 @@ const loadEditAddress = async(req,res) =>{
       
 
         if(!address){
-            return res.status(404).send("Address not found");
+            return res.redirect('/address');
         }
 
         res.render('editAddress',{user,address, from});

@@ -5,6 +5,7 @@ const Product = require("../../models/productSchema");
 const mongoose = require("mongoose");
 const ProductOffer = require('../../models/productOfferSchema');
 const CategoryOffer = require('../../models/categoryOfferSchema');
+const Wishlist = require("../../models/wishlistSchema");
 
 const loadCart = async(req, res) =>{
     try {
@@ -99,121 +100,136 @@ const updateCartTotals = async (req, res) =>{
 };
 
 
-const addToCart = async(req, res) =>{
-    const {productId, quantity} = req.body;
-    try {
+const addToCart = async (req, res) => {
+  const { productId, quantity, fromWishlist } = req.body;
 
-        const product = await Product.findById(productId);
-        if(!product){
-            return res.status(404).json({error: "Product not found"});
+  try {
+    const product = await Product.findById(productId).populate("categoryId");
+    if (!product) {
+      return res.status(404).json({ error: "Product not found" });
+    }
+
+    // Stock check
+    if (quantity > product.quantity) {
+      return res.status(400).json({ error: "Requested quantity exceeds stock" });
+    }
+
+    if (quantity > 5) {
+      return res.status(400).json({ error: "You can’t add more than 5 items per product" });
+    }
+
+    const currentDate = new Date();
+    const basePrice = product.price;
+    let bestPrice = basePrice;
+    let discountInfo = null;
+
+    // ====== FETCH ALL ACTIVE OFFERS ======
+    const [productOffers, categoryOffers] = await Promise.all([
+      ProductOffer.find({
+        productId: product._id,
+        isActive: true,
+        startDate: { $lte: currentDate },
+        endDate: { $gte: currentDate },
+      }),
+      CategoryOffer.find({
+        categoryId: product.categoryId._id,
+        isActive: true,
+        startDate: { $lte: currentDate },
+        endDate: { $gte: currentDate },
+      }),
+    ]);
+
+    // ====== HELPER FUNCTION ======
+    const getBestOffer = (offers) => {
+      let best = { finalPrice: basePrice, offer: null };
+      for (const offer of offers) {
+        let discounted = basePrice;
+
+        if (offer.discountType === "percentage") {
+          discounted = basePrice - (basePrice * offer.discountAmount) / 100;
+        } else if (offer.discountType === "flat") {
+          discounted = basePrice - offer.discountAmount;
         }
 
-        //check stock
-        if(quantity > product.quantity){
-            return res.status(400).json({error: "Requested quantity exceeds stock"});
+        discounted = Math.max(discounted, 0); // prevent negative
+        if (discounted < best.finalPrice) {
+          best = { finalPrice: discounted, offer };
         }
+      }
+      return best;
+    };
 
-        if (quantity > 5) {
-         return res.status(400).json({ error: "You can’t add more than 5 items per product" });
-        }
+    // ====== COMPARE OFFERS ======
+    const bestProductOffer = getBestOffer(productOffers);
+    const bestCategoryOffer = getBestOffer(categoryOffers);
 
+    if (bestProductOffer.finalPrice < bestCategoryOffer.finalPrice) {
+      bestPrice = bestProductOffer.finalPrice;
+      discountInfo = {
+        source: "product",
+        type: bestProductOffer.offer?.discountType,
+        amount: bestProductOffer.offer?.discountAmount,
+      };
+    } else if (bestCategoryOffer.offer && bestCategoryOffer.finalPrice < basePrice) {
+      bestPrice = bestCategoryOffer.finalPrice;
+      discountInfo = {
+        source: "category",
+        type: bestCategoryOffer.offer?.discountType,
+        amount: bestCategoryOffer.offer?.discountAmount,
+      };
+    }
 
-        const basePrice = product.price;
+    const discountAmount = basePrice - bestPrice;
 
-        // ====== OFFER CHECK START ======
-      
-        let discountAmount = 0;
-        let finalPrice = basePrice;
-
-        // Product offer
-        const productOffer = await ProductOffer.findOne({
-            productId: product._id,
-            isActive: true,
-            startDate: { $lte: new Date() },
-            endDate: { $gte: new Date() }
-        });
-
-        // Category offer
-        const categoryOffer = await CategoryOffer.findOne({
-            categoryId: product.categoryId,
-            isActive: true,
-            startDate: { $lte: new Date() },
-            endDate: { $gte: new Date() }
-        });
-
-        let productDiscountValue = 0;
-        if (productOffer) {
-            if (productOffer.discountType === "percentage") {
-                productDiscountValue = (basePrice * productOffer.discountAmount) / 100;
-            } else {
-                productDiscountValue = productOffer.discountAmount;
-            }
-        }
-
-        let categoryDiscountValue = 0;
-        if (categoryOffer) {
-            if (categoryOffer.discountType === "percentage") {
-                categoryDiscountValue = (basePrice * categoryOffer.discountAmount) / 100;
-            } else {
-                categoryDiscountValue = categoryOffer.discountAmount;
-            }
-        }
-
-        // Choose better discount
-        discountAmount = Math.max(productDiscountValue, categoryDiscountValue);
-   // Ensure finalPrice is always set
-
-        if (discountAmount === 0) {
-    finalPrice = product.price * quantity;
-}
-
-        finalPrice = basePrice - discountAmount;
-        if (finalPrice < 0) {
-            finalPrice = 0;
-        } // prevent negative price
-        
-        //find or create the user's cart
-        let userId = req.session.user?._id || req.session.passport?._id ;
-        
-        if (!userId) {
+    // ====== CART LOGIC ======
+    const userId = req.session.user?._id || req.session.passport?._id;
+    if (!userId) {
       return res.status(401).json({ message: "User not logged in" });
     }
-        
-        
-        let cart = await Cart.findOne({ userId});
-        if(!cart){
-           cart = new Cart({userId, items: []});
-        }
 
-        //check if product already exists in the cart
-        const itemIndex = cart.items.findIndex((item) => item.productId.equals(productId));
-        if(itemIndex > -1){
-            //update quantity if product already exists in cart
-            cart.items[itemIndex].quantity += quantity;
-            cart.items[itemIndex].price = basePrice;
-            cart.items[itemIndex].discountAmount = discountAmount;
-            cart.items[itemIndex].discountedPrice = finalPrice;
-
-        }else{
-              cart.items.push({
-                productId,
-                quantity,
-                price: basePrice,
-                discountAmount: discountAmount,  // offer 
-                discountedPrice: finalPrice    // here discountedAmount would be the amount after discount if there is a discount or else will be the amount without discount if there is no discount
-            });
-        }
-
-        await cart.save();
-
-
-        return res.status(200).json({success: true, message: "Product added to cart", cart});
-     
-    } catch (error) {
-       console.error("Error Loading Cart", error);
-       return res.status(500).json({ error: "Server Error"}); 
+    let cart = await Cart.findOne({ userId });
+    if (!cart) {
+      cart = new Cart({ userId, items: [] });
     }
+
+    // Check if product exists in cart
+    const itemIndex = cart.items.findIndex((item) => item.productId.equals(productId));
+
+    if (itemIndex > -1) {
+      // Update existing item
+      cart.items[itemIndex].quantity += quantity;
+      cart.items[itemIndex].price = basePrice;
+      cart.items[itemIndex].discountAmount = discountAmount;
+      cart.items[itemIndex].discountedPrice = bestPrice;
+    } else {
+      // Add new item
+      cart.items.push({
+        productId,
+        quantity,
+        price: basePrice,
+        discountAmount,
+        discountedPrice: bestPrice,
+      });
+    }
+
+    await cart.save();
+
+    // Remove from wishlist if added from there
+    if (fromWishlist) {
+      await Wishlist.updateOne({ userId }, { $pull: { products: { productId } } });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Product added to cart",
+      cart,
+    });
+  } catch (error) {
+    console.error("Error Loading Cart:", error);
+    return res.status(500).json({ error: "Server Error" });
+  }
 };
+
 
 
 const getCartItemCount = async (req, res) => {
@@ -249,7 +265,8 @@ const deleteCartItem = async(req, res) =>{
          cart.items.pull(item);
         await cart.save();
 
-        return res.status(200).json({ok:true});
+        return res.status(200).json({ success: true, message: "Item deleted successfully" });
+
 
     } catch (error) {
         console.error("Error deleting cart item :", error);

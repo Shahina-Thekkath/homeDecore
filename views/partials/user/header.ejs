@@ -30,6 +30,10 @@
     <link rel="stylesheet" href="/css/home.css">
 
     <link rel="stylesheet" href="/css/logo.css">
+
+    <link rel="stylesheet" href="/css/productDetails.css">
+
+    <link rel="stylesheet" href="/css/profileName.css">
 </head>
 <body class="config">
     <div class="preloader is-active">
@@ -97,7 +101,7 @@
                                             <ul style="width:120px">
                                                 <li>
                                                     <%if(locals.user){%>
-                                                        <a href="/profile"><i><%=locals.user.name%></i>
+                                                        <a href="/profile" title="<%=locals.user.name%>"><i><%=locals.user.name%></i>
 
                                                             </a></li> 
                                                         
@@ -169,7 +173,6 @@
 
                                 <button class="btn btn--icon toggle-button toggle-button--white fas fa-shopping-bag toggle-button-shop" type="button"></button>
 
-                                <span class="total-item-round">2</span>
 
                                 <!--====== Menu ======-->
                                 <div class="ah-lg-mode">
@@ -186,9 +189,7 @@
                                             <a href="/wishlist"><i class="far fa-heart"></i></a></li>
                                         <li class="has-dropdown">
 
-                                            <a class="mini-cart-shop-link" href="/cart"><i class="fas fa-shopping-bag"></i>
-
-                                                <span class="total-item-round">2</span></a>
+                                            <a class="mini-cart-shop-link" href="/cart"><i class="fas fa-shopping-bag"></i></a>
 
                                             <!--====== Dropdown ======-->
 

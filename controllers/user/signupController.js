@@ -189,8 +189,17 @@ const sendResetPasswordEmail = async(name,email,token) =>{
 
     } catch (error) {
         console.error("Sent verification email error",error.message);
-        return false;
-    }
+
+        // Detect common cases
+        let reason = "Failed to send reset email. Please try again later.";
+        if (error.code === 'ENOTFOUND' || error.code === 'EENVELOPE') {
+        reason = "Invalid or unreachable email address.";
+        } else if (error.responseCode === 550) {
+        reason = "The email address does not exist.";
+        }
+
+        return { success: false, reason };
+        }
 }
 
 const forgotPassword = async(req,res)=>{
@@ -205,94 +214,122 @@ const forgotPassword = async(req,res)=>{
 
 
 
-const forgotVerify = async(req,res) =>{
-    try {
-        const email = req.body.email;
-        const user = await User.findOne({email});
-   
-        if(user){
-            const randomString = randomstring.generate();
-            await User.updateOne({email},{$set:{token:randomString}});
+const forgotVerify = async (req, res) => {
+  try {
+    const { email } = req.body;
+    const user = await User.findOne({ email });
 
-            const mailSent = await sendResetPasswordEmail(user.name, user.email, randomString);
-
-        if (mailSent) {
-                console.log(" Reset email sent successfully to:", user.email);
-                res.render("forgotPassword", {
-                message: "Please check your mail to reset your password",
-                });
-            } else {
-                console.error(" Reset email sending failed for:", user.email);
-                res.render("forgotPassword", {
-                message: "Failed to send reset email. Please try again later.",
-                });
-            }
-
-        }else{
-            res.render("forgotPassword",{message:"User Email is incorrect"});
-
-        }
-    } catch (error) {
-        console.error("Forgot verify error", error.message);
-        return res.status(404).redirect("/pageNotFound")
+    if (!user) {
+      return res.render("forgotPassword", { message: "Email address not found." });
     }
-}
+
+    const randomString = randomstring.generate();
+    await User.updateOne({ email }, { $set: { token: randomString } });
+
+    const mailResult = await sendResetPasswordEmail(user.name, user.email, randomString);
+    console.log("mailResult", mailResult);
+    
+    if (mailResult) {
+      res.render("forgotPassword", {
+        message: "Password reset email sent. Please check your inbox.",
+      });
+    } else {
+      res.render("forgotPassword", {
+        message: mailResult.reason || "Failed to send reset email.",
+      });
+    }
+
+  } catch (error) {
+    console.error("Forgot verify error:", error.message);
+    res.status(500).render("forgotPassword", { message: "Internal Server Error. Please try again later." });
+  }
+};
+
 
 const changePassword = async(req,res)=>{
     try {
+        const userId = req.session.user?._id || req.session.passport._id;
+        const user = await User.findById(userId);
         const errors = {};
-        res.render("changePassword", { errors });
+        res.render("changePassword", { errors , user});
     } catch (error) {
         console.error("change password logic error",error);
         return res.status(404).redirect("/pageNotFound");
     }
 }
 
-const changeVerify = async(req,res) =>{
+const changeVerify = async(req, res) => {
     try {
         const { email, oldPassword, newPassword, cpassword } = req.body;
         const errors = {};
 
-        //Email validation with regex
+          const userId = req.session.user?._id || req.session.passport._id;
+        const existingUser = await User.findById(userId);
+
+        // Email validation with regex
         const emailPattern = /^([a-zA-Z0-9._-]+)@([a-zA-Z0-9]+)\.([a-zA-Z]{2,4})$/;
-        if (!emailPattern.test(email)) {
-          errors.email = "Please enter a valid email address";
+        if (!email || !emailPattern.test(email)) {
+            errors.email = "Please enter a valid email address";
         }
+
+        // Check for empty fields
+        if (!oldPassword) {
+            errors.oldPassword = "Old password is required";
+        }
+        if (!newPassword) {
+            errors.newPassword = "New password is required";
+        }
+        if (!cpassword) {
+            errors.cpassword = "Confirm password is required";
+        }
+
+        // If there are validation errors, return early
+        if (Object.keys(errors).length > 0) {
+            return res.render("changePassword", {user:existingUser, errors, oldData: req.body });
+        }
+
+        // Find user only after basic validation passes
         const user = await User.findOne({ email });
 
-        if(!user) {
+        if (!user) {
             errors.email = "User email is incorrect";
         } else {
             // Old password check
             const isMatch = await bcrypt.compare(oldPassword, user.password);
-            if(!isMatch) {
+            if (!isMatch) {
                 errors.oldPassword = "Old password is incorrect";
             }
 
             // Password Regex check
             const passwordPattern = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
-            if(!passwordPattern.test(newPassword)) {
+            if (!passwordPattern.test(newPassword)) {
                 errors.newPassword = "Password must be at least 8 characters and contain both letters and numbers";
             }
 
-            if(newPassword !== cpassword){
-                errors.cpassword = "Password do not match";
+            // Check if passwords match
+            if (newPassword !== cpassword) {
+                errors.cpassword = "Passwords do not match";
+            }
+
+            // Check if new password is same as old password
+            if (newPassword === oldPassword) {
+                errors.newPassword = "New password must be different from old password";
             }
         }
 
+        // Check for errors again after all validations
         if (Object.keys(errors).length > 0) {
-            return res.render("changePassword", { errors, oldData: req.body });
+            return res.render("changePassword", {user, errors, oldData: req.body });
         }
 
-        //update password
+        // Update password
         const hashedPassword = await securePassword(newPassword);
         await User.updateOne({ email }, { $set: { password: hashedPassword, token: "" } });
-        
 
         res.redirect("/login");
     } catch (error) {
         console.error("change verify error", error);
-        return res.status(404).redirect("/pageNotFound")
+        return res.status(500).redirect("/pageNotFound");
     }
 }
 

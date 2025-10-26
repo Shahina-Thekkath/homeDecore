@@ -199,99 +199,244 @@ const generateSalesPDF = async (req, res) => {
 
     // 🔹 Build doc definition
     const docDefinition = {
-      background: function () {
-        return {
-          text: "THE ELEGANT ADOBE",
-          color: "gray",
-          opacity: 0.1,
-          bold: true,
-          italics: true,
-          fontSize: 60,
-          alignment: "center",
-          margin: [0, 300, 0, 0],
-        };
-      },
-      content: [
-        // Logo + title
+  pageSize: 'A4',
+  pageMargins: [40, 60, 40, 60],
+  background: function () {
+    return {
+      text: "THE ELEGANT ATTIC",
+      color: "#FFE5CC",
+      opacity: 0.1,
+      bold: true,
+      italics: false,
+      fontSize: 60,
+      alignment: "center",
+      margin: [0, 300, 0, 0],
+    };
+  },
+  content: [
+    // Logo + title
+    {
+      stack: [
         {
-          columns: [
-            {
-              image: path.join(__dirname, "../../admin-public/assets/The Elegant Adobe-(Compressify.io)-1.png"),
-              width: 100,
-            },
-            { text: `Sales Report (${type.toUpperCase()})`, style: "header", alignment: "right" },
+          image: path.join(__dirname, "../../admin-public/assets/The Elegant Adobe-(Compressify.io)-1.png"),
+          width: 150,
+          margin: [0, 0, 0, 15]
+        },
+        {
+          text: `Sales Report (${type.toUpperCase()})`,
+          style: "header",
+          color: '#FF6B00'
+        }
+      ],
+      margin: [0, 0, 0, 10]
+    },
+    { text: `Date Range: ${data.range}`, style: "subheader", color: '#666' },
+    { canvas: [{ type: 'line', x1: 0, y1: 5, x2: 515, y2: 5, lineWidth: 1, lineColor: '#e0e0e0' }], margin: [0, 10, 0, 15] },
+
+    // Order-level table
+    {
+      table: {
+        headerRows: 1,
+        widths: ["auto", "*", "auto", "auto", "auto", "auto"],
+        body: [
+          [
+            { text: "Date", style: "tableHeader" },
+            { text: "Order ID", style: "tableHeader" },
+            { text: "Sales Amount", style: "tableHeader", alignment: 'right' },
+            { text: "Discounts", style: "tableHeader", alignment: 'right' },
+            { text: "Coupons", style: "tableHeader", alignment: 'right' },
+            { text: "Net Sales", style: "tableHeader", alignment: 'right' }
+          ],
+          ...data.orders.map((o) => [
+            { text: o.date, style: 'tableCell' },
+            { text: o.orderId, style: 'tableCell', fontSize: 8 },
+            { text: `₹${o.salesAmount.toFixed(2)}`, style: 'tableCell', alignment: 'right' },
+            { text: `₹${o.discount.toFixed(2)}`, style: 'tableCell', alignment: 'right' },
+            { text: `₹${o.coupon.toFixed(2)}`, style: 'tableCell', alignment: 'right' },
+            { text: `₹${o.netSales.toFixed(2)}`, style: 'tableCell', alignment: 'right', bold: true }
+          ]),
+        ],
+      },
+      layout: {
+        fillColor: function (rowIndex) {
+          return rowIndex === 0 ? '#f5f5f5' : (rowIndex % 2 === 0 ? '#fafafa' : null);
+        },
+        hLineWidth: function (i, node) {
+          return i === 0 || i === 1 || i === node.table.body.length ? 1 : 0.5;
+        },
+        vLineWidth: function () {
+          return 0;
+        },
+        hLineColor: function () {
+          return '#e0e0e0';
+        },
+        paddingLeft: function () { return 8; },
+        paddingRight: function () { return 8; },
+        paddingTop: function () { return 6; },
+        paddingBottom: function () { return 6; }
+      },
+      margin: [0, 0, 0, 20]
+    },
+
+    { text: "Order Details", style: "subheader", color: '#FF6B00', margin: [0, 15, 0, 10] },
+
+    // Each order with products
+    ...data.orders.flatMap((o) => [
+      { 
+        text: `Order: ${o.orderId} | Date: ${o.date}`, 
+        style: "orderHeader",
+        margin: [0, 10, 0, 5],
+        color: '#333'
+      },
+      {
+        table: {
+          headerRows: 1,
+          widths: ["*", "auto", "auto", "auto"],
+          body: [
+            [
+              { text: "Product", style: "productTableHeader" },
+              { text: "Qty", style: "productTableHeader", alignment: 'center' },
+              { text: "Price", style: "productTableHeader", alignment: 'right' },
+              { text: "Subtotal", style: "productTableHeader", alignment: 'right' }
+            ],
+            ...o.products.map((p) => [
+              { text: p.name, style: 'productCell' },
+              { text: p.qty.toString(), style: 'productCell', alignment: 'center' },
+              { text: `₹${p.price.toFixed(2)}`, style: 'productCell', alignment: 'right' },
+              { text: `₹${p.subtotal.toFixed(2)}`, style: 'productCell', alignment: 'right', bold: true }
+            ]),
           ],
         },
-        { text: `Date Range: ${data.range}`, style: "subheader" },
-        "\n",
-
-        // Order-level table
-        {
-          table: {
-            headerRows: 1,
-            widths: ["auto", "*", "auto", "auto", "auto", "auto"],
-            body: [
-              ["Date", "Order ID", "Sales Amount", "Discounts", "Coupons", "Net Sales"],
-              ...data.orders.map((o) => [
-                o.date,
-                o.orderId,
-                `₹ ${o.salesAmount.toFixed(2)}`,
-                `₹ ${o.discount.toFixed(2)}`,
-                `₹ ${o.coupon.toFixed(2)}`,
-                `₹ ${o.netSales.toFixed(2)}`,
-              ]),
-            ],
+        layout: {
+          fillColor: function (rowIndex) {
+            return rowIndex === 0 ? '#FFF5E6' : null;
           },
-          layout: "lightHorizontalLines",
+          hLineWidth: function (i, node) {
+            return i === 0 || i === 1 || i === node.table.body.length ? 1 : 0.5;
+          },
+          vLineWidth: function () {
+            return 0;
+          },
+          hLineColor: function () {
+            return '#e0e0e0';
+          },
+          paddingLeft: function () { return 8; },
+          paddingRight: function () { return 8; },
+          paddingTop: function () { return 6; },
+          paddingBottom: function () { return 6; }
         },
+        margin: [10, 0, 0, 5]
+      }
+    ]),
 
-        "\n",
-        { text: "Order Details", style: "subheader" },
-
-        // 🔹 Each order with products
-        ...data.orders.map((o) => ([
-          { text: `Order: ${o.orderId} (${o.date})`, style: "tableHeader", margin: [0, 5, 0, 3] },
-          {
-            table: {
-              headerRows: 1,
-              widths: ["*", "auto", "auto", "auto"],
-              body: [
-                ["Product", "Qty", "Price", "Subtotal"],
-                ...o.products.map((p) => [
-                  p.name,
-                  p.qty,
-                  `₹ ${p.price .toFixed(2)}`,
-                  `₹ ${p.subtotal.toFixed(2)}`,
-                ]),
-              ],
-            },
-            layout: "lightHorizontalLines",
-            margin: [0, 0, 0, 10],
-          },
-        ])),
-
-        "\n",
-        { text: "Sales Summary", style: "subheader" },
-        {
-          table: {
-            widths: ["*", "auto"],
-            body: [
-              ["Total Order Amount", `₹ ${summary.totalAmount.toFixed(2)}`],
-              ["Total Offer Discount", `₹ ${summary.totalDiscount.toFixed(2)}`],
-              ["Total Coupon Discount", `₹ ${summary.totalCoupon.toFixed(2)}`],
-              ["Total Sales Count", `${summary.totalCount}`],
-            ],
-          },
-          layout: "lightHorizontalLines",
-        },
-      ],
-      styles: {
-        header: { fontSize: 18, bold: true, margin: [0, 0, 0, 20] },
-        subheader: { fontSize: 14, bold: true, margin: [0, 10, 0, 5] },
-        tableHeader: { bold: true, fontSize: 12, fillColor: "#eeeeee" },
+    { canvas: [{ type: 'line', x1: 0, y1: 5, x2: 515, y2: 5, lineWidth: 1, lineColor: '#e0e0e0' }], margin: [0, 15, 0, 15] },
+    
+    { text: "Sales Summary", style: "subheader", color: '#FF6B00', margin: [0, 0, 0, 10] },
+    {
+      table: {
+        widths: ["*", "auto"],
+        body: [
+          [
+            { text: "Total Offer Discount", style: 'summaryLabel' },
+            { text: `₹${summary.totalDiscount.toFixed(2)}`, style: 'summaryValue', alignment: 'right' }
+          ],
+          [
+            { text: "Total Coupon Discount", style: 'summaryLabel' },
+            { text: `₹${summary.totalCoupon.toFixed(2)}`, style: 'summaryValue', alignment: 'right' }
+          ],
+          [
+            { text: "Total Order Amount", style: 'summaryLabelBold' },
+            { text: `₹${summary.totalAmount.toFixed(2)}`, style: 'summaryTotal', alignment: 'right' }
+          ],
+        ],
       },
-      defaultStyle: { font: "Roboto" },
-    };
+      layout: {
+        fillColor: function (rowIndex, node) {
+          return rowIndex === node.table.body.length - 1 ? '#FFF5E6' : null;
+        },
+        hLineWidth: function (i, node) {
+          return i === node.table.body.length - 1 ? 2 : 0.5;
+        },
+        vLineWidth: function () {
+          return 0;
+        },
+        hLineColor: function (i, node) {
+          return i === node.table.body.length - 1 ? '#FF6B00' : '#e0e0e0';
+        },
+        paddingLeft: function () { return 10; },
+        paddingRight: function () { return 10; },
+        paddingTop: function () { return 8; },
+        paddingBottom: function () { return 8; }
+      },
+      margin: [0, 0, 0, 20]
+    },
+
+    {
+      text: 'Generated by The Elegant Adobe',
+      style: 'footer',
+      alignment: 'center',
+      margin: [0, 20, 0, 0]
+    }
+  ],
+  styles: {
+    header: { 
+      fontSize: 20, 
+      bold: true, 
+      margin: [0, 0, 0, 5] 
+    },
+    subheader: { 
+      fontSize: 14, 
+      bold: true, 
+      margin: [0, 10, 0, 5] 
+    },
+    tableHeader: { 
+      bold: true, 
+      fontSize: 10, 
+      color: '#333'
+    },
+    tableCell: {
+      fontSize: 9,
+      color: '#666'
+    },
+    orderHeader: {
+      fontSize: 11,
+      bold: true
+    },
+    productTableHeader: {
+      bold: true,
+      fontSize: 10,
+      color: '#FF6B00'
+    },
+    productCell: {
+      fontSize: 9,
+      color: '#666'
+    },
+    summaryLabel: {
+      fontSize: 11,
+      color: '#666'
+    },
+    summaryValue: {
+      fontSize: 11,
+      color: '#333'
+    },
+    summaryLabelBold: {
+      fontSize: 12,
+      bold: true,
+      color: '#333'
+    },
+    summaryTotal: {
+      fontSize: 12,
+      bold: true,
+      color: '#FF6B00'
+    },
+    footer: {
+      fontSize: 10,
+      color: '#999',
+      italics: true
+    }
+  },
+  defaultStyle: { font: "Roboto" },
+};
 
     // Generate & send
     const pdfDoc = printer.createPdfKitDocument(docDefinition);
@@ -313,130 +458,102 @@ const generateSalesPDF = async (req, res) => {
 
 const generateSalesExcel = async (req, res) => {
   try {
-     const { type, startDate, endDate } = req.body;
-
-    //  Build query using helper
+    const { type, startDate, endDate } = req.body;
     const match = buildMatchQuery(type, startDate, endDate);
 
-    //  Fetch orders from DB
-    const orders = await Order.find(match).sort({ createdAt: 1 });
-
+    // Fetch orders
+    const orders = await Order.find(match).populate("products.productId").sort({ createdAt: 1 });
     if (!orders || orders.length === 0) {
       return res.status(404).json({ success: false, message: "No sales data found" });
     }
-
-    //  Format data for the PDF
-    const data = {
-      range:
-        type === "custom"
-          ? `${startDate} to ${endDate}`
-          : type.charAt(0).toUpperCase() + type.slice(1),
-      orders: orders.map((o) => {
-        const coupon = o.couponDiscount || 0;
-        const offer = o.discountAmount || 0;
-        const net = o.totalAmount || 0;
-        const gross = net + offer + coupon;
-        return{
-            date: o.createdAt.toISOString().split("T")[0],
-        orderId: o._id.toString(),
-        salesAmount: net ,
-        discount: o.discountAmount || 0,
-        coupon: o.couponDiscount || 0,
-        netSales: gross ,
-        }
-        
-      }),
-    };
-
-    const summary = {
-      totalAmount: data.orders.reduce((sum, o) => sum + o.salesAmount, 0),
-      totalDiscount: data.orders.reduce((sum, o) => sum + o.discount, 0),
-      totalCoupon: data.orders.reduce((sum, o) => sum + o.coupon, 0),
-      totalCount: data.orders.length,
-    };
 
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet("Sales Report");
 
     // Title
     worksheet.mergeCells("A1:F1");
-    worksheet.getCell("A1").value = `Sales Report (${data.range})`;
+    worksheet.getCell("A1").value = `Sales Report (${type === "custom" ? `${startDate} to ${endDate}` : type.toUpperCase()})`;
     worksheet.getCell("A1").font = { size: 16, bold: true };
     worksheet.getCell("A1").alignment = { horizontal: "center" };
-
-    // Empty row
     worksheet.addRow([]);
 
-   
-    // Orders Table
-    worksheet.addRow([
-      "Date",
-      "Order ID",
-      "Sales Amount",
-      "Discount",
-      "Coupon",
-      "Net Sales",
-    ]);
-
-    data.orders.forEach((order) =>
-      worksheet.addRow([
-        order.date,
-        order.orderId,
-        order.salesAmount,
-        order.discount,
-        order.coupon,
-        order.netSales,
-      ])
-    );
-
-    // Style Header Row
-    const headerRow = worksheet.getRow(3); // since 1 = title, 2 = blank, 3 = header
+    // Order-level table header
+    worksheet.addRow(["Date", "Order ID", "Sales Amount", "Discounts", "Coupons", "Net Sales"]);
+    const headerRow = worksheet.getRow(3);
     headerRow.eachCell((cell) => {
       cell.font = { bold: true, color: { argb: "FFFFFFFF" } };
-      cell.fill = {
-        type: "pattern",
-        pattern: "solid",
-        fgColor: { argb: "4472C4" },
-      };
-      cell.alignment = { vertical: "middle", horizontal: "center" };
+      cell.fill = { type: "pattern", pattern: "solid", fgColor: { argb: "4472C4" } };
+      cell.alignment = { horizontal: "center" };
     });
 
-    // Add empty row before summary
-    worksheet.addRow([]);
+    // Orders + products
+    for (const o of orders) {
+      const coupon = o.couponDiscount || 0;
+      const offer = o.discountAmount || 0;
+      const net = o.totalAmount || 0;
+      const gross = net + offer + coupon;
+
+      // Order row
+      worksheet.addRow([o.createdAt.toISOString().split("T")[0], o._id.toString(), gross, offer, coupon, net]);
+
+      // Product details header
+      worksheet.addRow(["Product", "Qty", "Price", "Subtotal"]);
+      const productHeader = worksheet.lastRow;
+      productHeader.eachCell((cell) => {
+        cell.font = { bold: true };
+        cell.alignment = { horizontal: "center" };
+      });
+
+      // Product rows
+      o.products.forEach((p) => {
+        worksheet.addRow([
+          p.productId?.name || "Unknown",
+          p.quantity,
+          p.discountedPrice,
+          p.discountedPrice * p.quantity,
+        ]);
+      });
+
+      worksheet.addRow([]); // empty row after products
+    }
+
+    // Sales Summary
     worksheet.addRow(["Sales Summary"]);
+    const summaryTitle = worksheet.lastRow;
+    summaryTitle.font = { bold: true, size: 14 };
 
-    // Summary rows
-    const summaryData = [
-      ["Total Order Amount", summary.totalAmount],
-      ["Total Offer Discount", summary.totalDiscount],
-      ["Total Coupon Discount", summary.totalCoupon],
-      ["Total Sales Count", summary.totalCount],
-    ];
+    const totalAmount = orders.reduce((sum, o) => sum + (o.totalAmount || 0) + (o.discountAmount || 0) + (o.couponDiscount || 0), 0);
+    const totalDiscount = orders.reduce((sum, o) => sum + (o.discountAmount || 0), 0);
+    const totalCoupon = orders.reduce((sum, o) => sum + (o.couponDiscount || 0), 0);
 
-    summaryData.forEach((row) => worksheet.addRow(row));
+    worksheet.addRow(["Total Offer Discount", totalDiscount]);
+    worksheet.addRow(["Total Coupon Discount", totalCoupon]);
+    worksheet.addRow(["Total Order Amount", totalAmount]);
 
-    // Style Summary Title
-    const summaryTitleRow = worksheet.getRow(orders.length + 5); // after table
-    summaryTitleRow.font = { bold: true, size: 14 };
+    // Auto-width columns
+    worksheet.columns.forEach((col) => {
+      let maxLength = 0;
+      col.eachCell({ includeEmpty: true }, (cell) => {
+        const columnLength = cell.value ? cell.value.toString().length : 10;
+        if (columnLength > maxLength) maxLength = columnLength;
+      });
+      col.width = maxLength + 5;
+    });
 
-    //Generate Excel Buffer
+    // Generate Excel Buffer
     const buffer = await workbook.xlsx.writeBuffer();
 
-    //send as Response (Download)
-    res.setHeader(
-      "Content-Type",
-      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-    );
-    res.setHeader("Content-Disposition", "attachment; filename=sales_report.xlsx");
-
+    // Send file
+    res.setHeader("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+    res.setHeader("Content-Disposition", 'attachment; filename="sales_report.xlsx"');
     res.send(buffer);
-    
+
   } catch (error) {
     console.error("Error generating Excel:", error);
     res.status(500).send("Error generating Excel file");
-    
   }
 };
+
 
 
 

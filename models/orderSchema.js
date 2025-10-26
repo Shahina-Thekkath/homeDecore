@@ -31,6 +31,7 @@ const OrderSchema = new Schema(
       },
     ],
     totalAmount: { type: Number, required: true }, // Total amount for the order
+    deliveryCharge: { type: Number, default: 0 },
     shippingAddress: {
       name: { type: String, required: true },
       address: { type: String, required: true },
@@ -46,6 +47,7 @@ const OrderSchema = new Schema(
         "Credit/Debit Card",
         "Razorpay",
         "Bank Transfer",
+        "wallet"
       ],
       required: true,
     },

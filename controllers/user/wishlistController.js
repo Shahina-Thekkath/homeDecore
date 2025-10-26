@@ -5,96 +5,107 @@ const ProductOffer = require('../../models/productOfferSchema');
 const CategoryOffer = require('../../models/categoryOfferSchema');
 
 const getWishlist = async (req, res) => {
-    try {
-        const user = req.session.user || req.session.passport;
-        const userId = user._id;
-        const wishlist = await Wishlist.findOne({ userId })
-            .populate({
-                path: 'products.productId',
-                populate: { path: 'categoryId', select: 'name' }
-            });
+  try {
+    const user = req.session.user || req.session.passport;
+    const userId = user._id;
 
-        if (!wishlist || wishlist.products.length === 0) {
-      return res.render("emptyWishlist", { user});
+    const wishlist = await Wishlist.findOne({ userId })
+      .populate({
+        path: "products.productId",
+        populate: { path: "categoryId", select: "name" },
+      });
+
+    if (!wishlist || wishlist.products.length === 0) {
+      return res.render("emptyWishlist", { user });
     }
 
     const now = new Date();
 
-    // Loop through wishlist items and calculate offers
-   const productsWithDiscount = await Promise.all(
-            wishlist.products.map(async (item) => {
-                const product = item.productId;
-                let finalPrice = product.price;
-                let discountAmount = 0;
-                let discountType = null; // NEW - track which type was applied
-                let discountPercent = 0;
+    const productsWithDiscount = await Promise.all(
+      wishlist.products.map(async (item) => {
+        const product = item.productId;
+        const originalPrice = product.price;
+        let bestPrice = originalPrice;
+        let discountInfo = null;
 
-                // 1️⃣ Product-level offer
-                let productDiscount = 0;
-                const productOffer = await ProductOffer.findOne({
-                    productId: product._id,
-                    isActive: true,
-                    startDate: { $lte: now },
-                    endDate: { $gte: now }
-                });
+        // ===== Fetch all active offers (product + category) =====
+        const [productOffers, categoryOffers] = await Promise.all([
+          ProductOffer.find({
+            productId: product._id,
+            isActive: true,
+            startDate: { $lte: now },
+            endDate: { $gte: now },
+          }),
+          CategoryOffer.find({
+            categoryId: product.categoryId._id,
+            isActive: true,
+            startDate: { $lte: now },
+            endDate: { $gte: now },
+          }),
+        ]);
 
-                if (productOffer) {
-                    if (productOffer.discountType === "flat") {
-                        productDiscount = productOffer.discountAmount;
-                    } else if (productOffer.discountType === "percentage") {
-                        discountPercent = productOffer.discountAmount;
-                        productDiscount = (product.price * productOffer.discountAmount) / 100;
-                    }
-                }
+        // ===== Helper function to find best discount =====
+        const getBestOffer = (offers) => {
+          let best = { finalPrice: originalPrice, offer: null };
+          for (const offer of offers) {
+            let discounted = originalPrice;
+            if (offer.discountType === "percentage") {
+              discounted = originalPrice - (originalPrice * offer.discountAmount) / 100;
+            } else if (offer.discountType === "flat") {
+              discounted = originalPrice - offer.discountAmount;
+            }
 
-                // 2️⃣ Category-level offer
-                let categoryDiscount = 0;
-                const categoryOffer = await CategoryOffer.findOne({
-                    categoryId: product.categoryId._id,
-                    isActive: true,
-                    startDate: { $lte: now },
-                    endDate: { $gte: now }
-                });
+            discounted = Math.max(discounted, 0);
+            if (discounted < best.finalPrice) {
+              best = { finalPrice: discounted, offer };
+            }
+          }
+          return best;
+        };
 
-                if (categoryOffer) {
-                    if (categoryOffer.discountType === "flat") {
-                        categoryDiscount = categoryOffer.discountAmount;
-                    } else if (categoryOffer.discountType === "percentage") {
-                        discountPercent = categoryOffer.discountAmount;
-                        categoryDiscount = (product.price * categoryOffer.discountAmount) / 100;
-                    }
-                }
+        // ===== Compare best product & category offers =====
+        const bestProductOffer = getBestOffer(productOffers);
+        const bestCategoryOffer = getBestOffer(categoryOffers);
 
-                // 3️⃣ Apply the bigger discount & set type
-                if (productDiscount >= categoryDiscount && productDiscount > 0) {
-                    discountAmount = productDiscount;
-                    discountType = productOffer.discountType;
-                } else if (categoryDiscount > productDiscount) {
-                    discountAmount = categoryDiscount;
-                    discountType = categoryOffer.discountType;
-                }
+        if (bestProductOffer.finalPrice < bestCategoryOffer.finalPrice) {
+          bestPrice = bestProductOffer.finalPrice;
+          discountInfo = {
+            source: "product",
+            type: bestProductOffer.offer?.discountType,
+            amount: bestProductOffer.offer?.discountAmount,
+          };
+        } else if (bestCategoryOffer.offer && bestCategoryOffer.finalPrice < originalPrice) {
+          bestPrice = bestCategoryOffer.finalPrice;
+          discountInfo = {
+            source: "category",
+            type: bestCategoryOffer.offer?.discountType,
+            amount: bestCategoryOffer.offer?.discountAmount,
+          };
+        }
 
-                // 4 Final price
-                finalPrice = Math.max(product.price - discountAmount, 0);
+        const discountAmount = originalPrice - bestPrice;
+        const discountPercent =
+          discountInfo?.type === "percentage" ? discountInfo.amount : 0;
 
-                return {
-                    ...item.toObject(),
-                    discountAmount: discountAmount > 0 ? discountAmount : null,
-                    discountType, // send type to frontend
-                    finalPrice,
-                    originalPrice: product.price,
-                    discountPercent
-                };
-            })
-        );
+        return {
+          ...item.toObject(),
+          originalPrice,
+          finalPrice: bestPrice.toFixed(2),
+          discountAmount: discountAmount > 0 ? discountAmount.toFixed(2) : null,
+          discountType: discountInfo?.type || null,
+          discountSource: discountInfo?.source || null,
+          discountPercent,
+        };
+      })
+    );
 
-        return res.render("wishlist", { wishlist: productsWithDiscount, user });
-
-    } catch (error) {
-        console.error(error);
-        res.status(500).send("Server error");
-    }
+    return res.render("wishlist", { wishlist: productsWithDiscount, user });
+  } catch (error) {
+    console.error("Error loading wishlist:", error);
+    res.status(500).send("Server error");
+  }
 };
+
 
 
 const addToWishlist = async (req, res) => {
@@ -176,11 +187,44 @@ const getEmptyWishlist = (req, res) => {
 };
 
 
+const checkWishlist = async (req, res) => {
+   try {
+       const { productId } = req.params;
+       const userId = req.session.user?._id || req.session.passport;
+
+       if (!userId) {
+        console.log("no user Id, checkWishlist");
+        
+        return res.status(200).json({ inWishlist: false });
+       }
+       
+       const wishlist = await Wishlist.findOne({ userId });
+
+       if (!wishlist) {
+         return res.status(200).json({ inWishlist: false });
+       }
+
+       // check if product exists in wishlist
+       const inWishlist = wishlist.products.some(
+        (item) => item.productId.toString() === productId
+       );
+
+       res.status(200).json({ inWishlist });
+
+   } catch (error) {
+      console.error("Error checking wishlist", error);
+      res.status(500).json({ error: "Internal Server Error" });
+      
+   }
+};
+
+
 
 module.exports = {
     getWishlist,
     addToWishlist,
     clearWishlist,
     removeProductFromWishlist,
-    getEmptyWishlist
+    getEmptyWishlist,
+    checkWishlist
 };

@@ -17,18 +17,6 @@ const getAdminOrders = async (req, res) => {
   }
 };
 
-//order status Management in orders list page
-
-// const updateOrderStatus = async(req, res) =>{
-//     const {orderId} = req.params;
-//     const {status} = req.body;
-//     try {
-//         await Order.findByIdAndUpdate( orderId, {status});
-//         res.json({message: "Order status updated successfully"})
-//     } catch (error) {
-//         res.status(500).json({error:"Failed to update order status."});
-//     }
-// }
 
 const getOrderById = async (req, res) => {
   try {
@@ -202,7 +190,7 @@ const calculateRefund = (order, product) => {
 
   if (activeProducts.length === 1 && activeProducts[0]._id.equals(product._id)) {
     // Last product → refund remaining amount (actual paid)
-    refundAmount = order.totalAmount - totalRefundedSoFar;
+    refundAmount = (order.totalAmount - totalRefundedSoFar) - order.deliveryCharge;
   } else {
     // Proportional refund from amount actually paid
     const subtotal = order.products.reduce(
@@ -211,7 +199,9 @@ const calculateRefund = (order, product) => {
     );
     const productPrice = product.discountedPrice * product.quantity;
 
-    refundAmount = (productPrice / subtotal) * order.totalAmount;
+    const totalWithoutDelivery = order.totalAmount - order.deliveryCharge;
+
+    refundAmount = (productPrice / subtotal) * totalWithoutDelivery;
   }
 
   return refundAmount;
@@ -281,18 +271,26 @@ const updateProductStatus = async (req, res) => {
         });
       }
 
+      const MAx_RETURN_DAYS = 3;
+      const deliveryDate = new Date(product.productId.deliveredAt);
+      const daysSinceDelivery = (Date.now() - deliveryDate.getTime()) / 1000 * 60 * 60 * 24;
+
+      if(daysSinceDelivery > MAx_RETURN_DAYS) {
+        res.status(400).json({message: "Return can be done only within 3 days"});
+      }
+
       product.status = "Returned";
 
       const refundAmount = calculateRefund(order, product);
       product.refundedAmount = refundAmount;
 
-      if (order.isPaid) {
+      
         await handleRefundToWallet(
           order.userId._id,
           refundAmount,
           "Return Refund"
         );
-      }
+      
 
       await Product.findByIdAndUpdate(product.productId._id, {
         $inc: { quantity: product.quantity },

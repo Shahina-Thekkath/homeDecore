@@ -85,7 +85,8 @@ userRouter.post('/updateCartTotals', auth.sessionVerify, cartController.updateCa
 
 
 userRouter.get('/checkout', auth.sessionVerify, checkoutController.loadCheckout);
-userRouter.post('/saveSelectedAddress', auth.sessionVerify, checkoutController.saveSelectedAddress)
+userRouter.post('/saveSelectedAddress', auth.sessionVerify, checkoutController.saveSelectedAddress);
+userRouter.post('/calculate-delivery-charge', auth.sessionVerify, orderController.calculateDeliveryCharge);
 
 userRouter.post('/create-razorpay-order', auth.sessionVerify, orderController.createRazorpayOrder);
 userRouter.post('/verify-razorpay-payment', auth.sessionVerify, orderController.verifyRazorpayPayment);
@@ -113,11 +114,10 @@ userRouter.post('/add-to-wishlist', auth.sessionVerify, wishlistController.addTo
 userRouter.delete('/wishlist/clear', auth.sessionVerify, wishlistController.clearWishlist);
 userRouter.delete('/wishlist/remove/:id', auth.sessionVerify, wishlistController.removeProductFromWishlist);
 userRouter.get('/wishlist/empty', auth.sessionVerify, wishlistController.getEmptyWishlist);
+userRouter.get('/check-wishlist/:productId', auth.sessionVerify, wishlistController.checkWishlist);
 
 userRouter.get('/wallet', auth.sessionVerify, walletController.getWallet);
-
-
-
+userRouter.post('/wallet-order', auth.sessionVerify, orderController.saveWalletOrder);
 
 
 module.exports = userRouter;

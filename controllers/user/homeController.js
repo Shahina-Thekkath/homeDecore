@@ -4,111 +4,102 @@ const CategoryOffer = require('../../models/categoryOfferSchema');
 const ProductOffer = require('../../models/productOfferSchema');
 
 
-const loadHomepage = async(req, res) =>{
-    try{
-         const user = req.session.user || req.session.passport;
-         
-         let products = await Product.find({isBlocked:false}).populate("categoryId").limit(20).lean();
+const loadHomepage = async (req, res) => {
+  try {
+    const user = req.session.user || req.session.passport;
+    const currentDate = new Date();
 
-         const currentDate = new Date();
+    const products = await Product.find({ isBlocked: false })
+      .populate("categoryId")
+      .limit(20)
+      .lean();
 
-         //Process each product for offer calculations
-         const updatedProducts = await Promise.all(
-            products.map(async (product) => {
-                const originalPrice = product.price;
-                let finalPrice = originalPrice;
-                let discountInfo = null;
+    const updatedProducts = await Promise.all(
+      products.map(async (product) => {
+        const originalPrice = product.price;
+        let bestPrice = originalPrice;
+        let discountInfo = null;
 
-          
-                let bestPrice = originalPrice;
+        // Fetch all active offers for this product and its category
+        const [productOffers, categoryOffers] = await Promise.all([
+          ProductOffer.find({
+            productId: product._id,
+            isActive: true,
+            startDate: { $lte: currentDate },
+            endDate: { $gte: currentDate },
+          }),
+          CategoryOffer.find({
+            categoryId: product.categoryId._id,
+            isActive: true,
+            startDate: { $lte: currentDate },
+            endDate: { $gte: currentDate },
+          }),
+        ]);
 
-                //Get valid product offer
-                const productOffer = await ProductOffer.findOne({
-                    productId: product._id,
-                    isActive: true,
-                    startDate: { $lte: currentDate },
-                    endDate: { $gte: currentDate }
-                });
+        // Helper: calculate the best price from a list of offers
+        const getBestOffer = (offers) => {
+          let best = { finalPrice: originalPrice, offer: null };
 
-                
-                    // get valid category offer if no Product offer
-                    const categoryOffer = await CategoryOffer.findOne({
-                        categoryId: product.categoryId._id,
-                        isActive: true,
-                        startDate: { $lte: currentDate },
-                        endDate: { $gte: currentDate }
-                    });
+          for (const offer of offers) {
+            let discounted = originalPrice;
+            if (offer.discountType === "percentage") {
+              discounted = originalPrice - (originalPrice * offer.discountAmount) / 100;
+            } else if (offer.discountType === "flat") {
+              discounted = originalPrice - offer.discountAmount;
+            }
 
-                    let productDiscountPrice = originalPrice;
-                    let categoryDiscountPrice = originalPrice;
+            discounted = Math.max(discounted, 0); // prevent negative
 
-                    // ----Calculate product offer discount
+            if (discounted < best.finalPrice) {
+              best = { finalPrice: discounted, offer };
+            }
+          }
 
-                    if(productOffer) {
-                        if(productOffer.discountType === "percentage") {
-                            productDiscountPrice = originalPrice - (originalPrice * productOffer.discountAmount) / 100;
-                        } else if(productOffer.discountType === 'flat') {
-                            productDiscountPrice = originalPrice - productOffer.discountAmount;
-                        }
-                    }
+          return best;
+        };
 
-                    //---Calculate category offer
+        // Find best product-level and category-level offer
+        const bestProductOffer = getBestOffer(productOffers);
+        const bestCategoryOffer = getBestOffer(categoryOffers);
 
-                    if(categoryOffer) {
-                        if(categoryOffer.discountType === 'percentage') {
-                            categoryDiscountPrice = originalPrice - (originalPrice * categoryOffer.discountAmount) / 100;
-                        } else if (categoryOffer.discountType === 'flat') {
-                            categoryDiscountPrice = originalPrice - categoryOffer.discountAmount;
-                        }
-                    }
+        // Compare which offer gives the lower price
+        if (bestProductOffer.finalPrice < bestCategoryOffer.finalPrice) {
+          bestPrice = bestProductOffer.finalPrice;
+          discountInfo = {
+            source: "product",
+            type: bestProductOffer.offer?.discountType,
+            amount: bestProductOffer.offer?.discountAmount,
+          };
+        } else if (bestCategoryOffer.offer && bestCategoryOffer.finalPrice < originalPrice) {
+          bestPrice = bestCategoryOffer.finalPrice;
+          discountInfo = {
+            source: "category",
+            type: bestCategoryOffer.offer?.discountType,
+            amount: bestCategoryOffer.offer?.discountAmount,
+          };
+        }
 
-                    // choose the better discount 
+        return {
+          ...product,
+          originalPrice,
+          finalPrice: bestPrice.toFixed(2),
+          discountInfo,
+        };
+      })
+    );
 
-                    if (productDiscountPrice !== undefined && 
-                        productDiscountPrice < categoryDiscountPrice && 
-                        productDiscountPrice < bestPrice) {
-                            bestPrice = productDiscountPrice;
-                            discountInfo = {
-                                type: productOffer?.discountType || null,
-                                amount: productOffer?.discountAmount || 0,
-                                source: "product"
-                            };
-                        } else if (categoryDiscountPrice !== undefined &&
-                            categoryDiscountPrice < bestPrice
-                        ) {
-                            bestPrice = categoryDiscountPrice;
-                            discountInfo = {
-                                type: categoryOffer?.discountType || null,
-                                amount: categoryOffer?.discountAmount || 0,
-                                source: "category"
-                            };
-                        }
-
-                // prevent negative price
-                bestPrice = Math.max(bestPrice, 0);
-
-                return {
-                    ...product,
-                    originalPrice,
-                    finalPrice: bestPrice.toFixed(2),
-                    discountInfo
-                };
-            })
-         );
-
-         
-
-         if(user){
-            return res.render('home', {user,products:updatedProducts})
-         }else{
-            return res.render('home',{products:updatedProducts});  
-         }
-        
-    }catch(error){
-        console.error("home page not found", error);
-        res.status(500).send("server error")
+    // Render home page
+    if (user) {
+      return res.render("home", { user, products: updatedProducts });
+    } else {
+      return res.render("home", { products: updatedProducts });
     }
+  } catch (error) {
+    console.error("Error loading home page:", error);
+    res.status(500).send("Server error");
+  }
 };
+
 
 
 module.exports = {

@@ -251,12 +251,12 @@
                                             <td style="padding: 10px;vertical-align: top; ">
                                                 <%= (product.quantity * product.discountedPrice).toFixed(2) %>
                                             </td>
-                                            <td style="padding: 10px;vertical-align: top; ">
-                                                <div><%=product.status %></div>
-                                                
-                                                <% if(product.status === 'Delivered' && product.deliveredAt){ %>
+                                            <td style="padding: 10px; vertical-align: top;">
+                                                <div><%= product.status %></div>
+
+                                                <% if (product.status === 'Delivered' && product.deliveredAt) { %>
                                                     <div style="color: green; font-size: 0.8rem; margin-top: 4px;">
-                                                        Delivered on: <%= new Date(product.deliveredAt).toLocaleDateString('en-IN') %>
+                                                    Delivered on: <%= new Date(product.deliveredAt).toLocaleDateString('en-IN') %>
                                                     </div>
                                                 <% } %>
 
@@ -278,7 +278,13 @@
                                                     </div>
                                                 <% } %>
 
-                                            </td>
+                                                <% if (product.refundedAmount && product.refundedAmount > 0) { %>
+                                                    <div style="color: #007BFF; font-size: 0.85rem; margin-top: 4px;">
+                                                     Refunded: ₹<%= product.refundedAmount.toFixed(2) %>
+                                                    </div>
+                                                <% } %>
+                                                </td>
+
 
 
                                             <!-- Management Controls -->

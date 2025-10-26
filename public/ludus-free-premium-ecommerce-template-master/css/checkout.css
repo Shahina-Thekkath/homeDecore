@@ -1,0 +1,21 @@
+.radio-box.disabled {
+  opacity: 0.6;           /* visually dim it */
+  pointer-events: none;   /* disable clicks on the div and label */
+  cursor: not-allowed;
+}
+
+.wallet-balance-inline {
+    color: #28a745;
+    font-weight: 600;
+    font-size: 0.9em;
+}
+
+/* When insufficient balance */
+.wallet-balance-inline.insufficient {
+    color: #dc3545;
+}
+
+/* Disabled state */
+.radio-box.disabled .wallet-balance-inline {
+    color: #6c757d;
+}

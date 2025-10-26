@@ -47,75 +47,95 @@ const loadProductDetails = async (req, res) =>{
 
        
 
-        const getBestDiscount = async (product) => {
-        const basePrice = product.price;
+         // ===== COMMON OFFER LOGIC =====
+    const getBestDiscount = async (product) => {
+      const basePrice = product.price;
+      const currentDate = new Date();
 
-        // Get product offer
-        const productOffer = await ProductOffer.findOne({
-            productId: product._id,
-            isActive: true,
-            startDate: { $lte: new Date() },
-            endDate: { $gte: new Date() }
-        });
+      // Fetch all active offers
+      const [productOffers, categoryOffers] = await Promise.all([
+        ProductOffer.find({
+          productId: product._id,
+          isActive: true,
+          startDate: { $lte: currentDate },
+          endDate: { $gte: currentDate },
+        }),
+        CategoryOffer.find({
+          categoryId: product.categoryId._id,
+          isActive: true,
+          startDate: { $lte: currentDate },
+          endDate: { $gte: currentDate },
+        }),
+      ]);
 
-      let productDiscountValue = 0;
-      if (productOffer) {
-        productDiscountValue = productOffer.discountType === "percentage"
-          ? (basePrice * productOffer.discountAmount) / 100
-          : productOffer.discountAmount;
+      // Helper to find best offer among multiple
+      const getBestOffer = (offers) => {
+        let best = { finalPrice: basePrice, offer: null };
+        for (const offer of offers) {
+          let discounted = basePrice;
+          if (offer.discountType === "percentage") {
+            discounted = basePrice - (basePrice * offer.discountAmount) / 100;
+          } else if (offer.discountType === "flat") {
+            discounted = basePrice - offer.discountAmount;
+          }
+
+          discounted = Math.max(discounted, 0);
+          if (discounted < best.finalPrice) {
+            best = { finalPrice: discounted, offer };
+          }
+        }
+        return best;
+      };
+
+      const bestProductOffer = getBestOffer(productOffers);
+      const bestCategoryOffer = getBestOffer(categoryOffers);
+
+      let discountType = null;
+      let discountAmount = 0;
+      let bestPrice = basePrice;
+      let source = null;
+
+      // Compare product vs category offers
+      if (bestProductOffer.finalPrice < bestCategoryOffer.finalPrice) {
+        bestPrice = bestProductOffer.finalPrice;
+        source = "product";
+        discountType = bestProductOffer.offer?.discountType || null;
+        discountAmount = bestProductOffer.offer?.discountAmount || 0;
+      } else if (
+        bestCategoryOffer.offer &&
+        bestCategoryOffer.finalPrice < basePrice
+      ) {
+        bestPrice = bestCategoryOffer.finalPrice;
+        source = "category";
+        discountType = bestCategoryOffer.offer?.discountType || null;
+        discountAmount = bestCategoryOffer.offer?.discountAmount || 0;
       }
 
-      // Get category offer
-      const categoryOffer = await CategoryOffer.findOne({
-        categoryId: product.categoryId,
-        isActive: true,
-        startDate: { $lte: new Date() },
-        endDate: { $gte: new Date() }
-      });
+      const discountValue = basePrice - bestPrice;
 
-      let categoryDiscountValue = 0;
-      if (categoryOffer) {
-        categoryDiscountValue = categoryOffer.discountType === "percentage"
-          ? (basePrice * categoryOffer.discountAmount) / 100
-          : categoryOffer.discountAmount;
-      }
-
-      // Pick greater discount
-      if (productDiscountValue > categoryDiscountValue) {
-        return {
-          discountType: productOffer.discountType,
-          discountAmount: productOffer.discountAmount,
-          finalPrice: Math.max(basePrice - productDiscountValue, 0),
-          basePrice
-        };
-      } else if (categoryDiscountValue > 0) {
-        return {
-          discountType: categoryOffer.discountType,
-          discountAmount: categoryOffer.discountAmount,
-          finalPrice: Math.max(basePrice - categoryDiscountValue, 0),
-          basePrice
-        };
-      } else {
-        return {
-          discountType: null,
-          discountAmount: 0,
-          finalPrice: basePrice,
-          basePrice
-        };
-      }
+      return {
+        source,               // "product" or "category"
+        discountType,         // "percentage" or "flat"
+        discountAmount,       // amount or percentage
+        basePrice,            // original price
+        finalPrice: bestPrice, // discounted price
+        discountValue,        // actual discount difference
+      };
     };
 
-    // Get best discount for current product
+    // ===== APPLY OFFER TO CURRENT PRODUCT =====
     const currentProductOffer = await getBestDiscount(currentProduct);
 
-    // Get related products
+    // ===== RELATED PRODUCTS WITH OFFERS =====
     const relatedProductsRaw = await Product.find({
       _id: { $ne: productId },
       categoryId: currentProduct.categoryId,
-      isBlocked: false
-    }).populate("categoryId").lean().limit(8);
+      isBlocked: false,
+    })
+      .populate("categoryId")
+      .lean()
+      .limit(8);
 
-    // Map related products with their best discount
     const relatedProducts = await Promise.all(
       relatedProductsRaw.map(async (prod) => {
         const offerData = await getBestDiscount(prod);
@@ -123,319 +143,326 @@ const loadProductDetails = async (req, res) =>{
       })
     );
 
-    // Render
+    // ===== RENDER =====
     res.render("productDetails", {
       currentProduct: { ...currentProduct, ...currentProductOffer },
       relatedProducts,
       cart,
       grandTotal,
-      user
+      user,
     });
-        
-        
-        
-        
-    } catch (error) {
-       console.error("Error while rendering the product details page: ", error);
-       
-        res.redirect("/PageNotFound");
-    }
+  } catch (error) {
+    console.error("Error while rendering product details page:", error);
+    res.redirect("/PageNotFound");
+  }
 };
 
-const getUserProductList = async(req, res) =>{
-    try {
 
-        const userId = req.session.user?._id || req.session.passport._id;
-        const user = await User.findById(userId);
+const getUserProductList = async (req, res) => {
+  try {
+    const userId = req.session.user?._id || req.session.passport._id;
+    const user = await User.findById(userId);
 
-        const sort = req.query.sort || 'newest';
-        
+    const sort = req.query.sort || 'newest';
+    const limit = 9;
+    const page = parseInt(req.query.page) || 1;
+    const skip = (page - 1) * limit;
 
-        // default
-        const limit = 9;
-        const page = parseInt(req.query.page) || 1;
-        const skip = (page - 1) * limit;
+    const query = { isBlocked: false };
+    const totalProducts = await Product.countDocuments(query);
+    const totalPages = Math.ceil(totalProducts / limit);
 
-        
-        const query = { isBlocked: false };
+    const products = await Product.find(query)
+      .populate("categoryId", "name")
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
+      .lean();
 
-        // Fetch total count
-        const totalProducts = await Product.countDocuments(query);
-        const totalPages = Math.ceil(totalProducts / limit);
+    const currentDate = new Date();
 
-    
-        const products = await Product.find(query)
-            .populate("categoryId", "name")
-            .sort({ createdAt: -1 }) // newest by default
-            .skip(skip)
-            .limit(limit)
-            .lean();
+    // ===== COMMON OFFER LOGIC =====
+    const getBestDiscount = async (product) => {
+      const basePrice = product.price;
 
-            const currentDate = new Date();
+      const [productOffers, categoryOffers] = await Promise.all([
+        ProductOffer.find({
+          productId: product._id,
+          isActive: true,
+          startDate: { $lte: currentDate },
+          endDate: { $gte: currentDate },
+        }),
+        CategoryOffer.find({
+          categoryId: product.categoryId._id,
+          isActive: true,
+          startDate: { $lte: currentDate },
+          endDate: { $gte: currentDate },
+        }),
+      ]);
 
-            //Apply offers for each product 
-
-            const updatedProducts = await Promise.all(
-              products.map(async (product) => {
-                const originalPrice = product.price;
-                let bestPrice = originalPrice;
-                let discountInfo = null;
-
-                let productDiscountPrice, categoryDiscountPrice;
-
-                //check product offer
-                const productOffer = await ProductOffer.findOne({
-                  productId: product._id,
-                  isActive: true,
-                  startDate: { $lte: currentDate },
-                  endDate: { $gte: currentDate }
-                });
-
-                if(productOffer) {
-                  if (productOffer.discountType === 'percentage') {
-                    productDiscountPrice = originalPrice - (originalPrice * productOffer.discountAmount) / 100;
-                  } else if (productOffer.discountType === 'flat') {
-                    productDiscountPrice = originalPrice - productOffer.discountAmount;
-                  }
-                }
-
-                //check category offer
-                const categoryOffer = await CategoryOffer.findOne({
-                  categoryId: product.categoryId._id,
-                  isActive: true,
-                  startDate: {$lte: currentDate},
-                  endDate: { $gte: currentDate }
-                });
-
-                if(categoryOffer) {
-                  if(categoryOffer.discountType === 'percentage') {
-                    categoryDiscountPrice = originalPrice - (originalPrice * categoryOffer.discountAmount) / 100;
-                  } else if (categoryOffer.discountType === 'flat') {
-                    categoryDiscountPrice = originalPrice - categoryOffer.discountAmount;
-                  }
-                }
-
-                if(productDiscountPrice !== undefined &&
-                  (categoryDiscountPrice === undefined || productDiscountPrice < categoryDiscountPrice) &&
-                  productDiscountPrice < bestPrice
-                ) {
-                  bestPrice = productDiscountPrice;
-                  discountInfo = {
-                    type: productOffer.discountType,
-                    amount: productOffer.discountAmount,
-                    source: "product"
-                  };
-                } else if ( categoryDiscountPrice !== undefined && 
-                  categoryDiscountPrice < bestPrice
-                ) {
-                  bestPrice = categoryDiscountPrice;
-                  discountInfo = {
-                    type: categoryOffer.discountType,
-                    amount: categoryOffer.discountAmount,
-                    source: "category"
-                  };
-                }
-
-                bestPrice = Math.max(bestPrice, 0);
-
-                return{
-                  ...product,
-                  originalPrice,
-                  finalPrice: bestPrice,
-                  discountInfo
-                };
-              })
-            );
-
-            
-
-            //  Aggregate product count by category
-        const categoryCounts = await Product.aggregate([
-            { $match: { isBlocked: false } },
-            { $group: {
-                _id: "$categoryId",
-                count: { $sum: 1 }
-            }}
-        ]);
-
-        //  Populate category names
-        const countsWithNames = await Category.populate(categoryCounts, {
-            path: "_id",
-            select: "name"
-        });
-
-        //  Convert to a simpler format
-        const categories = countsWithNames.map(item => ({
-            name: item._id.name,
-            count: item.count
-        }));
-
-       
-        res.render('userProductList', {
-            products: updatedProducts,
-            user,
-            sort,
-            limit,
-            totalPages,    
-            currentPage: page,
-            categories
-        });
-    } catch (error) {
-        console.error("Error loading user product List:", error);
-        res.redirect("/PageNotFound");
-        
-    }
-}
-
-const getFilteredProductList = async (req, res) =>{
-    try {
-          const {sort, category, search } = req.query;
-
-          const limit = parseInt(req.query.limit) || 12;
-          const page = parseInt(req.query.page) || 1;
-
-         
-          
-
-          const query = {isBlocked: false};
-          if(category){
-            const catDoc = await Category.findOne({ name: category });
-            if(catDoc){
-                query.categoryId = catDoc._id;
-            }
-          }
-          
-          let sortOption = {createdAt:-1};
-          switch(sort) {
-            case 'name_asc' : sortOption = {name: 1}; break;
-            case 'name_desc' : sortOption = {name: -1}; break;
-            case 'price_asc' : sortOption = {price: 1}; break;
-            case 'price_desc' : sortOption = {price: -1}; break;
+      const getBestOffer = (offers) => {
+        let best = { finalPrice: basePrice, offer: null };
+        for (const offer of offers) {
+          let discounted = basePrice;
+          if (offer.discountType === "percentage") {
+            discounted = basePrice - (basePrice * offer.discountAmount) / 100;
+          } else if (offer.discountType === "flat") {
+            discounted = basePrice - offer.discountAmount;
           }
 
-          const trimmedSearch = search?.trim();
-          if(trimmedSearch && trimmedSearch.length > 0){
-            const searchRegex =  new RegExp(trimmedSearch, 'i');
+          discounted = Math.max(discounted, 0);
+          if (discounted < best.finalPrice) {
+            best = { finalPrice: discounted, offer };
+          }
+        }
+        return best;
+      };
 
-             const parsedPrice = parseInt(search, 10);
-            const isValidPrice = !isNaN(parsedPrice);
+      const bestProductOffer = getBestOffer(productOffers);
+      const bestCategoryOffer = getBestOffer(categoryOffers);
 
+      let discountType = null;
+      let discountAmount = 0;
+      let bestPrice = basePrice;
+      let source = null;
 
-            // returns all the categories which starts with the searchRegex
-            const matchedCategory = await Category.findOne({ name: searchRegex });
+      if (bestProductOffer.finalPrice < bestCategoryOffer.finalPrice) {
+        bestPrice = bestProductOffer.finalPrice;
+        source = "product";
+        discountType = bestProductOffer.offer?.discountType || null;
+        discountAmount = bestProductOffer.offer?.discountAmount || 0;
+      } else if (
+        bestCategoryOffer.offer &&
+        bestCategoryOffer.finalPrice < basePrice
+      ) {
+        bestPrice = bestCategoryOffer.finalPrice;
+        source = "category";
+        discountType = bestCategoryOffer.offer?.discountType || null;
+        discountAmount = bestCategoryOffer.offer?.discountAmount || 0;
+      }
 
-              if (matchedCategory) {
-                //  If a category name matches exactly → only search products by that category
-                query.categoryId = matchedCategory._id;
-               } else if (isValidPrice) {
-                  //  If numeric → treat as price range (±10%)
-                  const minPrice = parsedPrice - parsedPrice * 0.1; // -10%
-                  const maxPrice = parsedPrice + parsedPrice * 0.1; // +10%
+      const discountValue = basePrice - bestPrice;
 
-                  query.price = { $gte: minPrice, $lte: maxPrice };
+      return {
+        source,
+        discountType,
+        discountAmount,
+        basePrice,
+        finalPrice: bestPrice,
+        discountValue,
+      };
+    };
 
-                } else {
-                  //  Otherwise search by name
-                  query.name = searchRegex;
-                }
+    // Apply offer to each product
+    const updatedProducts = await Promise.all(
+      products.map(async (product) => {
+        const offerData = await getBestDiscount(product);
+        return {
+          ...product,
+          originalPrice: offerData.basePrice,
+          finalPrice: offerData.finalPrice,
+          discountInfo: offerData.source
+            ? {
+                type: offerData.discountType,
+                amount: offerData.discountAmount,
+                source: offerData.source,
               }
+            : null,
+        };
+      })
+    );
 
-          const totalProducts = await Product.countDocuments(query);
-            const totalPages = Math.ceil(totalProducts / limit);
+    //  Aggregate category counts
+    const categoryCounts = await Product.aggregate([
+      { $match: { isBlocked: false } },
+      {
+        $group: {
+          _id: "$categoryId",
+          count: { $sum: 1 },
+        },
+      },
+    ]);
 
-            const safePage = (page > totalPages && totalPages !== 0) ? totalPages : (page < 1 ? 1 : page);
+    const countsWithNames = await Category.populate(categoryCounts, {
+      path: "_id",
+      select: "name",
+    });
 
-            const skip = (safePage - 1) * limit;
+    const categories = countsWithNames.map((item) => ({
+      name: item._id.name,
+      count: item.count,
+    }));
 
-          const products = await Product.find(query).populate("categoryId", "name").sort(sortOption).skip(skip)
-            .limit(limit).lean();
-
-            const currentDate = new Date();
-
-            //Apply offers for each product 
-
-            const updatedProducts = await Promise.all(
-              products.map(async (product) => {
-                const originalPrice = product.price;
-                let bestPrice = originalPrice;
-                let discountInfo = null;
-
-                let productDiscountPrice, categoryDiscountPrice;
-
-                //check product offer
-                const productOffer = await ProductOffer.findOne({
-                  productId: product._id,
-                  isActive: true,
-                  startDate: { $lte: currentDate },
-                  endDate: { $gte: currentDate }
-                });
-
-                if(productOffer) {
-                  if (productOffer.discountType === 'percentage') {
-                    productDiscountPrice = originalPrice - (originalPrice * productOffer.discountAmount) / 100;
-                  } else if (productOffer.discountType === 'flat') {
-                    productDiscountPrice = originalPrice - productOffer.discountAmount;
-                  }
-                }
-
-                //check category offer
-                const categoryOffer = await CategoryOffer.findOne({
-                  categoryId: product.categoryId._id,
-                  isActive: true,
-                  startDate: {$lte: currentDate},
-                  endDate: { $gte: currentDate }
-                });
-
-                if(categoryOffer) {
-                  if(categoryOffer.discountType === 'percentage') {
-                    categoryDiscountPrice = originalPrice - (originalPrice * categoryOffer.discountAmount) / 100;
-                  } else if (categoryOffer.discountType === 'flat') {
-                    categoryDiscountPrice = originalPrice - categoryOffer.discountAmount;
-                  }
-                }
-
-                if(productDiscountPrice !== undefined &&
-                  (categoryDiscountPrice === undefined || productDiscountPrice < categoryDiscountPrice) &&
-                  productDiscountPrice < bestPrice
-                ) {
-                  bestPrice = productDiscountPrice;
-                  discountInfo = {
-                    type: productOffer.discountType,
-                    amount: productOffer.discountAmount,
-                    source: "product"
-                  };
-                } else if ( categoryDiscountPrice !== undefined && 
-                  categoryDiscountPrice < bestPrice
-                ) {
-                  bestPrice = categoryDiscountPrice;
-                  discountInfo = {
-                    type: categoryOffer.discountType,
-                    amount: categoryOffer.discountAmount,
-                    source: "category"
-                  };
-                }
-
-                bestPrice = Math.max(bestPrice, 0);
-
-                return{
-                  ...product,
-                  originalPrice,
-                  finalPrice: bestPrice,
-                  discountInfo
-                };
-              })
-            );
-
-            
-
-
-          res.render('user/productListPartial', {products: updatedProducts, totalPages, currentPage: safePage, limit});
-
-    } catch (error) {
-         console.error("Error fetching products while using filter:", error);
-         res.status(500).send('Error fetching products');
-    }
+    res.render("userProductList", {
+      products: updatedProducts,
+      user,
+      sort,
+      limit,
+      totalPages,
+      currentPage: page,
+      categories,
+    });
+  } catch (error) {
+    console.error("Error loading user product List:", error);
+    res.redirect("/PageNotFound");
+  }
 };
+
+
+const getFilteredProductList = async (req, res) => {
+  try {
+    const { sort, category, search } = req.query;
+    const limit = parseInt(req.query.limit) || 12;
+    const page = parseInt(req.query.page) || 1;
+
+    const query = { isBlocked: false };
+    if (category) {
+      const catDoc = await Category.findOne({ name: category });
+      if (catDoc) {
+        query.categoryId = catDoc._id;
+      }
+    }
+
+    let sortOption = { createdAt: -1 };
+    switch (sort) {
+      case "name_asc":
+        sortOption = { name: 1 };
+        break;
+      case "name_desc":
+        sortOption = { name: -1 };
+        break;
+      case "price_asc":
+        sortOption = { price: 1 };
+        break;
+      case "price_desc":
+        sortOption = { price: -1 };
+        break;
+    }
+
+    const trimmedSearch = search?.trim();
+    if (trimmedSearch && trimmedSearch.length > 0) {
+      const searchRegex = new RegExp(trimmedSearch, "i");
+      const parsedPrice = parseInt(search, 10);
+      const isValidPrice = !isNaN(parsedPrice);
+
+      const matchedCategory = await Category.findOne({ name: searchRegex });
+      if (matchedCategory) {
+        query.categoryId = matchedCategory._id;
+      } else if (isValidPrice) {
+        const minPrice = parsedPrice - parsedPrice * 0.1;
+        const maxPrice = parsedPrice + parsedPrice * 0.1;
+        query.price = { $gte: minPrice, $lte: maxPrice };
+      } else {
+        query.name = searchRegex;
+      }
+    }
+
+    const totalProducts = await Product.countDocuments(query);
+    const totalPages = Math.ceil(totalProducts / limit);
+    const safePage =
+      page > totalPages && totalPages !== 0
+        ? totalPages
+        : page < 1
+        ? 1
+        : page;
+
+    const skip = (safePage - 1) * limit;
+
+    const products = await Product.find(query)
+      .populate("categoryId", "name")
+      .sort(sortOption)
+      .skip(skip)
+      .limit(limit)
+      .lean();
+
+    const currentDate = new Date();
+
+    // ===== REUSE SAME DISCOUNT LOGIC =====
+    const getBestDiscount = async (product) => {
+      const basePrice = product.price;
+
+      const [productOffers, categoryOffers] = await Promise.all([
+        ProductOffer.find({
+          productId: product._id,
+          isActive: true,
+          startDate: { $lte: currentDate },
+          endDate: { $gte: currentDate },
+        }),
+        CategoryOffer.find({
+          categoryId: product.categoryId._id,
+          isActive: true,
+          startDate: { $lte: currentDate },
+          endDate: { $gte: currentDate },
+        }),
+      ]);
+
+      const getBestOffer = (offers) => {
+        let best = { finalPrice: basePrice, offer: null };
+        for (const offer of offers) {
+          let discounted = basePrice;
+          if (offer.discountType === "percentage") {
+            discounted = basePrice - (basePrice * offer.discountAmount) / 100;
+          } else if (offer.discountType === "flat") {
+            discounted = basePrice - offer.discountAmount;
+          }
+          discounted = Math.max(discounted, 0);
+          if (discounted < best.finalPrice) {
+            best = { finalPrice: discounted, offer };
+          }
+        }
+        return best;
+      };
+
+      const bestProductOffer = getBestOffer(productOffers);
+      const bestCategoryOffer = getBestOffer(categoryOffers);
+
+      let bestPrice = basePrice;
+      let discountInfo = null;
+
+      if (bestProductOffer.finalPrice < bestCategoryOffer.finalPrice) {
+        bestPrice = bestProductOffer.finalPrice;
+        discountInfo = {
+          type: bestProductOffer.offer?.discountType,
+          amount: bestProductOffer.offer?.discountAmount,
+          source: "product",
+        };
+      } else if (bestCategoryOffer.finalPrice < basePrice) {
+        bestPrice = bestCategoryOffer.finalPrice;
+        discountInfo = {
+          type: bestCategoryOffer.offer?.discountType,
+          amount: bestCategoryOffer.offer?.discountAmount,
+          source: "category",
+        };
+      }
+
+      return { finalPrice: bestPrice, discountInfo };
+    };
+
+    const updatedProducts = await Promise.all(
+      products.map(async (product) => {
+        const originalPrice = product.price;
+        const { finalPrice, discountInfo } = await getBestDiscount(product);
+        return {
+          ...product,
+          originalPrice,
+          finalPrice,
+          discountInfo,
+        };
+      })
+    );
+
+    res.render("user/productListPartial", {
+      products: updatedProducts,
+      totalPages,
+      currentPage: safePage,
+      limit,
+    });
+  } catch (error) {
+    console.error("Error fetching products while using filter:", error);
+    res.status(500).send("Error fetching products");
+  }
+};
+
 
 
 

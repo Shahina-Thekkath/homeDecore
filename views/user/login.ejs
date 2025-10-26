@@ -1,4 +1,4 @@
-<%-include("../../views/partials/user/signup404Header")%>
+<%-include("../../views/partials/user/signupLoginHeader")%>
 
 <style>
             #toggleLoginPassword {
@@ -21,23 +21,7 @@
             <!--====== Section 1 ======-->
             <div class="u-s-p-y-60">
 
-                <!--====== Section Content ======-->
-                <div class="section__content">
-                    <div class="container">
-                        <div class="breadcrumb">
-                            <div class="breadcrumb__wrap">
-                                <ul class="breadcrumb__list">
-                                    <li class="has-separator">
-
-                                        <a href="/">Home</a></li>
-                                    <li class="is-marked">
-
-                                        <a href="/login">Signin</a></li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                
             </div>
             <!--====== End - Section 1 ======-->
 
@@ -96,7 +80,10 @@
                                                 <label class="gl-label" for="login-email">E-MAIL *</label>
 
                                                 <input class="input-text input-text--primary-style" type="email" id="login-email" placeholder="Enter E-mail" name="email" value="<%=locals.email?email:""%>">
-                                                 <span class="text-danger"><%=locals.invalidEmail?invalidEmail:""%></span>
+                                                 <span style="color: #e63946; font-size: 12px; font-weight: 600;">
+                                                    <%= locals.invalidEmail ? invalidEmail : "" %>
+                                                </span>
+
                                             
                                             </div>
 
@@ -121,7 +108,7 @@
                                                     </span>
                                                 </div>
                                                 
-                                                <span class="text-danger"><%=locals.invalidPassword?invalidPassword:""%></span></div>
+                                                <span style="color: #e63946; font-size: 12px; font-weight: 600;"><%=locals.invalidPassword?invalidPassword:""%></span></div>
                                             <div class="gl-inline">
                                                
 

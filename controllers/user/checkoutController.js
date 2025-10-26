@@ -4,6 +4,7 @@ const User = require("../../models/userSchma");
 const mongoose = require("mongoose");
 const Product = require("../../models/productSchema");
 const Coupon = require("../../models/couponSchema");
+const Wallet = require("../../models/walletSchema");
 
 const loadCheckout = async (req, res) => {
   try {
@@ -11,6 +12,16 @@ const loadCheckout = async (req, res) => {
     const cart = await Cart.findOne({ userId }).populate("items.productId");
 
     const user = await User.findById(userId);
+
+    let wallet = await Wallet.findOne({ userId });
+    
+    if (!wallet) {
+      wallet = await Wallet.create({ 
+        userId, 
+        balance: 0,
+        transactions: [] 
+      });
+    }
 
     const allCoupons = await Coupon.find();
 
@@ -88,7 +99,8 @@ const loadCheckout = async (req, res) => {
       flatCoupons,
       expiredCoupons,
       percentageCoupons,
-      coupons: allCoupons || []
+      coupons: allCoupons || [],
+      walletBalance: wallet.balance
     });
   } catch (error) {
     console.error("Error loading checkout page", error);

@@ -35,24 +35,28 @@ const getEditProfile = async(req, res) =>{
 
 const updateProfile = async (req, res) => {
   try {
-    if (!req.session.user && !req.session.passport) {
+    const userId = req.session.user?._id || req.session.passport?.user?._id;
+
+    if (!userId) {
       return res.status(401).json({
         success: false,
         message: "Unauthorized. Please login again."
       });
     }
 
-    const { name, gender, email, phone } = req.body;
-    const userId = req.session.user._id || req.session.passport._id;
-    
+    const { name, gender, phone } = req.body;
     const errors = {};
-    if (!name || !name.trim()) errors.name = "Name is required.";
-    if (!email || !email.trim()) errors.email = "Email is required.";
-    if (!phone || !phone.trim()) errors.phone = "Phone number is required.";
-    if (!gender || !gender.trim()) errors.gender = "Gender is required.";
+
+    const nameRegex = /^[a-zA-Z\s.]+$/;
+    const phoneRegex = /^[6-9]\d{9}$/;
+    const genderRegex = /^(male|female)$/;
+
+    if (!name || !nameRegex.test(name)) errors.name = "Name must contain only letters, spaces, or dot.";
+    if (!phone || !phoneRegex.test(phone)) errors.phone = "Phone must be a valid 10-digit number starting with 6-9.";
+    if (!gender || !genderRegex.test(gender)) errors.gender = "Please select a valid gender.";
 
     if (Object.keys(errors).length > 0) {
-      return res.json({ success: false, errors });
+      return res.status(400).json({ success: false, errors });
     }
 
     const user = await User.findById(userId);
@@ -63,10 +67,7 @@ const updateProfile = async (req, res) => {
       });
     }
 
-    //  Update data
-    await User.findByIdAndUpdate(userId, {
-      $set: { name, email, phone, gender }
-    });
+    await User.findByIdAndUpdate(userId, { $set: { name, phone, gender } });
 
     return res.json({
       success: true,
@@ -81,6 +82,7 @@ const updateProfile = async (req, res) => {
     });
   }
 };
+
 
 module.exports = {userProfile,
                   getEditProfile,

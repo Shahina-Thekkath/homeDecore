@@ -10,14 +10,83 @@ const qs = require("qs");
 const Coupon = require("../../models/couponSchema");
 const { log } = require("console");
 const Wallet = require('../../models/walletSchema');
+const axios = require("axios");
+const dotenv = require("dotenv");
+const { doesNotThrow } = require("assert");
+dotenv.config();
 
+const WAREHOUSE_CITY = process.env.WAREHOUSE_CITY;
+const ORS_API_KEY = process.env.ORS_API_KEY;
+
+async function getCoordinates(city) {
+   const url = `https://api.openrouteservice.org/geocode/search`;
+   try {
+    const { data } = await axios.get(url, {
+      params: { api_key: ORS_API_KEY, text: ` ${city}, Kerala, India`, 'boundary.country': 'IN' }
+    });
+
+    if (!data.features || data.features.length === 0) {
+        throw new Error('No coordinates found for this city.');
+    }
+
+    console.log('Geocode API result for', city, data.features[0]);
+    return data.features[0].geometry.coordinates; // or swap for [lat, lng]
+} catch (err) {
+    console.error(`Failed to fetch coordinates for city ${city}:`, err.message);
+    throw err;
+}
+}
+ 
+// Calculate delivery charge
+
+const calculateDeliveryCharge = async (req, res) => {
+  try {
+    console.log("calculate Delivery");
+    
+    const { city } = req.body;
+
+    if(!city) {
+      return res.status(400).json({ success: false, message: 'city required' });
+    }
+
+    const warehouseCoords = await getCoordinates(WAREHOUSE_CITY);
+    const userCoords = await getCoordinates(city);
+
+
+    const matrixRes = await axios.post(
+      `https://api.openrouteservice.org/v2/matrix/driving-car`,
+      { locations: [warehouseCoords, userCoords],
+        metrics: ['distance']
+       },
+      { headers: { Authorization: `Bearer ${ORS_API_KEY}`, 'Content-Type': 'application/json' } }
+
+    );
+    
+    const distanceMeters = matrixRes.data.distances[0][1];
+    const distanceKm = (distanceMeters / 1000).toFixed(2);
+
+    let deliveryCharge = 0;
+    if (distanceKm > 5) {
+      deliveryCharge = Math.round((distanceKm - 5) * 1.5);
+    }
+
+    req.session.deliveryCharge = deliveryCharge;
+
+    res.json({ success: true, distanceKm, deliveryCharge });
+  } catch (error) {
+    console.error('Delivery charge error:', error);
+    res.status(500).json({ success: false, message: 'Failed to calculate delivery charge' });
+    
+  }
+};
 
 const saveOrderFromSerializedData = async (
   formData,
   userId,
   isPaid = false,
   couponCode = null,
-  couponDiscount = 0
+  couponDiscount = 0,
+  deliveryCharge = 0
 ) => {
   try {
     const parsedFormData = qs.parse(formData);
@@ -40,7 +109,7 @@ const saveOrderFromSerializedData = async (
         return sum + (parseFloat(item.price) - parseFloat(item.discountedPrice)) * item.quantity;
       }, 0);
 
-      const finalTotal = parseFloat(grandTotal) - parseFloat(couponDiscount) || 0;   // the coupon discount is being reduced
+      const finalTotal = parseFloat(grandTotal) + parseFloat(deliveryCharge) - parseFloat(couponDiscount) || 0;   // the coupon discount is being reduced
 
     const newOrder = new Order({
       userId: userId,
@@ -51,6 +120,7 @@ const saveOrderFromSerializedData = async (
       isPaid: true,
       createdAt: new Date(),
       discountAmount: parseFloat(offerDiscountTotal) || 0,
+      deliveryCharge,
       couponCode: couponCode || null,
       couponDiscount: couponDiscount || 0
     });
@@ -86,6 +156,7 @@ const saveOrderFromSerializedData = async (
       shippingAddress,
       paymentMethod: payment,
       totalAmount: parseFloat(finalTotal),
+      deliveryCharge,
       isPaid: true,
       createdAt: new Date(),
       discountAmount: parseFloat(offerDiscountTotal) || 0,
@@ -116,7 +187,8 @@ const saveOrderInSession = async (req, res) => {
 
       // coupon discount from session (if applied)
       const couponDiscount = req.session.coupon?.discount || 0;
-      const finalTotal = parseFloat(grandTotal) - parseFloat(couponDiscount);    // grandTotal <= checkout.ejs = #orderForm <= cartItems = checkoutController
+      const deliveryCharge = req.session.deliveryCharge || 0;
+      const finalTotal = parseFloat(grandTotal) + parseFloat(deliveryCharge) - parseFloat(couponDiscount);    // grandTotal <= checkout.ejs = #orderForm <= cartItems = checkoutController
 
 
     // Format the order details
@@ -133,6 +205,7 @@ const saveOrderInSession = async (req, res) => {
         subtotal: parseFloat(item.subtotal),
       })),
       totalAmount: finalTotal,
+      deliveryCharge,
       shippingAddress: shippingAddress, // Parse the selected address if passed as JSON
       paymentMethod: payment,
       createdAt: new Date(),
@@ -199,6 +272,7 @@ const getOrderSuccess = (req, res) => {
     req.session.order = null;
     req.session.paymentMethod = null;
     req.session.coupon = null;
+    req.session.deliveryCharge = 0;
 
     const grandTotal = order.products.reduce((sum, item) => sum + (item.discountedPrice * item.quantity), 0);
 
@@ -211,6 +285,103 @@ const getOrderSuccess = (req, res) => {
     res.status(500).send("Failed to load order success page.");
   }
 };
+
+const saveWalletOrder = async (req, res) => {
+  try {
+    const userId = req.session.user?._id;
+    const { cartItems, grandTotal, shippingAddress, payment } = req.body;
+
+    const wallet = await Wallet.findOne({ userId });
+    if (!wallet) return res.status(400).json({ success: false, message: "Wallet not found" });
+
+    const itemsArray = Array.isArray(cartItems) ? cartItems : Object.values(cartItems);
+
+    const offerDiscountTotal = itemsArray.reduce((sum, item) => {
+      return sum + (parseFloat(item.price) - parseFloat(item.discountedPrice)) * item.quantity;
+    }, 0);
+
+    const couponDiscount = req.session.coupon?.discount || 0;
+    const deliveryCharge = req.session.deliveryCharge || 0;
+    const finalTotal = parseFloat(grandTotal) + parseFloat(deliveryCharge) - parseFloat(couponDiscount);
+
+    // Check wallet balance
+    if (wallet.balance < finalTotal) {
+      return res.status(400).json({ success: false, message: "Insufficient wallet balance." });
+    }
+
+    // Deduct from wallet
+    wallet.balance -= finalTotal;
+    wallet.transactions.push({
+      transactionId: `TXN${Date.now()}`,
+      type: "debit",
+      amount: finalTotal,
+      reason: "Order Payment",
+      date: new Date(),
+    });
+    await wallet.save();
+
+    // Save order
+    const order = {
+      userId,
+      products: itemsArray.map((item) => ({
+        productId: item.id,
+        name: item.name,
+        price: parseFloat(item.price),
+        discountedPrice: parseFloat(item.discountedPrice),
+        quantity: parseInt(item.quantity, 10),
+        subtotal: parseFloat(item.subtotal),
+      })),
+      totalAmount: finalTotal,
+      deliveryCharge,
+      shippingAddress,
+      paymentMethod: payment,
+      createdAt: new Date(),
+      discountAmount: parseFloat(offerDiscountTotal) || 0,
+      couponCode: req.session.coupon?.code || null,
+      couponDiscount: parseFloat(couponDiscount),
+      isPaid: true
+    };
+
+    req.session.order = order;
+    req.session.paymentMethod = payment;
+
+    const newOrder = new Order(order);
+    await newOrder.save();
+
+    // Decrement stock
+    for (const item of order.products) {
+      await Product.findByIdAndUpdate(
+        item.productId,
+        { $inc: { quantity: -item.quantity } },
+        { new: true }
+      );
+    }
+
+    // Mark coupon as used
+    const couponCode = req.session.coupon?.code;
+    if (couponCode) {
+      const coupon = await Coupon.findOne({ code: couponCode.trim().toUpperCase() });
+      if (coupon && !coupon.usersUsed.includes(userId)) {
+        coupon.usersUsed.push(userId);
+        coupon.usedCount += 1;
+        await coupon.save();
+      }
+    }
+
+    // Empty cart
+    await Cart.findOneAndUpdate({ userId }, { $set: { items: [] } });
+
+    // Clear session data
+    req.session.order = order;
+    req.session.paymentMethod = "Wallet Payment";
+
+    res.json({ success: true });
+  } catch (error) {
+    console.error("Error processing wallet order:", error);
+    res.status(500).json({ success: false, message: "Failed to process wallet payment." });
+  }
+};
+
 
 const getOrdersPage = async (req, res) => {
   try {
@@ -377,7 +548,7 @@ function updateOverallOrderStatus(order) {
 
   if (activeProducts.length === 1 && activeProducts[0]._id.equals(product._id)) {
     // Last product → refund remaining amount (actual paid)
-    refundAmount = order.totalAmount - totalRefundedSoFar;
+    refundAmount = (order.totalAmount - totalRefundedSoFar) - order.deliveryCharge;
   } else {
     // Proportional refund from amount actually paid
     const subtotal = order.products.reduce(
@@ -386,7 +557,9 @@ function updateOverallOrderStatus(order) {
     );
     const productPrice = product.discountedPrice * product.quantity;
 
-    refundAmount = (productPrice / subtotal) * order.totalAmount;
+    const totalWithoutDelivery = order.totalAmount - order.deliveryCharge;
+
+    refundAmount = (productPrice / subtotal) * totalWithoutDelivery;
   }
 
   return refundAmount;
@@ -639,24 +812,39 @@ const returnOrder = async (req, res) => {
 
 const createRazorpayOrder = async (req, res) => {
   try {
-    const { grandTotal } = req.body;      // here grandTotal is amount after the offer is being applied(not coupon), discountAmount => coupon discount
+    let grandTotal = Number(req.body.grandTotal) || 0; // ensure it's a number
 
-    let couponDiscount = 0
-     couponDiscount = req.session.coupon?.discount || 0;
+    const couponDiscount = req.session.coupon?.discount || 0;
+    const deliveryCharge = req.session.deliveryCharge || 0;
 
-    const finalAmount = (grandTotal - couponDiscount) * 100; // Convert to paise 
+    // calculate final total
+    let finalAmount = grandTotal + deliveryCharge - couponDiscount;
 
+    // safety check
     if (finalAmount <= 0) {
       return res.status(400).json({ success: false, message: "Invalid payment amount" });
+    }
+
+    // if amount is already in rupees, convert to paise
+    // (check your frontend — if you're already sending paise, remove *100)
+    finalAmount = Math.round(finalAmount * 100);
+
+    // Razorpay limit check
+    if (finalAmount > 50000000) {
+      return res.status(400).json({
+        success: false,
+        message: "Amount exceeds Razorpay's maximum transaction limit (₹5,00,000)",
+      });
     }
 
     const options = {
       amount: finalAmount,
       currency: "INR",
-      receipt: "receipt_" + Date.now,
+      receipt: "receipt_" + Date.now(), // ✅ fixed
     };
 
     const order = await razorpay.orders.create(options);
+
     res.json({
       success: true,
       razorpay_order_id: order.id,
@@ -669,6 +857,7 @@ const createRazorpayOrder = async (req, res) => {
     res.status(500).json({ success: false });
   }
 };
+
 
 // Verify Razorpay Payment
 
@@ -731,7 +920,8 @@ const verifyRazorpayPayment = async (req, res) => {
         req.session.user?._id || req.session.passport._id,
         true,
         req.session?.coupon?.code,
-        req.session?.coupon?.discount
+        req.session?.coupon?.discount,
+        req.session?.deliveryCharge
       ); // true means paid
 
       //update the quantity(stock) in the productSchema
@@ -770,7 +960,8 @@ const razorPaymentFailed = async (req, res) => {
     }, 0);
 
       const couponDiscount  = req.session.coupon?.discount || 0;
-      const finalTotal = parseFloat(grandTotal) - parseFloat(couponDiscount);
+      const deliveryCharge = req.session.deliveryCharge;
+      const finalTotal = parseFloat(grandTotal) + parseFloat(deliveryCharge) - parseFloat(couponDiscount);
 
 
     const order = {
@@ -786,6 +977,7 @@ const razorPaymentFailed = async (req, res) => {
       shippingAddress,
       paymentMethod: "Razorpay",
       totalAmount: parseFloat(finalTotal),
+      deliveryCharge,
       orderStatus: "Pending",
       createdAt: new Date(),
       discountAmount: parseFloat(offerDiscountTotal) || 0,
@@ -847,9 +1039,23 @@ const retryPayment = async (req, res) => {
     }
 
     const grandTotal = order.products.reduce((sum, item) => sum + (item.discountedPrice * item.quantity), 0);
-    const totalAmount = parseFloat(grandTotal) - parseFloat(order.couponDiscount);
+    let totalAmount = parseFloat(grandTotal) + parseFloat(order.deliveryCharge) - parseFloat(order.couponDiscount);
+    
+    if (totalAmount <= 0) {
+      return res.status(400).json({ success: false, message: "Invalid payment amount" });
+    }
 
-    const amount = totalAmount * 100;
+    // if amount is already in rupees, convert to paise
+    // (check your frontend — if you're already sending paise, remove *100)
+    const amount = Math.round(totalAmount * 100);
+
+    // Razorpay limit check
+    if (amount > 50000000) {
+      return res.status(400).json({
+        success: false,
+        message: "Amount exceeds Razorpay's maximum transaction limit (₹5,00,000)",
+      });
+    }
 
     const razorpayOrder = await razorpay.orders.create({
       amount,
@@ -931,5 +1137,7 @@ module.exports = {
   getOrderFailurePage,
   retryPayment,
   retryRazorPaymentFailed,
-  getRetryRazorpayFailurePage
+  getRetryRazorpayFailurePage,
+  calculateDeliveryCharge,
+  saveWalletOrder
 };

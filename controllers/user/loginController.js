@@ -19,7 +19,9 @@ const loadLogin = async(req, res) =>{
         res.redirect("/pageNotFound");
     }
 
-}
+};
+
+
 const login = async (req, res) => {
     try {
         const { email, password } = req.body;
@@ -32,8 +34,9 @@ const login = async (req, res) => {
         };
 
         const validationErrors = {};
-
-        if (!validateEmail(email)||email==="") {
+         if(email === "") {
+            validationErrors.invalidEmail = "Email is required";
+         } else if (!validateEmail(email)) {
             validationErrors.invalidEmail = "Invalid email";
         }
 
@@ -48,6 +51,7 @@ const login = async (req, res) => {
         }else{
         
             const findUser = await User.findOne({ email:email });
+            
 
             if (!findUser || findUser.is_admin === true) {
                 return res.render("login", { message: "User not found", email});
@@ -55,6 +59,11 @@ const login = async (req, res) => {
     
             if (findUser.isBlocked) {
                 return res.render("login", { message: "User is blocked by admin", email });
+            }
+
+            // Check if password is empty
+            if (!password || password.trim() === "") {
+                return res.render("login", { invalidPassword: "Password field cannot be empty", email });
             }
     
             // Compare passwords

@@ -237,10 +237,6 @@
                     <h4 class="total">Sales Summary</h4>
                     <ul>
                       <li>
-                        <h4>Total Order Amount</h4>
-                        <h5 id="totalAmount">$ 0.00 (0.00%)</h5>
-                      </li>
-                      <li>
                         <h4>Total Offer Discount</h4>
                         <h5 id="totalOfferDiscount">$ 0.00</h5>
                       </li>
@@ -249,8 +245,8 @@
                         <h5 id="totalCouponDiscount">$ 0.00</h5>
                       </li>
                       <li class="total">
-                        <h4>Total Sales Count</h4>
-                        <h5 id="totalOrders">0</h5>
+                        <h4>Total Order Amount</h4>
+                        <h5 id="totalAmount">$ 0.00 (0.00%)</h5>
                       </li>
                     </ul>
                   </div>
@@ -397,7 +393,7 @@
                     $("#totalAmount").text(`₹ ${Number(data.report.totalAmount || 0).toFixed(2)}`);
                     $("#totalOfferDiscount").text(`₹ ${Number(data.report.totalOfferDiscount || 0).toFixed(2)}`);
                     $("#totalCouponDiscount").text(`₹ ${Number(data.report.totalCouponDiscount || 0).toFixed(2)}`);
-                    $("#totalOrders").text(`${Number(data.report.totalOrders || 0)}`);
+                  
 
                      // Pagination
                 // Pagination

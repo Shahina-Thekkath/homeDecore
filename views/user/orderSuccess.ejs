@@ -71,9 +71,9 @@
                             <% } %>
                             <tr>
                                 <td colspan="2" class="fw-bold">Shipping</td>
-                                <td class="price-text">₹0.00</td>
+                                <td class="price-text">₹<%= (order.deliveryCharge || 0).toFixed(2) %></td>
                             </tr>
-                            <tr class="grand-total-row">
+                            <tr class="grand-total-row"><%= order.deliveryCharge.toFixed(2) %>
                                 <td colspan="2" class="fw-bold">Grand Total</td>
                                 <td class="fw-bold">₹<%= order.totalAmount.toFixed(2) %></td>
                             </tr>
