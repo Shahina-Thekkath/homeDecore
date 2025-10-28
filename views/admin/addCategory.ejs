@@ -198,11 +198,9 @@
                const namePattern = /^[a-zA-Z\s]+$/;
 
                if(!categoryName || categoryName == ""){
-                  console.log("1");
                   document.getElementById("error-message").innerHTML = "Invalid Name";
                   isValid = true;
                } else if(!namePattern.test(categoryName)){
-                console.log("2");
                 document.getElementById("error-message").innerHTML = "Should not include numbers";
                 isValid = true;
                }
@@ -245,7 +243,6 @@
             console.error("Error submitting form");
 
           }   
-            console.log(formData);
 
         }
 

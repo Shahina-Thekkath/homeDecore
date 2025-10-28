@@ -383,7 +383,6 @@
             const name = $(this).data("name");
             const price = $(this).data("price");
             const image = $(this).data("image");
-            console.log(image);
             
 
             $.ajax({
@@ -412,7 +411,6 @@
                             window.location.href = "/login";
                             });
                         } else {
-                        console.log("AJAX response:", response);
                         Swal.fire({
                             icon: "info",
                             title: response.error || "Already in cart",

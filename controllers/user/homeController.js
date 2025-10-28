@@ -2,6 +2,8 @@
 const Product = require("../../models/productSchema");
 const CategoryOffer = require('../../models/categoryOfferSchema');
 const ProductOffer = require('../../models/productOfferSchema');
+const { STATUS_CODES, MESSAGES } = require("../../constants");
+
 
 
 const loadHomepage = async (req, res) => {
@@ -96,7 +98,7 @@ const loadHomepage = async (req, res) => {
     }
   } catch (error) {
     console.error("Error loading home page:", error);
-    res.status(500).send("Server error");
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).send(MESSAGES.GENERIC.SERVER_ERROR);
   }
 };
 

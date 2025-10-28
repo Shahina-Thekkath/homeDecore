@@ -592,11 +592,10 @@
         let isValid = true;
  
     const addressId = document.getElementById("addressId").value;
-    console.log(addressId);
     
      // Collect form data
      const locality = document.getElementById("address-locality")?.value?.trim() ?? ""; // Use empty string as default
-     console.log(locality);
+ 
      
        const phone = document.getElementById("address-phone")?.value?.trim() ?? "";
        const name = document.getElementById("address-name")?.value?.trim() ?? "";
@@ -608,9 +607,7 @@
 
        // Extract `from` parameter from the URL
         const urlParams = new URLSearchParams(window.location.search);
-        const from = urlParams.get("from"); // 'checkout' or 'addressBook' or null if not provided
-        console.log("From parameter:", from);
-        
+        const from = urlParams.get("from"); // 'checkout' or 'addressBook' or null if not provided        
         
         
      // Validation patterns

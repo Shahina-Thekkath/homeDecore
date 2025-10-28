@@ -373,7 +373,6 @@
     try {
       const res = await fetch(`/admin/sales?type=${type}`);
       const data = await res.json();
-      console.log("Raw sales data from backend:", data);
 
       if (!Array.isArray(data)) {
         console.error("Unexpected response:", data);
@@ -389,9 +388,6 @@
 
       // sales numbers
       const sales = data.map(d => d.totalSales);
-
-      console.log("Generated labels:", labels);
-      console.log("Generated sales values:", sales);
 
       // update the already created chart
       window.salesChart.data.labels = labels;
@@ -414,7 +410,6 @@
     // Product Data from backend
 
     const topProducts = <%- JSON.stringify(topProducts) %>;
-    console.log("topProducts", topProducts);
     
     const productLabels = topProducts.map(p => p.name);
     const productValues = topProducts.map(p => p.totalSold);
@@ -451,7 +446,6 @@
     // Category data
 
     const topCategories = <%- JSON.stringify(topCategories) %>;
-    console.log("top categories", topCategories);
     
     const categoryLabels = topCategories.map(c => c.categoryName);
     const categoryValues = topCategories.map(c => c.totalSold);

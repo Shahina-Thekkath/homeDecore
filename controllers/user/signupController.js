@@ -4,6 +4,8 @@ const env = require('dotenv').config();
 const bcrypt = require("bcrypt");
 const session = require("express-session");
 const randomstring = require("randomstring");
+const { STATUS_CODES, MESSAGES } = require("../../constants");
+
 
 const loadSignup = async(req, res) =>{
     try {
@@ -50,12 +52,12 @@ const signup = async(req, res) =>{
     try {
         const{name,email, phone, password,cpassword} = req.body;
         if(password !== cpassword){
-            return res.render("signup", {message: "Passwords do not match"});
+            return res.render("signup", {message: MESSAGES.SIGNUP.PASSWORD_MISMATCH});
         }
         
         const findUser = await User.findOne({email});
         if(findUser){
-            return res.render("signup", {message: "user with this email already exists", name,email, phone, password});
+            return res.render("signup", {message: MESSAGES.SIGNUP.EMAIL_EXISTS, name,email, phone, password});
         }
 
         const otp = generateOtp(); 
@@ -116,12 +118,12 @@ const verifyOtp = async (req, res) =>{
         
         res.json({success: true, redirectUrl: "/"})
     }else {
-        res.status(400).json({success: false, message: "Invalid OTP, Please try again"})
+        res.status(STATUS_CODES.BAD_REQUEST).json({success: false, message: MESSAGES.SIGNUP.INVALID_OTP})
     }
         
     } catch (error) {
         console.error("Error Verifying OTP", error);
-        res.status(500).json({success: false, message: "An error occurred"});
+        res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({success: false, message: MESSAGES.GENERIC.ERROR_OCCURRED});
     }
 }
 
@@ -129,7 +131,7 @@ const resendOtp = async (req, res) =>{
     try {
         const {email} = req.session.userData;
         if(!email){
-            return res.status(400).json({success: false, message: "Email no found in session"})
+            return res.status(STATUS_CODES.BAD_REQUEST).json({success: false, message: MESSAGES.SIGNUP.EMAIL_NOT_IN_SESSION})
         }
         const otp = generateOtp();
         req.session.userOtp = otp;
@@ -137,13 +139,13 @@ const resendOtp = async (req, res) =>{
         const emailSent = await sendVerificationEmail(email, otp);        // using nodemailer send the user email and send otp to the user mail from the mail mentioned in nodemailer
 
         if(emailSent){
-            res.status(200).json({success: true, message: "OTP Resend Successfully"})
+            res.status(STATUS_CODES.OK).json({success: true, message: MESSAGES.SIGNUP.OTP_RESEND_SUCCESS})
         }else{
-            res.status(500).json({success: false, message: "Failed to resend OTP. Please try again"});
+            res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({success: false, message: MESSAGES.SIGNUP.OTP_RESEND_FAILED});
         }
     } catch (error) {
         console.error("Error resending OTP", error);
-        res.status(500).json({success: false, message: "Internal Server Error. Please try again"});
+        res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({success: false, message: MESSAGES.PROFILE.SERVER_ERROR});
     }
 }
 
@@ -181,8 +183,6 @@ const sendResetPasswordEmail = async(name,email,token) =>{
                            <a href="http://localhost:${process.env.PORT}/resetPassword?token=${token}">Reset</a>
                         your password</p>`
         })
-
-        console.log("sendReset", info);
         
 
         return info.accepted.length > 0              //an array of email addresses that the SMTP server accepted for delivery.
@@ -207,7 +207,7 @@ const forgotPassword = async(req,res)=>{
         res.render("forgotPassword",{message:""});
     } catch (error) {
         console.error("Forgot password logic error",error.message);
-        return res.status(404).redirect("/pageNotFound");
+        return res.status(STATUS_CODES.NOT_FOUND).redirect("/pageNotFound");
     }
 }
 
@@ -220,28 +220,27 @@ const forgotVerify = async (req, res) => {
     const user = await User.findOne({ email });
 
     if (!user) {
-      return res.render("forgotPassword", { message: "Email address not found." });
+      return res.render("forgotPassword", { message: MESSAGES.SIGNUP.EMAIL_NOT_FOUND });
     }
 
     const randomString = randomstring.generate();
     await User.updateOne({ email }, { $set: { token: randomString } });
 
     const mailResult = await sendResetPasswordEmail(user.name, user.email, randomString);
-    console.log("mailResult", mailResult);
     
     if (mailResult) {
       res.render("forgotPassword", {
-        message: "Password reset email sent. Please check your inbox.",
+        message: MESSAGES.SIGNUP.RESET_EMAIL_SENT,
       });
     } else {
       res.render("forgotPassword", {
-        message: mailResult.reason || "Failed to send reset email.",
+        message: mailResult.reason || MESSAGES.SIGNUP.RESET_EMAIL_FAILED,
       });
     }
 
   } catch (error) {
     console.error("Forgot verify error:", error.message);
-    res.status(500).render("forgotPassword", { message: "Internal Server Error. Please try again later." });
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).render("forgotPassword", { message: MESSAGES.PROFILE.SERVER_ERROR });
   }
 };
 
@@ -254,7 +253,7 @@ const changePassword = async(req,res)=>{
         res.render("changePassword", { errors , user});
     } catch (error) {
         console.error("change password logic error",error);
-        return res.status(404).redirect("/pageNotFound");
+        return res.status(STATUS_CODES.NOT_FOUND).redirect("/pageNotFound");
     }
 }
 
@@ -329,7 +328,7 @@ const changeVerify = async(req, res) => {
         res.redirect("/login");
     } catch (error) {
         console.error("change verify error", error);
-        return res.status(500).redirect("/pageNotFound");
+        return res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).redirect("/pageNotFound");
     }
 }
 
@@ -341,11 +340,11 @@ const resetPasswordLoad = async(req, res) =>{
         if(tokenData){
             res.render("resetPassword",{user_id:tokenData._id} )
         }else{
-            res.render("page-404",{message:"Token is invalid"});
+            res.render("page-404",{message:MESSAGES.SIGNUP.INVALID_TOKEN});
         }
     } catch (error) {
         console.error("forget password reset page load error", error.message);
-        return res.status(404).redirect('/pageNotFound');
+        return res.status(STATUS_CODES.NOT_FOUND).redirect('/pageNotFound');
         
     }
 }
@@ -362,7 +361,7 @@ const verifyResetPassword = async(req, res) =>{
     } catch (error) {
         console.error("verify reset password error", error.message);
 
-        return res.status(404).redirect('/pageNotFound');
+        return res.status(STATUS_CODES.NOT_FOUND).redirect('/pageNotFound');
     }
 }
 

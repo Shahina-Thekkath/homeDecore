@@ -1,4 +1,6 @@
 const User = require("../../models/userSchma");
+const { STATUS_CODES, MESSAGES } = require("../../constants");
+
 
 
 
@@ -30,7 +32,7 @@ const getAllUsers = async (req,res)=>{
         });
     }  catch (error) {
         console.error("userManagement error",error);
-        return res.status(404).render("404");
+        return res.status(STATUS_CODES.NOT_FOUND).render("404");
 
     }
 }
@@ -39,23 +41,20 @@ const getAllUsers = async (req,res)=>{
 const blockUser = async (req, res) => {
   try {
     const userId = req.params.id;
-    console.log("Block request for user:", userId);
 
     //  Update the user as blocked
     const user = await User.findByIdAndUpdate(userId, { isBlocked: true });
     if (!user) {
-      return res.status(404).json({ success: false, message: "User not found" });
+      return res.status(STATUS_CODES.NOT_FOUND).json({ success: false, message: MESSAGES.USER.NOT_FOUND });
     }
 
     //  If the currently logged-in session belongs to the same user being blocked
     if (req.session) {
-      console.log("Current Session Data:", req.session);
 
       const sessionUserId = req.session.user?._id?.toString();
       const sessionPassportId = req.session.passport?.user?._id?.toString();
 
       if (sessionUserId === userId || sessionPassportId === userId) {
-        console.log("Blocking logged-in user session:", userId);
 
         // Delete only user-related session data, not the admin
         delete req.session.user;
@@ -71,10 +70,10 @@ const blockUser = async (req, res) => {
     }
 
     // 3️⃣ Send success response
-    res.status(200).json({ success: true });
+    res.status(STATUS_CODES.OK).json({ success: true });
   } catch (error) {
     console.error("Error blocking user:", error);
-    res.status(500).json({ success: false });
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ success: false });
   }
 };
 
@@ -86,12 +85,12 @@ const unblockUser = async (req, res) => {
         const user = await User.findByIdAndUpdate(userId, { isBlocked: false });
 
         if (!user) {
-            return res.status(404).json({ success: false });
+            return res.status(STATUS_CODES.NOT_FOUND).json({ success: false });
         }
-        res.status(200).json({ success: true});
+        res.status(STATUS_CODES.OK).json({ success: true});
     } catch (error) {
         console.error("Error unblocking user:", error);
-        res.status(500).json({ success: false });
+        res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ success: false });
     }
 };
 

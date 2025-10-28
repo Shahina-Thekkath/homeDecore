@@ -408,7 +408,6 @@ $.ajax({
 
     },
     success: function (response) {
-            console.log("ajaxfilter", response);
 
             const products = response.data;
             let html = '';
@@ -444,7 +443,6 @@ $.ajax({
             $('#productTableBody').html(html);
         },
     error: function(xhr, status, error){
-        console.log(error);
         Swal.fire({
             icon: 'error',
             title: 'Filter Failed',

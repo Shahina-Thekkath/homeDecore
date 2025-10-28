@@ -3,6 +3,7 @@ const Category = require('../../models/categorySchema');
 const ProductOffer = require('../../models/productOfferSchema');
 const CategoryOffer = require('../../models/categoryOfferSchema');
 const mongoose = require('mongoose');
+const { STATUS_CODES, MESSAGES } = require("../../constants");
 
 const getAddOffer = async (req, res) => {
     try {
@@ -21,7 +22,7 @@ const getAddOffer = async (req, res) => {
         });
     } catch (error) {
         console.error(("Error loading add offer page:", error));
-        res.status(500).json({ success: false, message: "Internal Server Error" });
+        res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ success: false, message: MESSAGES.GENERIC.INTERNAL_ERROR });
         
     }
 };
@@ -66,7 +67,7 @@ const postAddOffer = async (req, res) => {
         }
 
         if(Object.keys(errors).length > 0) {
-            return res.status(200).json({ success: false, errors });
+            return res.status(STATUS_CODES.OK).json({ success: false, errors });
         }
         
         let newOffer;
@@ -94,10 +95,10 @@ const postAddOffer = async (req, res) => {
             await Category.findByIdAndUpdate(categoryId, { categoryOffer: newOffer._id });
         }
 
-        return res.status(200).json({ success: true });
+        return res.status(STATUS_CODES.OK).json({ success: true });
     } catch (error) {
         console.error('Error creating offer:', error);
-        res.status(500).json({ success: false, message: "Server Error" });
+        res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ success: false, message: MESSAGES.GENERIC.SERVER_ERROR });
         
     }
 };
@@ -140,7 +141,7 @@ const getOfferList = async (req, res) => {
 
     } catch (error) {
         console.error(('Error fetching offer list:', error));
-        res.status(500).send('Internal Server Error');
+        res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).send(MESSAGES.GENERIC.INTERNAL_ERROR);
         
      }
 };
@@ -161,7 +162,7 @@ const toggleOfferStatus = async (req, res) => {
     }
 
     if (!offer) {
-      return res.status(404).json({ message: 'Offer not found' });
+      return res.status(STATUS_CODES.NOT_FOUND).json({ message: MESSAGES.OFFER.NOT_FOUND });
     }
 
     // Toggle the isActive flag
@@ -176,10 +177,10 @@ const toggleOfferStatus = async (req, res) => {
         }
     }
 
-    res.status(200).json({ message: `${offerType === 'product' ? 'Product' : 'Category'} offer ${offer.isActive ? 'activated' : 'deactivated'} successfully` });
+    res.status(STATUS_CODES.OK).json({ message: `${offerType === 'product' ? 'Product' : 'Category'} offer ${offer.isActive ? 'activated' : 'deactivated'} successfully` });
   } catch (error) {
     console.error('Error toggling offer status:', error);
-    res.status(500).json({ message: 'Internal Server Error' });
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ message: MESSAGES.GENERIC.INTERNAL_ERROR });
   }
 };
 
@@ -198,7 +199,7 @@ const getEditOffer = async (req, res) => {
       }
     }
 
-    if (!offer) return res.status(404).send('Offer not found');
+    if (!offer) return res.status(STATUS_CODES.NOT_FOUND).send(MESSAGES.OFFER.NOT_FOUND);
 
     const products = await Product.find().lean();
     const categories = await Category.find().lean();
@@ -206,7 +207,7 @@ const getEditOffer = async (req, res) => {
     res.render('editOffer', { offer, products, categories });
   } catch (err) {
     console.error(err);
-    res.status(500).send('Server Error');
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).send(MESSAGES.GENERIC.SERVER_ERROR);
   }
 };
 
@@ -250,7 +251,7 @@ const updateOffer = async (req, res) => {
         }
 
         if(Object.keys(errors).length > 0) {
-            return res.status(200).json({ success: false, errors });
+            return res.status(STATUS_CODES.OK).json({ success: false, errors });
         }
 
         let updated = null;
@@ -270,7 +271,7 @@ const updateOffer = async (req, res) => {
             );
 
             if(!updated) {
-                return res.status(404).json({ success: false, message: "Product offer not found." });
+                return res.status(STATUS_CODES.NOT_FOUND).json({ success: false, message: MESSAGES.OFFER.PRODUCT_OFFER_NOT_FOUND });
             }
 
             // unlink from old product if product changes
@@ -299,7 +300,7 @@ const updateOffer = async (req, res) => {
             
 
             if(!updated) {
-                return res.status(400).json({ success: false, message: "Invalid offer type." });
+                return res.status(STATUS_CODES.BAD_REQUEST).json({ success: false, message: MESSAGES.OFFER.INVALID_TYPE });
             }
 
             // unlink from old category if changed
@@ -310,14 +311,14 @@ const updateOffer = async (req, res) => {
             // link to new category
             await Category.findByIdAndUpdate(categoryId,  { categoryOffer: updated._id });
         } else {
-            return res.status(400).json({ success: false, message: "Invalid offer type."});
+            return res.status(STATUS_CODES.BAD_REQUEST).json({ success: false, message: MESSAGES.OFFER.INVALID_TYPE});
         }
 
-        res.status(200).json({ success: true, message: "Offer updated successfully." });
+        res.status(STATUS_CODES.OK).json({ success: true, message: MESSAGES.OFFER.UPDATED_SUCCESS });
 
     } catch (error) {
         console.error("Error editing offer:", error);
-        res.status(500).json({ success: false, message: "Internal Server Error" });
+        res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ success: false, message: MESSAGES.GENERIC.INTERNAL_ERROR });
     }
 };
 

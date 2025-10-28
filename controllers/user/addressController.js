@@ -4,6 +4,7 @@ const Address = require("../../models/addressSchema");
 const Cart = require("../../models/cartSchema");
 const Product = require("../../models/productSchema");
 const mongoose = require("mongoose");
+const { STATUS_CODES, MESSAGES } = require("../../constants");
 
 
 const getAddress = async(req, res) =>{
@@ -15,7 +16,7 @@ const getAddress = async(req, res) =>{
         res.render('addressBook', {user:user,addresses:user.addresses.sort((a,b) => new Date(b.createdAt)- new Date(a.createdAt)) || []});
     }catch(error){
         console.error("Error Fetching addresses",error);
-        res.status(500).render("page-404");
+        res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).render("page-404");
     }
 };
 
@@ -36,7 +37,7 @@ const loadAddAddress = async(req, res)=>{
          res.render('addAddress', {user, address, from})
     } catch (error) {
         console.error("Error loading add Address page", error);
-         res.status(500).send("Internal server error");
+         res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).send(MESSAGES.GENERIC.INTERNAL_ERROR);
         
     }
 };
@@ -68,18 +69,18 @@ const addAddress = async(req, res) =>{
         const user = await User.findById(userId);
 
         if(!user){
-            return res.status(404).send("user not found");
+            return res.status(STATUS_CODES.NOT_FOUND).send(MESSAGES.USER.NOT_FOUND);
         }
 
         user.addresses.push(newAddress);
         await user.save();
 
-        return res.status(200).json({ message: "Address added successfully!" });
+        return res.status(STATUS_CODES.OK).json({ message: MESSAGES.ADDRESS.ADDED });
 
         return res.redirect('/address');
     } catch (error) {
         console.error("Error Adding Address", error);
-        return res.status(500).json({ message: 'Server error!' }); 
+        return res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ message: MESSAGES.GENERIC.SERVER_ERROR }); 
     }
 };
 
@@ -93,7 +94,7 @@ const loadEditAddress = async(req,res) =>{
         
         
         if(!user){
-            return res.status(404).send("User not found");
+            return res.status(STATUS_CODES.NOT_FOUND).send(MESSAGES.USER.NOT_FOUND);
         }
 
         const address = await user.addresses.id(addressId);
@@ -106,7 +107,7 @@ const loadEditAddress = async(req,res) =>{
         res.render('editAddress',{user,address, from});
     } catch (error) {
         console.error("Error Fetching Edit Address",error);
-        res.status(500).render('pageNotFound');
+        res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).render('pageNotFound');
     }
 }
 
@@ -123,7 +124,7 @@ const editAddress = async(req, res) =>{
     const {name, locality, phone, address, country, state, city, pincode} = req.body;
     
     if (!name || !locality || !phone || !address || !country || !state || !city || !pincode) {
-        return res.status(400).json({message:"All fields are required"});
+        return res.status(STATUS_CODES.BAD_REQUEST).json({ message: MESSAGES.VALIDATION.ALL_FIELDS_REQUIRED });
     }
 
     const user = await User.findById(userId);
@@ -131,12 +132,12 @@ const editAddress = async(req, res) =>{
     
 
     if(!user){
-        return res.status(404).json({message:"User not found"});
+        return res.status(STATUS_CODES.NOT_FOUND).json({message:MESSAGES.USER.NOT_FOUND});
     }
 
     if (!addresstoUpdate) {
         console.error('Address not found');
-        return res.status(404).json({message:"Address not found"});
+        return res.status(STATUS_CODES.NOT_FOUND).json({message:MESSAGES.ADDRESS.NOT_FOUND});
     }
 
    addresstoUpdate.name = name;
@@ -155,7 +156,7 @@ const editAddress = async(req, res) =>{
 
    } catch (error) {
       console.error("Error updating address", error);
-      return res.status(500).json({message:"Internal server Error"});
+      return res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({message:MESSAGES.GENERIC.INTERNAL_ERROR});
       
    }    
 }; 
@@ -168,25 +169,25 @@ const deleteAddress = async(req, res) =>{
         const user = await User.findById(userId);
     
         if(!user){
-           return res.status(400).json({ok:false,
-                message:"User not found"});
+           return res.status(STATUS_CODES.BAD_REQUEST).json({ok:false,
+                message:MESSAGES.USER.NOT_FOUND});
         }
     
         const address = user.addresses.id(addressId);
     
         if(!address){
-           return res.status(400).json({ok:false,
-                message:"address not found"});
+           return res.status(STATUS_CODES.BAD_REQUEST).json({ok:false,
+                message: MESSAGES.USER.NOT_FOUND});
         }
     
         await user.addresses.pull(address);
         await user.save();
     
-         return res.status(200).json({ok:true});
+         return res.status(STATUS_CODES.OK).json({ok:true});
     
     } catch (error) {
         console.error("Server Error", error);
-        return res.status(500).json({message:"Internal Server Error"});
+        return res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({message:MESSAGES.GENERIC.INTERNAL_ERROR});
         
     }
 

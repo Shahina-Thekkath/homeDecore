@@ -407,7 +407,6 @@
           const discountAmount = document.querySelector('input[name="discountAmount"]').value.trim();
           const startDate = document.getElementById("StartDatePicker").value.trim();
           const endDate = document.getElementById("endDatePicker").value.trim();
-          console.log("all inputs", offerType, productId, categoryId, discountAmount, discountType, startDate, endDate);
           
 
           // Regex patterns
@@ -420,7 +419,6 @@
             isValid = false;
           }
           if (offerType === "category" && !categoryId) {
-            console.log("category");
             
             document.getElementById("categoryId-error").innerText ="Please select a category";
             isValid = false;
@@ -471,7 +469,6 @@
             document.getElementById("endDate-error").innerText ="End date must be after start date";
             isValid = false;
           }
-          console.log("validation completed");
           
 
           // Show SweetAlert if errors exist
@@ -496,9 +493,6 @@
           startDate,
           endDate
         };
-       
-
-        console.log("data", data);
         
 
         //create AJAX request

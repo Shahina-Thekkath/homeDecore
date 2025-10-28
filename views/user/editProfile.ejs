@@ -612,7 +612,6 @@ document.querySelector('#editProfileForm').addEventListener('submit', async func
         });
 
         const result = await res.json();
-        console.log("editProfile:", result);
 
         if (res.ok && result.success) {
             Swal.fire({

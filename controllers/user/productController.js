@@ -4,6 +4,7 @@ const User = require("../../models/userSchma");
 const Category = require('../../models/categorySchema');
 const CategoryOffer = require('../../models/categoryOfferSchema');
 const ProductOffer = require('../../models/productOfferSchema');
+const { STATUS_CODES, MESSAGES } = require("../../constants");
 
 
 const loadProductDetails = async (req, res) =>{
@@ -459,7 +460,7 @@ const getFilteredProductList = async (req, res) => {
     });
   } catch (error) {
     console.error("Error fetching products while using filter:", error);
-    res.status(500).send("Error fetching products");
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).send(MESSAGES.PRODUCT.FETCH_ERROR);
   }
 };
 

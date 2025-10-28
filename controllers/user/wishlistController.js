@@ -3,6 +3,8 @@ const Wishlist = require('../../models/wishlistSchema');
 const Product = require('../../models/productSchema');
 const ProductOffer = require('../../models/productOfferSchema');
 const CategoryOffer = require('../../models/categoryOfferSchema');
+const { STATUS_CODES, MESSAGES } = require("../../constants");
+
 
 const getWishlist = async (req, res) => {
   try {
@@ -102,7 +104,7 @@ const getWishlist = async (req, res) => {
     return res.render("wishlist", { wishlist: productsWithDiscount, user });
   } catch (error) {
     console.error("Error loading wishlist:", error);
-    res.status(500).send("Server error");
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).send(MESSAGES.GENERIC.SERVER_ERROR);
   }
 };
 
@@ -115,7 +117,7 @@ const addToWishlist = async (req, res) => {
 
         const product = await Product.findById(productId);
         if(!product){
-            return res.status(404).json({success: false, message: "Product not found"});
+            return res.status(STATUS_CODES.NOT_FOUND).json({success: false, message: MESSAGES.PRODUCT.NOT_FOUND});
         }
         
         let wishlist = await Wishlist.findOne({userId});
@@ -126,7 +128,7 @@ const addToWishlist = async (req, res) => {
             products: [{productId}]
            });
            await wishlist.save();
-           return res.status(200).json({ success: true, message: "Product added to wishlist" });
+           return res.status(STATUS_CODES.OK).json({ success: true, message: MESSAGES.WISHLIST.PRODUCT_ADDED });
         }
 
         //check if the product already exists
@@ -135,17 +137,17 @@ const addToWishlist = async (req, res) => {
         );
 
         if(alreadyExists){
-            return res.status(200).json({ error: "Product already in wishlist" });
+            return res.status(STATUS_CODES.OK).json({ error: MESSAGES.WISHLIST.PRODUCT_ALREADY_EXISTS });
         }
 
         wishlist.products.push({productId});
         await wishlist.save();
 
-        res.json({ success: true, message: "Product added to wishlist" });
+        res.json({ success: true, message: MESSAGES.WISHLIST.PRODUCT_ADDED });
 
     } catch (error) {
         console.error("Error Adding to wishlist", error);
-        res.status(500).json({ error: "Internal Server Error" });
+        res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ error: MESSAGES.GENERIC.INTERNAL_ERROR });
     }
 };
 
@@ -158,10 +160,10 @@ const clearWishlist = async (req, res) => {
       { $set: { products: [] } } // empty the products array
     );
 
-    res.status(200).json({ success: true, message: "Wishlist cleared successfully" });
+    res.status(STATUS_CODES.OK).json({ success: true, message: MESSAGES.WISHLIST.CLEARED_SUCCESS });
   } catch (error) {
     console.error("Error clearing wishlist:", error);
-    res.status(500).json({ success: false, message: "Server error" });
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ success: false, message: MESSAGES.GENERIC.SERVER_ERROR });
   }
 };
 
@@ -175,10 +177,10 @@ const removeProductFromWishlist = async (req, res) => {
       { $pull: { products: { productId: new mongoose.Types.ObjectId(id) } } } // remove matching product
     );
 
-    res.status(200).json({ success: true, message: "Product removed from wishlist" });
+    res.status(STATUS_CODES.OK).json({ success: true, message: MESSAGES.WISHLIST.PRODUCT_REMOVED });
   } catch (error) {
     console.error("Error removing product from wishlist:", error);
-    res.status(500).json({ success: false, message: "Server error" });
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ success: false, message: MESSAGES.GENERIC.SERVER_ERROR });
   }
 };
 
@@ -193,15 +195,13 @@ const checkWishlist = async (req, res) => {
        const userId = req.session.user?._id || req.session.passport;
 
        if (!userId) {
-        console.log("no user Id, checkWishlist");
-        
-        return res.status(200).json({ inWishlist: false });
+        return res.status(STATUS_CODES.OK).json({ inWishlist: false });
        }
        
        const wishlist = await Wishlist.findOne({ userId });
 
        if (!wishlist) {
-         return res.status(200).json({ inWishlist: false });
+         return res.status(STATUS_CODES.OK).json({ inWishlist: false });
        }
 
        // check if product exists in wishlist
@@ -209,11 +209,11 @@ const checkWishlist = async (req, res) => {
         (item) => item.productId.toString() === productId
        );
 
-       res.status(200).json({ inWishlist });
+       res.status(STATUS_CODES.OK).json({ inWishlist });
 
    } catch (error) {
       console.error("Error checking wishlist", error);
-      res.status(500).json({ error: "Internal Server Error" });
+      res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ error: MESSAGES.GENERIC.INTERNAL_ERROR });
       
    }
 };

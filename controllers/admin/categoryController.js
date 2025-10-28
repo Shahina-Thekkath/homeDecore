@@ -1,4 +1,5 @@
 const Category = require("../../models/categorySchema");
+const { STATUS_CODES, MESSAGES } = require("../../constants");
 
 const categoryInfo = async (req, res) => {
   try {
@@ -50,7 +51,7 @@ const addCategory = async (req, res) => {
   try {
     const existingCategory = await Category.findOne({ name });
     if (existingCategory) {
-      return res.status(400).json({ message: "Category already exist" });
+      return res.status(STATUS_CODES.BAD_REQUEST).json({ message: MESSAGES.CATEGORY.ALREADY_EXISTS });
     }
 
     const newCategory = new Category({
@@ -60,7 +61,7 @@ const addCategory = async (req, res) => {
     await newCategory.save();
     return res.json({ ok: true });
   } catch (error) {
-    return res.status(500).json({ error: "Internl Server Error" });
+    return res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ error: MESSAGES.GENERIC.INTERNAL_ERROR });
   }
 };
 
@@ -72,7 +73,7 @@ const getEditCategory = async (req, res) => {
     const category = await Category.findById(categoryId);
 
     if (!category) {
-      return res.status(404).render("pageerror");
+      return res.status(STATUS_CODES.NOT_FOUND).render("pageerror");
     }
 
     // Render the editCategory view with the fetched data
@@ -81,7 +82,7 @@ const getEditCategory = async (req, res) => {
     });
   } catch (err) {
     console.error("Error fetching category:", err);
-    res.status(500).render("pageerror");
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).render("pageerror");
   }
 };
 
@@ -94,13 +95,13 @@ const editCategory = async (req, res) => {
     const catId = await Category.findById(categoryId);
 
     if(catId.name === name){
-      return res.status(400).json({ message: "Changes not made" });
+      return res.status(STATUS_CODES.BAD_REQUEST).json({ message: MESSAGES.CATEGORY.NO_CHANGES });
     }
 
     const existingCategory = await Category.findOne({ name });
 
     if (existingCategory) {
-      return res.status(400).json({ message: "Category already exist" });
+      return res.status(STATUS_CODES.BAD_REQUEST).json({ message: MESSAGES.CATEGORY.ALREADY_EXISTS });
     }
 
     const updated = { name: name };
@@ -117,7 +118,7 @@ const editCategory = async (req, res) => {
   } catch (error) {
     console.error("Error updating category:", error);
     res.render("editCategory", {
-      errorMessage: "An error occurred while updating the category.",
+      errorMessage: MESSAGES.CATEGORY.UPDATE_ERROR,
       category: req.body, // Retain entered data for user convenience
     });
   }
@@ -131,12 +132,12 @@ try {
  
 
  if (!category) {
-     return res.status(404).json({ success: false});
+     return res.status(STATUS_CODES.NOT_FOUND).json({ success: false});
  }
- res.status(200).json({ success: true });
+ res.status(STATUS_CODES.OK).json({ success: true });
 } catch (error) {
  console.error("Error blocking category:", error);
- res.status(500).json({ success: false });
+ res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ success: false });
 }
 };
 
@@ -147,12 +148,12 @@ try {
  const category = await Category.findByIdAndUpdate(categoryId, { isBlocked: false });
 
  if (!category) {
-     return res.status(404).json({ success: false });
+     return res.status(STATUS_CODES.NOT_FOUND).json({ success: false });
  }
- res.status(200).json({ success: true});
+ res.status(STATUS_CODES.OK).json({ success: true});
 } catch (error) {
  console.error("Error unblocking category:", error);
- res.status(500).json({ success: false });
+ res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ success: false });
 }
 };
 

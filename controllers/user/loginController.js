@@ -4,6 +4,7 @@ const nodemailer = require("nodemailer");
 const env = require('dotenv').config();
 const bcrypt = require("bcrypt");
 const session = require("express-session");
+const { STATUS_CODES, MESSAGES } = require("../../constants");
 
 const loadLogin = async(req, res) =>{
     try{
@@ -54,22 +55,22 @@ const login = async (req, res) => {
             
 
             if (!findUser || findUser.is_admin === true) {
-                return res.render("login", { message: "User not found", email});
+                return res.render("login", { message: MESSAGES.USER.NOT_FOUND, email});
             }
     
             if (findUser.isBlocked) {
-                return res.render("login", { message: "User is blocked by admin", email });
+                return res.render("login", { message: MESSAGES.AUTH.USER_BLOCKED, email });
             }
 
             // Check if password is empty
             if (!password || password.trim() === "") {
-                return res.render("login", { invalidPassword: "Password field cannot be empty", email });
+                return res.render("login", { invalidPassword: MESSAGES.AUTH.PASSWORD_EMPTY, email });
             }
     
             // Compare passwords
             const passwordMatch = await bcrypt.compare(password, findUser.password);
             if (!passwordMatch) {
-                return res.render("login", { invalidPassword: "Incorrect Password", email });
+                return res.render("login", { invalidPassword: MESSAGES.AUTH.INCORRECT_PASSWORD, email });
             }
         
         // Set user session

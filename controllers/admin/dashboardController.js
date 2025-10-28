@@ -1,6 +1,7 @@
 const { errorMonitor } = require('nodemailer/lib/xoauth2');
 const Order = require('../../models/orderSchema');
 const Product = require('../../models/productSchema');
+const { STATUS_CODES, MESSAGES } = require("../../constants");
 
 const loadDashboard = async (req, res) =>{
     try {
@@ -152,7 +153,7 @@ const getSalesData = async (req, res) => {
     res.json(sales);
   } catch (error) {
     console.error("getSalesData error:", error);
-    res.status(500).json({ error: "Failed to fetch sales data" });
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ error: MESSAGES.SALES.FETCH_FAILED });
   }
 };
 

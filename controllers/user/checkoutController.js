@@ -5,6 +5,7 @@ const mongoose = require("mongoose");
 const Product = require("../../models/productSchema");
 const Coupon = require("../../models/couponSchema");
 const Wallet = require("../../models/walletSchema");
+const { STATUS_CODES, MESSAGES } = require("../../constants");
 
 const loadCheckout = async (req, res) => {
   try {
@@ -113,25 +114,25 @@ const saveSelectedAddress = async (req, res) => {
     const { selectedAddress } = req.body; // Extract selected address ID from request body
 
     if (!selectedAddress) {
-      return res.status(400).json({ message: "No address selected" });
+      return res.status(STATUS_CODES.BAD_REQUEST).json({ message: MESSAGES.CHECKOUT.NO_ADDRESS_SELECTED });
     }
 
     // Find the user and update the default address
     const user = await User.findById(userId);
     if (!user) {
-      return res.status(404).json({ message: "User not found" });
+      return res.status(STATUS_CODES.NOT_FOUND).json({ message: MESSAGES.USER.NOT_FOUND });
     }
 
     // Set the selected address as the default or handle it as required
     user.defaultAddress = selectedAddress; // Assuming you have a `defaultAddress` field
     await user.save();
 
-    res.status(200).json({ message: "Address saved successfully" });
+    res.status(STATUS_CODES.OK).json({ message: MESSAGES.CHECKOUT.ADDRESS_SAVED });
   } catch (error) {
     console.error("Error saving selected address:", error);
     res
-      .status(500)
-      .json({ message: "An error occurred while saving the address" });
+      .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
+      .json({ message: MESSAGES.CHECKOUT.ADDRESS_SAVE_FAILED });
   }
 };
 

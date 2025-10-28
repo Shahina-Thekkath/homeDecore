@@ -3,6 +3,8 @@ const Order = require("../../models/orderSchema");
 const Wallet = require("../../models/walletSchema");
 const mongoose = require("mongoose");
 const Coupon = require("../../models/couponSchema");
+const { STATUS_CODES, MESSAGES } = require("../../constants");
+
 
 const getAdminOrders = async (req, res) => {
   try {
@@ -13,7 +15,7 @@ const getAdminOrders = async (req, res) => {
     res.render("orderList", { orders });
   } catch (error) {
     console.error("Error fetching orders");
-    res.status(500).send("Error fetching orders");
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).send(MESSAGES.ORDER.FETCH_FAILED);
   }
 };
 
@@ -23,7 +25,7 @@ const getOrderById = async (req, res) => {
     const order = await Order.findById(req.params.orderId)
       .populate("userId", "email phone name")
       .populate("products.productId", "name image");
-    if (!order) return res.status(404).json({ message: "Order not found" });
+    if (!order) return res.status(STATUS_CODES.NOT_FOUND).json({ message: MESSAGES.ORDER.NOT_FOUND });
 
     // need to check
     const grandTotal = order.totalAmount;
@@ -32,8 +34,8 @@ const getOrderById = async (req, res) => {
   } catch (error) {
     console.error("Error fetching order by ID:", error);
     res
-      .status(500)
-      .json({ message: "Error fetching order details", error: error.message });
+      .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
+      .json({ message: MESSAGES.ORDER.ORDER_DETAILS_FETCH_FAILED, error: error.message });
   }
 };
 
@@ -92,21 +94,21 @@ const cancelOrder = async (req, res) => {
       
     if (!order) {
       return res
-        .status(404)
-        .json({ success: false, message: "Order not found" });
+        .status(STATUS_CODES.NOT_FOUND)
+        .json({ success: false, message: MESSAGES.ORDER.NOT_FOUND });
     }
 
     if (order.orderStatus === "Cancelled") {
       return res
-        .status(400)
-        .json({ success: false, message: "Order already cancelled" });
+        .status(STATUS_CODES.BAD_REQUEST)
+        .json({ success: false, message: MESSAGES.ORDER.ALREADY_CANCELLED });
     }
 
     const cancellableStatuses = ["Pending Payment", "Processing"];
     if (!cancellableStatuses.includes(order.orderStatus)) {
       return res
-        .status(400)
-        .json({ success: false, message: "Cannot cancel order at this stage" });
+        .status(STATUS_CODES.BAD_REQUEST)
+        .json({ success: false, message: MESSAGES.ORDER.CANNOT_CANCEL_STAGE });
     }
 
     for (let item of order.products) {
@@ -133,19 +135,19 @@ const cancelOrder = async (req, res) => {
     await order.save();
 
     res
-      .status(200)
+      .status(STATUS_CODES.OK)
       .json({
         success: true,
-        message: "Order successfully cancelled and refund processed.",
+        message: MESSAGES.ORDER.CANCELLED_AND_REFUNDED,
         products: order.products,
       });
   } catch (error) {
     console.error("cancel Order Error: ", error);
     res
-      .status(500)
+      .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
       .json({
         success: false,
-        message: "Server error while cancelling order.",
+        message: MESSAGES.ORDER.SERVER_ERROR_WHILE_CANCELLING,
       });
   }
 };
@@ -216,19 +218,19 @@ const updateProductStatus = async (req, res) => {
       .populate("userId")
       .populate("products.productId");
     if (!order) {
-      return res.status(404).json({ message: "Order not found" });
+      return res.status(STATUS_CODES.NOT_FOUND).json({ message: MESSAGES.ORDER.NOT_FOUND });
     }
 
     const product = order.products[productIndex];
     if (!product) {
-      return res.status(400).json({ message: "Invalid product Index" });
+      return res.status(STATUS_CODES.BAD_REQUEST).json({ message: MESSAGES.ORDER.INVALID_PRODUCT_INDEX });
     }
 
     const currentStatus = product.status;
 
     if (["Returned", "Cancelled"].includes(currentStatus)) {
-      return res.status(400).json({
-        message: "Product already returned or cancelled",
+      return res.status(STATUS_CODES.BAD_REQUEST).json({
+        message: MESSAGES.ORDER.PRODUCT_ALREADY_RETURNED_OR_CANCELLED,
       });
     }
 
@@ -236,9 +238,9 @@ const updateProductStatus = async (req, res) => {
     if (newStatus === "Cancelled") {
       const cancellableStatuses = ["Pending", "Processing"];
       if (!cancellableStatuses.includes(currentStatus)) {
-        return res.status(400).json({
+        return res.status(STATUS_CODES.BAD_REQUEST).json({
           success: false,
-          message: "Cannot cancel at this stage",
+          message: MESSAGES.ORDER.CANNOT_CANCEL_THIS_PRODUCT,
         });
       }
 
@@ -265,9 +267,9 @@ const updateProductStatus = async (req, res) => {
     // ----- HANDLE RETURN -----
     else if (newStatus === "Returned") {
       if (currentStatus !== "Return Requested") {
-        return res.status(400).json({
+        return res.status(STATUS_CODES.BAD_REQUEST).json({
           message:
-            "Product must be in Return Requested state before Returned",
+            MESSAGES.ORDER.PRODUCT_MUST_BE_IN_RETURN_REQUESTED,
         });
       }
 
@@ -276,7 +278,7 @@ const updateProductStatus = async (req, res) => {
       const daysSinceDelivery = (Date.now() - deliveryDate.getTime()) / 1000 * 60 * 60 * 24;
 
       if(daysSinceDelivery > MAx_RETURN_DAYS) {
-        res.status(400).json({message: "Return can be done only within 3 days"});
+        res.status(STATUS_CODES.BAD_REQUEST).json({message: MESSAGES.ORDER.RETURN_WITHIN_3_DAYS});
       }
 
       product.status = "Returned";
@@ -311,10 +313,10 @@ const updateProductStatus = async (req, res) => {
     updateOverallOrderStatus(order);
     await order.save();
 
-    res.json({ message: "Product status updated successfully" });
+    res.json({ message: MESSAGES.ORDER.PRODUCT_STATUS_UPDATED });
   } catch (error) {
     console.error("Error updating status:", error);
-    res.status(500).json({ message: "Server error" });
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ message: MESSAGES.GENERIC.SERVER_ERROR });
   }
 };
 
@@ -327,16 +329,16 @@ const cancelProductByIndex = async (req, res) => {
       .populate("userId")
       .populate("products.productId");
 
-    if (!order) return res.status(404).json({ message: "Order not found" });
+    if (!order) return res.status(STATUS_CODES.NOT_FOUND).json({ message: MESSAGES.ORDER.NOT_FOUND });
 
     const product = order.products[productIndex];
-    if (!product) return res.status(400).json({ message: "Invalid product index" });
+    if (!product) return res.status(STATUS_CODES.BAD_REQUEST).json({ message: MESSAGES.ORDER.INVALID_PRODUCT_INDEX });
 
     // Only allow user to cancel if Pending or Processing
     if (!["Pending", "Processing"].includes(product.status)) {
       return res
-        .status(400)
-        .json({ message: "Cannot cancel this product at this stage" });
+        .status(STATUS_CODES.BAD_REQUEST)
+        .json({ message: MESSAGES.ORDER.CANNOT_CANCEL_THIS_PRODUCT });
     }
 
     // Mark as cancelled
@@ -364,11 +366,11 @@ const cancelProductByIndex = async (req, res) => {
     updateOverallOrderStatus(order);
 
     await order.save();
-    res.json({ message: "Product cancelled and refunded." });
+    res.json({ message: MESSAGES.ORDER.PRODUCT_CANCELLED_AND_REFUNDED });
 
   } catch (error) {
     console.error("Cancel product error:", error);
-    res.status(500).json({ message: "Server error" });
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ message: MESSAGES.GENERIC.SERVER_ERROR });
   }
 };
 

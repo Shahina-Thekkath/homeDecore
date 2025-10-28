@@ -1201,8 +1201,6 @@
 
         if(chargeData.success) {
             const { deliveryCharge } = chargeData;
-
-            console.log(deliveryCharge);
             
 
             currentDeliveryCharge = deliveryCharge;
@@ -1361,8 +1359,6 @@ $(document).ready(function() {
 
                 
     if (paymentMethod === 'Razorpay') {
-
-        console.log("ifRazorpay", formData);
         
 
         $.ajax({
@@ -1406,7 +1402,6 @@ $(document).ready(function() {
                    modal: {
                         ondismiss: function () {
                             // Optional: handle manual close
-                            console.log("User dismissed Razorpay modal.");
                              window.location.href = '/payment-failed';
                         }
                     },
@@ -1461,7 +1456,6 @@ $(document).ready(function() {
             url: '/order-save',
             data: formData,
             success: function (res) {
-                console.log("formData", formData);
                 
                 if (res.success) {
                     Swal.fire('Success', 'Order Placed Successfully!', 'success')
@@ -1485,8 +1479,6 @@ $(document).ready(function() {
     
     const addressData = JSON.parse(selectedAddress.dataset.address);
     const userPincode = addressData.pincode;
-    console.log("Inside fetchDelivery", addressData, userPincode);
-
     const userCity = addressData.city;
     
 
@@ -1497,9 +1489,7 @@ $(document).ready(function() {
             body: JSON.stringify({ city: userCity })
         });
 
-        const data = await response.json();
-        console.log("data", data);
-        
+        const data = await response.json();        
         if (data.success) {
             return data.deliveryCharge;
         } else {
@@ -1555,7 +1545,6 @@ $(document).ready(function() {
     function copyToClipboard(text) {
         if (navigator.clipboard) {
             navigator.clipboard.writeText(text).catch(function() {
-                console.log('❌ Failed to copy with modern method:', err);
                 fallbackCopy(text);
             });
         } else {
@@ -1637,14 +1626,10 @@ $(document).ready(function() {
                     
                     
                     // Update button states after successful coupon application
-                    updateButtonsAfterCouponApply(response.data.appliedDiscount);
-                    console.log("coupon-frontend-one");
-                    
+                    updateButtonsAfterCouponApply(response.data.appliedDiscount);                    
                     
                     // Disable the coupon input
-                    $('#coupon').prop('disabled', true);
-                    console.log("coupon-frontend-two");
-                    
+                    $('#coupon').prop('disabled', true);                    
                 } else {
                     // Show error message with SweetAlert
                     Swal.fire({
@@ -1855,7 +1840,6 @@ function showLoadingAlert() {
 }
 
  $(document).on('click', '#removeCouponBtn', function () {
-    console.log("inside remove");
     
     $.ajax({
       url: '/remove-coupon',

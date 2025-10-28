@@ -510,10 +510,9 @@
                                 style="display: none; margin-top: 15px"
                               >
                                 <div style="margin-bottom: 10px">
-                                  <input
-                                    type="text"
-                                    id="reasonInput_<%= order._id %>_<%= product.originalProductId %>"
-                                    placeholder="Please provide reason..."
+                                  <select
+                                    id="reasonSelect_<%= order._id %>_<%= product.originalProductId %>"
+                                    onchange="handleReasonChange('<%= order._id %>', '<%= product.originalProductId %>')"
                                     style="
                                       width: 100%;
                                       padding: 12px 16px;
@@ -522,10 +521,12 @@
                                       font-size: 14px;
                                       font-family: inherit;
                                       background-color: #fff;
+                                      cursor: pointer;
                                       transition: border-color 0.3s ease;
                                     "
-                                    onkeypress="handleReasonKeyPress(event, '<%= order._id %>', '<%= product.originalProductId %>')"
-                                  />
+                                  >
+                                    <option value="">-- Select a reason --</option>
+                                  </select>
                                 </div>
                                 <div
                                   style="
@@ -859,7 +860,7 @@
                   <div class="lower-footer__copyright">
                     <span>Copyright © 2018</span>
 
-                    <a href="index.html">Reshop</a>
+                    <a href="/">Reshop</a>
 
                     <span>All Right Reserved</span>
                   </div>
@@ -912,240 +913,201 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
 
     <script>
-      // Global variable to track current action type
-      let currentActionType = null;
+     // Global variable to track current action type
+    let currentActionType = null;
 
-      function cancelOrder(orderId, productId) {
-        Swal.fire({
-          title: "Are you sure?",
-          text: "Do you really want to cancel this order?",
-          icon: "warning",
-          showCancelButton: true,
-          confirmButtonColor: "#d33",
-          cancelButtonColor: "#3085d6",
-          confirmButtonText: "Yes, cancel it!",
-        }).then((result) => {
-          if (result.isConfirmed) {
-            showReasonInput(orderId, productId, "cancel");
-          }
+    // Predefined reasons for cancellation and return
+    const CANCELLATION_REASONS = [
+      "Changed my mind",
+      "Found a better price elsewhere",
+      "Ordered by mistake",
+      "Delivery taking too long",
+      "Need to change delivery address",
+      "Financial constraints",
+      "Product no longer needed"
+    ];
+
+    const RETURN_REASONS = [
+      "Product damaged or defective",
+      "Wrong item received",
+      "Product not as described",
+      "Quality not satisfactory",
+      "Size/fit issues",
+      "Missing parts or accessories",
+      "Changed my mind"
+    ];
+
+    function cancelOrder(orderId, productId) {
+      Swal.fire({
+        title: "Are you sure?",
+        text: "Do you really want to cancel this order?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#d33",
+        cancelButtonColor: "#3085d6",
+        confirmButtonText: "Yes, cancel it!",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          showReasonInput(orderId, productId, "cancel");
+        }
+      });
+    }
+
+    function requestReturn(orderId, productId) {
+      Swal.fire({
+        title: "Request Return?",
+        text: "Are you sure you want to request a return for this order?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#f39c12",
+        cancelButtonColor: "#3085d6",
+        confirmButtonText: "Yes, request return!",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          showReasonInput(orderId, productId, "return");
+        }
+      });
+    }
+
+    function showReasonInput(orderId, productId, actionType) {
+      currentActionType = actionType;
+
+      const cancelBtn = document.getElementById(`cancelBtn_${orderId}_${productId}`);
+      const returnBtn = document.getElementById(`returnBtn_${orderId}_${productId}`);
+      const reasonContainer = document.getElementById(`reasonContainer_${orderId}_${productId}`);
+      const reasonSelect = document.getElementById(`reasonSelect_${orderId}_${productId}`);
+      const submitBtn = document.getElementById(`submitBtn_${orderId}_${productId}`);
+
+      // Hide appropriate button
+      if (cancelBtn && actionType === "cancel") {
+        cancelBtn.style.display = "none";
+      }
+      if (returnBtn && actionType === "return") {
+        returnBtn.style.display = "none";
+      }
+
+      // Populate dropdown with appropriate reasons
+      if (reasonSelect) {
+        const reasons = actionType === "cancel" ? CANCELLATION_REASONS : RETURN_REASONS;
+        reasonSelect.innerHTML = '<option value="">-- Select a reason --</option>';
+        reasons.forEach(reason => {
+          const option = document.createElement('option');
+          option.value = reason;
+          option.textContent = reason;
+          reasonSelect.appendChild(option);
         });
+        
+        reasonSelect.setAttribute("data-action", actionType);
       }
 
-      function requestReturn(orderId, productId) {
-        Swal.fire({
-          title: "Request Return?",
-          text: "Are you sure you want to request a return for this order?",
-          icon: "warning",
-          showCancelButton: true,
-          confirmButtonColor: "#f39c12",
-          cancelButtonColor: "#3085d6",
-          confirmButtonText: "Yes, request return!",
-        }).then((result) => {
-          if (result.isConfirmed) {
-            showReasonInput(orderId, productId, "return");
-          }
-        });
+      // Show reason container
+      if (reasonContainer) {
+        reasonContainer.style.display = "block";
       }
 
-      function showReasonInput(orderId, productId, actionType) {
-        currentActionType = actionType;
-
-        const cancelBtn = document.getElementById(
-          `cancelBtn_${orderId}_${productId}`
-        );
-        const returnBtn = document.getElementById(
-          `returnBtn_${orderId}_${productId}`
-        );
-        const reasonContainer = document.getElementById(
-          `reasonContainer_${orderId}_${productId}`
-        );
-        const reasonInput = document.getElementById(
-          `reasonInput_${orderId}_${productId}`
-        );
-        const submitBtn = document.getElementById(
-          `submitBtn_${orderId}_${productId}`
-        );
-
-        // Hide appropriate button
-        if (cancelBtn && actionType === "cancel") {
-          cancelBtn.style.display = "none";
-        }
-        if (returnBtn && actionType === "return") {
-          returnBtn.style.display = "none";
-        }
-
-        // Show reason container
-        if (reasonContainer) {
-          reasonContainer.style.display = "block";
-        }
-
-        // Update placeholder and submit button based on action type
-        if (reasonInput) {
-          if (actionType === "cancel") {
-            reasonInput.placeholder =
-              "Please provide reason for cancellation (minimum 10 characters)";
-            reasonInput.setAttribute("data-action", "cancel");
-          } else if (actionType === "return") {
-            reasonInput.placeholder =
-              "Please provide reason for return request (minimum 10 characters)";
-            reasonInput.setAttribute("data-action", "return");
-          }
-          reasonInput.focus();
-        }
-
-        // Update submit button color based on action
-        if (submitBtn) {
-          if (actionType === "cancel") {
-            submitBtn.style.backgroundColor = "#dc3545";
-            submitBtn.onmouseover = function () {
-              this.style.backgroundColor = "#c82333";
-            };
-            submitBtn.onmouseout = function () {
-              this.style.backgroundColor = "#dc3545";
-            };
-          } else if (actionType === "return") {
-            submitBtn.style.backgroundColor = "#f39c12";
-            submitBtn.onmouseover = function () {
-              this.style.backgroundColor = "#e68900";
-            };
-            submitBtn.onmouseout = function () {
-              this.style.backgroundColor = "#f39c12";
-            };
-          }
-        }
-      }
-
-      function handleReasonKeyPress(event, orderId, productId) {
-        if (event.key === "Enter") {
-          submitReason(orderId, productId);
-        }
-      }
-
-      function submitReason(orderId, productId) {
-        const reasonInput = document.getElementById(
-          `reasonInput_${orderId}_${productId}`
-        );
-        const reason = reasonInput.value.trim();
-        const actionType = reasonInput.getAttribute("data-action");
-
-        // Validate reason
-        const validation = validateReason(reason);
-        if (!validation.isValid) {
-          Swal.fire({
-            title: "Invalid Reason",
-            text: validation.message,
-            icon: "warning",
-            confirmButtonColor: "#3085d6",
-          });
-          reasonInput.focus();
-          return;
-        }
-
-        // Show loading
-        const actionText =
-          actionType === "cancel" ? "Cancelling" : "Requesting return for";
-        Swal.fire({
-          title: "Processing...",
-          text: `${actionText} your order`,
-          allowOutsideClick: false,
-          allowEscapeKey: false,
-          didOpen: () => {
-            Swal.showLoading();
-          },
-        });
-
-        // Determine API endpoint and method
-        let url, method;
+      // Update submit button color based on action
+      if (submitBtn) {
         if (actionType === "cancel") {
-          url = `/order/${orderId}/cancel/${productId}`;
-          method = "PATCH";
+          submitBtn.style.backgroundColor = "#dc3545";
+          submitBtn.onmouseover = function () {
+            this.style.backgroundColor = "#c82333";
+          };
+          submitBtn.onmouseout = function () {
+            this.style.backgroundColor = "#dc3545";
+          };
         } else if (actionType === "return") {
-          url = `/order/return/${orderId}/${productId}`;
-          method = "POST";
+          submitBtn.style.backgroundColor = "#f39c12";
+          submitBtn.onmouseover = function () {
+            this.style.backgroundColor = "#e68900";
+          };
+          submitBtn.onmouseout = function () {
+            this.style.backgroundColor = "#f39c12";
+          };
         }
+      }
 
-        fetch(url, {
-          method: method,
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ reason: validation.cleanedReason }),
-        })
-          .then((response) => response.json())
-          .then((data) => {
-            if (data.success) {
-              const successTitle =
-                actionType === "cancel" ? "Cancelled!" : "Return Requested!";
-              const successText =
-                actionType === "cancel"
-                  ? "Your order has been cancelled successfully."
-                  : "Your return request has been submitted successfully.";
+      // Focus on dropdown
+      if (reasonSelect) {
+        reasonSelect.focus();
+      }
+    }
 
-              Swal.fire(successTitle, successText, "success").then(() => {
-                location.reload();
-              });
-            } else {
-              Swal.fire(
-                "Error",
-                data.message ||
-                  `Failed to ${actionType} the order. Please try again later.`,
-                "error"
-              );
-            }
-          })
-          .catch((error) => {
-            console.error(`Error ${actionType}ing order:`, error);
+    function submitReason(orderId, productId) {
+      const reasonSelect = document.getElementById(`reasonSelect_${orderId}_${productId}`);
+      const actionType = reasonSelect.getAttribute("data-action");
+      
+      const finalReason = reasonSelect.value;
+      
+      // Validate dropdown selection
+      if (!finalReason) {
+        Swal.fire({
+          title: "No Reason Selected",
+          text: "Please select a reason from the dropdown",
+          icon: "warning",
+          confirmButtonColor: "#3085d6",
+        });
+        reasonSelect.focus();
+        return;
+      }
+
+      // Show loading
+      const actionText = actionType === "cancel" ? "Cancelling" : "Requesting return for";
+      Swal.fire({
+        title: "Processing...",
+        text: `${actionText} your order`,
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        didOpen: () => {
+          Swal.showLoading();
+        },
+      });
+
+      // Determine API endpoint and method
+      let url, method;
+      if (actionType === "cancel") {
+        url = `/order/${orderId}/cancel/${productId}`;
+        method = "PATCH";
+      } else if (actionType === "return") {
+        url = `/order/return/${orderId}/${productId}`;
+        method = "POST";
+      }
+
+      fetch(url, {
+        method: method,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ reason: finalReason }),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.success) {
+            const successTitle = actionType === "cancel" ? "Cancelled!" : "Return Requested!";
+            const successText =
+              actionType === "cancel"
+                ? "Your order has been cancelled successfully."
+                : "Your return request has been submitted successfully.";
+
+            Swal.fire(successTitle, successText, "success").then(() => {
+              location.reload();
+            });
+          } else {
             Swal.fire(
-              "Error!",
-              "Something went wrong. Please try again later.",
+              "Error",
+              data.message || `Failed to ${actionType} the order. Please try again later.`,
               "error"
             );
-          });
-      }
-
-      function validateReason(reason) {
-        const MIN_LENGTH = 10;
-        const MAX_LENGTH = 500;
-
-        if (!reason || reason.length === 0) {
-          return {
-            isValid: false,
-            message: "Please provide a reason",
-          };
-        }
-
-        const cleanedReason = reason.replace(/\s+/g, " ");
-
-        if (cleanedReason.length < MIN_LENGTH) {
-          return {
-            isValid: false,
-            message: `Reason must be at least ${MIN_LENGTH} characters long`,
-          };
-        }
-
-        if (cleanedReason.length > MAX_LENGTH) {
-          return {
-            isValid: false,
-            message: `Reason cannot exceed ${MAX_LENGTH} characters`,
-          };
-        }
-
-        // Check for meaningful content
-        const uniqueChars = new Set(
-          cleanedReason.toLowerCase().replace(/\s/g, "")
-        );
-        if (uniqueChars.size < 3) {
-          return {
-            isValid: false,
-            message: "Please provide a more meaningful reason",
-          };
-        }
-
-        return {
-          isValid: true,
-          cleanedReason: cleanedReason,
-        };
-      }
+          }
+        })
+        .catch((error) => {
+          console.error(`Error ${actionType}ing order:`, error);
+          Swal.fire(
+            "Error!",
+            "Something went wrong. Please try again later.",
+            "error"
+          );
+        });
+    }
 
       // download invoice
    document.addEventListener('DOMContentLoaded', function() {
@@ -1188,9 +1150,7 @@ async function getLogoBase64() {
   });
 }
 
-async function downloadInvoice() {
-  console.log('Download invoice clicked'); // Debug log
-  
+async function downloadInvoice() {  
   // Check if pdfMake is loaded
   if (typeof pdfMake === 'undefined') {
     alert('PDF library not loaded. Please refresh the page and try again.');
@@ -1460,9 +1420,7 @@ async function downloadInvoice() {
   };
 
   // Generate and download the PDF
-  pdfMake.createPdf(docDefinition).download('Invoice_' + orderData.orderId + '.pdf');
-  console.log('PDF generated successfully'); // Debug log
-  
+  pdfMake.createPdf(docDefinition).download('Invoice_' + orderData.orderId + '.pdf');  
   } catch (error) {
     console.error('Error generating PDF:', error);
     alert('Error generating invoice. Please try again or contact support.');

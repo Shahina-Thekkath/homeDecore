@@ -1,12 +1,13 @@
 const Coupon = require("../../models/couponSchema");
 const moment = require("moment");
+const { STATUS_CODES, MESSAGES } = require("../../constants");
 
 const renderAddCouponPage = async (req, res) => {
   try {
     res.render("addCoupon");
   } catch (error) {
     console.error("Add Coupon render error:", error);
-    res.status(500).send("server Error");
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).send(MESSAGES.GENERIC.SERVER_ERROR);
   }
 };
 
@@ -74,14 +75,14 @@ const addCoupon = async (req, res) => {
     }
 
     if (Object.keys(errors).length > 0) {
-      return res.status(400).json({ success: false, errors });
+      return res.status(STATUS_CODES.BAD_REQUEST).json({ success: false, errors });
     }
 
     const existingCoupon = await Coupon.findOne({ code});
     if (existingCoupon) {
-      return res.status(400).json({
+      return res.status(STATUS_CODES.BAD_REQUEST).json({
         success: false,
-        errors: { code: "Coupon code already exists" },
+        errors: { code: MESSAGES.COUPON.CODE_EXISTS},
       });
     }
 
@@ -95,10 +96,10 @@ const addCoupon = async (req, res) => {
       discountType,
     });
 
-    return res.json({ success: true, message: "Coupon added successfully" });
+    return res.json({ success: true, message: MESSAGES.COUPON.ADDED_SUCCESS });
   } catch (error) {
     console.error("Internal Server Error adding coupon)", error);
-    return res.status(500).json({ success: false, message: "Server error" });
+    return res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ success: false, message: MESSAGES.GENERIC.SERVER_ERROR });
   }
 };
 
@@ -109,7 +110,7 @@ const getCouponList = async (req, res) => {
         res.render('couponList', { coupons });
     } catch (error) {
         console.error(error);
-        res.status(500).send('Server error');
+        res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).send(MESSAGES.GENERIC.SERVER_ERROR);
     }
 };
 
@@ -119,7 +120,7 @@ const toggleCouponStatus = async (req, res) => {
         const coupon = await Coupon.findById(couponId);
 
         if(!coupon) {
-            return res.status(404).json({ success: false, message: 'Coupon not found' });
+            return res.status(STATUS_CODES.NOT_FOUND).json({ success: false, message: MESSAGES.COUPON.NOT_FOUND });
         }
 
         coupon.isActive = !coupon.isActive;
@@ -128,7 +129,7 @@ const toggleCouponStatus = async (req, res) => {
         return res.json({ success: true, message: `Coupon ${coupon.isActive ? 'activated' : 'deactivated'} successfully` });
     } catch (error) {
         console.error(err);
-        return res.status(500).json({ success: false, message:'Server error' });
+        return res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ success: false, message:MESSAGES.GENERIC.SERVER_ERROR });
         
     }
 };
@@ -139,7 +140,7 @@ const getEditCoupon = async (req, res) => {
     res.render('editCoupon', {moment, coupon});
   } catch (error) {
     console.error("EditCoupon render error", error);
-    res.status(500).send("Server Error")
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).send(MESSAGES.GENERIC.SERVER_ERROR)
     
   }
 };
@@ -213,14 +214,14 @@ const updateCoupon = async (req, res) => {
     }
 
     if (Object.keys(errors).length > 0) {
-      return res.status(400).json({ success: false, errors });
+      return res.status(STATUS_CODES.BAD_REQUEST).json({ success: false, errors });
     }
 
     const existingCoupon = await Coupon.findOne({ code, _id: {$ne: id} });
     if (existingCoupon) {
-      return res.status(400).json({
+      return res.status(STATUS_CODES.BAD_REQUEST).json({
         success: false,
-        errors: { code: "Coupon code already exists" },
+        errors: { code: MESSAGES.COUPON.CODE_EXISTS },
       });
     }
 
@@ -234,10 +235,10 @@ const updateCoupon = async (req, res) => {
       discountType,
     }, { new: true });
 
-    return res.json({ success: true, message: "Coupon updated successfully" });
+    return res.json({ success: true, message: MESSAGES.COUPON.UPDATED_SUCCESS });
   } catch (error) {
     console.error("Internal Server Error editing coupon", error);
-    return res.status(500).json({ success: false, message: "Server error" });
+    return res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ success: false, message: MESSAGES.GENERIC.SERVER_ERROR });
   }
 };
 

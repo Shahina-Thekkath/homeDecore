@@ -3,6 +3,8 @@ const pdfPrinter = require('pdfmake');
 const fs = require('fs');
 const path = require("path");
 const ExcelJS = require('exceljs');
+const { STATUS_CODES, MESSAGES } = require("../../constants");
+
 
 const getSalesReport = async (req, res) => {
     try {
@@ -10,7 +12,7 @@ const getSalesReport = async (req, res) => {
         return res.render('salesReport', {currentPage: 1, totalPages: 1, baseUrl: "/admin/salesReport"});
     } catch (error) {
         console.error("Error loading sales Report page", error);
-        res.json(500).send("Internal Server Error");
+        res.json(STATUS_CODES.INTERNAL_SERVER_ERROR).send(MESSAGES.GENERIC.INTERNAL_ERROR);
         
     }
 };
@@ -131,7 +133,7 @@ const getSalesReportData = async (req, res) => {
     return res.json({ success: true, report: summary, orders, currentPage, totalPages });
   } catch (err) {
     console.error("Error building sales report:", err);
-    res.status(500).json({ success: false, message: "Internal Server Error" });
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ success: false, message: MESSAGES.GENERIC.INTERNAL_ERROR });
   }
 };
 
@@ -148,7 +150,7 @@ const generateSalesPDF = async (req, res) => {
       .sort({ createdAt: 1 });
 
     if (!orders || orders.length === 0) {
-      return res.status(404).json({ success: false, message: "No sales data found" });
+      return res.status(STATUS_CODES.NOT_FOUND).json({ success: false, message: MESSAGES.SALES.NO_DATA_FOUND });
     }
 
     // 🔹 Format data
@@ -447,9 +449,9 @@ const generateSalesPDF = async (req, res) => {
 
   } catch (error) {
     console.error("Error generating PDF:", error);
-    res.status(500).json({
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
       success: false,
-      message: "Failed to generate sales report PDF",
+      message: MESSAGES.SALES.PDF_GENERATION_FAILED,
       error: error.message,
     });
   }
@@ -464,7 +466,7 @@ const generateSalesExcel = async (req, res) => {
     // Fetch orders
     const orders = await Order.find(match).populate("products.productId").sort({ createdAt: 1 });
     if (!orders || orders.length === 0) {
-      return res.status(404).json({ success: false, message: "No sales data found" });
+      return res.status(STATUS_CODES.NOT_FOUND).json({ success: false, message: MESSAGES.SALES.NO_DATA_FOUND });
     }
 
     const workbook = new ExcelJS.Workbook();
@@ -550,7 +552,7 @@ const generateSalesExcel = async (req, res) => {
 
   } catch (error) {
     console.error("Error generating Excel:", error);
-    res.status(500).send("Error generating Excel file");
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).send(MESSAGES.SALES.EXCEL_GENERATION_FAILED);
   }
 };
 

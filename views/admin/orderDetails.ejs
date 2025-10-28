@@ -414,7 +414,6 @@
             },
             error: function (xhr, status, error) {
                 console.error('AJAX Error:', status, error);
-                console.log('Response Text:', xhr.responseText);
                Swal.fire({
                     title: 'Something went wrong!',
                     text: 'We couldn’t process your request. Please try again later.',
@@ -448,8 +447,6 @@ $('.status-dropdown').on('change', function () {
     const newStatus = dropdown.val();
     const previousStatus = dropdown.data('previous'); // old value
 
-    console.log("updateStatus", orderId, index, newStatus);
-
     $.ajax({
         url: '/admin/orders/update-status',
         method: 'POST',
@@ -467,7 +464,6 @@ $('.status-dropdown').on('change', function () {
             })
         },
         error: function (err) {
-            console.log("error", err);
 
             let msg = 'There was an error updating the product status.';
             if (err.responseJSON && err.responseJSON.message) {
@@ -490,7 +486,6 @@ $('.status-dropdown').on('change', function () {
     $('.cancel-product-btn').on('click', function(){
         const orderId = $(this).data('order-id');
         const index = $(this).data('index');
-        console.log("cancelProduct", orderId, index);
         
 
         Swal.fire({
@@ -510,7 +505,6 @@ $('.status-dropdown').on('change', function () {
                     contentType: 'application/json',
                     data: JSON.stringify({ orderId, productIndex: index}),
                     success: function (res) {
-                        console.log("res", res);
                         
                         Swal.fire({
                             icon: 'success',

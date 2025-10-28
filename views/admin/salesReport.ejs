@@ -327,11 +327,10 @@
             const type = $("#reportType").val();
             const startDate = $("#startDate").val();
             const endDate = $("#endDate").val();
-            console.log("type, startDated, endDate",type, startDate,endDate);
             
 
             let url = `/admin/sales-report/data?type=${encodeURIComponent(type)}&page=${page}`;
-             console.log("url", url);
+         
             if(type === "custom") {
               if(!startDate || !endDate) {
                 Swal.fire({
@@ -342,7 +341,6 @@
                 return;
               }
               url += `&startDate=${encodeURIComponent(startDate)}&endDate=${encodeURIComponent(endDate)}`;
-              console.log("url", url);
               
             }
 
@@ -359,7 +357,6 @@
                   });
                   return;
                 }
-                console.log("data", data);
                 
 
                 //fill table

@@ -415,8 +415,6 @@
     // Extract `from` parameter from the URL
     const urlParams = new URLSearchParams(window.location.search);
     const from = urlParams.get("from"); // 'checkout' or 'addressBook' or null if not provided
-    console.log("From parameter:", from);
-
     
     // Validation patterns
     const namePattern = /^[a-zA-Z.\s,]+$/;
@@ -531,10 +529,7 @@
       state,
       city,
       pincode
-    };
-
-    console.log(formData);
-    
+    };    
 
     try {
       // Use fetch API to send data

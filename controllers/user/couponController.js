@@ -1,6 +1,7 @@
 const Coupon = require("../../models/couponSchema");
 const Cart = require("../../models/cartSchema");
 const User = require("../../models/userSchma");
+const { STATUS_CODES, MESSAGES } = require("../../constants");
 
 const applyCoupon = async (req, res) => {
   try {
@@ -8,40 +9,40 @@ const applyCoupon = async (req, res) => {
         const { couponCode } = req.body;
 
         if (!couponCode) {
-            return res.status(400).json({ success: false, message: "Coupon code is required." });
+            return res.status(STATUS_CODES.BAD_REQUEST).json({ success: false, message: MESSAGES.COUPON.CODE_REQUIRED });
         }
 
         const coupon = await Coupon.findOne({ code: couponCode.trim().toUpperCase() });
 
         if (!coupon) {
-            return res.status(404).json({ success: false, message: "Coupon not found." });
+            return res.status(STATUS_CODES.NOT_FOUND).json({ success: false, message: MESSAGES.COUPON.NOT_FOUND });
         }
 
         if (!coupon.isActive) {
-            return res.status(400).json({ success: false, message: "This coupon is no longer active." });
+            return res.status(STATUS_CODES.BAD_REQUEST).json({ success: false, message: MESSAGES.COUPON.INACTIVE });
         }
 
         if (new Date(coupon.expiresOn) < new Date()) {
-            return res.status(400).json({ success: false, message: "This coupon has expired." });
+            return res.status(STATUS_CODES.BAD_REQUEST).json({ success: false, message: MESSAGES.COUPON.EXPIRED });
         }
 
         if (coupon.usageLimit <= coupon.usedCount) {
-            return res.status(400).json({ success: false, message: "Coupon usage limit reached." });
+            return res.status(STATUS_CODES.BAD_REQUEST).json({ success: false, message: MESSAGES.COUPON.USAGE_LIMIT_REACHED });
         }
 
         if (coupon.usersUsed.includes(userId)) {
-            return res.status(400).json({ success: false, message: "You have already used this coupon." });
+            return res.status(STATUS_CODES.BAD_REQUEST).json({ success: false, message: MESSAGES.COUPON.ALREADY_USED });
         }
 
         const cart = await Cart.findOne({ userId }).populate('items.productId');
         if (!cart || cart.items.length === 0) {
-            return res.status(400).json({ success: false, message: "Your cart is empty." });
+            return res.status(STATUS_CODES.BAD_REQUEST).json({ success: false, message: MESSAGES.COUPON.EMPTY_CART });
         }
 
         const subtotal = cart.items.reduce((sum, item) => sum + (item.discountedPrice * item.quantity), 0);
 
         if (subtotal < coupon.minPurchaseAmount) {
-            return res.status(400).json({
+            return res.status(STATUS_CODES.BAD_REQUEST).json({
                 success: false,
                 message: `Minimum purchase of ₹${coupon.minPurchaseAmount} required to use this coupon.`
             });
@@ -65,9 +66,9 @@ const applyCoupon = async (req, res) => {
           discountType: coupon.discountType
         };
 
-        return res.status(200).json({
+        return res.status(STATUS_CODES.OK).json({
             success: true,
-            message: "Coupon applied successfully.",
+            message: MESSAGES.COUPON.APPLIED,
             data: {
                 couponCode: coupon.code,
                 discountAmount,
@@ -79,7 +80,7 @@ const applyCoupon = async (req, res) => {
 
     } catch (err) {
         console.error("Error applying coupon:", err);
-        res.status(500).json({ success: false, message: "Internal server error." });
+        res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ success: false, message: MESSAGES.GENERIC.INTERNAL_ERROR });
     }
 }
 
@@ -93,15 +94,15 @@ const removeCoupon = async (req, res) => {
     // Fetch cart and recalculate totals
     const cart = await Cart.findOne({ userId }).populate('items.productId');
     if (!cart || cart.items.length === 0) {
-      return res.status(400).json({ success: false, message: "Cart is empty." });
+      return res.status(STATUS_CODES.BAD_REQUEST).json({ success: false, message: MESSAGES.COUPON.CART_EMPTY });
     }
 
     const subtotal = cart.items.reduce((sum, item) => sum + (item.discountedPrice * item.quantity), 0);
     const grandTotal = subtotal; // No discount after removal
 
-    return res.status(200).json({
+    return res.status(STATUS_CODES.OK).json({
       success: true,
-      message: "Coupon removed successfully.",
+      message: MESSAGES.COUPON.REMOVED,
       data: {
         subtotal,
         discountAmount: 0,
@@ -113,7 +114,7 @@ const removeCoupon = async (req, res) => {
 
   } catch (err) {
     console.error("Error removing coupon:", err);
-    return res.status(500).json({ success: false, message: "Internal server error." });
+    return res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ success: false, message: MESSAGES.GENERIC.INTERNAL_ERROR });
   }
 };
 

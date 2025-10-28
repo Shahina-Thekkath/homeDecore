@@ -1,5 +1,6 @@
 const Wallet = require('../../models/walletSchema');
 const User = require('../../models/userSchma');
+const { STATUS_CODES, MESSAGES } = require("../../constants");
 
 const getWallet = async (req, res) => {
   try {
@@ -54,7 +55,7 @@ const getWallet = async (req, res) => {
 
   } catch (error) {
     console.error("Error fetching wallet:", error);
-    res.status(500).render("error", { message: "Server error while loading wallet" });
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).render("error", { message: MESSAGES.WALLET.SERVER_ERROR_WHILE_LOADING });
   }
 };
 

@@ -1,5 +1,6 @@
 const session = require("express-session");
 const User = require("../../models/userSchma");
+const { STATUS_CODES, MESSAGES } = require("../../constants");
 
 
 const userProfile = async(req, res) =>{
@@ -22,14 +23,14 @@ const getEditProfile = async(req, res) =>{
         const user = await User.findById(userId);
 
         if (!user) {
-            return res.status(404).send('user not found');
+            return res.status(STATUS_CODES.NOT_FOUND).send(MESSAGES.USER.NOT_FOUND);
         }
         res.render('editProfile', {user});
 
         
     } catch (error) {
         console.error("Error getting Edit Profile page", error);
-        res.status(404).send('Internal Server Error');
+        res.status(STATUS_CODES.NOT_FOUND).send(MESSAGES.GENERIC.INTERNAL_ERROR);
     }
 };
 
@@ -38,9 +39,9 @@ const updateProfile = async (req, res) => {
     const userId = req.session.user?._id || req.session.passport?.user?._id;
 
     if (!userId) {
-      return res.status(401).json({
+      return res.status(STATUS_CODES.UNAUTHORIZED).json({
         success: false,
-        message: "Unauthorized. Please login again."
+        message: MESSAGES.PROFILE.UNAUTHORIZED
       });
     }
 
@@ -56,14 +57,14 @@ const updateProfile = async (req, res) => {
     if (!gender || !genderRegex.test(gender)) errors.gender = "Please select a valid gender.";
 
     if (Object.keys(errors).length > 0) {
-      return res.status(400).json({ success: false, errors });
+      return res.status(STATUS_CODES.BAD_REQUEST).json({ success: false, errors });
     }
 
     const user = await User.findById(userId);
     if (!user) {
-      return res.status(404).json({
+      return res.status(STATUS_CODES.NOT_FOUND).json({
         success: false,
-        message: "User not found."
+        message: MESSAGES.USER.NOT_FOUND
       });
     }
 
@@ -71,14 +72,14 @@ const updateProfile = async (req, res) => {
 
     return res.json({
       success: true,
-      message: "Profile updated successfully!"
+      message: MESSAGES.PROFILE.UPDATE_SUCCESS
     });
 
   } catch (error) {
     console.error("Internal Server Error", error);
-    res.status(500).json({
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
       success: false,
-      message: "Internal Server Error. Please try again later."
+      message: MESSAGES.PROFILE.SERVER_ERROR
     });
   }
 };

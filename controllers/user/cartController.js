@@ -6,6 +6,7 @@ const mongoose = require("mongoose");
 const ProductOffer = require('../../models/productOfferSchema');
 const CategoryOffer = require('../../models/categoryOfferSchema');
 const Wishlist = require("../../models/wishlistSchema");
+const { STATUS_CODES, MESSAGES } = require("../../constants");
 
 const loadCart = async(req, res) =>{
     try {
@@ -38,7 +39,7 @@ const loadCart = async(req, res) =>{
 
     } catch (error) {
         console.error("Error loading cart page:", error);
-        res.status(500).send("Internal Server Error");
+        res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).send(MESSAGES.GENERIC.INTERNAL_ERROR);
     }
 };
 
@@ -48,20 +49,20 @@ const updateCartTotals = async (req, res) =>{
        
     
         if(!productId || !quantity){
-            return res.status(400).json({ error: "Invalid request"});
+            return res.status(STATUS_CODES.BAD_REQUEST).json({ error: MESSAGES.VALIDATION.INVALID_REQUEST});
         }
 
         const userId = req.session.user?._id || req.session.passport._id;    
         const cart = await Cart.findOne({ userId }).populate("items.productId");
         
         if(!cart){
-            return res.status(404).json({ error: "Cart not found"});
+            return res.status(STATUS_CODES.NOT_FOUND).json({ error: MESSAGES.CART.NOT_FOUND});
         }
 
         const item = cart.items.find((item) => item.productId._id.toString() === productId);
 
         if(!item){
-            return res.status(404).json({ error:"Product not found in cart"});
+            return res.status(STATUS_CODES.NOT_FOUND).json({ error:MESSAGES.PRODUCT.NOT_FOUND_IN_CART});
         }
 
        // Check if the requested quantity exceeds available stock
@@ -95,7 +96,7 @@ const updateCartTotals = async (req, res) =>{
 
     } catch (error) {
         console.error("Error updating cart totals:", error);
-        res.status(500).json({error: "Internal Server Error"});
+        res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({error: MESSAGES.GENERIC.INTERNAL_ERROR});
     }
 };
 
@@ -106,16 +107,16 @@ const addToCart = async (req, res) => {
   try {
     const product = await Product.findById(productId).populate("categoryId");
     if (!product) {
-      return res.status(404).json({ error: "Product not found" });
+      return res.status(STATUS_CODES.NOT_FOUND).json({ error: MESSAGES.PRODUCT.NOT_FOUND });
     }
 
     // Stock check
     if (quantity > product.quantity) {
-      return res.status(400).json({ error: "Requested quantity exceeds stock" });
+      return res.status(STATUS_CODES.BAD_REQUEST).json({ error: MESSAGES.CART.QUANTITY_EXCEEDS_STOCK });
     }
 
     if (quantity > 5) {
-      return res.status(400).json({ error: "You can’t add more than 5 items per product" });
+      return res.status(STATUS_CODES.BAD_REQUEST).json({ error: MESSAGES.CART.MAX_QUANTITY_EXCEEDED });
     }
 
     const currentDate = new Date();
@@ -184,7 +185,7 @@ const addToCart = async (req, res) => {
     // ====== CART LOGIC ======
     const userId = req.session.user?._id || req.session.passport?._id;
     if (!userId) {
-      return res.status(401).json({ message: "User not logged in" });
+      return res.status(STATUS_CODES.UNAUTHORIZED).json({ message: MESSAGES.USER.NOT_LOGGED_IN });
     }
 
     let cart = await Cart.findOne({ userId });
@@ -219,14 +220,14 @@ const addToCart = async (req, res) => {
       await Wishlist.updateOne({ userId }, { $pull: { products: { productId } } });
     }
 
-    return res.status(200).json({
+    return res.status(STATUS_CODES.OK).json({
       success: true,
-      message: "Product added to cart",
+      message: MESSAGES.CART.PRODUCT_ADDED,
       cart,
     });
   } catch (error) {
     console.error("Error Loading Cart:", error);
-    return res.status(500).json({ error: "Server Error" });
+    return res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ error: MESSAGES.GENERIC.SERVER_ERROR });
   }
 };
 
@@ -247,7 +248,7 @@ const getCartItemCount = async (req, res) => {
         res.json({ itemCount });
     } catch (error) {
         console.error("Error fetching cart item count:", error);
-        res.status(500).json({ error: "Internal Server Error" });
+        res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ error: MESSAGES.GENERIC.INTERNAL_ERROR });
     }
 };
 
@@ -265,12 +266,12 @@ const deleteCartItem = async(req, res) =>{
          cart.items.pull(item);
         await cart.save();
 
-        return res.status(200).json({ success: true, message: "Item deleted successfully" });
+        return res.status(STATUS_CODES.OK).json({ success: true, message: MESSAGES.CART.ITEM_DELETED });
 
 
     } catch (error) {
         console.error("Error deleting cart item :", error);
-        res.status(500).json({ error: "Internal Server Error" });
+        res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ error: MESSAGES.GENERIC.INTERNAL_ERROR });
         
     }
 }
