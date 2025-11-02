@@ -13,12 +13,12 @@
     />
     <meta name="author" content="Dreamguys - Bootstrap Admin Template" />
     <meta name="robots" content="noindex, nofollow" />
-    <title>Dreams Pos admin template</title>
+    <title>The Elegant Adobe - Home Decor</title>
 
     <link
       rel="shortcut icon"
       type="image/x-icon"
-      href="/admin-assets/img/favicon.jpg"
+      href="/images/favicon.png"
     />
 
     <link rel="stylesheet" href="/admin-assets/css/bootstrap.min.css" />
@@ -312,6 +312,26 @@
                 if(errorField) errorField.innerText = rule.message;
             }
         });
+
+        const discountType = form.elements["discountType"].value;
+        const minPurchaseAmount = parseFloat(data.minPurchaseAmount);
+        const discountAmount = parseFloat(data.discountAmount);
+
+        if(discountType === "flat" > minPurchaseAmount) {
+         isValid = false;
+         
+            const minPurchaseError = getElementById(minPurchaseAmount-error);
+            if(minPurchaseError) {
+              minPurchaseError.innerText = "Minimum Purchase amount should be greater than or equal to discount";
+            }
+
+            Swal.fire("Validation Error",
+                      "Minimum purchase amount cannot be less than discount amount",
+                      "warning"
+            );
+
+            return;
+        }
 
          if(!isValid) {
             Swal.fire('Validation Error', 'Please correct the highlighted fields.', 'warning');

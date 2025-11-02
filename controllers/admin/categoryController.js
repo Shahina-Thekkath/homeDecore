@@ -155,7 +155,9 @@ try {
  console.error("Error unblocking category:", error);
  res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ success: false });
 }
-};
+}
+
+
 
 module.exports = {
   categoryInfo,

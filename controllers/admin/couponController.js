@@ -86,6 +86,12 @@ const addCoupon = async (req, res) => {
       });
     }
 
+    if (discountType === "flat" && Number(discountAmount) > Number(minPurchaseAmount)) {
+      return res.status(400).json({success: false, errors: {minPurchaseAmount: "Minimum purchase amount should be greater than discount amount for flat coupons"}})
+    }
+    
+    
+
     await Coupon.create({
       name,
       code,
