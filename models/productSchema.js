@@ -5,7 +5,7 @@ const { Types } = mongoose;
 
 const ProductSchema = new Schema(
   {
-    name: { type: String, required: true },
+    name: { type: String, required: true, unique: true },
     description: { type: String, required: true },
     price: { type: Number, required: true },
     categoryId: { type: Types.ObjectId, ref: "Category", required: true },
@@ -49,7 +49,7 @@ const ProductSchema = new Schema(
 
 // ProductSchema.index({ price: 1 });
 // ProductSchema.index({ averageRating: -1 });
-// ProductSchema.index({ name: 1 });
+ProductSchema.index({ name: 1, unique: true});
 // ProductSchema.index({ isFeatured: 1 });
 
 

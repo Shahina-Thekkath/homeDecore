@@ -92,6 +92,14 @@ const addProducts = async (req, res) => {
     return res.json({ message: MESSAGES.PRODUCT.ADDED_SUCCESS });
   } catch (error) {
     console.error("Error saving product", error);
+
+    if (error.code === 11000) {
+    return res.status(409).json({ 
+      success: false, 
+      message: "Product name already exists" 
+    });
+  }
+  
     return res.redirect("/admin/pageerror");
   }
 };

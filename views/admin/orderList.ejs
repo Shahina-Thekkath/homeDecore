@@ -175,6 +175,7 @@
                             <table class="table  datanew">
                                 <thead>
                                     <tr>
+                                        <th>Sl No.</th>
                                         <th>Order Id</th>
                                         <th>Customer Info</th>
                                       
@@ -190,8 +191,9 @@
                                 </thead>
                                 <tbody>
   
-                                <% orders.forEach((order) =>{%>
-                                    <tr><td><%= order._id %></td>
+                                <% orders.forEach((order, index) =>{%>
+                                    <tr><td><%= index + 1 %></td>
+                                    <td><%= order._id %></td>
                                     <td><%= order.userId.name %> <br/> <%= order.userId.email %></td>
                                     <td><%= new Date(order.createdAt).toLocaleDateString() %></td>
                                     <td><%= order.orderStatus%></td>

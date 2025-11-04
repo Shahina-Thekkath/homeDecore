@@ -14,6 +14,7 @@ const orderController = require("../controllers/admin/orderController");
 const couponController = require("../controllers/admin/couponController");
 const offerController = require('../controllers/admin/offerController');
 const salesController = require('../controllers/admin/salesController');
+const checkDuplicateProduct = require('../middleware/checkDuplicateProduct');
 
 adminRouter.get("/", adminAuth.isLogout, loginController.loadLogin);
 adminRouter.post("/", adminAuth.isLogout, loginController.login);
@@ -31,6 +32,7 @@ adminRouter.get("/products/addProducts", productController.getProductAddPage);
 adminRouter.post(
   "/products/addProducts",
   uploads.array("images", 5),
+  checkDuplicateProduct,
   productController.addProducts
 );
 adminRouter.get("/productList", productController.getAllProducts);

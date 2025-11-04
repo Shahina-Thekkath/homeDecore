@@ -191,6 +191,7 @@
                     <div class="form-group">
                       <label>Category</label>
                       <select class="select" name="categoryId" id="categoryId">
+                        <option value="" selected disabled>Select Category</option>
                         <% category.forEach((category) => { %>
                         <option value="<%= category._id %>">
                           <%= category.name %>
@@ -288,7 +289,7 @@
                   <button
                     type="submit"
                     class="btn btn-md rounded font-sm hover-up"
-                    onclick="validateAndSubmit()"
+                    id="submitBtn"
                   >
                     Submit
                   </button>
@@ -585,7 +586,7 @@
             descriptionErrorElement.style.display = "block";
             isValid = false;
           } else if (
-            !/^[a-zA-Z0-9\s.,!?'"():;@#%&*\-\/]+$/.test(description.trim())
+            !/^[\p{L}\p{N}\s.,!?'"():;%@#&*\-\/–]+$/u.test(description.trim())
           ) {
             descriptionErrorElement.textContent =
               "Description should contain only alphabetic characters and punctuations only.";
@@ -761,7 +762,11 @@
 
     const form = this;
     const formData = new FormData(form);
+    const submitBtn = $("#submitBtn");
+
         if (validateForm()) {
+
+          submitBtn.prop("disabled", true).text("Uploading...");
           
         try {
               $.ajax({
@@ -782,6 +787,9 @@
                 });
               },
               error: function (xhr) {
+
+                submitBtn.prop("disabled", false).text("Submit");
+
                 if (xhr.responseJSON && xhr.responseJSON.errors) {
                   const errors = xhr.responseJSON.errors;
 
@@ -807,9 +815,11 @@
                     $("#image-error").text(errors.images);
                   }
                 } else {
+
+                  const backendMessage = (xhr.responseJSON && xhr.responseJSON.message) || "Something went wrong! Please try again."
                   Swal.fire({
                     icon: "error",
-                    title: "Something went wrong!",
+                    title: backendMessage,
                   });
                 }
               },

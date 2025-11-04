@@ -11,7 +11,7 @@
     />
     <meta name="description" content="" />
     <meta name="author" content="" />
-    <link href="images/favicon.png" rel="shortcut icon" />
+    <link href="/images/favicon.png" rel="shortcut icon" />
     <title>The Elegant Adobe - Home Decor</title>
 
     <!--====== Google Font ======-->
@@ -59,24 +59,6 @@
                 <%- include('../../views/partials/icons/icon-logo') %>
               </a>
               <!--====== End - Main Logo ======-->
-
-              <!--====== Search Form ======-->
-              <!-- <form class="main-form">
-                <label for="main-search"></label>
-
-                <input
-                  class="input-text input-text--border-radius input-text--style-1"
-                  type="text"
-                  id="main-search"
-                  placeholder="Search"
-                />
-
-                <button
-                  class="btn btn--icon fas fa-search main-search-button"
-                  type="submit"
-                ></button>
-              </form> -->
-              <!--====== End - Search Form ======-->
 
               <!--====== Dropdown Main plugin ======-->
               <div class="menu-init" id="navigation">
@@ -660,21 +642,25 @@
                             <span class="dash__text-2"
                               >Paid by <%= order.paymentMethod %></span
                             >
-                            <div class="d-flex justify-content-end" style="margin-top: 50px;">
-                              <button 
-                                type="button"
-                                id="downloadInvoiceBtn" 
-                                class="btn btn-sm"
-                                style="background-color: #8B4513; color: white; border: none; padding: 8px 16px; border-radius: 4px; font-size: 14px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap;"
-                              >
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink: 0;">
-                                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                                  <polyline points="7 10 12 15 17 10"/>
-                                  <line x1="12" y1="15" x2="12" y2="3"/>
-                                </svg>
-                                Download Invoice
-                              </button>
-                            </div>
+
+                            <% if(order.isPaid) { %>
+                               <div class="d-flex justify-content-end" style="margin-top: 50px;">
+                                <button 
+                                  type="button"
+                                  id="downloadInvoiceBtn" 
+                                  class="btn btn-sm"
+                                  style="background-color: #8B4513; color: white; border: none; padding: 8px 16px; border-radius: 4px; font-size: 14px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap;"
+                                >
+                                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink: 0;">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                    <polyline points="7 10 12 15 17 10"/>
+                                    <line x1="12" y1="15" x2="12" y2="3"/>
+                                  </svg>
+                                  Download Invoice
+                                </button>
+                              </div>
+                            <% } %>
+                            
                           </div>
                         </div>
                       </div>
@@ -1159,268 +1145,347 @@ async function downloadInvoice() {
   }
   
   try {
-  // Get logo as base64
-  const logoBase64 = await getLogoBase64();
-  // Prepare order data from EJS variables
-  const orderData = {
-    orderId: '<%= order._id %>',
-    date: '<%= new Date(order.createdAt).toLocaleString() %>',
-    items: [
-      <% order.products.forEach((item, index) => { %>
-        {
-          name: '<%= item.productId.name %>',
-          quantity: <%= item.quantity %>,
-          price: <%= item.discountedPrice %>
-        }<%= index < order.products.length - 1 ? ',' : '' %>
-      <% }); %>
-    ],
-    subtotal: <%= order.products.reduce((sum, p) => sum + p.discountedPrice * p.quantity, 0) %>,
-    discount: <%= order.couponDiscount || 0 %>,
-    shippingFee: <%= order.deliveryCharge || 0 %>,
-    total: <%= order.totalAmount %>,
-    paymentMethod: '<%= order.paymentMethod %>',
-    shippingAddress: {
-      name: '<%= order.shippingAddress.name %>',
-      address: '<%= order.shippingAddress.address %>',
-      city: '<%= order.shippingAddress.city %>, <%= order.shippingAddress.state %> - <%= order.shippingAddress.pincode %>',
-      phone: '<%= order.shippingAddress.phone %>'
-    }
-  };
-
-  // Create the PDF document definition
-  const docDefinition = {
-    pageSize: 'A4',
-    pageMargins: [40, 60, 40, 60],
-    watermark: { text: 'The Elegant Adobe', color: '#FFE5CC', opacity: 0.1, bold: true, italics: false, fontSize: 60 },
-    content: [
-      // Header (Logo will be loaded as base64)
-      {
-        stack: [
-          logoBase64 ? {
-            image: logoBase64,
-            width: 200,
-            margin: [0, 0, 0, 15]
-          } : {
-            text: 'The Elegant Adobe', 
-            style: 'header', 
-            color: '#FF6B00',
-            margin: [0, 0, 0, 15]
-          },
-          { text: 'Tax Invoice', style: 'subheader' }
-        ]
-      },
-      {
-        columns: [
-          { width: '*', text: '' },
-          {
-            width: 'auto',
-            stack: [
-              { text: 'Order #' + orderData.orderId, style: 'orderNumber', alignment: 'right' },
-              { text: 'Date: ' + orderData.date, style: 'date', alignment: 'right' }
-            ]
-          }
-        ],
-        margin: [0, 0, 0, 30]
-      },
-      
-      // Billing and Shipping Details
-      {
-        stack: [
-          { text: 'Shipping Address', style: 'sectionHeader' },
-          { text: orderData.shippingAddress.name, style: 'addressText', bold: true },
-          { text: orderData.shippingAddress.address, style: 'addressText' },
-          { text: orderData.shippingAddress.city, style: 'addressText' },
-          { text: 'Phone: ' + orderData.shippingAddress.phone, style: 'addressText' }
-        ],
-        margin: [0, 0, 0, 30]
-      },
-      
-      // Order Items Table
-      {
-        text: 'Order Items',
-        style: 'sectionHeader',
-        margin: [0, 0, 0, 10]
-      },
-      {
-        table: {
-          headerRows: 1,
-          widths: ['*', 'auto', 'auto', 'auto'],
-          body: [
-            [
-              { text: 'Item', style: 'tableHeader' },
-              { text: 'Quantity', style: 'tableHeader', alignment: 'center' },
-              { text: 'Price', style: 'tableHeader', alignment: 'right' },
-              { text: 'Total', style: 'tableHeader', alignment: 'right' }
-            ]
-          ].concat(orderData.items.map(function(item) {
-            return [
-              { text: item.name, style: 'tableCell' },
-              { text: item.quantity.toString(), style: 'tableCell', alignment: 'center' },
-              { text: '₹' + item.price.toFixed(2), style: 'tableCell', alignment: 'right' },
-              { text: '₹' + (item.quantity * item.price).toFixed(2), style: 'tableCell', alignment: 'right' }
-            ];
-          }))
-        },
-        layout: {
-          fillColor: function (rowIndex) {
-            return rowIndex === 0 ? '#f5f5f5' : null;
-          },
-          hLineWidth: function (i, node) {
-            return i === 0 || i === 1 || i === node.table.body.length ? 1 : 0.5;
-          },
-          vLineWidth: function () {
-            return 0;
-          },
-          hLineColor: function () {
-            return '#e0e0e0';
-          },
-          paddingLeft: function () { return 8; },
-          paddingRight: function () { return 8; },
-          paddingTop: function () { return 8; },
-          paddingBottom: function () { return 8; }
-        },
-        margin: [0, 0, 0, 20]
-      },
-      
-      // Total Summary
-      {
-        columns: [
-          { width: '*', text: '' },
-          {
-            width: 200,
-            stack: [
-              {
-                columns: [
-                  { text: 'Subtotal:', style: 'summaryLabel' },
-                  { text: '₹' + orderData.subtotal.toFixed(2), style: 'summaryValue', alignment: 'right' }
-                ],
-                margin: [0, 0, 0, 5]
-              }
-            ].concat(
-              orderData.discount > 0 ? [{
-                columns: [
-                  { text: 'Discount:', style: 'summaryLabel' },
-                  { text: '-₹' + orderData.discount.toFixed(2), style: 'summaryValue', alignment: 'right' }
-                ],
-                margin: [0, 0, 0, 5]
-              }] : []
-            ).concat([
-              {
-                columns: [
-                  { text: 'Shipping Fee:', style: 'summaryLabel' },
-                  { text: '₹' + orderData.shippingFee.toFixed(2), style: 'summaryValue', alignment: 'right' }
-                ],
-                margin: [0, 0, 0, 5]
-              },
-              {
-                canvas: [
-                  {
-                    type: 'line',
-                    x1: 0, y1: 5,
-                    x2: 200, y2: 5,
-                    lineWidth: 1,
-                    lineColor: '#e0e0e0'
-                  }
-                ],
-                margin: [0, 5, 0, 10]
-              },
-              {
-                columns: [
-                  { text: 'Total:', style: 'totalLabel' },
-                  { text: '₹' + orderData.total.toFixed(2), style: 'totalValue', alignment: 'right' }
-                ]
-              }
-            ])
-          }
-        ]
-      },
-      
-      // Footer
-      {
-        text: 'Thank you for your purchase!',
-        style: 'footer',
-        margin: [0, 40, 0, 0]
-      },
-      {
-        text: 'Payment Method: ' + orderData.paymentMethod,
-        style: 'paymentMethod',
-        margin: [0, 10, 0, 0]
-      }
-    ],
+    // Get logo as base64
+    const logoBase64 = await getLogoBase64();
     
-    styles: {
-      header: {
-        fontSize: 24,
-        bold: true
-      },
-      subheader: {
-        fontSize: 14,
-        color: '#666'
-      },
-      orderNumber: {
-        fontSize: 12,
-        bold: true
-      },
-      date: {
-        fontSize: 10,
-        color: '#666',
-        margin: [0, 2, 0, 0]
-      },
-      sectionHeader: {
-        fontSize: 12,
-        bold: true,
-        color: '#333',
-        margin: [0, 0, 0, 8]
-      },
-      addressText: {
-        fontSize: 10,
-        color: '#666',
-        margin: [0, 2, 0, 0]
-      },
-      tableHeader: {
-        fontSize: 10,
-        bold: true,
-        color: '#333'
-      },
-      tableCell: {
-        fontSize: 10,
-        color: '#666'
-      },
-      summaryLabel: {
-        fontSize: 10,
-        color: '#666'
-      },
-      summaryValue: {
-        fontSize: 10,
-        color: '#333'
-      },
-      totalLabel: {
-        fontSize: 12,
-        bold: true,
-        color: '#333'
-      },
-      totalValue: {
-        fontSize: 12,
-        bold: true,
-        color: '#FF6B00'
-      },
-      footer: {
-        fontSize: 12,
-        alignment: 'center',
-        color: '#FF6B00',
-        bold: true
-      },
-      paymentMethod: {
-        fontSize: 9,
-        alignment: 'center',
-        color: '#999',
-        italics: true
+    // Prepare order data from EJS variables
+    const orderData = {
+      orderId: '<%= order._id %>',
+      date: '<%= new Date(order.createdAt).toLocaleString() %>',
+      items: [
+        <% order.products.forEach((item, index) => { %>
+          {
+            name: '<%= item.productId.name %>',
+            quantity: <%= item.quantity %>,
+            price: <%= item.discountedPrice %>,
+            status: '<%= item.status %>',
+            refundedAmount: <%= item.refundedAmount || 0 %>,
+            cancellationReason: '<%= item.cancellationReason || "" %>',
+            returnReason: '<%= item.returnReason || "" %>'
+          }<%= index < order.products.length - 1 ? ',' : '' %>
+        <% }); %>
+      ],
+      subtotal: <%= order.products.reduce((sum, p) => sum + p.discountedPrice * p.quantity, 0) %>,
+      discount: <%= order.couponDiscount || 0 %>,
+      shippingFee: <%= order.deliveryCharge || 0 %>,
+      total: <%= order.totalAmount %>,
+      paymentMethod: '<%= order.paymentMethod %>',
+      shippingAddress: {
+        name: '<%= order.shippingAddress.name %>',
+        address: '<%= order.shippingAddress.address %>',
+        city: '<%= order.shippingAddress.city %>, <%= order.shippingAddress.state %> - <%= order.shippingAddress.pincode %>',
+        phone: '<%= order.shippingAddress.phone %>'
       }
-    }
-  };
+    };
 
-  // Generate and download the PDF
-  pdfMake.createPdf(docDefinition).download('Invoice_' + orderData.orderId + '.pdf');  
+    // Calculate totals excluding cancelled/returned items
+    const activeItems = orderData.items.filter(item => 
+      item.status !== 'Cancelled' && item.status !== 'Returned'
+    );
+    const cancelledReturnedItems = orderData.items.filter(item => 
+      item.status === 'Cancelled' || item.status === 'Returned'
+    );
+    
+    const activeSubtotal = activeItems.reduce((sum, item) => 
+      sum + (item.quantity * item.price), 0
+    );
+    const refundedTotal = cancelledReturnedItems.reduce((sum, item) => 
+      sum + item.refundedAmount, 0
+    );
+
+    // Create the PDF document definition
+    const docDefinition = {
+      pageSize: 'A4',
+      pageMargins: [40, 60, 40, 60],
+      watermark: { 
+        text: 'The Elegant Adobe', 
+        color: '#FFE5CC', 
+        opacity: 0.1, 
+        bold: true, 
+        italics: false, 
+        fontSize: 60 
+      },
+      content: [
+        // Header
+        {
+          stack: [
+            logoBase64 ? {
+              image: logoBase64,
+              width: 200,
+              margin: [0, 0, 0, 15]
+            } : {
+              text: 'The Elegant Adobe', 
+              style: 'header', 
+              color: '#FF6B00',
+              margin: [0, 0, 0, 15]
+            },
+            { text: 'Tax Invoice', style: 'subheader' }
+          ]
+        },
+        {
+          columns: [
+            { width: '*', text: '' },
+            {
+              width: 'auto',
+              stack: [
+                { text: 'Order #' + orderData.orderId, style: 'orderNumber', alignment: 'right' },
+                { text: 'Date: ' + orderData.date, style: 'date', alignment: 'right' }
+              ]
+            }
+          ],
+          margin: [0, 0, 0, 30]
+        },
+        
+        // Shipping Address
+        {
+          stack: [
+            { text: 'Shipping Address', style: 'sectionHeader' },
+            { text: orderData.shippingAddress.name, style: 'addressText', bold: true },
+            { text: orderData.shippingAddress.address, style: 'addressText' },
+            { text: orderData.shippingAddress.city, style: 'addressText' },
+            { text: 'Phone: ' + orderData.shippingAddress.phone, style: 'addressText' }
+          ],
+          margin: [0, 0, 0, 30]
+        },
+        
+        // Order Items Table
+        {
+          text: 'Order Items',
+          style: 'sectionHeader',
+          margin: [0, 0, 0, 10]
+        },
+        {
+          table: {
+  headerRows: 1,
+  widths: ['*', 'auto', 'auto', 'auto', 'auto'],
+  body: [
+    [
+      { text: 'Item', style: 'tableHeader' },
+      { text: 'Quantity', style: 'tableHeader', alignment: 'center' },
+      { text: 'Price', style: 'tableHeader', alignment: 'right' },
+      { text: 'Total', style: 'tableHeader', alignment: 'right' },
+      { text: 'Status', style: 'tableHeader', alignment: 'center' }
+    ]
+  ].concat(orderData.items.map(function(item) {
+    
+    return [
+      { text: item.name, style: 'tableCell', color: '#444' },
+      { text: item.quantity.toString(), style: 'tableCell', alignment: 'center', color: '#444' },
+      { text: '₹' + item.price.toFixed(2), style: 'tableCell', alignment: 'right', color: '#444' },
+      { text: '₹' + (item.quantity * item.price).toFixed(2), style: 'tableCell', alignment: 'right', color: '#444' },
+      {
+        text: item.status,
+        style: 'statusBadge',
+        alignment: 'center',
+        color: item.status === 'Cancelled' || item.status === 'Returned' ? '#d32f2f' : '#4caf50',
+        bold: true
+      }
+    ];
+  }))
+}
+,
+          layout: {
+            fillColor: function (rowIndex, node) {
+              if (rowIndex === 0) return '#f5f5f5';
+              const item = orderData.items[rowIndex - 1];
+              if (item && (item.status === 'Cancelled' || item.status === 'Returned')) {
+                return '#fff3e0';
+              }
+              return null;
+            },
+            hLineWidth: function (i, node) {
+              return i === 0 || i === 1 || i === node.table.body.length ? 1 : 0.5;
+            },
+            vLineWidth: function () {
+              return 0;
+            },
+            hLineColor: function () {
+              return '#e0e0e0';
+            },
+            paddingLeft: function () { return 8; },
+            paddingRight: function () { return 8; },
+            paddingTop: function () { return 8; },
+            paddingBottom: function () { return 8; }
+          },
+          margin: [0, 0, 0, 10]
+        },
+        
+        // Add notes section if there are cancelled/returned items
+      ].concat(cancelledReturnedItems.length > 0 ? [
+        {
+          stack: cancelledReturnedItems.map(function(item) {
+            const reason = item.status === 'Cancelled' 
+              ? item.cancellationReason 
+              : item.returnReason;
+            return {
+              text: [
+                { text: item.name + ': ', bold: true, color: '#d32f2f', fontSize: 9 },
+                { text: item.status, color: '#d32f2f', fontSize: 9 },
+                reason ? { text: ' - ' + reason, fontSize: 9, color: '#666', italics: true } : ''
+              ],
+              margin: [0, 2, 0, 2]
+            };
+          }),
+          margin: [0, 0, 0, 20]
+        }
+      ] : []).concat([
+        
+        // Total Summary
+        {
+          columns: [
+            { width: '*', text: '' },
+            {
+              width: 220,
+              stack: [
+                {
+                  columns: [
+                    { text: 'Subtotal:', style: 'summaryLabel' },
+                    { text: '₹' + orderData.subtotal.toFixed(2), style: 'summaryValue', alignment: 'right' }
+                  ],
+                  margin: [0, 0, 0, 5]
+                }
+              ].concat(
+                orderData.discount > 0 ? [{
+                  columns: [
+                    { text: 'Discount:', style: 'summaryLabel' },
+                    { text: '-₹' + orderData.discount.toFixed(2), style: 'summaryValue', alignment: 'right' }
+                  ],
+                  margin: [0, 0, 0, 5]
+                }] : []
+              ).concat([
+                {
+                  columns: [
+                    { text: 'Shipping Fee:', style: 'summaryLabel' },
+                    { text: '₹' + orderData.shippingFee.toFixed(2), style: 'summaryValue', alignment: 'right' }
+                  ],
+                  margin: [0, 0, 0, 5]
+                }
+              ]).concat(
+                refundedTotal > 0 ? [{
+                  columns: [
+                    { text: 'Refunded Amount:', style: 'summaryLabel' },
+                    { text: '-₹' + refundedTotal.toFixed(2), style: 'refundValue', alignment: 'right' }
+                  ],
+                  margin: [0, 0, 0, 5]
+                }] : []
+              ).concat([
+                {
+                  canvas: [
+                    {
+                      type: 'line',
+                      x1: 0, y1: 5,
+                      x2: 220, y2: 5,
+                      lineWidth: 1,
+                      lineColor: '#e0e0e0'
+                    }
+                  ],
+                  margin: [0, 5, 0, 10]
+                },
+                {
+                  columns: [
+                    { text: 'Total:', style: 'totalLabel' },
+                    { text: '₹' + orderData.total.toFixed(2), style: 'totalValue', alignment: 'right' }
+                  ]
+                }
+              ])
+            }
+          ]
+        },
+        
+        // Footer
+        {
+          text: 'Thank you for your purchase!',
+          style: 'footer',
+          margin: [0, 40, 0, 0]
+        },
+        {
+          text: 'Payment Method: ' + orderData.paymentMethod,
+          style: 'paymentMethod',
+          margin: [0, 10, 0, 0]
+        }
+      ]),
+      
+      styles: {
+        header: {
+          fontSize: 24,
+          bold: true
+        },
+        subheader: {
+          fontSize: 14,
+          color: '#666'
+        },
+        orderNumber: {
+          fontSize: 12,
+          bold: true
+        },
+        date: {
+          fontSize: 10,
+          color: '#666',
+          margin: [0, 2, 0, 0]
+        },
+        sectionHeader: {
+          fontSize: 12,
+          bold: true,
+          color: '#333',
+          margin: [0, 0, 0, 8]
+        },
+        addressText: {
+          fontSize: 10,
+          color: '#666',
+          margin: [0, 2, 0, 0]
+        },
+        tableHeader: {
+          fontSize: 10,
+          bold: true,
+          color: '#333'
+        },
+        tableCell: {
+          fontSize: 10,
+          color: '#666'
+        },
+        statusBadge: {
+          fontSize: 9
+        },
+        summaryLabel: {
+          fontSize: 10,
+          color: '#666'
+        },
+        summaryValue: {
+          fontSize: 10,
+          color: '#333'
+        },
+        refundValue: {
+          fontSize: 10,
+          color: '#d32f2f',
+          bold: true
+        },
+        totalLabel: {
+          fontSize: 12,
+          bold: true,
+          color: '#333'
+        },
+        totalValue: {
+          fontSize: 12,
+          bold: true,
+          color: '#FF6B00'
+        },
+        footer: {
+          fontSize: 12,
+          alignment: 'center',
+          color: '#FF6B00',
+          bold: true
+        },
+        paymentMethod: {
+          fontSize: 9,
+          alignment: 'center',
+          color: '#999',
+          italics: true
+        }
+      }
+    };
+
+    // Generate and download the PDF
+    pdfMake.createPdf(docDefinition).download('Invoice_' + orderData.orderId + '.pdf');  
   } catch (error) {
     console.error('Error generating PDF:', error);
     alert('Error generating invoice. Please try again or contact support.');

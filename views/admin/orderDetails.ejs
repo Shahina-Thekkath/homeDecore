@@ -292,11 +292,29 @@
                                                     <div class="d-flex align-items-center gap-2">
                                                 <input type="hidden" class="order-id" value="<%= order._id %>">
                                                 <input type="hidden" class="product-index" value="<%= index %>">
+                                                <% 
+                                                    const statusFlow = {
+                                                    "Pending": ["Processing", "Cancelled"],
+                                                    "Processing": ["Shipped", "Cancelled"],
+                                                    "Shipped": ["Delivered", "Returned"],
+                                                    "Delivered": ["Returned"],
+                                                    "Cancelled": [],
+                                                    "Returned": []
+                                                    };
+                                                %>
 
                                                 <select class="status-dropdown form-select mb-2" data-order-id="<%= order._id %>" data-index="<%= index %>">
                                                     <% const statusOptions = ["Pending", "Processing", "Shipped", "Delivered", "Cancelled", "Returned"]; %>
-                                                    <% statusOptions.forEach(opt => { %>
-                                                    <option value="<%= opt %>" <%= product.status === opt ? 'selected' : '' %>><%= opt %></option>
+                                                    <% statusOptions.forEach(opt => { 
+                                                        const allowed = statusFlow[product.status] || [];
+                                                    %>
+                                                    
+                                                        <% if (allowed.includes(opt) || opt === product.status) { %>
+                                                            <option value="<%= opt %>" <%= product.status === opt ? 'selected' : '' %>>
+                                                                <%= opt %>
+                                                            </option>
+                                                        <% } %>
+
                                                     <% }) %>
                                                 </select>
                                                 
