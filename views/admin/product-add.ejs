@@ -586,7 +586,7 @@
             descriptionErrorElement.style.display = "block";
             isValid = false;
           } else if (
-            !/^[\p{L}\p{N}\p{P}\p{S}\s]+$/u.test(description.trim())
+            !/^[a-zA-Z0-9\s.,!?'"():;%@#&*\-\/–]+$/u.test(description.trim())
           ) {
             descriptionErrorElement.textContent =
               "Description should contain only alphabetic characters and punctuations only.";
