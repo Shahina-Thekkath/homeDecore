@@ -574,6 +574,14 @@
         const description = document.getElementById("descriptionid").value;
         const descriptionErrorElement =
           document.getElementById("description-error");
+          const cleaned = description
+        .replace(/[“”]/g, '"')   // fancy double quotes -> "
+        .replace(/[‘’]/g, "'")   // fancy single quotes -> '
+        .replace(/[–—]/g, '-')   // en/em dash -> -
+        .replace(/\u00A0/g, ' '); // non-breaking space -> normal space
+
+        const re = /^[a-zA-Z0-9\s.,!?'"():;%@#&*\-\/-]+$/u;
+        
         if (descriptionErrorElement) {
           if (description.trim() === "") {
             descriptionErrorElement.textContent =
@@ -586,7 +594,7 @@
             descriptionErrorElement.style.display = "block";
             isValid = false;
           } else if (
-            !/^[a-zA-Z0-9\s.,!?'"():;%@#&*\-\/–]+$/u.test(description.trim())
+            !re.test(description.trim())
           ) {
             descriptionErrorElement.textContent =
               "Description should contain only alphabetic characters and punctuations only.";
