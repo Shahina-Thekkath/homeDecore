@@ -299,12 +299,13 @@
                                                     "Shipped": ["Delivered", "Returned"],
                                                     "Delivered": ["Returned"],
                                                     "Cancelled": [],
-                                                    "Returned": []
+                                                    "Returned": [],
+                                                     "Return Requested": ["Returned"]
                                                     };
                                                 %>
 
                                                 <select class="status-dropdown form-select mb-2" data-order-id="<%= order._id %>" data-index="<%= index %>">
-                                                    <% const statusOptions = ["Pending", "Processing", "Shipped", "Delivered", "Cancelled", "Returned"]; %>
+                                                    <% const statusOptions = ["Pending", "Processing", "Shipped", "Delivered", "Cancelled", "Returned", "Return Requested"]; %>
                                                     <% statusOptions.forEach(opt => { 
                                                         const allowed = statusFlow[product.status] || [];
                                                     %>

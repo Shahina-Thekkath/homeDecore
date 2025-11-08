@@ -40,6 +40,8 @@ async function sendVerificationEmail(email, otp){
             text: `Your OTP is ${otp}`,
             html: `<b>Your OTP: ${otp}</b>`,
         })
+        
+        
 
         return info.accepted.length > 0    // info.accepted contains an array of email addresses which accepted the mail
     } catch (error) {
@@ -63,6 +65,8 @@ const signup = async(req, res) =>{
         const otp = generateOtp(); 
 
         const emailSent = await sendVerificationEmail(email, otp);
+        console.log();
+        
         if(!emailSent){
             return res.json("email.error")
         }
