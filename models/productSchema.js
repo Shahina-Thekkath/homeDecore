@@ -49,7 +49,7 @@ const ProductSchema = new Schema(
 
 // ProductSchema.index({ price: 1 });
 // ProductSchema.index({ averageRating: -1 });
-ProductSchema.index({ name: 1, unique: true});
+// ProductSchema.index({ name: 1, unique: true});
 // ProductSchema.index({ isFeatured: 1 });
 
 

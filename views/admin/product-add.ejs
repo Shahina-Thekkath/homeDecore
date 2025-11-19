@@ -838,7 +838,18 @@
             Swal.fire('Server Error', 'Please try again later.', 'error');
         }
           
-        }
+        } else  {
+
+        // ❗ THIS IS THE PART YOU ASKED FOR — SHOW ALERT WHEN VALIDATION FAILS
+        Swal.fire({
+            icon: "warning",
+            title: "Please fill all the required fields!",
+            text: "Some fields are missing or invalid.",
+            timer: 2000,
+            showConfirmButton: false
+        });
+
+    }
         
       })
 

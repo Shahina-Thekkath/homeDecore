@@ -23,6 +23,12 @@ const addProducts = async (req, res) => {
 
      if (!products.productName || products.productName.trim().length < 3) {
       errors.productName = "Product name must be at least 3 characters long.";
+    } else {
+      const existingProduct = await Product.findOne({name: products.productName.trim()});
+
+      if(existingProduct) {
+        errors.productName = "Product already exists, try adding a new product.";
+      }
     }
 
     // Category

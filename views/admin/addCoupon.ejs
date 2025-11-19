@@ -317,10 +317,10 @@
         const minPurchaseAmount = parseFloat(data.minPurchaseAmount);
         const discountAmount = parseFloat(data.discountAmount);
 
-        if(discountType === "flat" > minPurchaseAmount) {
+        if(discountType === "flat" && discountAmount > minPurchaseAmount) {
          isValid = false;
          
-            const minPurchaseError = getElementById(minPurchaseAmount-error);
+            const minPurchaseError = getElementById('minPurchaseAmount-error');
             if(minPurchaseError) {
               minPurchaseError.innerText = "Minimum Purchase amount should be greater than or equal to discount";
             }

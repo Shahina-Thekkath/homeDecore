@@ -7,7 +7,7 @@ const { STATUS_CODES, MESSAGES } = require("../../constants");
 
 const getAddOffer = async (req, res) => {
     try {
-        const products = await Product.find({}, 'name');         // {} -> all fields are selected and then   'name' -> filters to select only the name field
+        const products = await Product.find({}, 'name price');         // {} -> all fields are selected and then   'name' -> filters to select only the name field
         const categories = await Category.find({ isBlocked: false }, 'name');                                //[
                                                                                           // { name: "iPhone 15" },
                                                                                           // { name: "Samsung Galaxy S23" },

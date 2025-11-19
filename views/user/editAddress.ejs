@@ -611,11 +611,11 @@
         
         
      // Validation patterns
-     const namePattern = /^[a-zA-Z.\s,]+$/;
+     const namePattern = /^[a-zA-Z.\s,]{3, 50}$/;
      const phonePattern = /^[6-9]\d{9}$/;
      const pincodePattern = /^\d{5,6}$/;
-     const addressPattern = /^[a-zA-Z0-9., ]+$/;
-     const locationPattern = /^[a-zA-Z0-9\s.,\-\/]+$/;
+     const addressPattern = /^[a-zA-Z0-9., ]{3, 100}$/;
+     const locationPattern = /^[a-zA-Z0-9\s.,\-\/]{3, 50}$/;
  
  
      // Clear previous error messages
