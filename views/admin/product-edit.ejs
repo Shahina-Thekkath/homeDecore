@@ -590,7 +590,7 @@
         isValid = false;
     } else {
         // Validation regex to include all possible characters
-        const specRegex = /^[a-zA-Z0-9\s.,!?'"():;@#%&*_\-\/\\]+$/;
+        const specRegex = /^[a-zA-Z0-9\s.,!?'"():;@#%&*_\-\/\\]{3,70}$/;
 
         // Loop through all specification groups
         for (let i = 0; i < specifications.length; i++) {

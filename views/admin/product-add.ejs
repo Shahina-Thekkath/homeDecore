@@ -560,7 +560,7 @@
               "Product name must be at least 5 characters long.";
             nameErrorElement.style.display = "block";
             isValid = false;
-          } else if (!/^[a-zA-Z\s\-\_()\[\]{}<>]+$/.test(name.trim())) {
+          } else if (!/^[a-zA-Z\s\-\_()\[\]{}<>]{3,70}$/.test(name.trim())) {
             nameErrorElement.textContent =
               "Product name should contain only alphabetic characters.";
             nameErrorElement.style.display = "block";
@@ -580,7 +580,7 @@
         .replace(/[–—]/g, '-')   // en/em dash -> -
         .replace(/\u00A0/g, ' '); // non-breaking space -> normal space
 
-        const re = /^[a-zA-Z0-9\s.,!?'"():;%@#&*\-\/-]+$/u;
+        const re = /^[a-zA-Z0-9\s.,!?'"():;%@#&*\-\/-]{10,500}$/u;
         
         if (descriptionErrorElement) {
           if (description.trim() === "") {
@@ -711,7 +711,7 @@
             if (valueErrorElement) valueErrorElement.textContent = "";
 
             // Validation regex to include all possible characters
-            const specRegex = /^[a-zA-Z0-9\s.,!?'"():;@#%&*_\-\/\\]+$/;
+            const specRegex = /^[a-zA-Z0-9\s.,!?'"():;@#%&*_\-\/\\]{3,70}$/;
 
             let specValid = true;
 
