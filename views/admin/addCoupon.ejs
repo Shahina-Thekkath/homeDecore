@@ -257,7 +257,7 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
     flatpickr("#expiresOnPicker", {
-        dateFormat: "d-m-y",
+        dateFormat: "d-m-Y",
         minDate: "today"
     });
     </script>
@@ -265,7 +265,7 @@
           function message(msg){
             if(msg){
                   Swal.fire({
-                    positition: "center",
+                    position: "center",
                     icon: "success",
                     title: msg,
                     showConfirmButton: false,
@@ -316,11 +316,31 @@
         const discountType = form.elements["discountType"].value;
         const minPurchaseAmount = parseFloat(data.minPurchaseAmount);
         const discountAmount = parseFloat(data.discountAmount);
+        const usageLimit = parseFloat(data.usageLimit);
+        const expiresOn = data.expiresOn;
 
-        if(discountType === "flat" && discountAmount > minPurchaseAmount) {
+        if(discountAmount <= 0) {
+          isValid = false;
+          const discountAmountError = document.getElementById('discountAmount-error');
+          discountAmountError.innerText = "Discount Amount should not be negative";
+        }
+
+        if(minPurchaseAmount <= 0) {
+          isValid = false
+          const minPurchaseAmountError = document.getElementById('minPurchaseAmount-error');
+          minPurchaseAmountError.innerText = "Minimum purchase amount should be greater than zero"
+        }
+
+        if(usageLimit <= 0) {
+          isValid = false;
+          const usageLimitError = document.getElementById('usageLimit-error');
+          usageLimitError.innerText = "Usage should'nt be a negative number";
+        }
+
+        if(discountType === "flat" && discountAmount >= minPurchaseAmount) {
          isValid = false;
          
-            const minPurchaseError = getElementById('minPurchaseAmount-error');
+            const minPurchaseError = document.getElementById('minPurchaseAmount-error');
             if(minPurchaseError) {
               minPurchaseError.innerText = "Minimum Purchase amount should be greater than or equal to discount";
             }
@@ -332,6 +352,24 @@
 
             return;
         }
+
+        // date validation
+        if(expiresOn){
+            const [day, month, year] = expiresOn.split("-");
+            const expiryDate = new Date(year, month - 1, day);
+
+           const today = new Date();
+           today.setHours(0,0,0,0);
+
+          if(isNaN(expiryDate.getTime()) || expiryDate <= today) {
+            isValid = false;
+            document.getElementById('expiresOn-error').innerText = 'expiry date must be a valid future date';
+          }
+        }
+       
+
+
+
 
          if(!isValid) {
             Swal.fire('Validation Error', 'Please correct the highlighted fields.', 'warning');

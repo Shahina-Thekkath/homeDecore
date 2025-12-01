@@ -363,27 +363,27 @@
                
                
 
-               let isValid = false;
+               let isValid = true;
 
                let categoryNames = document.querySelector("#categoryName");
                let categoryName = categoryNames.value.trim();
               
-               const namePattern = /^[a-zA-Z\s]+$/;
+               const namePattern = /^[a-zA-Z\s]{4,20}$/;
 
                if(!categoryName || categoryName == ""){
                   
                   document.getElementById("error-message").innerHTML = "Invalid Name";
-                  isValid = true;
-               } else if(!namePattern.test(categoryName)){
+                  isValid = false;
+               } else if(categoryName.length < 4){
+                document.getElementById("error-message").innerHTML = "Name should'nt be less than 4";
+                isValid = false;
+               }else if(!namePattern.test(categoryName)){
    
                 document.getElementById("error-message").innerHTML = "Should not include numbers";
-                isValid = true;
-               }else if(categoryName.length < 4){
-                document.getElementById("error-message").innerHTML = "Name should'nt be less than 4";
-                
+                isValid = false;
                }
                
-               if(isValid === false){
+               if(isValid){
                  
                  var formData ={
                     name: categoryName,

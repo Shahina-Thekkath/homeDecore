@@ -233,9 +233,12 @@ const updateProduct = async (req, res) => {
   }
 };
 
+
+
 const removeProduct  = async (req, res) => {
     try {
         const productId = req.params.id;
+
       
         const product = await Product.findById(productId);
         if (!product) return res.status(STATUS_CODES.NOT_FOUND).json({ success: false, message: MESSAGES.PRODUCT.NOT_FOUND });

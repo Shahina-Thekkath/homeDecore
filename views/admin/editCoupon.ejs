@@ -259,7 +259,7 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
     flatpickr("#expiresOnPicker", {
-        dateFormat: "d-m-y",
+        dateFormat: "d-m-Y",
         minDate: "today"
     });
     </script>
@@ -314,6 +314,54 @@
                 if(errorField) errorField.innerText = rule.message;
             }
         });
+
+        const discountAmount = parseFloat(data.discountAmount);
+        const usageLimit = parseFloat(data.usageLimit);
+        const minPurchaseAmount = parseFloat(data.minPurchaseAmount);
+        const expiresOn = data.expiresOn;
+        const discountAmountError = document.getElementById('discountAmount-error');
+        const discountType = data.discountType;
+
+        if(discountAmount < 1) {
+          isValid = false;
+          discountAmountError.innerText = "Discount amount cannot be less than 1";
+        }
+
+        if(usageLimit < 1) {
+          isValid = false;
+          const usageLimitError = document.getElementById('usageLimit-error');
+          usageLimitError.innerText = "Usage limit cannot be less than 1";
+        }
+
+        if(minPurchaseAmount < 1) {
+          isValid = false;
+          const minPurchaseAmountError = document.getElementById('minPurchaseAmount-error');
+          minPurchaseAmountError.innerText = "Minimum purchase amount cannot be less than 1";
+        } 
+
+        if(discountType === 'flat' && discountAmount >= minPurchaseAmount) {
+          isValid = false;
+          discountAmountError.innerText = "discountAmount should'nt be greater than the minimum purchase amount";
+          
+        } else if(discountType === 'percentage' && discountAmount > 100) {
+          isValid = false;
+          discountAmountError.innerText = "percentage can only go upto 100%";
+        }
+
+        if(data.expiresOn) {
+          const [day, month, year] = expiresOn.split("-");
+          const expiryDate = new Date(year, month - 1, day);
+          
+          const today = new Date();
+          today.setHours(0, 0, 0, 0);
+          
+          if(isNaN(expiryDate.getTime()) || expiryDate <= today) {
+            isValid = false;
+            const expiresOnError = document.getElementById('expiresOn-error');
+            expiresOnError.innerText = "Provide a future date";
+          }
+        }
+
 
          if(!isValid) {
             Swal.fire('Validation Error', 'Please correct the highlighted fields.', 'warning');

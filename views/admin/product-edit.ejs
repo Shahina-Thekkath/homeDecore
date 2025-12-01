@@ -412,6 +412,7 @@
   // ================= IMAGE HANDLING ===================
   let selectedImages = [];
   let deletedImages = [];
+  let croppedStatus = [];   // track if each image is cropped or not
 
   // Delete existing images
   function deleteImage(index) {
@@ -424,14 +425,17 @@
 
   // Handle adding new images (with cropper)
   function handleFileSelect(event) {
-    const files = event.target.files;
+    selectedImages = [];
+    croppedStatus = [];   
+
+    const files = event.target.files;   // files being selected from folder
     const container = document.getElementById("addedImagesContainer");
 
     selectedImages = [];
     Array.from(files).forEach((file, index) => {
       if (!file.type.startsWith("image/")) return;
 
-      const reader = new FileReader();
+      const reader = new FileReader();   // converts into base 64
       reader.onload = (e) => {
         const wrapper = document.createElement("div");
         wrapper.classList.add("image-wrapper", "m-2");
@@ -469,6 +473,7 @@
         container.appendChild(wrapper);
 
         selectedImages.push(file);
+        croppedStatus.push(false);
 
         // Initialize cropper on image click
         img.addEventListener("click", () =>
@@ -479,6 +484,7 @@
         removeButton.addEventListener("click", () => {
           wrapper.remove();
           selectedImages.splice(index, 1);
+          croppedStatus.splice(index, 1);
 
           const dt = new DataTransfer();
           selectedImages.forEach((f) => dt.items.add(f));
@@ -501,6 +507,7 @@
       cropperCanvas.toBlob((blob) => {
         const croppedFile = new File([blob], `cropped_img_${index}.png`, { type: "image/png" });
         selectedImages[index] = croppedFile;
+        croppedStatus[index] = true;
 
         const dt = new DataTransfer();
         selectedImages.forEach((f) => dt.items.add(f));
@@ -520,6 +527,26 @@
 
 
 //validation
+
+        function clearErrorMessages() {
+              // Product main field errors
+              document.getElementById("productName-error").textContent = "";
+              document.getElementById("regularPrice-error").textContent = "";
+              document.getElementById("quantity-error").textContent = "";
+              document.getElementById("description-error").textContent = "";
+              document.getElementById("category-error").textContent = "";
+              document.getElementById("image-error").textContent = "";
+
+              // Hide them properly
+              document.getElementById("productName-error").style.display = "none";
+              document.getElementById("regularPrice-error").style.display = "none";
+              document.getElementById("quantity-error").style.display = "none";
+              document.getElementById("description-error").style.display = "none";
+              document.getElementById("category-error").style.display = "none";
+              document.getElementById("image-error").style.display = "none";
+
+        }
+        
         function validateForm() {
             clearErrorMessages();
             let isValid = true;
@@ -676,18 +703,39 @@
                 isValid = false;
             }
 
+           // image validation
+            const imageError = document.getElementById("image-error");
+
+            const existingImageCount = document.querySelectorAll(".image-wrapper[data-index]").length;
+
+            const deletedImageCount = deletedImages.length;
+
+            const newImageCount = selectedImages.length;
+
+            const finalImageCount =  existingImageCount - deletedImageCount + newImageCount;
+
+            if(finalImageCount < 4) {
+              imageError.textContent = "At least 4 images are required";
+              imageError.style.display = "block";
+              isValid = false;
+            }
+
+            let uncroppedIndex = croppedStatus.findIndex(status => status === false);
+
+            if(uncroppedIndex !== -1) {
+              console.log("inside cropper error");
+              
+              Swal.fire({
+                icon: "warning",
+                title: "Crop Required",
+                text: "Please crop all selected images before submitting"
+              });
+
+              isValid = false;
+            }
+
             return isValid;
         }
-      
-
-
-
-        
-        // function validateAndSubmit() {
-        //     if (validateForm()) {
-        //         document.forms[0].submit();
-        //     }
-        // }
 
 
         function message(msg){

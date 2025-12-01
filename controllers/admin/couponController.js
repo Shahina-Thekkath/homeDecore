@@ -60,13 +60,21 @@ const addCoupon = async (req, res) => {
     let newDate;
     if (expiresOn) {
       const [day, month, year] = expiresOn.split('-');
-      const isoDate = new Date(`${year}-${month}-${day}`); // Convert to valid Date object
-      if (isNaN(Date.parse(isoDate))) {
+      const isoDate = new Date(year, month - 1, day); // Convert to valid Date object
+      if (isNaN(isoDate.getTime())) {
         errors.expiresOn = "Invalid date format";
       }else {
+        const today = new Date();
+        today.setHours(0,0,0,0);
+        
+        if(isoDate <= today){
+
+        errors.expiresOn = "Give an appropriate date";
+      }else{
       newDate = isoDate;
       }
     }
+  }
 
 
     if (discountType && !["percentage", "flat"].includes(discountType)) {
@@ -86,7 +94,7 @@ const addCoupon = async (req, res) => {
       });
     }
 
-    if (discountType === "flat" && Number(discountAmount) > Number(minPurchaseAmount)) {
+    if (discountType === "flat" && Number(discountAmount) >= Number(minPurchaseAmount)) {
       return res.status(400).json({success: false, errors: {minPurchaseAmount: "Minimum purchase amount should be greater than discount amount for flat coupons"}})
     }
     
@@ -202,16 +210,45 @@ const updateCoupon = async (req, res) => {
       errors.minPurchaseAmount = "Enter a valid amount (e.g., 50 or 50.00)";
     }
 
+    const usage = Number(usageLimit);
+    const discount = Number(discountAmount);
+    const minPurchase = Number(minPurchaseAmount);
+    if(usage && usage <= 0) {
+      errors.usageLimit = "Usage limit should'nt be zero or less than zero";
+    }
+
+    if(discount && discount <= 0) {
+      errors.discountAmount = "Discount amount should'nt less than or equal to zero";
+    }
+
+    if(minPurchase && minPurchase <= 0) {
+      errors.minPurchaseAmount = "Minimum Purchase amount should'nt be equal to or less than zero";
+    }
+
+    if(discountType === 'flat' && discount >= minPurchase) {
+      errors.discountAmount = "discount amount should'nt go beyond minimum purchase amount";
+    } else if(discountType === 'percentage' && discount > 100) {
+      errors.discountAmount = "Percentage discount cannot exceed 100%";
+    }
+
     let newDate;
     if (expiresOn) {
       const [day, month, year] = expiresOn.split('-');
-      const isoDate = new Date(`${year}-${month}-${day}`); // Convert to valid Date object
-      if (isNaN(Date.parse(isoDate))) {
+      const isoDate = new Date(year, month-1, day); // Convert to valid Date object
+      if (isNaN(isoDate.getTime())) {
         errors.expiresOn = "Invalid date format";
       }else {
-      newDate = isoDate;
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        if(isoDate <= today){
+         errors.expiresOn = "Give a future date"
+        } else {
+           newDate = isoDate;
       }
     }
+  }
+
+
 
 
     if (discountType && !["percentage", "flat"].includes(discountType)) {
