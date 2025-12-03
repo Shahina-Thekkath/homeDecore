@@ -215,16 +215,6 @@
                       </tr>
                     </thead>
                     <tbody id="salesTableBody">
-                      
-                      <!-- <tr class="bor-b1">
-                        
-                        <td>150</td>
-                        <td>500</td>
-                        <td>500</td>
-                        <td>100</td>
-                        <td>50</td>
-                        <td>250</td>
-                        </td> -->
                       </tr>
                     </tbody>
                   </table>
@@ -369,7 +359,7 @@
                     const row = `
                     <tr>
                       <td>${dateStr}</td>
-                      <td>${order._id}</td>
+                      <td>${order.orderId}</td>
                       <td>${order.salesAmount.toFixed(2)}</td>
                       <td>${(order.discountAmount || 0).toFixed(2)}</td>
                       <td>${(order.couponDiscount || 0).toFixed(2)}</td>

@@ -1,8 +1,11 @@
 const mongoose = require("mongoose");
 const { Schema, model, Types } = mongoose;
 
+const generateOrderId = require("../helpers/generateOrderId");
+
 const OrderSchema = new Schema(
   {
+    orderId: {type: String, unique: true},
     userId: { type: Types.ObjectId, ref: "User", required: true }, // Reference to the user placing the order
     products: [
       {
@@ -88,6 +91,13 @@ const OrderSchema = new Schema(
   },
   { timestamps: true }
 );
+
+OrderSchema.pre('save', function(next) {
+  if(!this.orderId) {
+    this.orderId = generateOrderId(this.createdAt);
+  }
+  next();
+});
 
 const Order = model("Order", OrderSchema);
 module.exports = Order;

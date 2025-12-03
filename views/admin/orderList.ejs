@@ -193,7 +193,7 @@
   
                                 <% orders.forEach((order, index) =>{%>
                                     <tr><td><%= index + 1 %></td>
-                                    <td><%= order._id %></td>
+                                    <td><%= order.orderId %></td>
                                     <td><%= order.userId.name %> <br/> <%= order.userId.email %></td>
                                     <td><%= new Date(order.createdAt).toLocaleDateString() %></td>
                                     <td><%= order.orderStatus%></td>

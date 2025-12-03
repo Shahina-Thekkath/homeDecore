@@ -166,7 +166,7 @@ const generateSalesPDF = async (req, res) => {
         const gross = net + offer + coupon;
         return {
           date: o.createdAt.toISOString().split("T")[0],
-          orderId: o._id.toString(),
+          orderId: o.orderId.toString(),
           salesAmount: gross,
           discount: o.discountAmount || 0,
           coupon: o.couponDiscount || 0,
@@ -496,7 +496,7 @@ const generateSalesExcel = async (req, res) => {
       const gross = net + offer + coupon;
 
       // Order row
-      worksheet.addRow([o.createdAt.toISOString().split("T")[0], o._id.toString(), gross, offer, coupon, net]);
+      worksheet.addRow([o.createdAt.toISOString().split("T")[0], o.orderId.toString(), gross, offer, coupon, net]);
 
       // Product details header
       worksheet.addRow(["Product", "Qty", "Price", "Subtotal"]);
