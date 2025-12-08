@@ -14,7 +14,7 @@ const walletSchema = new Schema({
             type:{
             type: String,
             enum: ['credit', 'debit', 'refund']
-        },
+            },
         amount: Number,
         reason: String,
         date: {type: Date, default: Date.now }

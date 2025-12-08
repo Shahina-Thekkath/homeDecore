@@ -308,7 +308,7 @@
                                                                                 <% } %>
                                                                             </td>
                                                                             <td class="amount <%= txn.type === 'debit' ? 'negative' : 'positive' %>">
-                                                                                <%= txn.type === 'debit' ? '-' : '+' %>$<%= txn.amount.toFixed(2) %>
+                                                                                <%= txn.type === 'debit' ? '-' : '+' %>₹<%= txn.amount.toFixed(2) %>
                                                                             </td>
                                                                             <td class="reason"><%= txn.reason %></td>
                                                                         </tr>

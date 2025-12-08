@@ -187,14 +187,15 @@
                       <p id="productName-error" class="error-message"></p>
                     </div>
                   </div>
+
                   <div class="col-lg-4 col-sm-6 col-12">
                     <div class="form-group">
                       <label>Category</label>
                       <select class="select" name="categoryId" id="categoryId">
                         <option value="" selected disabled>Select Category</option>
-                        <% category.forEach((category) => { %>
-                        <option value="<%= category._id %>">
-                          <%= category.name %>
+                        <% category.forEach((cat) => { %>
+                        <option value="<%= cat._id %>">
+                          <%= cat.name %>
                         </option>
                         <% }) %>
                       </select>
@@ -329,6 +330,7 @@
     <script src="/admin-assets/js/script.js"></script>
     <script>
       $(document).ready(function () {
+        $('.select').select2();
         let specificationCount = $(
           "#specificationsContainer .specification-group"
         ).length;

@@ -10,6 +10,9 @@ const getProductAddPage = async (req, res) => {
   try {
     const category = await Category.find({isBlocked: false});
 
+    console.log("category", category);
+    
+
     res.render("product-add", { category });
   } catch (error) {
     res.status(STATUS_CODES.NOT_FOUND).send(MESSAGES.GENERIC.PAGE_NOT_FOUND);
