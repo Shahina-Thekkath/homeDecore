@@ -30,12 +30,8 @@
 
     <link rel="stylesheet" href="/css/profileName.css">
 
-    <style>
-        .product-o__action-wrap {
-          pointer-events: none;
-        }
+     <link rel="stylesheet" href="/css/containerWidth.css">
 
-    </style>
 </head>
 <body class="config">
     <div class="preloader is-active">
@@ -523,33 +519,22 @@
                                                 <div class="pd-table gl-scroll">
                                                     <table>
                                                         <tbody>
-                                                            <tr>
-                                                                <td>Product Dimensions</td>
-                                                                <td class="preserve-format">
-                                                                    Height: 26"
-                                                                    Length: 23"
-                                                                    Width: 11"</td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td>Overall Dimension</td>
-                                                                <td>L (58.5 cm) x W (28 cm) x H (66 cm)</td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td>Package Contents</td>
-                                                                <td>1 Premium Home Decor.</td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td>Product Material</td>
-                                                                <td>Metal Stems with Resin Body</td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td>Product Weight (KG)</td>
-                                                                <td>7.8</td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td>Country Of Origin</td>
-                                                                <td>U.S.A</td>
-                                                            </tr>
+                                                            <% if (currentProduct.specification && currentProduct.specification.length > 0) { %>
+
+                                                                <% currentProduct.specification.forEach(spec => { %>
+                                                                    <tr>
+                                                                        <td><%= spec.key %></td>
+                                                                        <td class="preserve-format"><%= spec.value %></td>
+                                                                    </tr>
+                                                                <% }) %>
+
+                                                            <% } else { %>
+
+                                                                <tr>
+                                                                    <td colspan="2">No specifications available</td>
+                                                                </tr>
+
+                                                            <% } %>
                                                            
                                                         </tbody>
                                                     </table>
@@ -891,7 +876,7 @@
 
                                            <span class="product-o__name">
                                                 <a href="/product-details/<%= relatedProducts[i]._id %>"><%= relatedProducts[i].name %></a>
-                                                </span></span>
+                                                </span>
                                         <div class="product-o__rating gl-rating-style"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
 
                                             <span class="product-o__review">(20)</span></div>

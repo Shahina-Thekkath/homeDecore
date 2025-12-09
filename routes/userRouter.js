@@ -62,7 +62,7 @@ userRouter.get("/auth/google/callback",passport.authenticate('google',{
 userRouter.get("/success",signupController.successGoogleLogin)
 userRouter.get("/failure",signupController.failureGoogleLogin)
 
-userRouter.get('/product-details/:id', auth.isLogin, productController.loadProductDetails);
+userRouter.get('/product-details/:id', productController.loadProductDetails);
 userRouter.get('/productList', auth.sessionVerify, productController.getUserProductList);
 userRouter.get('/user/products/filter', auth.isLogin, productController.getFilteredProductList)
 
