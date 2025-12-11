@@ -161,8 +161,7 @@ const loadProductDetails = async (req, res) =>{
 
 const getUserProductList = async (req, res) => {
   try {
-    const userId = req.session.user?._id || req.session.passport._id;
-    const user = await User.findById(userId);
+   const user = req.session.user || req.session.passport;
 
     const sort = req.query.sort || 'newest';
     const limit = 9;

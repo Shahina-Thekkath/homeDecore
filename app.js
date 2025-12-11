@@ -71,9 +71,18 @@ app.set("views", [
 ]);
 
 app.use("/admin", adminRouter);
+
+app.use("/admin", (req, res) => {
+  res.status(404).render("404Error")
+});
+
 app.use("/", userRouter);
 
-// app.listen(process.env.PORT, ()=> console.log("Server is running"));
+app.use((req, res) => {
+  res.status(404).render("page-404");
+})
+
+
 db()
   .then(() => {
     app.listen(process.env.PORT, () => {
