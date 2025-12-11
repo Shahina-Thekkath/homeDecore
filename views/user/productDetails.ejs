@@ -215,7 +215,10 @@
                                                         </div>
                                                     </div>
 
-                                                    <a class="mini-product__delete-link far fa-trash-alt"></a>
+                                                    <a class="mini-product__delete-link far fa-trash-alt"
+                                                       onclick="deleteMiniCartItem('<%= item._id %>')"
+                                                       title="Remove item"
+                                                    ></a>
                                                 </div>
 
                                             <%})%>
@@ -1362,7 +1365,7 @@
     // Minus button
     minus.addEventListener("click", () => {
       let value = parseInt(input.value, 10) || 1;
-      if (value > 1) {
+      if (value > 1) {   // ensure when decreased doesn't go below 1
         input.value = value - 1;
       }
     });
@@ -1498,7 +1501,57 @@
         wishlistIcon.style.color = '';
       }
     }
+
   });
+
+  function deleteMiniCartItem(itemId) {
+    console.log("function triggered with id", itemId);
+    
+    Swal.fire({
+        title: "Are you sure?",
+        text: "This will be removed from your cart",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Yes, Delete it!",
+        cancelButtonText: "Cancel"
+    }).then(result => {
+        if(result.isConfirmed) {
+           fetch(`/deleteCartItem/${itemId}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+           }).then(response => response.json())
+           .then(data => {
+            if(data.success) {
+                Swal.fire({
+                    icon: "success",
+                    title: "Removed",
+                    text: "Item removed from cart",
+                    timer: 1500,
+                    showConfirmButton: false
+                }).then(() => {
+                    location.reload();
+                });
+            } else {
+                Swal.fire({
+                    icon: "error",
+                    title: "Error",
+                    text: data.message || "Failed to delete the item. Please try again"
+                });
+            }
+           }).catch(err => {
+            Swal.fire({
+                icon: "error",
+                title: "Error",
+                text: "An unexpected error occurred. Please try again later."
+            });
+           })
+        }
+    })
+}
+
+
 </script>
 
 

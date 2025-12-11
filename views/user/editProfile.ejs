@@ -566,7 +566,7 @@ document.querySelector('#editProfileForm').addEventListener('submit', async func
 
     // Validation rules
     const rules = [
-        { name: 'name', regex: /^[a-zA-Z\s.]{3, 50}$/, message: 'Name must contain only letters, spaces, or dot.' },
+        { name: 'name', regex: /^[a-zA-Z.\s,]{3,80}$/, message: 'Name must contain only letters, spaces, or dot.' },
         { name: 'phone', regex: /^[6-9]\d{9}$/, message: 'Phone must be a valid 10-digit number starting with 6-9.' },
         { name: 'gender', regex: /^(male|female)$/, message: 'Please select your gender.' }
     ];
