@@ -103,7 +103,8 @@ const MESSAGES = {
         NOT_FOUND_IN_CART: "Product not found in cart",
         FETCH_ERROR: "Error fetching products",
         FETCH_FAILED: "Failed to fetch product",
-        FILTER_FAILED: "Error filtering products"
+        FILTER_FAILED: "Error filtering products",
+        OUT_OF_STOCK: "Product is out of stock"
     },
 
     // ============ CATEGORY MESSAGES ============

@@ -64,7 +64,7 @@ userRouter.get("/failure",signupController.failureGoogleLogin)
 
 userRouter.get('/product-details/:id', productController.loadProductDetails);
 userRouter.get('/productList', productController.getUserProductList);
-userRouter.get('/user/products/filter', auth.isLogin, productController.getFilteredProductList)
+userRouter.get('/user/products/filter', productController.getFilteredProductList)   //changed auth.isLogin here
 
 userRouter.get('/profile',auth.isLogin, profileController.userProfile);
 userRouter.get('/updateProfile',auth.isLogin,profileController.getEditProfile );

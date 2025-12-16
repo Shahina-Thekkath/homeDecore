@@ -196,6 +196,14 @@ const addToCart = async (req, res) => {
     // Check if product exists in cart
     const itemIndex = cart.items.findIndex((item) => item.productId.equals(productId));
 
+    const existingQuantity = itemIndex > -1 ? cart.items[itemIndex].quantity : 0;
+
+    const totalRequestedQty = existingQuantity + quantity;
+
+    if(totalRequestedQty > product.quantity) {
+      return res.status(STATUS_CODES.BAD_REQUEST).json({error: MESSAGES.PRODUCT.OUT_OF_STOCK});
+    }
+
     if (itemIndex > -1) {
       // Update existing item
       cart.items[itemIndex].quantity += quantity;

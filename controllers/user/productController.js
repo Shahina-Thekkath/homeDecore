@@ -370,6 +370,7 @@ const getFilteredProductList = async (req, res) => {
 
     const products = await Product.find(query)
       .populate("categoryId", "name")
+      .collation({ locale: "en", strength: 2 })
       .sort(sortOption)
       .skip(skip)
       .limit(limit)
