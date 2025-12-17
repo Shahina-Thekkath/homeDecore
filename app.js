@@ -52,7 +52,6 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use(orderGuard);
 
 app.use((req, res, next) => {
   if (req.isAuthenticated() && !req.session.user) {
