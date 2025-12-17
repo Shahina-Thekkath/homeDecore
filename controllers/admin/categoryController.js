@@ -82,7 +82,7 @@ const getEditCategory = async (req, res) => {
     });
   } catch (err) {
     console.error("Error fetching category:", err);
-    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).render("pageerror");
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).render("404Error");
   }
 };
 

@@ -59,8 +59,8 @@ const addProducts = async (req, res) => {
     }
 
     // Images
-    if (!req.files || req.files.length < 3) {
-      errors.images = "At least three product images required.";
+    if (!req.files || req.files.length < 4) {
+      errors.images = "At least four product images required.";
     }
 
     if (Object.keys(errors).length > 0) {

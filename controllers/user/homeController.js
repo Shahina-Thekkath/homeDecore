@@ -8,6 +8,15 @@ const { STATUS_CODES, MESSAGES } = require("../../constants");
 
 const loadHomepage = async (req, res) => {
   try {
+
+     if (req.session.orderCompleted) {
+    req.session.orderCompleted = false; // allow future orders
+  }
+
+  res.set({
+    "Cache-Control": "no-store, no-cache, must-revalidate, private",
+  });
+  
     const user = req.session.user || req.session.passport;
     const currentDate = new Date();
 

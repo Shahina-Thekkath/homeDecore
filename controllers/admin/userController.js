@@ -21,7 +21,7 @@ const getAllUsers = async (req,res)=>{
         const totalUsers = await User.countDocuments({ ...searchQuery, is_admin: false });
         const totalPages = Math.ceil(totalUsers / limit);
 
-        const users = await User.find({ ...searchQuery, is_admin: false }).skip(skip).limit(limit);
+        const users = await User.find({ ...searchQuery, is_admin: false }).skip(skip).limit(limit).sort({createdAt: -1});
 
         res.render("userList", {
             users,
@@ -32,7 +32,7 @@ const getAllUsers = async (req,res)=>{
         });
     }  catch (error) {
         console.error("userManagement error",error);
-        return res.status(STATUS_CODES.NOT_FOUND).render("404");
+        return res.status(STATUS_CODES.NOT_FOUND).render("404Error");
 
     }
 }

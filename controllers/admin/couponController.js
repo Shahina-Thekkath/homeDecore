@@ -49,7 +49,7 @@ const addCoupon = async (req, res) => {
       errors.discountAmount = "Enter a valid amount (e.g., 10 or 10.50)";
     }
 
-    if (usageLimit && !/^\d+$/.test(usageLimit)) {
+    if (usageLimit && !/^\d{1,3}$/.test(usageLimit)) {
       errors.usageLimit = "Usage limit must be a valid number";
     }
 
@@ -202,7 +202,7 @@ const updateCoupon = async (req, res) => {
       errors.discountAmount = "Enter a valid amount (e.g., 10 or 10.50)";
     }
 
-    if (usageLimit && !/^\d+$/.test(usageLimit)) {
+    if (usageLimit && !/^\d{1,3}$/.test(usageLimit)) {
       errors.usageLimit = "Usage limit must be a valid number";
     }
 
@@ -225,10 +225,24 @@ const updateCoupon = async (req, res) => {
       errors.minPurchaseAmount = "Minimum Purchase amount should'nt be equal to or less than zero";
     }
 
-    if(discountType === 'flat' && discount >= minPurchase) {
-      errors.discountAmount = "discount amount should'nt go beyond minimum purchase amount";
-    } else if(discountType === 'percentage' && discount > 100) {
-      errors.discountAmount = "Percentage discount cannot exceed 100%";
+    const MAX_FLAT_DISCOUNT_PERCENT = 50;
+    const MAX_PERCENTAGE_DISCOUNT = 50;
+
+    if(discountType === 'flat') {
+
+      if(discountAmount >= minPurchaseAmount) {
+         errors.discountAmount = "discount amount should'nt go beyond minimum purchase amount";
+      }
+
+      const maxAllowedDiscount = (minPurchaseAmount * MAX_FLAT_DISCOUNT_PERCENT) / 100;
+      
+      if(discountAmount > maxAllowedDiscount) {
+        errors.discountAmount = `Discount Amount should'nt be more than ${MAX_FLAT_DISCOUNT_PERCENT}% of minimum purchase amount`;
+      }
+
+      
+    } else if(discountType === 'percentage' && discount > MAX_PERCENTAGE_DISCOUNT) {
+      errors.discountAmount = `Percentage discount cannot exceed ${MAX_PERCENTAGE_DISCOUNT}%`;
     }
 
     let newDate;

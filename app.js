@@ -6,6 +6,8 @@ const session = require("express-session");
 const db = require("./config/db");
 const userRouter = require("./routes/userRouter");
 const adminRouter = require("./routes/adminRouter");
+const orderGuard = require("./middleware/orderGuard");
+
 
 const passport = require("./config/passport");
 db();
@@ -50,6 +52,8 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
+app.use(orderGuard);
+
 app.use((req, res, next) => {
   if (req.isAuthenticated() && !req.session.user) {
     req.session.user = req.user; //  Copy passport user into req.session.user
@@ -81,6 +85,7 @@ app.use("/", userRouter);
 app.use((req, res) => {
   res.status(404).render("page-404");
 })
+
 
 
 db()

@@ -454,6 +454,8 @@
                                                    <input type="hidden" name="cartItems[<%= index %>][discountedPrice]" value="<%= item.discountedPrice %>">
                                                    <input type="hidden" name="cartItems[<%= index %>][quantity]" value="<%= item.quantity %>">
                                                    <input type="hidden" name="cartItems[<%= index %>][subtotal]" value="<%= item.subtotal %>">
+                                                   
+
                 
                 
                                                 <% }) %>
@@ -1342,6 +1344,7 @@ $(document).ready(function() {
     
         $('#orderForm').submit(function (e) {
                 e.preventDefault();
+
 
                 const paymentMethod = $('input[name ="payment"]:checked').val();
                 const formData = $(this).serialize();   // to make it urlencoded

@@ -9,7 +9,15 @@ const { STATUS_CODES, MESSAGES } = require("../../constants");
 
 const loadCheckout = async (req, res) => {
   try {
+    if(req.session.orderCompleted) {
+      return res.redirect("/");
+    }
+    
+    if (req.session.lastOrderFailed) {
+    return res.redirect("/cart");
+  }
     const userId = req.session.user?._id || req.session.passport._id;
+
     const cart = await Cart.findOne({ userId }).populate("items.productId");
 
     const user = await User.findById(userId);

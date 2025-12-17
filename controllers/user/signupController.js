@@ -65,7 +65,7 @@ const signup = async(req, res) =>{
         const otp = generateOtp(); 
 
         const emailSent = await sendVerificationEmail(email, otp);
-        console.log();
+       
         
         if(!emailSent){
             return res.json("email.error")
@@ -274,6 +274,7 @@ const changeVerify = async(req, res) => {
         if (!email || !emailPattern.test(email)) {
             errors.email = "Please enter a valid email address";
         }
+        
 
         // Check for empty fields
         if (!oldPassword) {

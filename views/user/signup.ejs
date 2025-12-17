@@ -305,6 +305,7 @@ toggleCPassword.addEventListener("click", () => {
 
             function phoneValidateChecking(e){
                 const phoneVal = phoneid.value;
+                const phonePattern = /^[6-9]\d{9}$/;
 
                 if(phoneVal.trim() === ""){
                     error2.style.display = "block";
@@ -313,6 +314,9 @@ toggleCPassword.addEventListener("click", () => {
                 else if(phoneVal.length < 10 || phoneVal.length > 10){
                     error2.style.display = "block";
                     error2.innerHTML = "Enter 10 digits";
+                }else if(!phonePattern.test(phoneVal)){
+                    error2.style.display = "block";
+                    error2.innerHTML = "Mobile number must be exactly 10 digits and start with 6–9 (e.g., 9876543210)."
                 }else{
                     error2.style.display = "none";
                     error2.innerHTML = "";

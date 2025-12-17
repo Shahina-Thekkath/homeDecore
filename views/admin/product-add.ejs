@@ -639,8 +639,8 @@
         // Images Validation
         const imageErrorElement = document.getElementById("image-error");
         if (imageErrorElement) {
-          if (selectedImages.length < 3) {
-            imageErrorElement.textContent = "Minimum 3 images are required.";
+          if (selectedImages.length < 4) {
+            imageErrorElement.textContent = "Minimum 4 images are required.";
             imageErrorElement.style.display = "block";
             isValid = false;
           }

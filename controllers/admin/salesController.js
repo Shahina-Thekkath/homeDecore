@@ -76,7 +76,7 @@ const getSalesReportData = async (req, res) => {
 
     // list of orders for table rows
     const ordersPromise = await Order.find(matchQuery)
-      .select("_id createdAt totalAmount discountAmount couponDiscount")
+      .select("_id createdAt totalAmount discountAmount couponDiscount orderId")
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)
@@ -122,6 +122,7 @@ const getSalesReportData = async (req, res) => {
       const gross = net + offer + coupon;
       return {
         _id: o._id,
+        orderId: o.orderId,
         createdAt: o.createdAt,
         salesAmount: gross,
         discountAmount: offer,
@@ -130,6 +131,7 @@ const getSalesReportData = async (req, res) => {
       };
     });
 
+    console.log("orders", orders);
     return res.json({ success: true, report: summary, orders, currentPage, totalPages });
   } catch (err) {
     console.error("Error building sales report:", err);
@@ -205,7 +207,7 @@ const generateSalesPDF = async (req, res) => {
   pageMargins: [40, 60, 40, 60],
   background: function () {
     return {
-      text: "THE ELEGANT ATTIC",
+      text: "THE ELEGANT ADOBE",
       color: "#FFE5CC",
       opacity: 0.1,
       bold: true,

@@ -265,7 +265,7 @@
                                                 <div class="gl-inline">
                                                     <div class="u-s-m-b-30">
 
-                                                        <label class="gl-label" for="address-fname">FULL NAME *</label>
+                                                        <label class="gl-label" for="address-name">FULL NAME *</label>
 
                                                         <input class="input-text input-text--primary-style" type="text" id="address-name" placeholder="John Doe" name="name" value="<%=address.name%>">
                                                         <p id="name-error" class="error-message" style="color: red; display: none;"></p>
@@ -348,10 +348,10 @@
                                                     </div>
                                                     <div class="u-s-m-b-30">
 
-                                                        <label class="gl-label" for="address-street">ZIP/POSTAL CODE *</label>
+                                                        <label class="gl-label" for="address-pincode">ZIP/POSTAL CODE *</label>
 
                                                         <input class="input-text input-text--primary-style" type="text" id="address-pincode" placeholder="20006" name="pincode" value="<%=address.pincode%>">
-                                                        <p id="pincode" class="error-message" style="color: red; display: none;"></p>
+                                                        <p id="pincode-error" class="error-message" style="color: red; display: none;"></p>
                                                     
                                                     </div>
                                                 </div>
@@ -616,7 +616,7 @@
          showError("phone-error", "Phone number is required.");
          isValid = false;
      } else if (!phonePattern.test(phone)) {
-         showError("phone-error", "Should be 11 digits.");
+         showError("phone-error", "Mobile number must be exactly 10 digits and start with 6–9 (e.g., 9876543210).");
          isValid = false;
      }
  

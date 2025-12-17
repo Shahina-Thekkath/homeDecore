@@ -285,7 +285,7 @@
                 {name: 'name', regex: /^[a-zA-Z0-9₹\s]{3,30}$/, message: 'Name must be 3-30 letters only'},
                 {name: 'code', regex: /^[A-Z0-9_-]{3,10}$/, message: 'Code must be characters (A-Z, 0-9, _, -)'},
                 {name: 'discountAmount', regex: /^\d+(\.\d{1,2})?$/, message: 'Discount must be a number (1-999)'},
-                {name: 'usageLimit', regex: /^\d+$/, message: 'Usage limit must be a positive number'},
+                {name: 'usageLimit', regex: /^\d{1,3}$/, message: 'Usage limit must be a positive number'},
                 {name: 'minPurchaseAmount', regex: /^\d+(\.\d{1,2})?$/, message: 'Minimum purchase amount must be a number'},
                 {name: 'expiresOn', regex: /^\d{2}-\d{2}-\d{4}$/, message: 'Enter a valid expiry date (DD-MM-YYYY)'}
         ];
@@ -337,20 +337,42 @@
           usageLimitError.innerText = "Usage should'nt be a negative number";
         }
 
-        if(discountType === "flat" && discountAmount >= minPurchaseAmount) {
-         isValid = false;
-         
-            const minPurchaseError = document.getElementById('minPurchaseAmount-error');
+        const MAX_FLAT_DISCOUNT_PERCENT = 50; 
+        const MAX_PERCENTAGE_DISCOUNT = 50;
+
+        if(discountType === "flat") {
+          if(discountAmount >= minPurchaseAmount){
+          isValid = false;
+          
+              const minPurchaseError = document.getElementById('minPurchaseAmount-error');
+              if(minPurchaseError) {
+                minPurchaseError.innerText = "Minimum Purchase amount should be greater than or equal to discount";
+              }
+
+              Swal.fire("Validation Error",
+                        "Minimum purchase amount cannot be less than discount amount",
+                        "warning"
+              );
+
+              return;
+          }
+
+          const maxAllowedDiscount = (minPurchaseAmount * MAX_FLAT_DISCOUNT_PERCENT) / 100;
+
+          if(discountAmount > maxAllowedDiscount) {
+            isValid = false;
+
             if(minPurchaseError) {
-              minPurchaseError.innerText = "Minimum Purchase amount should be greater than or equal to discount";
+              minPurchaseError.innerText = `Flat discount cannot exceed ${MAX_FLAT_DISCOUNT_PERCENT}% of minimum purchase amount`;
             }
 
-            Swal.fire("Validation Error",
-                      "Minimum purchase amount cannot be less than discount amount",
-                      "warning"
-            );
-
-            return;
+              return
+          }
+        } else if(discountType === 'percentage') {
+          if(discountAmount > MAX_PERCENTAGE_DISCOUNT) {
+            isValid = false;
+            discountAmountError.innerText = `Discount amount should not exceed ${MAX_PERCENTAGE_DISCOUNT}%`;
+          }
         }
 
         // date validation
