@@ -596,7 +596,7 @@
         }).then((result) => {
           if (result.isConfirmed) {
             $.ajax({
-              type: "DELETE",
+              type: "PUT",
               url: `/admin/block/${id}`,
               success: function (response) {
                 if (response.success) {
@@ -615,13 +615,24 @@
                   });
                 }
               },
-              error: function () {
-                Swal.fire({
-                  icon: "error",
-                  title: "Error",
-                  text: "An error occurred while blocking the user",
-                });
-              },
+              error: function (xhr) {
+  if (xhr.status === 401) {
+    Swal.fire({
+      icon: "error",
+      title: "Session expired",
+      text: "Please login again",
+    }).then(() => {
+      window.location.href = "/admin";
+    });
+  } else {
+    Swal.fire({
+      icon: "error",
+      title: "Error",
+      text: "Something went wrong",
+    });
+  }
+}
+,
             });
           }
         });
@@ -641,6 +652,8 @@
               type: "PUT",
               url: `/admin/unblock/${id}`,
               success: function (response) {
+                console.log("response unblock");
+                
                 if (response.success) {
                   Swal.fire({
                     icon: "success",
@@ -672,7 +685,7 @@
           function message(msg){
             if(msg){
                   Swal.fire({
-                    positition: "center",
+                    position: "center",
                     icon: "success",
                     title: msg,
                     showConfirmButton: false,

@@ -21,7 +21,7 @@ const getAllUsers = async (req,res)=>{
         const totalUsers = await User.countDocuments({ ...searchQuery, is_admin: false });
         const totalPages = Math.ceil(totalUsers / limit);
 
-        const users = await User.find({ ...searchQuery, is_admin: false }).skip(skip).limit(limit).sort({createdAt: -1});
+        const users = await User.find({ ...searchQuery, is_admin: false }).skip(skip).limit(limit);
 
         res.render("userList", {
             users,
@@ -32,7 +32,7 @@ const getAllUsers = async (req,res)=>{
         });
     }  catch (error) {
         console.error("userManagement error",error);
-        return res.status(STATUS_CODES.NOT_FOUND).render("404Error");
+        return res.status(STATUS_CODES.NOT_FOUND).render("404");
 
     }
 }
@@ -41,50 +41,40 @@ const getAllUsers = async (req,res)=>{
 const blockUser = async (req, res) => {
   try {
     const userId = req.params.id;
+    console.log("blockUser", userId);
+    
 
-    //  Update the user as blocked
-    const user = await User.findByIdAndUpdate(userId, { isBlocked: true });
-    if (!user) {
-      return res.status(STATUS_CODES.NOT_FOUND).json({ success: false, message: MESSAGES.USER.NOT_FOUND });
-    }
+  const user = await User.findByIdAndUpdate(userId,
+    {$set:{isBlocked: true}},
+    {new: true}
+  );
 
-    //  If the currently logged-in session belongs to the same user being blocked
-    if (req.session) {
+  console.log("user:", user);
+  
 
-      const sessionUserId = req.session.user?._id?.toString();
-      const sessionPassportId = req.session.passport?.user?._id?.toString();
+  if(!user) {
+    return res.
+    status(STATUS_CODES.NOT_FOUND)
+    .json({success: false, message: MESSAGES.USER.NOT_FOUND});
+  }
 
-      if (sessionUserId === userId || sessionPassportId === userId) {
-
-        // Delete only user-related session data, not the admin
-        delete req.session.user;
-        delete req.session.passport;
-
-        // Save session changes
-        req.session.save((err) => {
-          if (err) console.error("Error saving session after user deletion:", err);
-        });
-      } else {
-        console.log("Admin session detected — skipping session removal.");
-      }
-    }
-
-    // 3️⃣ Send success response
-    res.status(STATUS_CODES.OK).json({ success: true });
+return res.status(STATUS_CODES.OK).json({success: true});
   } catch (error) {
     console.error("Error blocking user:", error);
-    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ success: false });
+    return res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({success: false});
   }
-};
+}
 
 
 // Unblock user
 const unblockUser = async (req, res) => {
     try {
         const userId = req.params.id;
-        const user = await User.findByIdAndUpdate(userId, { isBlocked: false });
+        const user = await User.findByIdAndUpdate(userId, { isBlocked: false });        
 
         if (!user) {
+          console.log("unblock !user");
+          
             return res.status(STATUS_CODES.NOT_FOUND).json({ success: false });
         }
         res.status(STATUS_CODES.OK).json({ success: true});

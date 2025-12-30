@@ -15,7 +15,9 @@ const checkoutController = require("../controllers/user/checkoutController");
 const orderController = require("../controllers/user/orderController");
 const couponController = require("../controllers/user/couponController");
 const wishlistController = require("../controllers/user/wishlistController");
-const walletController = require("../controllers/user/walletController")
+const walletController = require("../controllers/user/walletController");
+const ensureOrderNotPlaced = require("../middleware/ensureOrderNotPlaced");
+const ensureCartNotEmpty = require("../middleware/ensureCartNotEmpty");
 
 // const GoogleStrategy = require('passport-google-oauth20').Strategy;
 
@@ -41,6 +43,7 @@ userRouter.get("/logout",auth.isLogin, logoutController.logout);
 userRouter.get("/auth/google", passport.authenticate('google',{
     scope:['email' , 'profile']
 }))
+
 
 userRouter.get('/forgotPassword',auth.isLogout, signupController.forgotPassword);
 userRouter.post('/forgotPassword',auth.isLogout, signupController.forgotVerify);
@@ -84,7 +87,7 @@ userRouter.delete('/deleteCartItem/:id',auth.sessionVerify, cartController.delet
 userRouter.post('/updateCartTotals', auth.sessionVerify, cartController.updateCartTotals);
 
 
-userRouter.get('/checkout', auth.sessionVerify, checkoutController.loadCheckout);
+userRouter.get('/checkout', auth.sessionVerify, ensureCartNotEmpty, ensureOrderNotPlaced, checkoutController.loadCheckout);
 userRouter.post('/saveSelectedAddress', auth.sessionVerify, checkoutController.saveSelectedAddress);
 userRouter.post('/calculate-delivery-charge', auth.sessionVerify, orderController.calculateDeliveryCharge);
 

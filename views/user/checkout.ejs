@@ -1311,22 +1311,22 @@ $(document).ready(function() {
 
                 const result = await response.json();  //parse the response (convert int normal from JSON)  ie it would like normal key value pair in an object
 
-                if (response.ok) {
-                    
+               if(!response.ok) {
+                Swal.fire("Error", error.message, "error");
+                return;
+               }
+
+               if(result.isCartEmpty) {
                 Swal.fire({
-                    icon: "success",
-                    title: "Item Delete!",
-                    text: result.message || "The Item has been successfully deleted",
+                    icon: "info",
+                    title: "Cart is Empty",
+                    text: "Please add items to continue shopping"
                 }).then(() => {
-                    window.location.href = "/checkout"
+                    window.location.href = "/"
                 });
-            } else {
-                Swal.fire({
-                    icon: "error",
-                    title: "Error",
-                    text: result.message || "Failed to delete the item. Please try again.",
-                });
-                }
+               } else {
+                location.reload();
+               }
             } catch (error) {
                 Swal.fire({
                 icon: "error",

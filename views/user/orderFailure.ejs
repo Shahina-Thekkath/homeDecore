@@ -157,11 +157,9 @@
     <script src="/js/retryPayment.js"></script>
 
     <script>
-    if (window.history && window.history.pushState) {
-        window.history.pushState(null, null, window.location.href);
-        window.onpopstate = function () {
-            window.location.href = "/";
-        };
+    if (window.history && window.history.replaceState) {
+        window.history.replaceState(null, null, window.location.href);
+       
     }
     </script>
 

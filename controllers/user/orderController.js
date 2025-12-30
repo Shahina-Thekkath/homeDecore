@@ -250,7 +250,7 @@ const saveOrderInSession = async (req, res) => {
     );
 
     // mark order as completed
-    req.session.orderCompleted = true;
+    req.session.orderPlaced = true;
 
     return res.json({ success: true });
   } catch (error) {
@@ -271,10 +271,12 @@ const getOrderSuccess = (req, res) => {
       return res.redirect("/checkout"); // Redirect to checkout if no order in session
     }
 
-    req.session.orderAttempted = false;
+    req.session.orderPlaced = true;
+    req.session.checkoutInProgress = false;
+    req.session.paymentAttempted = false;
+
     req.session.lastOrderFailed = false;
 
-    req.session.orderCompleted = false;
     req.session.order = null;
     req.session.paymentMethod = null;
     req.session.coupon = null;
@@ -363,7 +365,9 @@ const saveWalletOrder = async (req, res) => {
       );
     }
 
-    req.session.orderCompleted = true;
+    req.session.orderPlaced = true;
+    req.session.checkoutInProgress = false;
+    req.session.paymentAttempted = false;
 
     // Mark coupon as used
     const couponCode = req.session.coupon?.code;
@@ -393,6 +397,11 @@ const saveWalletOrder = async (req, res) => {
 
 const getOrdersPage = async (req, res) => {
   try {
+    // User has acknowledged order — reset checkout flow
+    delete req.session.orderPlaced;
+    delete req.session.checkoutInProgress;
+    delete req.session.paymentAttempted;
+
     const userId = req.session.user?._id || req.session.passport._id;
 
     const user = await User.findById(userId);
@@ -821,6 +830,8 @@ const returnOrder = async (req, res) => {
 
 const createRazorpayOrder = async (req, res) => {
   try {
+    req.session.paymentAttempted = true;
+
     let grandTotal = Number(req.body.grandTotal) || 0; // ensure it's a number
 
     const couponDiscount = req.session.coupon?.discount || 0;
@@ -950,7 +961,9 @@ const verifyRazorpayPayment = async (req, res) => {
         });
       }
 
-      req.session.orderCompleted = true;
+    req.session.orderPlaced = true;
+    req.session.checkoutInProgress = false;
+    req.session.paymentAttempted = false;
 
       //  Store the saved order in session for success page
       req.session.order = savedOrder;
@@ -1009,6 +1022,10 @@ const razorPaymentFailed = async (req, res) => {
     // Clear cart and coupon
     await Cart.findOneAndUpdate({ userId }, { $set: { items: [] } });
 
+    req.session.orderPlaced = true;
+    req.session.checkoutInProgress = false;
+    req.session.paymentAttempted = false;
+
     // Store the failed order temporarily to show on failure page
     req.session.failedOrder = newOrder;
     req.session.orderAttempted = true;
@@ -1030,6 +1047,11 @@ const getOrderFailurePage = async (req, res) => {
     const grandTotal = order.products.reduce((sum, item) => sum + (item.discountedPrice * item.quantity), 0);
 
     req.session.failedOrder = null;
+
+    req.session.orderPlaced = true;
+    req.session.checkoutInProgress = false;
+    req.session.paymentAttempted = false;
+
 
     return res.render("orderFailure", {
       order,
@@ -1058,8 +1080,7 @@ const retryPayment = async (req, res) => {
         .json({ success: false, message: "Invalid retry request" });
     }
 
-    req.session.orderAttempted = true;
-   req.session.lastOrderFailed = true;
+   
 
 
     const grandTotal = order.products.reduce((sum, item) => sum + (item.discountedPrice * item.quantity), 0);

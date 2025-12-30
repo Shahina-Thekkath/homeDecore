@@ -22,7 +22,7 @@ adminRouter.use(adminAuth.isLogin);
 adminRouter.get("/dashboard", dashboardController.loadDashboard);
 adminRouter.get("/users", userController.getAllUsers);
 
-adminRouter.delete("/block/:id", userController.blockUser);
+adminRouter.put("/block/:id", userController.blockUser);
 adminRouter.put("/unblock/:id", userController.unblockUser);
 adminRouter.get("/pageerror", admin404Controller.pageError);
 

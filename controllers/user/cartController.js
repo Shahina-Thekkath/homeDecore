@@ -274,7 +274,7 @@ const deleteCartItem = async(req, res) =>{
          cart.items.pull(item);
         await cart.save();
 
-        return res.status(STATUS_CODES.OK).json({ success: true, message: MESSAGES.CART.ITEM_DELETED });
+        return res.status(STATUS_CODES.OK).json({ success: true, message: MESSAGES.CART.ITEM_DELETED, isCartEmpty: cart.items.length  === 0 });
 
 
     } catch (error) {

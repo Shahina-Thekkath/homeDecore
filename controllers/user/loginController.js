@@ -6,11 +6,20 @@ const bcrypt = require("bcrypt");
 const session = require("express-session");
 const { STATUS_CODES, MESSAGES } = require("../../constants");
 
+
 const loadLogin = async(req, res) =>{
     try{
         const user = req.session.user || req.session.passport;
+
+        const message = req.cookies?.blockedMessage || null;
+        
+
+        if(message) {
+            res.clearCookie("blockedMessage");
+        }
+
         if(!user){
-            return res.render("login");
+            return res.render("login", {message});
         }
         else{
             res.redirect("/");

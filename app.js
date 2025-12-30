@@ -7,6 +7,10 @@ const db = require("./config/db");
 const userRouter = require("./routes/userRouter");
 const adminRouter = require("./routes/adminRouter");
 const orderGuard = require("./middleware/orderGuard");
+const checkBlocked = require("./middleware/checkBlocked");
+const cookieParser = require("cookie-parser");
+app.use(cookieParser());
+
 
 
 const passport = require("./config/passport");
@@ -53,6 +57,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 
+
 app.use((req, res, next) => {
   if (req.isAuthenticated() && !req.session.user) {
     req.session.user = req.user; //  Copy passport user into req.session.user
@@ -65,6 +70,8 @@ app.use((req, res, next) => {
   res.set("cache-control", "no-store");
   next();
 });
+
+app.use("/",checkBlocked);
 
 app.set("view engine", "ejs");
 app.set("views", [

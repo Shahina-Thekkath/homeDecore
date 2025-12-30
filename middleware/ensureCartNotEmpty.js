@@ -1,0 +1,17 @@
+const Cart = require("../models/cartSchema");
+
+module.exports = async (req, res, next) => {
+    const userId = req.session.user?._id || req.session.passport?.user;
+
+    if(!userId) {
+        return res.redirect("/login");
+    }
+
+    const cart = await Cart.findOne({userId});
+
+    if(!cart || cart.items.length === 0) {
+        return res.redirect("/")
+    }
+
+    next();
+}
