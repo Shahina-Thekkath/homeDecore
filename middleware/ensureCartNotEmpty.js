@@ -1,7 +1,8 @@
 const Cart = require("../models/cartSchema");
 
 module.exports = async (req, res, next) => {
-    const userId = req.session.user?._id || req.session.passport?.user;
+    try {
+        const userId = req.session.user?._id || req.session.passport?.user;
 
     if(!userId) {
         return res.redirect("/login");
@@ -14,4 +15,9 @@ module.exports = async (req, res, next) => {
     }
 
     next();
+    } catch (error) {
+        console.error("ensureCartNotEmpty middleware crashed:", error);
+        
+    }
+    
 }
