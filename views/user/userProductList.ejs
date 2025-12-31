@@ -572,7 +572,6 @@
             let currentSearch = '';
 
             function fetchProducts() {
-                console.log("Fetching with:", currentCategory, currentSort, limit, currentPage);
                 $.ajax({
                     url: '/user/products/filter',
                     method: 'GET',
@@ -583,7 +582,6 @@
                              search: currentSearch
                           },
                     success: function (response) {
-                        console.log("Response received:", response);
                         $('#product-pagination-container').replaceWith(response);
                     },
                     error: function (xhr, status, error) {
@@ -637,7 +635,6 @@
     e.preventDefault();
 
     const productId = $(this).data("product-id");
-    console.log("productdetails productId", productId);
 
     $.ajax({
         url: "/add-to-wishlist",

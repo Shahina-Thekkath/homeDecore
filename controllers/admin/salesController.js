@@ -130,8 +130,7 @@ const getSalesReportData = async (req, res) => {
         netSales: net,
       };
     });
-
-    console.log("orders", orders);
+    
     return res.json({ success: true, report: summary, orders, currentPage, totalPages });
   } catch (err) {
     console.error("Error building sales report:", err);

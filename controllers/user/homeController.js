@@ -18,7 +18,6 @@ const loadHomepage = async (req, res) => {
   // });
   
     const user = req.session.user || req.session.passport;
-    console.log("loadHomepage",user);
     
     const currentDate = new Date();
 

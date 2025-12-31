@@ -392,7 +392,6 @@
                 data: JSON.stringify({ productId, quantity: 1 }),
                 success: function (response) {
                     if(response.success) {
-                        console.log("showing modal...");
                         
                         $("#modal-product-image").attr("src", image);
                         $("#add-to-cart .success__name").text(name);

@@ -652,8 +652,6 @@
               type: "PUT",
               url: `/admin/unblock/${id}`,
               success: function (response) {
-                console.log("response unblock");
-                
                 if (response.success) {
                   Swal.fire({
                     icon: "success",

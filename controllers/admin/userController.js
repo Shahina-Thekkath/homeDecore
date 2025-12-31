@@ -41,15 +41,11 @@ const getAllUsers = async (req,res)=>{
 const blockUser = async (req, res) => {
   try {
     const userId = req.params.id;
-    console.log("blockUser", userId);
-    
 
   const user = await User.findByIdAndUpdate(userId,
     {$set:{isBlocked: true}},
     {new: true}
   );
-
-  console.log("user:", user);
   
 
   if(!user) {
@@ -73,8 +69,6 @@ const unblockUser = async (req, res) => {
         const user = await User.findByIdAndUpdate(userId, { isBlocked: false });        
 
         if (!user) {
-          console.log("unblock !user");
-          
             return res.status(STATUS_CODES.NOT_FOUND).json({ success: false });
         }
         res.status(STATUS_CODES.OK).json({ success: true});

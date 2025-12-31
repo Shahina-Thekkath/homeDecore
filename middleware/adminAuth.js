@@ -37,7 +37,7 @@ const isLogout = async (req,res,next)=>{
         next();
     }
    } catch (error) {
-    console.log("islogout middleware error ",error.message);
+    console.error("islogout middleware error ",error.message);
    }
 }
 

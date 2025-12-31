@@ -45,8 +45,6 @@ const sessionVerify = async (req, res, next) =>{
         
 
         if(user||passport){
-            console.log("passport", passport);
-            
             next();
         }else{
           if (req.xhr) {
