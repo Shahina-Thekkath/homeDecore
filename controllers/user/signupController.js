@@ -184,7 +184,7 @@ const sendResetPasswordEmail = async(name,email,token) =>{
             to: email,
             subject:"For Reset Password",
             html:`<p>Hii ${name} please click here to 
-                           <a href="http://localhost:${process.env.PORT}/resetPassword?token=${token}">Reset</a>
+                           <a href="${process.env.BASE_URL}/resetPassword?token=${token}">Reset</a>
                         your password</p>`
         })
         
