@@ -5,11 +5,11 @@ const { STATUS_CODES, MESSAGES } = require("../../constants");
 
 const applyCoupon = async (req, res) => {
   try {
-        const userId = req.session.user?._id || req.session.passport._id;
+        const userId = req.session.user?._id || req.session.passport?.user;
         const { couponCode } = req.body;
 
         if (!couponCode) {
-            return res.status(STATUS_CODES.BAD_REQUEST).json({ success: false, message: MESSAGES.COUPON.CODE_REQUIRED });
+            return res.status(STATUS_CODES.OK).json({ success: false, message: MESSAGES.COUPON.CODE_REQUIRED });
         }
 
         const coupon = await Coupon.findOne({ code: couponCode.trim().toUpperCase() });
@@ -19,30 +19,30 @@ const applyCoupon = async (req, res) => {
         }
 
         if (!coupon.isActive) {
-            return res.status(STATUS_CODES.BAD_REQUEST).json({ success: false, message: MESSAGES.COUPON.INACTIVE });
+            return res.status(STATUS_CODES.OK).json({ success: false, message: MESSAGES.COUPON.INACTIVE });
         }
 
         if (new Date(coupon.expiresOn) < new Date()) {
-            return res.status(STATUS_CODES.BAD_REQUEST).json({ success: false, message: MESSAGES.COUPON.EXPIRED });
+            return res.status(STATUS_CODES.OK).json({ success: false, message: MESSAGES.COUPON.EXPIRED });
         }
 
         if (coupon.usageLimit <= coupon.usedCount) {
-            return res.status(STATUS_CODES.BAD_REQUEST).json({ success: false, message: MESSAGES.COUPON.USAGE_LIMIT_REACHED });
+            return res.status(STATUS_CODES.OK).json({ success: false, message: MESSAGES.COUPON.USAGE_LIMIT_REACHED });
         }
 
         if (coupon.usersUsed.includes(userId)) {
-            return res.status(STATUS_CODES.BAD_REQUEST).json({ success: false, message: MESSAGES.COUPON.ALREADY_USED });
+            return res.status(STATUS_CODES.OK).json({ success: false, message: MESSAGES.COUPON.ALREADY_USED });
         }
 
         const cart = await Cart.findOne({ userId }).populate('items.productId');
         if (!cart || cart.items.length === 0) {
-            return res.status(STATUS_CODES.BAD_REQUEST).json({ success: false, message: MESSAGES.COUPON.EMPTY_CART });
+            return res.status(STATUS_CODES.OK).json({ success: false, message: MESSAGES.COUPON.EMPTY_CART });
         }
 
         const subtotal = cart.items.reduce((sum, item) => sum + (item.discountedPrice * item.quantity), 0);
 
         if (subtotal < coupon.minPurchaseAmount) {
-            return res.status(STATUS_CODES.BAD_REQUEST).json({
+            return res.status(STATUS_CODES.OK).json({
                 success: false,
                 message: `Minimum purchase of ₹${coupon.minPurchaseAmount} required to use this coupon.`
             });
@@ -65,6 +65,7 @@ const applyCoupon = async (req, res) => {
           grandTotal,
           discountType: coupon.discountType
         };
+        
 
         return res.status(STATUS_CODES.OK).json({
             success: true,
