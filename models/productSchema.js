@@ -47,10 +47,6 @@ const ProductSchema = new Schema(
   { timestamps: true }
 );
 
-// ProductSchema.index({ price: 1 });
-// ProductSchema.index({ averageRating: -1 });
-// ProductSchema.index({ name: 1, unique: true});
-// ProductSchema.index({ isFeatured: 1 });
 
 
 const Product = model("Product", ProductSchema);

@@ -48,7 +48,7 @@ const updateProfile = async (req, res) => {
     const { name, gender, phone } = req.body;
     const errors = {};
 
-    const nameRegex = /^[a-zA-Z.\s,]{3,80}$/;
+    const nameRegex = /^[a-zA-Z0-9.\s,]{3,80}$/;
     const phoneRegex = /^[6-9]\d{9}$/;
     const genderRegex = /^(male|female)$/;
 

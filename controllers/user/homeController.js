@@ -21,10 +21,27 @@ const loadHomepage = async (req, res) => {
     
     const currentDate = new Date();
 
-    const products = await Product.find({ isBlocked: false })
-      .populate("categoryId")
-      .limit(20)
-      .lean();
+    const products = await Product.aggregate([
+      {
+        $match: {isBlocked: false}
+      },
+      {
+        $lookup: {
+          from: "categories",
+          localField: "categoryId",
+          foreignField: "_id",
+          as: "category"
+        }
+      },
+       {
+          $unwind: "$category"
+        },
+        {
+          $match: {"category.isBlocked": false}
+        },
+        {$limit: 20},
+       
+    ]);
 
     const updatedProducts = await Promise.all(
       products.map(async (product) => {

@@ -172,12 +172,22 @@ const getUserProductList = async (req, res) => {
     const totalProducts = await Product.countDocuments(query);
     const totalPages = Math.ceil(totalProducts / limit);
 
-    const products = await Product.find(query)
-      .populate("categoryId", "name")
-      .sort({ createdAt: -1 })
-      .skip(skip)
-      .limit(limit)
-      .lean();
+    const products = await Product.aggregate([
+      {$match: {isBlocked: false}},
+      {$lookup: 
+        {
+          from: "categories",
+          localField: "categoryId",
+          foreignField: "_id",
+          as: "category"
+        }
+      },
+      {$unwind: "$category"},
+      {$match: {"category.isBlocked": false}},
+      {$sort: {createdAt: -1}},
+      {$skip: skip},
+      {$limit: limit}
+    ]);
 
     const currentDate = new Date();
 
@@ -272,26 +282,56 @@ const getUserProductList = async (req, res) => {
       })
     );
 
-    //  Aggregate category counts
-    const categoryCounts = await Product.aggregate([
-      { $match: { isBlocked: false } },
+    // //  Aggregate category counts
+    // const categoryCounts = await Product.aggregate([
+    //   { $match: { isBlocked: false } },
+    //   {
+    //     $group: {
+    //       _id: "$categoryId",
+    //       count: { $sum: 1 },
+    //     },
+    //   },
+    // ]);
+
+    // const countsWithNames = await Category.populate(categoryCounts, {
+    //   path: "_id",
+    //   select: "name",
+    // });
+
+    // const categories = countsWithNames.map((item) => ({
+    //   name: item._id.name,
+    //   count: item.count,
+    // }));
+
+    const categories = await Product.aggregate([
+      {$match: {isBlocked: false}},
+      {$lookup: {
+        from: "categories",
+        localField: "categoryId",
+        foreignField: "_id",
+        as: "category"
+      }},
+      {$unwind: "$category"},
+      {$match: {"category.isBlocked": false}},
       {
         $group: {
-          _id: "$categoryId",
-          count: { $sum: 1 },
-        },
+          _id: "$category._id",
+          name: {$first: "$category.name"},
+          count: {$sum: 1}
+        }
       },
+        {
+          $project: {
+            _id: 0,
+            categoryId: "$_id",
+            name: 1,
+            count: 1
+          }
+        },
+        {
+          $sort: {count: -1}
+        }
     ]);
-
-    const countsWithNames = await Category.populate(categoryCounts, {
-      path: "_id",
-      select: "name",
-    });
-
-    const categories = countsWithNames.map((item) => ({
-      name: item._id.name,
-      count: item.count,
-    }));
 
     res.render("userProductList", {
       products: updatedProducts,
@@ -317,9 +357,16 @@ const getFilteredProductList = async (req, res) => {
 
     const query = { isBlocked: false };
     if (category) {
-      const catDoc = await Category.findOne({ name: category });
+      const catDoc = await Category.findOne({ name: category, isBlocked: false });
       if (catDoc) {
         query.categoryId = catDoc._id;
+      } else {
+        return res.render('user/productListPartial', {
+          products: [],
+          totalPages: 0,
+          currentPage: 1,
+          limit
+        });
       }
     }
 
@@ -357,6 +404,18 @@ const getFilteredProductList = async (req, res) => {
       }
     }
 
+    const allProducts = await Product.find(query)
+      .populate("categoryId", "name isBlocked")
+      .collation({ locale: "en", strength: 2 })
+      .sort(sortOption)
+      .lean();
+
+    const productsWithActiveCategories = allProducts.filter
+    (product => product.categoryId && !product.categoryId.isBlocked);
+
+    console.log(productsWithActiveCategories);
+    
+
     const totalProducts = await Product.countDocuments(query);
     const totalPages = Math.ceil(totalProducts / limit);
     const safePage =
@@ -368,13 +427,7 @@ const getFilteredProductList = async (req, res) => {
 
     const skip = (safePage - 1) * limit;
 
-    const products = await Product.find(query)
-      .populate("categoryId", "name")
-      .collation({ locale: "en", strength: 2 })
-      .sort(sortOption)
-      .skip(skip)
-      .limit(limit)
-      .lean();
+    const products = productsWithActiveCategories.slice(skip, skip + limit);
 
     const currentDate = new Date();
 

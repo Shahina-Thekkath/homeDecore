@@ -325,7 +325,7 @@ toggleCPassword.addEventListener("click", () => {
 
             function emailValidateChecking(e){
                 const emailVal = emailid.value;
-                const emailPattern = /^([a-zA-Z0-9._-]+)@([a-zA-z0-9/-]+)\.([a-zA-Z]{2,4})$/;
+                const emailPattern = /^([a-zA-Z0-9._-]{3,64})@([a-zA-z0-9/-]+)\.([a-zA-Z]{2,4})$/;
 
                 if(emailVal.trim() === ""){
                     error3.style.display = "block";

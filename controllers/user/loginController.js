@@ -39,7 +39,7 @@ const login = async (req, res) => {
             return String(email)
             .toLowerCase()
             .match(
-                /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+                /^[a-zA-Z0-9._%+-]{3,64}@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
             );
         };
 
@@ -49,8 +49,7 @@ const login = async (req, res) => {
          } else if (!validateEmail(email)) {
             validationErrors.invalidEmail = "Invalid email";
         }
-
-    
+       
        
         if (Object.keys(validationErrors).length > 0) {
             validationErrors.email=email

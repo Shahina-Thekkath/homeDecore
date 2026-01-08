@@ -9,7 +9,6 @@ const { STATUS_CODES, MESSAGES } = require("../../constants");
 
 const loadCheckout = async (req, res) => {
   try {
-    req.session.paymentAttempted = true;
 
     const userId = req.session.user?._id || req.session.passport._id;
 

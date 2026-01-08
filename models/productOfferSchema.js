@@ -1,4 +1,3 @@
-// models/ProductOffer.js
 const mongoose = require("mongoose");
 
 const productOfferSchema = new mongoose.Schema({

@@ -249,9 +249,6 @@ const saveOrderInSession = async (req, res) => {
       { $set: { items: [] } }
     );
 
-    // mark order as completed
-    req.session.orderPlaced = true;
-
     return res.json({ success: true });
   } catch (error) {
     console.error("Error saving order in session:", error);
@@ -270,10 +267,6 @@ const getOrderSuccess = (req, res) => {
       console.error("order success Error:", order);
       return res.redirect("/checkout"); // Redirect to checkout if no order in session
     }
-
-    req.session.orderPlaced = true;
-    req.session.checkoutInProgress = false;
-    req.session.paymentAttempted = false;
 
     req.session.lastOrderFailed = false;
 
@@ -365,10 +358,6 @@ const saveWalletOrder = async (req, res) => {
       );
     }
 
-    req.session.orderPlaced = true;
-    req.session.checkoutInProgress = false;
-    req.session.paymentAttempted = false;
-
     // Mark coupon as used
     const couponCode = req.session.coupon?.code;
     if (couponCode) {
@@ -397,10 +386,6 @@ const saveWalletOrder = async (req, res) => {
 
 const getOrdersPage = async (req, res) => {
   try {
-    // User has acknowledged order — reset checkout flow
-    delete req.session.orderPlaced;
-    delete req.session.checkoutInProgress;
-    delete req.session.paymentAttempted;
 
     const userId = req.session.user?._id || req.session.passport._id;
 
@@ -961,10 +946,6 @@ const verifyRazorpayPayment = async (req, res) => {
         });
       }
 
-    req.session.orderPlaced = true;
-    req.session.checkoutInProgress = false;
-    req.session.paymentAttempted = false;
-
       //  Store the saved order in session for success page
       req.session.order = savedOrder;
       req.session.paymentMethod = "Razorpay";
@@ -1022,10 +1003,6 @@ const razorPaymentFailed = async (req, res) => {
     // Clear cart and coupon
     await Cart.findOneAndUpdate({ userId }, { $set: { items: [] } });
 
-    req.session.orderPlaced = true;
-    req.session.checkoutInProgress = false;
-    req.session.paymentAttempted = false;
-
     // Store the failed order temporarily to show on failure page
     req.session.failedOrder = newOrder;
     req.session.orderAttempted = true;
@@ -1047,11 +1024,6 @@ const getOrderFailurePage = async (req, res) => {
     const grandTotal = order.products.reduce((sum, item) => sum + (item.discountedPrice * item.quantity), 0);
 
     req.session.failedOrder = null;
-
-    req.session.orderPlaced = true;
-    req.session.checkoutInProgress = false;
-    req.session.paymentAttempted = false;
-
 
     return res.render("orderFailure", {
       order,

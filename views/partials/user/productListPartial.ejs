@@ -29,7 +29,7 @@
         </div>
         <div class="product-m__content">
           <div class="product-m__category">
-            <a href="#"><%= product.categoryId.name %></a>
+            <a href="#"><%= product.categoryId?.name || product.category.name %></a>
           </div>
           <div class="product-m__name">
             <a href="/product-details/<%= product._id%>"><%= product.name%></a>

@@ -75,7 +75,7 @@ const signup = async(req, res) =>{
         
         req.session.userData = {name, phone, email, password};
         
-        res.render("verify-otp");
+        res.redirect("/verify-otp");
         
     } catch (error) {
        console.error("signup error", error);
@@ -95,6 +95,9 @@ const securePassword = async (password) =>{
         }
     } 
 
+const getVerifyOtp = async (req, res) => {
+    res.render("verify-otp")
+}
 
 const verifyOtp = async (req, res) =>{
     try {
@@ -270,7 +273,7 @@ const changeVerify = async(req, res) => {
         const existingUser = await User.findById(userId);
 
         // Email validation with regex
-        const emailPattern = /^([a-zA-Z0-9._-]+)@([a-zA-Z0-9]+)\.([a-zA-Z]{2,4})$/;
+        const emailPattern = /^([a-zA-Z0-9._-]{3,64})@([a-zA-Z0-9]+)\.([a-zA-Z]{2,4})$/;
         if (!email || !emailPattern.test(email)) {
             errors.email = "Please enter a valid email address";
         }
@@ -383,7 +386,8 @@ module.exports = {loadSignup,
                   resetPasswordLoad,
                   verifyResetPassword,
                   changePassword,
-                  changeVerify
+                  changeVerify,
+                  getVerifyOtp
 
 
 }

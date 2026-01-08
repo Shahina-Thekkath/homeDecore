@@ -144,6 +144,7 @@ try {
 
 const unblockCategory = async (req, res) => {
 try {
+  console.log("inside unblock category")
  const categoryId = req.params.id;
  const category = await Category.findByIdAndUpdate(categoryId, { isBlocked: false });
 
