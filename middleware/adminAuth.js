@@ -4,22 +4,27 @@ const isLogin = async (req, res, next) => {
       return next();
     }
 
-    // Handle AJAX requests
-    if (req.xhr) {
-      return res
-        .status(401)
-        .json({ success: false, message: "Unauthorized" });
+    const isAjax =
+      req.headers["x-requested-with"] === "XMLHttpRequest" ||
+      req.headers.accept?.includes("application/json");
+
+    if (isAjax) {
+      return res.status(401).json({
+        success: false,
+        message: "Unauthorized",
+      });
     }
 
-    // Handle normal browser requests
     return res.redirect("/admin");
   } catch (error) {
     console.error("isLogin middleware error:", error);
-    return res
-      .status(500)
-      .json({ success: false, message: "Server error" });
+    return res.status(500).json({
+      success: false,
+      message: "Server error",
+    });
   }
 };
+
 
 
 

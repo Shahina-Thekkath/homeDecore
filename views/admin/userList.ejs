@@ -638,56 +638,60 @@
       }
 
       function unblock(id) {
-        Swal.fire({
-          title: "Are you sure?",
-          text: "You won't be able to revert this!",
-          icon: "warning",
-          showCancelButton: true,
-          confirmButtonColor: "#d33",
-          confirmButtonText: "yes, unblock it!",
-        }).then((result) => {
-          if (result.isConfirmed) {
-            $.ajax({
-              type: "PUT",
-              url: `/admin/unblock/${id}`,
-              success: function (response) {
-                if (response.success) {
-                  Swal.fire({
-                    icon: "success",
-                    title: "Unblocked!",
-                    text: "User has been unblocked",
-                    showConfirmButton: false,
-                    timer: 1500,
-                  }).then(() => location.reload(true));
-                } else {
-                  Swal.fire({
-                    icon: "error",
-                    title: "Error",
-                    text: response.message,
-                  });
-                }
-              },
-              error: function () {
-                if (xhr.status === 401) {
-                Swal.fire({
-                  icon: "error",
-                  title: "Session expired",
-                  text: "Please login again",
-                }).then(() => {
-                  window.location.href = "/admin";
-                });
-              } else {
-                  Swal.fire({
-                              icon: "error",
-                              title: "Error",
-                              text: "An error occurred while unblocking the user",
-                            });
-                 } 
-              },
-            });
-          }
-        });
-      }
+          Swal.fire({
+            title: "Are you sure?",
+            text: "You won't be able to revert this!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#d33",
+            confirmButtonText: "Yes, unblock it!",
+          }).then((result) => {
+            if (result.isConfirmed) {
+              $.ajax({
+                type: "PUT",
+                url: `/admin/unblock/${id}`,
+                success: function (response) {
+                  if (response.success) {
+                    Swal.fire({
+                      icon: "success",
+                      title: "Unblocked!",
+                      text: "User has been unblocked",
+                      showConfirmButton: false,
+                      timer: 1500,
+                    }).then(() => location.reload(true));
+                  } else {
+                    Swal.fire({
+                      icon: "error",
+                      title: "Error",
+                      text: response.message || "Unblock failed",
+                    });
+                  }
+                },
+                error: function (xhr, status, error) {
+                  console.error("Unblock AJAX error:", status, error);
+                  console.error("Response:", xhr.responseText);
+
+                  if (xhr.status === 401) {
+                    Swal.fire({
+                      icon: "error",
+                      title: "Session expired",
+                      text: "Please login again",
+                    }).then(() => {
+                      window.location.href = "/admin";
+                    });
+                  } else {
+                    Swal.fire({
+                      icon: "error",
+                      title: "Error",
+                      text: "An error occurred while unblocking the user",
+                    });
+                  }
+                },
+              });
+            }
+          });
+        }
+
 
           function message(msg){
             if(msg){
