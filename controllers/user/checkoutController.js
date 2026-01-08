@@ -49,6 +49,8 @@ const loadCheckout = async (req, res) => {
         coupon.usersUsed.includes(userId)
     );
 
+    console.log("coupons", allCoupons);
+    
 
 
 
