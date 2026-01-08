@@ -616,23 +616,22 @@
                 }
               },
               error: function (xhr) {
-  if (xhr.status === 401) {
-    Swal.fire({
-      icon: "error",
-      title: "Session expired",
-      text: "Please login again",
-    }).then(() => {
-      window.location.href = "/admin";
-    });
-  } else {
-    Swal.fire({
-      icon: "error",
-      title: "Error",
-      text: "Something went wrong",
-    });
-  }
-}
-,
+                if (xhr.status === 401) {
+                  Swal.fire({
+                    icon: "error",
+                    title: "Session expired",
+                    text: "Please login again",
+                  }).then(() => {
+                    window.location.href = "/admin";
+                  });
+                } else {
+                  Swal.fire({
+                    icon: "error",
+                    title: "Error",
+                    text: "Something went wrong",
+                  });
+                }
+              },
             });
           }
         });
@@ -669,11 +668,21 @@
                 }
               },
               error: function () {
+                if (xhr.status === 401) {
                 Swal.fire({
                   icon: "error",
-                  title: "Error",
-                  text: "An error occurred while unblocking the user",
+                  title: "Session expired",
+                  text: "Please login again",
+                }).then(() => {
+                  window.location.href = "/admin";
                 });
+              } else {
+                  Swal.fire({
+                              icon: "error",
+                              title: "Error",
+                              text: "An error occurred while unblocking the user",
+                            });
+                 } 
               },
             });
           }
