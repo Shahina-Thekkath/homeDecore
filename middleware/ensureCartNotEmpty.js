@@ -1,23 +1,21 @@
-const Cart = require("../models/cartSchema");
+import Cart from "../models/cartSchema.js";
 
-module.exports = async (req, res, next) => {
-    try {
-        const userId = req.session.user?._id || req.session.passport?.user;
+export default async (req, res, next) => {
+  try {
+    const userId = req.session.user?._id || req.session.passport?.user;
 
-    if(!userId) {
-        return res.redirect("/login");
+    if (!userId) {
+      return res.redirect("/login");
     }
 
-    const cart = await Cart.findOne({userId});
+    const cart = await Cart.findOne({ userId });
 
-    if(!cart || cart.items.length === 0) {
-        return res.redirect("/")
+    if (!cart || cart.items.length === 0) {
+      return res.redirect("/");
     }
 
     next();
-    } catch (error) {
-        console.error("ensureCartNotEmpty middleware crashed:", error);
-        
-    }
-    
-}
+  } catch (error) {
+    console.error("ensureCartNotEmpty middleware crashed:", error);
+  }
+};

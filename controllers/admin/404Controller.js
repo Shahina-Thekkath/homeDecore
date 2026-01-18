@@ -1,10 +1,12 @@
+import logger from '../../utils/logger.js';
+
 const pageError = (req, res) =>{
     try {
         res.render("404Error");
     } catch (error) {
-        console.error("page not found");
+        logger.error("Failed to render 404 page", error);
         res.redirect("/admin/pageerror");
     }
 }
 
-module.exports= {pageError};
+export default { pageError };

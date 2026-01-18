@@ -1,3 +1,5 @@
+import logger from "../../utils/logger.js";
+
 const logout = async(req, res) =>{
     try {
         if(req.session) {
@@ -15,9 +17,9 @@ const logout = async(req, res) =>{
         
         
     } catch (error) {
-        console.error("logout Error", error);
+        logger.error("logout Error", error);
         res.redirect("/pageNotFound");
     }
 }
 
-module.exports = {logout};
+export default {logout};

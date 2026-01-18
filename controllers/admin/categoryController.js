@@ -1,5 +1,6 @@
-const Category = require("../../models/categorySchema");
-const { STATUS_CODES, MESSAGES } = require("../../constants");
+import Category from "../../models/categorySchema.js";
+import { STATUS_CODES, MESSAGES } from "../../constants/index.js";
+import logger from '../../utils/logger.js';
 
 const categoryInfo = async (req, res) => {
   try {
@@ -33,7 +34,7 @@ const categoryInfo = async (req, res) => {
     
     });
   } catch (error) {
-    console.error(error);
+    logger.error(error);
     res.redirect("/pageerror");
   }
 };
@@ -81,7 +82,7 @@ const getEditCategory = async (req, res) => {
       category, // Pass category data to the EJS template
     });
   } catch (err) {
-    console.error("Error fetching category:", err);
+    logger.error("Error fetching category:", err);
     res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).render("404Error");
   }
 };
@@ -116,7 +117,7 @@ const editCategory = async (req, res) => {
       return res.json({ ok: true });
     }
   } catch (error) {
-    console.error("Error updating category:", error);
+    logger.error("Error updating category:", error);
     res.render("editCategory", {
       errorMessage: MESSAGES.CATEGORY.UPDATE_ERROR,
       category: req.body, // Retain entered data for user convenience
@@ -136,7 +137,7 @@ try {
  }
  res.status(STATUS_CODES.OK).json({ success: true });
 } catch (error) {
- console.error("Error blocking category:", error);
+ logger.error("Error blocking category:", error);
  res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ success: false });
 }
 };
@@ -144,7 +145,6 @@ try {
 
 const unblockCategory = async (req, res) => {
 try {
-  console.log("inside unblock category")
  const categoryId = req.params.id;
  const category = await Category.findByIdAndUpdate(categoryId, { isBlocked: false });
 
@@ -153,14 +153,12 @@ try {
  }
  res.status(STATUS_CODES.OK).json({ success: true});
 } catch (error) {
- console.error("Error unblocking category:", error);
+ logger.error("Error unblocking category:", error);
  res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ success: false });
 }
 }
 
-
-
-module.exports = {
+export default {
   categoryInfo,
   addCategory,
   getAddCategory,

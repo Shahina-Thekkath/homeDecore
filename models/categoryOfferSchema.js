@@ -1,32 +1,35 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
-const categoryOfferSchema = new mongoose.Schema({
-  categoryId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Category",
-    required: true
+const categoryOfferSchema = new mongoose.Schema(
+  {
+    categoryId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Category",
+      required: true,
+    },
+    discountType: {
+      type: String,
+      enum: ["flat", "percentage"],
+      required: true,
+    },
+    discountAmount: {
+      type: Number,
+      required: true,
+    },
+    startDate: {
+      type: Date,
+      required: true,
+    },
+    endDate: {
+      type: Date,
+      required: true,
+    },
+    isActive: {
+      type: Boolean,
+      default: true,
+    },
   },
-  discountType: {
-    type: String,
-    enum: ["flat", "percentage"],
-    required: true
-  },
-  discountAmount: {
-    type: Number,
-    required: true
-  },
-  startDate: {
-    type: Date,
-    required: true
-  },
-  endDate: {
-    type: Date,
-    required: true
-  },
-  isActive: {
-    type: Boolean,
-    default: true
-  }
-}, { timestamps: true });
+  { timestamps: true }
+);
 
-module.exports = mongoose.model("CategoryOffer", categoryOfferSchema);
+export default mongoose.model("CategoryOffer", categoryOfferSchema);

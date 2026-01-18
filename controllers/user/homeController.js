@@ -1,10 +1,9 @@
 
-const Product = require("../../models/productSchema");
-const CategoryOffer = require('../../models/categoryOfferSchema');
-const ProductOffer = require('../../models/productOfferSchema');
-const { STATUS_CODES, MESSAGES } = require("../../constants");
-
-
+import Product from "../../models/productSchema.js";
+import CategoryOffer from "../../models/categoryOfferSchema.js";
+import ProductOffer from "../../models/productOfferSchema.js";
+import { STATUS_CODES, MESSAGES } from "../../constants/index.js";
+import logger from "../../utils/logger.js";
 
 const loadHomepage = async (req, res) => {
   try {
@@ -124,15 +123,14 @@ const loadHomepage = async (req, res) => {
       return res.render("home", { products: updatedProducts });
     }
   } catch (error) {
-    console.error("Error loading home page:", error);
+    logger.error("Error loading home page:", error);
     res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).send(MESSAGES.GENERIC.SERVER_ERROR);
   }
 };
 
 
 
-module.exports = {
-    loadHomepage
+export default { loadHomepage };
     
-}
+
     

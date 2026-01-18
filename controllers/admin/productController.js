@@ -1,15 +1,13 @@
-const Product = require("../../models/productSchema");
-const Category = require("../../models/categorySchema");
-const fs = require("fs");
-const mongoose = require("mongoose");
-const cloudinary = require('cloudinary');
-const { STATUS_CODES, MESSAGES } = require("../../constants");
-
+import Product from "../../models/productSchema.js";
+import Category from "../../models/categorySchema.js";
+import cloudinary from "cloudinary";
+import { STATUS_CODES, MESSAGES } from "../../constants/index.js";
+import logger from "../../utils/logger.js";
 
 const getProductAddPage = async (req, res) => {
   try {
-    const category = await Category.find({isBlocked: false});
-    
+    const category = await Category.find({ isBlocked: false });
+
     res.render("product-add", { category });
   } catch (error) {
     res.status(STATUS_CODES.NOT_FOUND).send(MESSAGES.GENERIC.PAGE_NOT_FOUND);
@@ -21,13 +19,16 @@ const addProducts = async (req, res) => {
     const products = req.body;
     const errors = {};
 
-     if (!products.productName || products.productName.trim().length < 3) {
+    if (!products.productName || products.productName.trim().length < 3) {
       errors.productName = "Product name must be at least 3 characters long.";
     } else {
-      const existingProduct = await Product.findOne({name: products.productName.trim()});
+      const existingProduct = await Product.findOne({
+        name: products.productName.trim(),
+      });
 
-      if(existingProduct) {
-        errors.productName = "Product already exists, try adding a new product.";
+      if (existingProduct) {
+        errors.productName =
+          "Product already exists, try adding a new product.";
       }
     }
 
@@ -37,12 +38,20 @@ const addProducts = async (req, res) => {
     }
 
     // Price
-    if (!products.price || isNaN(products.price) || Number(products.price) <= 0) {
+    if (
+      !products.price ||
+      isNaN(products.price) ||
+      Number(products.price) <= 0
+    ) {
       errors.price = "Price must be a valid number greater than 0.";
     }
 
     // Quantity
-    if (!products.quantity || isNaN(products.quantity) || Number(products.quantity) < 0) {
+    if (
+      !products.quantity ||
+      isNaN(products.quantity) ||
+      Number(products.quantity) < 0
+    ) {
       errors.quantity = "Quantity must be a non-negative number.";
     }
 
@@ -52,7 +61,8 @@ const addProducts = async (req, res) => {
       products.description.length < 10 ||
       products.description.length > 1000
     ) {
-      errors.description = "Description should be between 10 - 1000 characters.";
+      errors.description =
+        "Description should be between 10 - 1000 characters.";
     }
 
     // Images
@@ -64,66 +74,68 @@ const addProducts = async (req, res) => {
       return res.status(STATUS_CODES.BAD_REQUEST).json({ errors });
     }
 
-    
     let uploadedImages = [];
     if (req.files && req.files.length > 0) {
       const uploadResults = await Promise.all(
         req.files.map((file) => {
-          return cloudinary.uploader.upload(file.path, {folder: 'products'})
+          return cloudinary.uploader.upload(file.path, { folder: "products" });
         })
       );
-     
+
       uploadedImages = uploadResults.map((r) => ({
         public_id: r.public_id,
-        url: r.secure_url
+        url: r.secure_url,
       }));
-
-
-
     }
-    
+
     const newProduct = new Product({
       name: products.productName,
       description: products.description,
-      specification:  products.specifications.map(spec =>({key: spec.key, value: spec.value})),
+      specification: products.specifications.map((spec) => ({
+        key: spec.key,
+        value: spec.value,
+      })),
       categoryId: products.categoryId,
       price: products.price,
       createdOn: new Date(),
       quantity: products.quantity,
       image: uploadedImages,
-      status: "Available"
+      status: "Available",
     });
-   
+
     await newProduct.save();
     return res.json({ message: MESSAGES.PRODUCT.ADDED_SUCCESS });
   } catch (error) {
-    console.error("Error saving product", error);
+    logger.error("Error saving product", error);
 
     if (error.code === 11000) {
-    return res.status(409).json({ 
-      success: false, 
-      message: "Product name already exists" 
-    });
-  }
-  
+      return res.status(409).json({
+        success: false,
+        message: "Product name already exists",
+      });
+    }
+
     return res.redirect("/admin/pageerror");
   }
 };
 
 const getAllProducts = async (req, res) => {
   try {
-    const productData =  await Product.find({isBlocked: false}).populate("categoryId", "name");
+    const productData = await Product.find({ isBlocked: false }).populate(
+      "categoryId",
+      "name"
+    );
 
-    const categories = await Category.find({isBlocked: false}, 'name');
-    const productNames = await Product.find({isBlocked: false}, 'name');
+    const categories = await Category.find({ isBlocked: false }, "name");
+    const productNames = await Product.find({ isBlocked: false }, "name");
 
-    res.render("productList", { 
-                data: productData,
-                categories,
-                productNames
-     });
+    res.render("productList", {
+      data: productData,
+      categories,
+      productNames,
+    });
   } catch (error) {
-    console.error("Error loading productList: ", error);
+    logger.error("Error loading productList: ", error);
     res.redirect("/pageerror");
   }
 };
@@ -134,7 +146,7 @@ const getEditProduct = async (req, res) => {
 
     const product = await Product.findOne({ _id: id });
     const category = await Category.find({});
-  
+
     //when done normally
     res.render("product-edit", {
       category,
@@ -144,7 +156,7 @@ const getEditProduct = async (req, res) => {
     //when doing with fetch()
   } catch (error) {
     //     res.redirect("/pageerror");
-    console.error("Error editing product", error);
+    logger.error("Error editing product", error);
     res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
       success: false,
       message: MESSAGES.PRODUCT.FETCH_FAILED,
@@ -152,8 +164,6 @@ const getEditProduct = async (req, res) => {
     });
   }
 };
-
-
 
 const updateProduct = async (req, res) => {
   try {
@@ -164,17 +174,20 @@ const updateProduct = async (req, res) => {
       price,
       quantity,
       description,
-      specifications = [] ,
+      specifications = [],
       replaceImageIndex,
       deletedImages,
     } = req.body;
-    
 
-    let filteredSpecifications = specifications.filter(spec => spec && spec.key && spec.value);
+    let filteredSpecifications = specifications.filter(
+      (spec) => spec && spec.key && spec.value
+    );
 
     const product = await Product.findById(productId);
     if (!product) {
-      return res.status(STATUS_CODES.NOT_FOUND).send(MESSAGES.PRODUCT.NOT_FOUND);
+      return res
+        .status(STATUS_CODES.NOT_FOUND)
+        .send(MESSAGES.PRODUCT.NOT_FOUND);
     }
 
     product.name = productName;
@@ -182,7 +195,7 @@ const updateProduct = async (req, res) => {
     product.price = price;
     product.quantity = quantity;
     product.description = description;
-    product.specification = filteredSpecifications ;
+    product.specification = filteredSpecifications;
 
     if (req.files && req.files.length > 0) {
       const newImages = req.files.map((file) => ({
@@ -190,7 +203,7 @@ const updateProduct = async (req, res) => {
         public_id: file.filename || null, // store cloudinary ID if available
       }));
 
-     if (
+      if (
         replaceImageIndex !== undefined &&
         replaceImageIndex >= 0 &&
         replaceImageIndex < product.image.length
@@ -210,7 +223,10 @@ const updateProduct = async (req, res) => {
     if (deletedImages) {
       const deletedIndices = Array.isArray(deletedImages)
         ? deletedImages
-        : deletedImages.split(",").map(Number).filter(index => !isNaN(index));
+        : deletedImages
+            .split(",")
+            .map(Number)
+            .filter((index) => !isNaN(index));
 
       for (const index of deletedIndices) {
         if (index >= 0 && index < product.image.length) {
@@ -228,92 +244,88 @@ const updateProduct = async (req, res) => {
     await product.save();
     res.redirect("/admin/productList/?success=Product Updated Successfully");
   } catch (error) {
-    console.error(error);
-    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).send(MESSAGES.GENERIC.SERVER_ERROR);
+    logger.error(error);
+    res
+      .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
+      .send(MESSAGES.GENERIC.SERVER_ERROR);
   }
 };
 
-
-
-const removeProduct  = async (req, res) => {
-    try {
-        const productId = req.params.id;
-
-      
-        const product = await Product.findById(productId);
-        if (!product) return res.status(STATUS_CODES.NOT_FOUND).json({ success: false, message: MESSAGES.PRODUCT.NOT_FOUND });
-
-        product.isBlocked = !product.isBlocked; // toggle
-        await product.save();
-
-        res.status(STATUS_CODES.OK).json({ success: true, message: MESSAGES.PRODUCT.DELETED_SUCCESS });
-    } catch (error) {
-        console.error('Internal server error', error);
-        res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ success: false });
-    }
-};
-
-
-const filterProducts = async (req, res) =>{
+const removeProduct = async (req, res) => {
   try {
-  
-         const {product = null, category = null, other} = req.query;
-         
+    const productId = req.params.id;
 
-         const filter = {};
-         if(product) filter.name = { $regex: product, $options: 'i' };
-         if(category) filter.categoryId = category;
-         
+    const product = await Product.findById(productId);
+    if (!product)
+      return res
+        .status(STATUS_CODES.NOT_FOUND)
+        .json({ success: false, message: MESSAGES.PRODUCT.NOT_FOUND });
 
-          //apply sort based on dropdown selections
-          // if(priceOrder === 'asc') query = query.sort({ price: 1 });
-          // if(priceOrder === 'desc') query = query.sort({ price: -1 });
- 
-          let query = {};
-           switch(other){
-            case 'desc':
-                    query = { price: 1 };
-                    break;
-              case 'asc':
-                      query = { price: -1 };
-                      break;
-                          
-             case 'alphabetical-asc':
-                               query = { name: -1 };
-                               break;
-             case 'alphabetical-desc':
-                               query = { name: 1 };
-                               break;
-             case 'new-arrivals':
-                                 query = { createdAt: 1 };
-                                 break;
-            default:
-                    query = {};
-                           
- }    
+    product.isBlocked = !product.isBlocked; // toggle
+    await product.save();
 
-         let products = await Product.find(filter).sort(query).populate('categoryId');
-                
-                
-                 res.status(STATUS_CODES.OK).json({success: true, data: products});
-
+    res
+      .status(STATUS_CODES.OK)
+      .json({ success: true, message: MESSAGES.PRODUCT.DELETED_SUCCESS });
   } catch (error) {
-       console.error('Error filtering products: ', error);
-       res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({success: false, message: MESSAGES.PRODUCT.FILTER_FAILED});
+    logger.error("Internal server error", error);
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ success: false });
   }
 };
 
+const filterProducts = async (req, res) => {
+  try {
+    const { product = null, category = null, other } = req.query;
 
+    const filter = {};
+    if (product) filter.name = { $regex: product, $options: "i" };
+    if (category) filter.categoryId = category;
 
+    //apply sort based on dropdown selections
+    // if(priceOrder === 'asc') query = query.sort({ price: 1 });
+    // if(priceOrder === 'desc') query = query.sort({ price: -1 });
 
+    let query = {};
+    switch (other) {
+      case "desc":
+        query = { price: 1 };
+        break;
+      case "asc":
+        query = { price: -1 };
+        break;
 
-module.exports = {
+      case "alphabetical-asc":
+        query = { name: -1 };
+        break;
+      case "alphabetical-desc":
+        query = { name: 1 };
+        break;
+      case "new-arrivals":
+        query = { createdAt: 1 };
+        break;
+      default:
+        query = {};
+    }
+
+    let products = await Product.find(filter)
+      .sort(query)
+      .populate("categoryId");
+
+    res.status(STATUS_CODES.OK).json({ success: true, data: products });
+  } catch (error) {
+    logger.error("Error filtering products: ", error);
+    res
+      .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
+      .json({ success: false, message: MESSAGES.PRODUCT.FILTER_FAILED });
+  }
+};
+
+export default {
   getProductAddPage,
   addProducts,
   getAllProducts,
   getEditProduct,
   updateProduct,
   removeProduct,
-  filterProducts
-  
+  filterProducts,
 };

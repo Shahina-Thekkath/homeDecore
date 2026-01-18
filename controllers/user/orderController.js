@@ -1,65 +1,72 @@
-const Cart = require("../../models/cartSchema");
-const session = require("express-session");
-const User = require("../../models/userSchma");
-const Product = require("../../models/productSchema");
-const mongoose = require("mongoose");
-const Order = require("../../models/orderSchema");
-const razorpay = require("../../config/razorpayInstance");
-const crypto = require("crypto");
-const qs = require("qs");
-const Coupon = require("../../models/couponSchema");
-const { log } = require("console");
-const Wallet = require('../../models/walletSchema');
-const axios = require("axios");
-const dotenv = require("dotenv");
-const { doesNotThrow } = require("assert");
-const { STATUS_CODES, MESSAGES } = require('../../constants');
+import Cart from "../../models/cartSchema.js";
+import session from "express-session";
+import User from "../../models/userSchma.js";
+import Product from "../../models/productSchema.js";
+import Order from "../../models/orderSchema.js";
+import razorpay from "../../config/razorpayInstance.js";
+import crypto from "crypto";
+import qs from "qs";
+import Coupon from "../../models/couponSchema.js";
+import Wallet from "../../models/walletSchema.js";
+import axios from "axios";
+import dotenv from "dotenv";
+import { doesNotThrow } from "assert";
+import { STATUS_CODES, MESSAGES } from "../../constants/index.js";
+import logger from "../../utils/logger.js";
+
 dotenv.config();
 
 const WAREHOUSE_CITY = process.env.WAREHOUSE_CITY;
 const ORS_API_KEY = process.env.ORS_API_KEY;
 
 async function getCoordinates(city) {
-   const url = `https://api.openrouteservice.org/geocode/search`;
-   try {
+  const url = `https://api.openrouteservice.org/geocode/search`;
+  try {
     const { data } = await axios.get(url, {
-      params: { api_key: ORS_API_KEY, text: ` ${city}, Kerala, India`, 'boundary.country': 'IN' }
+      params: {
+        api_key: ORS_API_KEY,
+        text: ` ${city}, Kerala, India`,
+        "boundary.country": "IN",
+      },
     });
 
     if (!data.features || data.features.length === 0) {
-        throw new Error('No coordinates found for this city.');
+      throw new Error("No coordinates found for this city.");
     }
 
     return data.features[0].geometry.coordinates; // or swap for [lat, lng]
-} catch (err) {
-    console.error(`Failed to fetch coordinates for city ${city}:`, err.message);
+  } catch (err) {
+    logger.error(`Failed to fetch coordinates for city ${city}:`, err.message);
     throw err;
+  }
 }
-}
- 
+
 // Calculate delivery charge
 
 const calculateDeliveryCharge = async (req, res) => {
   try {
     const { city } = req.body;
 
-    if(!city) {
-      return res.status(STATUS_CODES.BAD_REQUEST).json({ success: false, message: MESSAGES.ADDRESS.CITY_REQUIRED });
+    if (!city) {
+      return res
+        .status(STATUS_CODES.BAD_REQUEST)
+        .json({ success: false, message: MESSAGES.ADDRESS.CITY_REQUIRED });
     }
 
     const warehouseCoords = await getCoordinates(WAREHOUSE_CITY);
     const userCoords = await getCoordinates(city);
 
-
     const matrixRes = await axios.post(
       `https://api.openrouteservice.org/v2/matrix/driving-car`,
-      { locations: [warehouseCoords, userCoords],
-        metrics: ['distance']
-       },
-      { headers: { Authorization: `Bearer ${ORS_API_KEY}`, 'Content-Type': 'application/json' } }
-
+      { locations: [warehouseCoords, userCoords], metrics: ["distance"] },
+      {
+        headers: {
+          Authorization: `Bearer ${ORS_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+      }
     );
-    
+
     const distanceMeters = matrixRes.data.distances[0][1];
     const distanceKm = (distanceMeters / 1000).toFixed(2);
 
@@ -72,9 +79,10 @@ const calculateDeliveryCharge = async (req, res) => {
 
     res.json({ success: true, distanceKm, deliveryCharge });
   } catch (error) {
-    console.error('Delivery charge error:', error);
-    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ success: false, message: MESSAGES.DELIVERY.CALCULATE_FAILED });
-    
+    logger.error("Delivery charge error:", error);
+    res
+      .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
+      .json({ success: false, message: MESSAGES.DELIVERY.CALCULATE_FAILED });
   }
 };
 
@@ -91,8 +99,6 @@ const saveOrderFromSerializedData = async (
 
     const { cartItems, shippingAddress, payment, grandTotal } = parsedFormData;
 
-    
-
     const orderItems = cartItems.map((item) => ({
       productId: item.id,
       name: item.name,
@@ -102,12 +108,19 @@ const saveOrderFromSerializedData = async (
       subtotal: parseFloat(item.subtotal),
     }));
 
-    // Calculate offer discount (sum of original - discounted per product) 
-      const offerDiscountTotal = orderItems.reduce((sum, item) => {
-        return sum + (parseFloat(item.price) - parseFloat(item.discountedPrice)) * item.quantity;
-      }, 0);
+    // Calculate offer discount (sum of original - discounted per product)
+    const offerDiscountTotal = orderItems.reduce((sum, item) => {
+      return (
+        sum +
+        (parseFloat(item.price) - parseFloat(item.discountedPrice)) *
+          item.quantity
+      );
+    }, 0);
 
-      const finalTotal = parseFloat(grandTotal) + parseFloat(deliveryCharge) - parseFloat(couponDiscount) || 0;   // the coupon discount is being reduced
+    const finalTotal =
+      parseFloat(grandTotal) +
+        parseFloat(deliveryCharge) -
+        parseFloat(couponDiscount) || 0; // the coupon discount is being reduced
 
     const newOrder = new Order({
       userId: userId,
@@ -120,13 +133,13 @@ const saveOrderFromSerializedData = async (
       discountAmount: parseFloat(offerDiscountTotal) || 0,
       deliveryCharge,
       couponCode: couponCode || null,
-      couponDiscount: couponDiscount || 0
+      couponDiscount: couponDiscount || 0,
     });
 
     let savedOrder = await newOrder.save();
 
     if (!savedOrder || !savedOrder._id) {
-      console.error("Order saving failed!");
+      logger.error("Order saving failed!");
       throw new Error("Order save failed");
     }
 
@@ -159,10 +172,10 @@ const saveOrderFromSerializedData = async (
       createdAt: new Date(),
       discountAmount: parseFloat(offerDiscountTotal) || 0,
       couponCode: couponCode || null,
-      couponDiscount: couponDiscount || 0
+      couponDiscount: couponDiscount || 0,
     };
   } catch (error) {
-    console.error("Error Deserializing:", error);
+    logger.error("Error Deserializing:", error);
     throw error;
   }
 };
@@ -171,23 +184,28 @@ const saveOrderFromSerializedData = async (
 const saveOrderInSession = async (req, res) => {
   try {
     const userId = req.session.user?._id;
-    const { cartItems, grandTotal, shippingAddress, payment } = req.body;   // here the grandTotal is the amount after the  discount is applied if any but in cartSchema the discountedPrice and price are stored seperately
-    
+    const { cartItems, grandTotal, shippingAddress, payment } = req.body; // here the grandTotal is the amount after the  discount is applied if any but in cartSchema the discountedPrice and price are stored seperately
 
     const itemsArray = Array.isArray(cartItems)
       ? cartItems
       : Object.values(cartItems);
 
-      // Calculate offer discount (sum of original - discounted per product) 
-      const offerDiscountTotal = itemsArray.reduce((sum, item) => {
-        return sum + (parseFloat(item.price) - parseFloat(item.discountedPrice)) * item.quantity;
-      }, 0);
+    // Calculate offer discount (sum of original - discounted per product)
+    const offerDiscountTotal = itemsArray.reduce((sum, item) => {
+      return (
+        sum +
+        (parseFloat(item.price) - parseFloat(item.discountedPrice)) *
+          item.quantity
+      );
+    }, 0);
 
-      // coupon discount from session (if applied)
-      const couponDiscount = req.session.coupon?.discount || 0;
-      const deliveryCharge = req.session.deliveryCharge || 0;
-      const finalTotal = parseFloat(grandTotal) + parseFloat(deliveryCharge) - parseFloat(couponDiscount);    // grandTotal <= checkout.ejs = #orderForm <= cartItems = checkoutController
-
+    // coupon discount from session (if applied)
+    const couponDiscount = req.session.coupon?.discount || 0;
+    const deliveryCharge = req.session.deliveryCharge || 0;
+    const finalTotal =
+      parseFloat(grandTotal) +
+      parseFloat(deliveryCharge) -
+      parseFloat(couponDiscount); // grandTotal <= checkout.ejs = #orderForm <= cartItems = checkoutController
 
     // Format the order details
 
@@ -207,9 +225,9 @@ const saveOrderInSession = async (req, res) => {
       shippingAddress: shippingAddress, // Parse the selected address if passed as JSON
       paymentMethod: payment,
       createdAt: new Date(),
-      discountAmount: parseFloat(offerDiscountTotal) || 0,  // req.session.coupon?.discount || 0;  ==> need to be checked
+      discountAmount: parseFloat(offerDiscountTotal) || 0, // req.session.coupon?.discount || 0;  ==> need to be checked
       couponCode: req.session.coupon?.code || null,
-      couponDiscount: parseFloat(couponDiscount)
+      couponDiscount: parseFloat(couponDiscount),
     };
 
     req.session.order = order;
@@ -227,7 +245,6 @@ const saveOrderInSession = async (req, res) => {
       );
     }
 
-
     const couponCode = req.session.coupon?.code;
     if (couponCode) {
       const coupon = await Coupon.findOne({
@@ -236,23 +253,24 @@ const saveOrderInSession = async (req, res) => {
 
       if (coupon && !coupon.usersUsed.includes(userId)) {
         // Prevent double-use by the same user
-        
-          coupon.usersUsed.push(userId);
-          coupon.usedCount += 1;
-          await coupon.save();
-        
+
+        coupon.usersUsed.push(userId);
+        coupon.usedCount += 1;
+        await coupon.save();
       }
     }
 
     await Cart.findOneAndUpdate(
-      { userId: req.session.user?._id || req.session.passport._id},
+      { userId: req.session.user?._id || req.session.passport._id },
       { $set: { items: [] } }
     );
 
     return res.json({ success: true });
   } catch (error) {
-    console.error("Error saving order in session:", error);
-    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ message: MESSAGES.ORDER.SAVE_FAILED });
+    logger.error("Error saving order in session:", error);
+    res
+      .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
+      .json({ message: MESSAGES.ORDER.SAVE_FAILED });
   }
 };
 
@@ -264,7 +282,7 @@ const getOrderSuccess = (req, res) => {
     const paymentMethod = req.session.paymentMethod;
 
     if (!order) {
-      console.error("order success Error:", order);
+      logger.error("order success Error:", order);
       return res.redirect("/checkout"); // Redirect to checkout if no order in session
     }
 
@@ -275,15 +293,18 @@ const getOrderSuccess = (req, res) => {
     req.session.coupon = null;
     req.session.deliveryCharge = 0;
 
-    const grandTotal = order.products.reduce((sum, item) => sum + (item.discountedPrice * item.quantity), 0);
-
-
+    const grandTotal = order.products.reduce(
+      (sum, item) => sum + item.discountedPrice * item.quantity,
+      0
+    );
 
     // Render the success page with order details
     res.render("orderSuccess", { order, paymentMethod, grandTotal });
   } catch (error) {
-    console.error("Error displaying order success page:", error);
-    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).send(MESSAGES.ORDER.SUCCESS_PAGE_FAILED);
+    logger.error("Error displaying order success page:", error);
+    res
+      .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
+      .send(MESSAGES.ORDER.SUCCESS_PAGE_FAILED);
   }
 };
 
@@ -293,21 +314,38 @@ const saveWalletOrder = async (req, res) => {
     const { cartItems, grandTotal, shippingAddress, payment } = req.body;
 
     const wallet = await Wallet.findOne({ userId });
-    if (!wallet) return res.status(STATUS_CODES.BAD_REQUEST).json({ success: false, message: MESSAGES.WALLET.NOT_FOUND });
+    if (!wallet)
+      return res
+        .status(STATUS_CODES.BAD_REQUEST)
+        .json({ success: false, message: MESSAGES.WALLET.NOT_FOUND });
 
-    const itemsArray = Array.isArray(cartItems) ? cartItems : Object.values(cartItems);
+    const itemsArray = Array.isArray(cartItems)
+      ? cartItems
+      : Object.values(cartItems);
 
     const offerDiscountTotal = itemsArray.reduce((sum, item) => {
-      return sum + (parseFloat(item.price) - parseFloat(item.discountedPrice)) * item.quantity;
+      return (
+        sum +
+        (parseFloat(item.price) - parseFloat(item.discountedPrice)) *
+          item.quantity
+      );
     }, 0);
 
     const couponDiscount = req.session.coupon?.discount || 0;
     const deliveryCharge = req.session.deliveryCharge || 0;
-    const finalTotal = parseFloat(grandTotal) + parseFloat(deliveryCharge) - parseFloat(couponDiscount);
+    const finalTotal =
+      parseFloat(grandTotal) +
+      parseFloat(deliveryCharge) -
+      parseFloat(couponDiscount);
 
     // Check wallet balance
     if (wallet.balance < finalTotal) {
-      return res.status(STATUS_CODES.BAD_REQUEST).json({ success: false, message: MESSAGES.WALLET.INSUFFICIENT_BALANCE });
+      return res
+        .status(STATUS_CODES.BAD_REQUEST)
+        .json({
+          success: false,
+          message: MESSAGES.WALLET.INSUFFICIENT_BALANCE,
+        });
     }
 
     // Deduct from wallet
@@ -340,7 +378,7 @@ const saveWalletOrder = async (req, res) => {
       discountAmount: parseFloat(offerDiscountTotal) || 0,
       couponCode: req.session.coupon?.code || null,
       couponDiscount: parseFloat(couponDiscount),
-      isPaid: true
+      isPaid: true,
     };
 
     req.session.order = order;
@@ -361,7 +399,9 @@ const saveWalletOrder = async (req, res) => {
     // Mark coupon as used
     const couponCode = req.session.coupon?.code;
     if (couponCode) {
-      const coupon = await Coupon.findOne({ code: couponCode.trim().toUpperCase() });
+      const coupon = await Coupon.findOne({
+        code: couponCode.trim().toUpperCase(),
+      });
       if (coupon && !coupon.usersUsed.includes(userId)) {
         coupon.usersUsed.push(userId);
         coupon.usedCount += 1;
@@ -378,15 +418,15 @@ const saveWalletOrder = async (req, res) => {
 
     res.json({ success: true });
   } catch (error) {
-    console.error("Error processing wallet order:", error);
-    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ success: false, message: MESSAGES.WALLET.PAYMENT_FAILED });
+    logger.error("Error processing wallet order:", error);
+    res
+      .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
+      .json({ success: false, message: MESSAGES.WALLET.PAYMENT_FAILED });
   }
 };
 
-
 const getOrdersPage = async (req, res) => {
   try {
-
     const userId = req.session.user?._id || req.session.passport._id;
 
     const user = await User.findById(userId);
@@ -426,10 +466,18 @@ const getOrdersPage = async (req, res) => {
       .limit(limit)
       .populate("products.productId", "name image price");
 
-    res.render("userOrder", { orders, user, filter, currentPage: page, totalPages });
+    res.render("userOrder", {
+      orders,
+      user,
+      filter,
+      currentPage: page,
+      totalPages,
+    });
   } catch (error) {
-    console.error("Error fetching orders:", error);
-    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).send(MESSAGES.ORDER.LOAD_FAILED);
+    logger.error("Error fetching orders:", error);
+    res
+      .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
+      .send(MESSAGES.ORDER.LOAD_FAILED);
   }
 };
 
@@ -438,7 +486,6 @@ const getOrderDetails = async (req, res) => {
     const userId = req.session.user?._id || req.session.passport._id;
     const user = await User.findById(userId);
     const { orderId } = req.params;
-    
 
     const order = await Order.findById(orderId)
       .populate("products.productId", "name image price")
@@ -467,8 +514,10 @@ const getOrderDetails = async (req, res) => {
       grandTotal,
     });
   } catch (error) {
-    console.error("Error fetching order details:", error);
-    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).send(MESSAGES.ORDER.DETAILS_LOAD_FAILED);
+    logger.error("Error fetching order details:", error);
+    res
+      .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
+      .send(MESSAGES.ORDER.DETAILS_LOAD_FAILED);
   }
 };
 
@@ -477,7 +526,6 @@ const generateTransactionId = () => {
   const randomPart = Math.floor(1000 + Math.random() * 9000); // 4-digit random
   return `TXN${timestamp}${randomPart}`;
 };
-
 
 const handleRefundToWallet = async (userId, amount, reason) => {
   const transactionId = generateTransactionId();
@@ -495,11 +543,10 @@ const handleRefundToWallet = async (userId, amount, reason) => {
       type: "credit",
       amount,
       reason,
-      date: new Date()
+      date: new Date(),
     });
 
     await wallet.save();
-    
   } else {
     await Wallet.create({
       userId,
@@ -510,7 +557,7 @@ const handleRefundToWallet = async (userId, amount, reason) => {
           type: "credit",
           amount,
           reason,
-          date: new Date()
+          date: new Date(),
         },
       ],
     });
@@ -518,13 +565,13 @@ const handleRefundToWallet = async (userId, amount, reason) => {
 };
 
 function updateOverallOrderStatus(order) {
-  const statuses = order.products.map(p => p.status);
+  const statuses = order.products.map((p) => p.status);
 
-  if (statuses.every(s => s === "Cancelled")) {
+  if (statuses.every((s) => s === "Cancelled")) {
     order.orderStatus = "Cancelled";
-  } else if (statuses.every(s => s === "Returned")) {
+  } else if (statuses.every((s) => s === "Returned")) {
     order.orderStatus = "Returned";
-  } else if (statuses.every(s => s === "Delivered")) {
+  } else if (statuses.every((s) => s === "Delivered")) {
     order.orderStatus = "Completed";
   } else if (statuses.includes("Processing") || statuses.includes("Shipped")) {
     order.orderStatus = "Processing";
@@ -535,7 +582,7 @@ function updateOverallOrderStatus(order) {
   return order.orderStatus;
 }
 
-     const calculateRefund = (order, product) => {
+const calculateRefund = (order, product) => {
   // Total refunded so far
   const totalRefundedSoFar = order.products.reduce(
     (sum, p) => sum + (p.refundedAmount || 0),
@@ -549,9 +596,13 @@ function updateOverallOrderStatus(order) {
 
   let refundAmount;
 
-  if (activeProducts.length === 1 && activeProducts[0]._id.equals(product._id)) {
+  if (
+    activeProducts.length === 1 &&
+    activeProducts[0]._id.equals(product._id)
+  ) {
     // Last product → refund remaining amount (actual paid)
-    refundAmount = (order.totalAmount - totalRefundedSoFar) - order.deliveryCharge;
+    refundAmount =
+      order.totalAmount - totalRefundedSoFar - order.deliveryCharge;
   } else {
     // Proportional refund from amount actually paid
     const subtotal = order.products.reduce(
@@ -568,7 +619,6 @@ function updateOverallOrderStatus(order) {
   return refundAmount;
 };
 
-
 // cancel for a single product in an order
 //here the product which has been cancelled, its stock is updated, amount is also refunded
 const cancelOrder = async (req, res) => {
@@ -578,7 +628,9 @@ const cancelOrder = async (req, res) => {
   try {
     const order = await Order.findById(orderId).populate("userId");
     if (!order) {
-      return res.status(STATUS_CODES.NOT_FOUND).json({ success: false, message: MESSAGES.ORDER.NOT_FOUND });
+      return res
+        .status(STATUS_CODES.NOT_FOUND)
+        .json({ success: false, message: MESSAGES.ORDER.NOT_FOUND });
     }
 
     const product = order.products.find(
@@ -586,7 +638,9 @@ const cancelOrder = async (req, res) => {
     );
 
     if (!product) {
-      return res.status(STATUS_CODES.NOT_FOUND).json({ success: false, message: MESSAGES.ORDER.PRODUCT_NOT_FOUND });
+      return res
+        .status(STATUS_CODES.NOT_FOUND)
+        .json({ success: false, message: MESSAGES.ORDER.PRODUCT_NOT_FOUND });
     }
 
     if (!["Pending", "Processing"].includes(product.status)) {
@@ -597,7 +651,9 @@ const cancelOrder = async (req, res) => {
     }
 
     if (product.status === "Cancelled") {
-      return res.status(STATUS_CODES.BAD_REQUEST).json({ success: false, message: "Product already cancelled" });
+      return res
+        .status(STATUS_CODES.BAD_REQUEST)
+        .json({ success: false, message: "Product already cancelled" });
     }
 
     // Enhanced cancellation reason validation
@@ -620,8 +676,6 @@ const cancelOrder = async (req, res) => {
     // Refund calculation
     const refundAmount = calculateRefund(order, product);
     product.refundedAmount = refundAmount;
-    
-
 
     // Wallet refund for paid orders
     if (order.isPaid) {
@@ -640,86 +694,94 @@ const cancelOrder = async (req, res) => {
 
     return res.json({ success: true });
   } catch (error) {
-    console.error("Error cancelling order:", error);
-    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ success: false, message: MESSAGES.ORDER.CANCEL_FAILED });
+    logger.error("Error cancelling order:", error);
+    res
+      .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
+      .json({ success: false, message: MESSAGES.ORDER.CANCEL_FAILED });
   }
 };
 
-
 // Comprehensive validation function for cancellation reason
-function validateOrderReason(reason, type = 'general') {
+function validateOrderReason(reason, type = "general") {
   // This can be shared between cancellation and return validation
   // Just change the error messages based on the type parameter
   const MIN_LENGTH = 10;
   const MAX_LENGTH = 500;
-  const actionType = type === 'cancel' ? 'Cancellation' : 'Return';
-  
+  const actionType = type === "cancel" ? "Cancellation" : "Return";
+
   if (!reason) {
     return {
       isValid: false,
-      message: `${actionType} reason is required`
+      message: `${actionType} reason is required`,
     };
   }
 
-  const cleanedReason = reason.trim().replace(/\s+/g, ' ');
-  
+  const cleanedReason = reason.trim().replace(/\s+/g, " ");
+
   if (cleanedReason.length === 0) {
     return {
       isValid: false,
-      message: `${actionType} reason cannot be empty`
+      message: `${actionType} reason cannot be empty`,
     };
   }
 
   if (cleanedReason.length < MIN_LENGTH) {
     return {
       isValid: false,
-      message: `${actionType} reason must be at least ${MIN_LENGTH} characters long`
+      message: `${actionType} reason must be at least ${MIN_LENGTH} characters long`,
     };
   }
 
   if (cleanedReason.length > MAX_LENGTH) {
     return {
       isValid: false,
-      message: `${actionType} reason cannot exceed ${MAX_LENGTH} characters`
+      message: `${actionType} reason cannot exceed ${MAX_LENGTH} characters`,
     };
   }
 
-  const uniqueChars = new Set(cleanedReason.toLowerCase().replace(/\s/g, ''));
+  const uniqueChars = new Set(cleanedReason.toLowerCase().replace(/\s/g, ""));
   if (uniqueChars.size < 3) {
     return {
       isValid: false,
-      message: `Please provide a meaningful ${actionType.toLowerCase()} reason`
+      message: `Please provide a meaningful ${actionType.toLowerCase()} reason`,
     };
   }
 
-  const inappropriateWords = ['damn', 'shit', 'fuck', 'bitch', 'asshole', 'bastard'];
+  const inappropriateWords = [
+    "damn",
+    "shit",
+    "fuck",
+    "bitch",
+    "asshole",
+    "bastard",
+  ];
   const lowerReason = cleanedReason.toLowerCase();
-  const hasProfanity = inappropriateWords.some(word => 
+  const hasProfanity = inappropriateWords.some((word) =>
     lowerReason.includes(word.toLowerCase())
   );
-  
+
   if (hasProfanity) {
     return {
       isValid: false,
-      message: `Please use appropriate language in your ${actionType.toLowerCase()} reason`
+      message: `Please use appropriate language in your ${actionType.toLowerCase()} reason`,
     };
   }
 
-  const words = cleanedReason.toLowerCase().split(' ');
+  const words = cleanedReason.toLowerCase().split(" ");
   const wordCount = {};
   let maxRepeats = 0;
-  
-  words.forEach(word => {
+
+  words.forEach((word) => {
     if (word.length > 2) {
       wordCount[word] = (wordCount[word] || 0) + 1;
       maxRepeats = Math.max(maxRepeats, wordCount[word]);
     }
   });
-  
+
   if (maxRepeats > 5) {
     return {
       isValid: false,
-      message: `Please provide a more descriptive ${actionType.toLowerCase()} reason`
+      message: `Please provide a more descriptive ${actionType.toLowerCase()} reason`,
     };
   }
 
@@ -727,30 +789,29 @@ function validateOrderReason(reason, type = 'general') {
   if (!hasLetters) {
     return {
       isValid: false,
-      message: `${actionType} reason must contain descriptive text`
+      message: `${actionType} reason must contain descriptive text`,
     };
   }
 
-  const meaningfulWords = words.filter(word => word.length > 2);
+  const meaningfulWords = words.filter((word) => word.length > 2);
   if (meaningfulWords.length < 2) {
     return {
       isValid: false,
-      message: `Please provide a more detailed ${actionType.toLowerCase()} reason`
+      message: `Please provide a more detailed ${actionType.toLowerCase()} reason`,
     };
   }
 
   return {
     isValid: true,
-    cleanedReason: cleanedReason
+    cleanedReason: cleanedReason,
   };
 }
 
-// here finally return is requested now it should be 
-// approved from the admin then only will the status be returned 
-// here the stock updation and refunding is not done , 
+// here finally return is requested now it should be
+// approved from the admin then only will the status be returned
+// here the stock updation and refunding is not done ,
 // it is only done after the admin has approved ie the status which
 //  would be 'return requested' is changed to 'returned'
-
 
 const returnOrder = async (req, res) => {
   const { orderId, productId } = req.params;
@@ -779,10 +840,13 @@ const returnOrder = async (req, res) => {
         .json({ success: false, message: "Product cannot be returned" });
     }
 
-    if (product.status === "Return Requested" || product.status === "Returned") {
+    if (
+      product.status === "Return Requested" ||
+      product.status === "Returned"
+    ) {
       return res.status(STATUS_CODES.BAD_REQUEST).json({
-        success: false, 
-        message: MESSAGES.ORDER.RETURN_ALREADY_REQUESTED
+        success: false,
+        message: MESSAGES.ORDER.RETURN_ALREADY_REQUESTED,
       });
     }
 
@@ -791,7 +855,7 @@ const returnOrder = async (req, res) => {
     if (!validationResult.isValid) {
       return res.status(STATUS_CODES.BAD_REQUEST).json({
         success: false,
-        message: validationResult.message
+        message: validationResult.message,
       });
     }
 
@@ -804,7 +868,7 @@ const returnOrder = async (req, res) => {
 
     return res.json({ success: true });
   } catch (error) {
-    console.error("Error requesting return:", error);
+    logger.error("Error requesting return:", error);
     return res
       .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
       .json({ success: false, message: MESSAGES.ORDER.RETURN_REQUEST_FAILED });
@@ -827,7 +891,9 @@ const createRazorpayOrder = async (req, res) => {
 
     // safety check
     if (finalAmount <= 0) {
-      return res.status(STATUS_CODES.BAD_REQUEST).json({ success: false, message: MESSAGES.PAYMENT.INVALID_AMOUNT });
+      return res
+        .status(STATUS_CODES.BAD_REQUEST)
+        .json({ success: false, message: MESSAGES.PAYMENT.INVALID_AMOUNT });
     }
 
     // if amount is already in rupees, convert to paise
@@ -858,23 +924,21 @@ const createRazorpayOrder = async (req, res) => {
       key_id: process.env.RAZORPAY_KEY_ID,
     });
   } catch (error) {
-    console.error("Error creating razorpay order", error);
+    logger.error("Error creating razorpay order", error);
     res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ success: false });
   }
 };
-
 
 // Verify Razorpay Payment
 
 const verifyRazorpayPayment = async (req, res) => {
   try {
-
     const {
       razorpay_order_id,
       razorpay_payment_id,
       razorpay_signature,
       formData,
-      isRetry = false
+      isRetry = false,
     } = req.body;
 
     //signature verification
@@ -884,14 +948,15 @@ const verifyRazorpayPayment = async (req, res) => {
       .digest("hex");
 
     if (generated_signature !== razorpay_signature) {
-
       req.session.orderAttempted = false;
       req.session.lastOrderFailed = false;
 
-
       return res
         .status(STATUS_CODES.BAD_REQUEST)
-        .json({ success: false, message: MESSAGES.PAYMENT.VERIFICATION_FAILED });
+        .json({
+          success: false,
+          message: MESSAGES.PAYMENT.VERIFICATION_FAILED,
+        });
     }
 
     let savedOrder;
@@ -907,7 +972,7 @@ const verifyRazorpayPayment = async (req, res) => {
         },
         { new: true }
       );
-      
+
       // after payment has been done the product items should be decreased
       for (const item of savedOrder.products) {
         await Product.findByIdAndUpdate(item.productId, {
@@ -919,12 +984,10 @@ const verifyRazorpayPayment = async (req, res) => {
 
       req.session.orderCompleted = true;
 
-       req.session.order = savedOrder;
+      req.session.order = savedOrder;
       req.session.paymentMethod = "Razorpay";
 
-      
       return res.json({ success: true });
-
     } else {
       //  Save the order in DB
       savedOrder = await saveOrderFromSerializedData(
@@ -953,7 +1016,7 @@ const verifyRazorpayPayment = async (req, res) => {
       return res.json({ success: true });
     }
   } catch (error) {
-    console.error("Error verifying razorpay payment", error);
+    logger.error("Error verifying razorpay payment", error);
     res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ success: false });
   }
 };
@@ -967,14 +1030,20 @@ const razorPaymentFailed = async (req, res) => {
       ? cartItems
       : Object.values(cartItems);
 
-      const offerDiscountTotal = itemsArray.reduce((sum, item) => {
-      return sum + (parseFloat(item.price) - parseFloat(item.discountedPrice)) * item.quantity;
+    const offerDiscountTotal = itemsArray.reduce((sum, item) => {
+      return (
+        sum +
+        (parseFloat(item.price) - parseFloat(item.discountedPrice)) *
+          item.quantity
+      );
     }, 0);
 
-      const couponDiscount  = req.session.coupon?.discount || 0;
-      const deliveryCharge = req.session.deliveryCharge;
-      const finalTotal = parseFloat(grandTotal) + parseFloat(deliveryCharge) - parseFloat(couponDiscount);
-
+    const couponDiscount = req.session.coupon?.discount || 0;
+    const deliveryCharge = req.session.deliveryCharge;
+    const finalTotal =
+      parseFloat(grandTotal) +
+      parseFloat(deliveryCharge) -
+      parseFloat(couponDiscount);
 
     const order = {
       userId: userId,
@@ -994,7 +1063,7 @@ const razorPaymentFailed = async (req, res) => {
       createdAt: new Date(),
       discountAmount: parseFloat(offerDiscountTotal) || 0,
       couponCode: req.session.coupon?.code || null,
-      couponDiscount: couponDiscount
+      couponDiscount: couponDiscount,
     };
 
     const newOrder = new Order(order);
@@ -1010,8 +1079,10 @@ const razorPaymentFailed = async (req, res) => {
 
     return res.json({ success: true });
   } catch (error) {
-    console.error("Error handling payment failure:", error);
-    return res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ message: MESSAGES.PAYMENT.FAILED_ORDER_SAVE });
+    logger.error("Error handling payment failure:", error);
+    return res
+      .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
+      .json({ message: MESSAGES.PAYMENT.FAILED_ORDER_SAVE });
   }
 };
 
@@ -1021,25 +1092,30 @@ const getOrderFailurePage = async (req, res) => {
 
     if (!order) return res.redirect("/checkout");
 
-    const grandTotal = order.products.reduce((sum, item) => sum + (item.discountedPrice * item.quantity), 0);
+    const grandTotal = order.products.reduce(
+      (sum, item) => sum + item.discountedPrice * item.quantity,
+      0
+    );
 
     req.session.failedOrder = null;
 
     return res.render("orderFailure", {
       order,
       paymentMethod: "Razorpay",
-      grandTotal
+      grandTotal,
     });
   } catch (error) {
-    console.error("Error loading order failure page:", error);
-    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).send(MESSAGES.GENERIC.SOMETHING_WRONG);
+    logger.error("Error loading order failure page:", error);
+    res
+      .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
+      .send(MESSAGES.GENERIC.SOMETHING_WRONG);
   }
 };
 
 const retryPayment = async (req, res) => {
   try {
     const orderId = req.params.orderId;
-    
+
     const order = await Order.findById(orderId);
 
     if (
@@ -1052,14 +1128,19 @@ const retryPayment = async (req, res) => {
         .json({ success: false, message: "Invalid retry request" });
     }
 
-   
+    const grandTotal = order.products.reduce(
+      (sum, item) => sum + item.discountedPrice * item.quantity,
+      0
+    );
+    let totalAmount =
+      parseFloat(grandTotal) +
+      parseFloat(order.deliveryCharge) -
+      parseFloat(order.couponDiscount);
 
-
-    const grandTotal = order.products.reduce((sum, item) => sum + (item.discountedPrice * item.quantity), 0);
-    let totalAmount = parseFloat(grandTotal) + parseFloat(order.deliveryCharge) - parseFloat(order.couponDiscount);
-    
     if (totalAmount <= 0) {
-      return res.status(STATUS_CODES.BAD_REQUEST).json({ success: false, message: MESSAGES.PAYMENT.INVALID_AMOUNT });
+      return res
+        .status(STATUS_CODES.BAD_REQUEST)
+        .json({ success: false, message: MESSAGES.PAYMENT.INVALID_AMOUNT });
     }
 
     // if amount is already in rupees, convert to paise
@@ -1088,7 +1169,7 @@ const retryPayment = async (req, res) => {
       key_id: process.env.RAZORPAY_KEY_ID,
     });
   } catch (error) {
-    console.error("Error in the retry-payment:", error);
+    logger.error("Error in the retry-payment:", error);
     res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ success: false });
   }
 };
@@ -1102,7 +1183,9 @@ const retryRazorPaymentFailed = async (req, res) => {
     const failedOrder = await Order.findById(orderId);
 
     if (!failedOrder || failedOrder.userId.toString() !== userId.toString()) {
-      return res.status(STATUS_CODES.BAD_REQUEST).json({ success: false, message: MESSAGES.ORDER.INVALID_ORDER });
+      return res
+        .status(STATUS_CODES.BAD_REQUEST)
+        .json({ success: false, message: MESSAGES.ORDER.INVALID_ORDER });
     }
 
     // Store the failed order ID in session
@@ -1112,8 +1195,10 @@ const retryRazorPaymentFailed = async (req, res) => {
 
     return res.json({ success: true });
   } catch (error) {
-    console.error("Error handling payment failure:", error);
-    return res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ success: false, message: MESSAGES.GENERIC.SOMETHING_WRONG });
+    logger.error("Error handling payment failure:", error);
+    return res
+      .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
+      .json({ success: false, message: MESSAGES.GENERIC.SOMETHING_WRONG });
   }
 };
 
@@ -1124,26 +1209,30 @@ const getRetryRazorpayFailurePage = async (req, res) => {
 
     if (!failedOrderId) return res.redirect("/checkout");
 
-    const failedOrder = await Order.findById(failedOrderId).populate("products.productId").lean();
-    const grandTotal = failedOrder.products.reduce((sum, item) => sum + (item.discountedPrice * item.quantity), 0);
+    const failedOrder = await Order.findById(failedOrderId)
+      .populate("products.productId")
+      .lean();
+    const grandTotal = failedOrder.products.reduce(
+      (sum, item) => sum + item.discountedPrice * item.quantity,
+      0
+    );
 
     req.session.failedOrderId = null; // clear it after use
 
     return res.render("orderFailure", {
       order: failedOrder,
       paymentMethod: "Razorpay",
-      grandTotal
+      grandTotal,
     });
   } catch (error) {
-    console.error("Error rendering failed payment page:", error);
-    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).send(MESSAGES.GENERIC.SOMETHING_WRONG);
+    logger.error("Error rendering failed payment page:", error);
+    res
+      .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
+      .send(MESSAGES.GENERIC.SOMETHING_WRONG);
   }
 };
 
-
-
-
-module.exports = {
+export default {
   saveOrderInSession,
   getOrderSuccess,
   getOrdersPage,
@@ -1158,5 +1247,5 @@ module.exports = {
   retryRazorPaymentFailed,
   getRetryRazorpayFailurePage,
   calculateDeliveryCharge,
-  saveWalletOrder
+  saveWalletOrder,
 };

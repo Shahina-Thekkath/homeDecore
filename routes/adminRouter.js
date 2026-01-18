@@ -1,20 +1,21 @@
-const express = require("express");
+import express from "express";
+
 const adminRouter = express.Router();
-const loginController = require("../controllers/admin/loginController");
-const dashboardController = require("../controllers/admin/dashboardController");
-const userController = require("../controllers/admin/userController");
-const adminAuth = require("../middleware/adminAuth");
-const admin404Controller = require("../controllers/admin/404Controller");
-const productController = require("../controllers/admin/productController");
-const multer = require("multer");
-const { uploads } = require("../middleware/cloudinary");
-const categoryController = require("../controllers/admin/categoryController");
-const logoutController = require("../controllers/admin/logoutController");
-const orderController = require("../controllers/admin/orderController");
-const couponController = require("../controllers/admin/couponController");
-const offerController = require('../controllers/admin/offerController');
-const salesController = require('../controllers/admin/salesController');
-const checkDuplicateProduct = require('../middleware/checkDuplicateProduct');
+
+import loginController from "../controllers/admin/loginController.js";
+import dashboardController from "../controllers/admin/dashboardController.js";
+import userController from "../controllers/admin/userController.js";
+import adminAuth from "../middleware/adminAuth.js";
+import admin404Controller from "../controllers/admin/404Controller.js";
+import productController from "../controllers/admin/productController.js";
+import { uploads } from "../middleware/cloudinary.js";
+import categoryController from "../controllers/admin/categoryController.js";
+import logoutController from "../controllers/admin/logoutController.js";
+import orderController from "../controllers/admin/orderController.js";
+import couponController from "../controllers/admin/couponController.js";
+import offerController from "../controllers/admin/offerController.js";
+import salesController from "../controllers/admin/salesController.js";
+import checkDuplicateProduct from "../middleware/checkDuplicateProduct.js";
 
 adminRouter.get("/", adminAuth.isLogout, loginController.loadLogin);
 adminRouter.post("/", adminAuth.isLogout, loginController.login);
@@ -60,33 +61,28 @@ adminRouter.get("/logout", logoutController.logout);
 adminRouter.get("/orderList", orderController.getAdminOrders);
 adminRouter.get("/orders/:orderId", orderController.getOrderById);
 adminRouter.post("/orders/:id/cancel", orderController.cancelOrder);
-adminRouter.post('/orders/update-status', orderController.updateProductStatus);
-adminRouter.post('/order/cancel-product', orderController.cancelProductByIndex);
+adminRouter.post("/orders/update-status", orderController.updateProductStatus);
+adminRouter.post("/order/cancel-product", orderController.cancelProductByIndex);
 
 adminRouter.get("/coupon", couponController.getCouponList);
 adminRouter.get("/coupon/add-coupon", couponController.renderAddCouponPage);
 adminRouter.post("/coupon/add-coupon", couponController.addCoupon);
 adminRouter.get("/coupon/edit-coupon/:id", couponController.getEditCoupon);
 adminRouter.put("/coupon/edit-coupon/:id", couponController.updateCoupon);
-adminRouter.patch('/coupons/toggle/:id', couponController.toggleCouponStatus);
+adminRouter.patch("/coupons/toggle/:id", couponController.toggleCouponStatus);
 
-adminRouter.get('/offer', offerController.getOfferList);
-adminRouter.get('/offer/add-offer', offerController.getAddOffer);
-adminRouter.post('/offer/add-offer', offerController.postAddOffer);
-adminRouter.patch('/offer/toggle/:id', offerController.toggleOfferStatus);
-adminRouter.get('/offer/edit-offer/:id', offerController.getEditOffer);
-adminRouter.put('/offer/edit-offer/:id', offerController.updateOffer);
+adminRouter.get("/offer", offerController.getOfferList);
+adminRouter.get("/offer/add-offer", offerController.getAddOffer);
+adminRouter.post("/offer/add-offer", offerController.postAddOffer);
+adminRouter.patch("/offer/toggle/:id", offerController.toggleOfferStatus);
+adminRouter.get("/offer/edit-offer/:id", offerController.getEditOffer);
+adminRouter.put("/offer/edit-offer/:id", offerController.updateOffer);
 
-adminRouter.get("/salesReport", salesController.getSalesReport);     
-adminRouter.get("/sales-report/data", salesController.getSalesReportData); 
-adminRouter.post("/sales-report/pdf", salesController.generateSalesPDF); 
+adminRouter.get("/salesReport", salesController.getSalesReport);
+adminRouter.get("/sales-report/data", salesController.getSalesReportData);
+adminRouter.post("/sales-report/pdf", salesController.generateSalesPDF);
 adminRouter.post("/sales-report/excel", salesController.generateSalesExcel);
-
 
 adminRouter.get("/sales", dashboardController.getSalesData);
 
-
-
-
-
-module.exports = adminRouter;
+export default adminRouter;

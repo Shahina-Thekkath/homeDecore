@@ -1,25 +1,34 @@
-const express = require("express");
+import express from "express";
+
 const app = express();
-const env = require("dotenv").config();
-const path = require("path");
-const session = require("express-session");
-const db = require("./config/db");
-const userRouter = require("./routes/userRouter");
-const adminRouter = require("./routes/adminRouter");
-const orderGuard = require("./middleware/orderGuard");
-const checkBlocked = require("./middleware/checkBlocked");
-const cookieParser = require("cookie-parser");
+import dotenv from "dotenv";
+dotenv.config();
+import session from "express-session";
+import db from "./config/db.js";
+import userRouter from "./routes/userRouter.js";
+import adminRouter from "./routes/adminRouter.js";
+import checkBlocked from "./middleware/checkBlocked.js";
+import cookieParser from "cookie-parser";
 app.use(cookieParser());
+import logger from "./utils/logger.js";
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 
+import passport from "./config/passport.js";
+import  requestLogger from "./middleware/requestLogger.js";
 
-const passport = require("./config/passport");
-db();
+app.use(requestLogger);
+
 app.use(
   express.static(
     path.join(__dirname, "public/ludus-free-premium-ecommerce-template-master")
   )
 );
+
 app.use(
   "/admin-assets",
   (req, res, next) => {
@@ -97,11 +106,11 @@ app.use((req, res) => {
 db()
   .then(() => {
     app.listen(process.env.PORT, () => {
-      console.log(`server running on port${process.env.PORT}`);
+      logger.info(`server running on port ${process.env.PORT}`);
     });
   })
   .catch((error) => {
-    console.log(`failed to connect to the database`, error);
+    logger.info(`failed to connect to the database`, error);
   });
 
-module.exports = app;
+export default app;

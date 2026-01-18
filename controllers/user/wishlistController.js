@@ -1,9 +1,10 @@
-const mongoose = require('mongoose');
-const Wishlist = require('../../models/wishlistSchema');
-const Product = require('../../models/productSchema');
-const ProductOffer = require('../../models/productOfferSchema');
-const CategoryOffer = require('../../models/categoryOfferSchema');
-const { STATUS_CODES, MESSAGES } = require("../../constants");
+import mongoose from 'mongoose';
+import Wishlist from "../../models/wishlistSchema.js";
+import Product from "../../models/productSchema.js";
+import ProductOffer from "../../models/productOfferSchema.js";
+import CategoryOffer from "../../models/categoryOfferSchema.js";
+import { STATUS_CODES, MESSAGES } from "../../constants/index.js";
+import logger from "../../utils/logger.js";
 
 
 const getWishlist = async (req, res) => {
@@ -103,7 +104,7 @@ const getWishlist = async (req, res) => {
 
     return res.render("wishlist", { wishlist: productsWithDiscount, user });
   } catch (error) {
-    console.error("Error loading wishlist:", error);
+    logger.error("Error loading wishlist:", error);
     res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).send(MESSAGES.GENERIC.SERVER_ERROR);
   }
 };
@@ -146,7 +147,7 @@ const addToWishlist = async (req, res) => {
         res.json({ success: true, message: MESSAGES.WISHLIST.PRODUCT_ADDED });
 
     } catch (error) {
-        console.error("Error Adding to wishlist", error);
+        logger.error("Error Adding to wishlist", error);
         res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ error: MESSAGES.GENERIC.INTERNAL_ERROR });
     }
 };
@@ -162,7 +163,7 @@ const clearWishlist = async (req, res) => {
 
     res.status(STATUS_CODES.OK).json({ success: true, message: MESSAGES.WISHLIST.CLEARED_SUCCESS });
   } catch (error) {
-    console.error("Error clearing wishlist:", error);
+    logger.error("Error clearing wishlist:", error);
     res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ success: false, message: MESSAGES.GENERIC.SERVER_ERROR });
   }
 };
@@ -179,7 +180,7 @@ const removeProductFromWishlist = async (req, res) => {
 
     res.status(STATUS_CODES.OK).json({ success: true, message: MESSAGES.WISHLIST.PRODUCT_REMOVED });
   } catch (error) {
-    console.error("Error removing product from wishlist:", error);
+    logger.error("Error removing product from wishlist:", error);
     res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ success: false, message: MESSAGES.GENERIC.SERVER_ERROR });
   }
 };
@@ -212,7 +213,7 @@ const checkWishlist = async (req, res) => {
        res.status(STATUS_CODES.OK).json({ inWishlist });
 
    } catch (error) {
-      console.error("Error checking wishlist", error);
+      logger.error("Error checking wishlist", error);
       res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ error: MESSAGES.GENERIC.INTERNAL_ERROR });
       
    }
@@ -220,7 +221,7 @@ const checkWishlist = async (req, res) => {
 
 
 
-module.exports = {
+export default {
     getWishlist,
     addToWishlist,
     clearWishlist,

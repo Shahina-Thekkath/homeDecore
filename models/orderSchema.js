@@ -1,11 +1,11 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 const { Schema, model, Types } = mongoose;
 
-const generateOrderId = require("../helpers/generateOrderId");
+import generateOrderId from "../helpers/generateOrderId.js";
 
 const OrderSchema = new Schema(
   {
-    orderId: {type: String, unique: true},
+    orderId: { type: String, unique: true },
     userId: { type: Types.ObjectId, ref: "User", required: true }, // Reference to the user placing the order
     products: [
       {
@@ -27,10 +27,9 @@ const OrderSchema = new Schema(
           default: "Processing",
         },
         deliveredAt: { type: Date },
-        cancellationReason: { type: String, default: null },  // reason for cancellation
-        returnReason: { type: String, default: null },  // reason for return
-        refundedAmount: { type: Number, default: 0 } // track refund for each product
-
+        cancellationReason: { type: String, default: null }, // reason for cancellation
+        returnReason: { type: String, default: null }, // reason for return
+        refundedAmount: { type: Number, default: 0 }, // track refund for each product
       },
     ],
     totalAmount: { type: Number, required: true }, // Total amount for the order
@@ -50,7 +49,7 @@ const OrderSchema = new Schema(
         "Credit/Debit Card",
         "Razorpay",
         "Bank Transfer",
-        "wallet"
+        "wallet",
       ],
       required: true,
     },
@@ -64,7 +63,7 @@ const OrderSchema = new Schema(
         "Cancelled",
         "Return Requested",
         "Returned",
-        "Completed"
+        "Completed",
       ],
       default: "Processing",
     },
@@ -82,22 +81,22 @@ const OrderSchema = new Schema(
     discountAmount: {
       type: Number,
       default: 0,
-    },                    // this is the amount in rs whether percent or flat , offerDiscount
+    }, // this is the amount in rs whether percent or flat , offerDiscount
     couponCode: {
       type: String,
       default: null,
     },
-    couponDiscount: { type: Number, default: 0 }                                            
+    couponDiscount: { type: Number, default: 0 },
   },
   { timestamps: true }
 );
 
-OrderSchema.pre('save', function(next) {
-  if(!this.orderId) {
+OrderSchema.pre("save", function (next) {
+  if (!this.orderId) {
     this.orderId = generateOrderId(this.createdAt);
   }
   next();
 });
 
 const Order = model("Order", OrderSchema);
-module.exports = Order;
+export default Order;

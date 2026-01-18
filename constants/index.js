@@ -1,8 +1,8 @@
 // Central export file for all constants
-const STATUS_CODES = require('./statusCodes');
-const MESSAGES = require('./messages');
+import STATUS_CODES from './statusCodes.js';
+import MESSAGES from './messages.js';
 
-module.exports = {
+export {
   STATUS_CODES,
   MESSAGES
 };

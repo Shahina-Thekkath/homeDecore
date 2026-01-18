@@ -1,3 +1,5 @@
+import logger from "../utils/logger.js";
+
 const isLogin = async (req, res, next) => {
   try {
     if (req.session.admin) {
@@ -17,7 +19,7 @@ const isLogin = async (req, res, next) => {
 
     return res.redirect("/admin");
   } catch (error) {
-    console.error("isLogin middleware error:", error);
+    logger.error("isLogin middleware error:", error);
     return res.status(500).json({
       success: false,
       message: "Server error",
@@ -25,30 +27,21 @@ const isLogin = async (req, res, next) => {
   }
 };
 
+const isLogout = async (req, res, next) => {
+  try {
+    const admin = req.session.admin;
 
-
-
-
-
-
-
-const isLogout = async (req,res,next)=>{
-   try {
-    const admin = req.session.admin
-
-    if(admin){
-        res.redirect('/admin/dashboard');
-    }else{
-        next();
+    if (admin) {
+      res.redirect("/admin/dashboard");
+    } else {
+      next();
     }
-   } catch (error) {
-    console.error("islogout middleware error ",error.message);
-   }
-}
+  } catch (error) {
+    logger.error("islogout middleware error ", error.message);
+  }
+};
 
-
-
-module.exports={
-    isLogin,
-    isLogout
-}
+export default {
+  isLogin,
+  isLogout,
+};

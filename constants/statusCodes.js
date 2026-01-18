@@ -18,4 +18,4 @@ const STATUS_CODES = {
   SERVICE_UNAVAILABLE: 503
 };
 
-module.exports = STATUS_CODES;
+export default STATUS_CODES;

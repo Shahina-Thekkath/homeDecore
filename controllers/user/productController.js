@@ -1,54 +1,55 @@
-const Cart = require("../../models/cartSchema");
-const Product = require("../../models/productSchema");
-const User = require("../../models/userSchma");
-const Category = require('../../models/categorySchema');
-const CategoryOffer = require('../../models/categoryOfferSchema');
-const ProductOffer = require('../../models/productOfferSchema');
-const { STATUS_CODES, MESSAGES } = require("../../constants");
+import Cart from "../../models/cartSchema.js";
+import Product from "../../models/productSchema.js";
+import User from "../../models/userSchma.js";
+import Category from "../../models/categorySchema.js";
+import CategoryOffer from "../../models/categoryOfferSchema.js";
+import ProductOffer from "../../models/productOfferSchema.js";
+import { STATUS_CODES, MESSAGES } from "../../constants/index.js";
+import logger from "../../utils/logger.js";
 
+const loadProductDetails = async (req, res) => {
+  try {
+    const productId = req.params.id;
+    const user = req.session.user || req.session.passport;
+    let cart;
+    let grandTotal;
 
-const loadProductDetails = async (req, res) =>{
-    try {
-        const productId = req.params.id;
-        const user = req.session.user || req.session.passport;
-         let cart 
-         let grandTotal;
+    if (user) {
+      cart = await Cart.findOne({ userId: user._id }).populate({
+        path: "items.productId",
+      });
 
-        if(user){
-             cart = await Cart.findOne({userId: user._id}).populate({path:"items.productId"});
-            
-             const cartItems = cart && cart.items && cart.items.length > 0
-                ? cart.items.map((item) => {
-                  const priceToUse = item.discountAmount && item.discountAmount > 0 ? item.discountedPrice : item.price;
-                  return {
-                    _id: item._id,
-                    productId: item.productId._id,
-                    name: item.productId.name,
-                    price: item.price,
-                    quantity: item.quantity,
-                    subtotal: priceToUse * item.quantity
-                }
-        })
-                : [];
-    
-            grandTotal = cartItems.reduce((total, item) => total + item.subtotal, 0);
-           
-        }else{
+      const cartItems =
+        cart && cart.items && cart.items.length > 0
+          ? cart.items.map((item) => {
+              const priceToUse =
+                item.discountAmount && item.discountAmount > 0
+                  ? item.discountedPrice
+                  : item.price;
+              return {
+                _id: item._id,
+                productId: item.productId._id,
+                name: item.productId.name,
+                price: item.price,
+                quantity: item.quantity,
+                subtotal: priceToUse * item.quantity,
+              };
+            })
+          : [];
 
-            cart = null;
-        }
+      grandTotal = cartItems.reduce((total, item) => total + item.subtotal, 0);
+    } else {
+      cart = null;
+    }
 
-        
-        const currentProduct = await Product.findOne({ 
-            _id: productId, 
-            isBlocked: false 
-        })
-        .populate("categoryId")
-        .lean();
+    const currentProduct = await Product.findOne({
+      _id: productId,
+      isBlocked: false,
+    })
+      .populate("categoryId")
+      .lean();
 
-       
-
-         // ===== COMMON OFFER LOGIC =====
+    // ===== COMMON OFFER LOGIC =====
     const getBestDiscount = async (product) => {
       const basePrice = product.price;
       const currentDate = new Date();
@@ -115,12 +116,12 @@ const loadProductDetails = async (req, res) =>{
       const discountValue = basePrice - bestPrice;
 
       return {
-        source,               // "product" or "category"
-        discountType,         // "percentage" or "flat"
-        discountAmount,       // amount or percentage
-        basePrice,            // original price
+        source, // "product" or "category"
+        discountType, // "percentage" or "flat"
+        discountAmount, // amount or percentage
+        basePrice, // original price
         finalPrice: bestPrice, // discounted price
-        discountValue,        // actual discount difference
+        discountValue, // actual discount difference
       };
     };
 
@@ -153,17 +154,16 @@ const loadProductDetails = async (req, res) =>{
       user,
     });
   } catch (error) {
-    console.error("Error while rendering product details page:", error);
+    logger.error("Error while rendering product details page:", error);
     res.redirect("/PageNotFound");
   }
 };
 
-
 const getUserProductList = async (req, res) => {
   try {
-   const user = req.session.user || req.session.passport;
+    const user = req.session.user || req.session.passport;
 
-    const sort = req.query.sort || 'newest';
+    const sort = req.query.sort || "newest";
     const limit = 9;
     const page = parseInt(req.query.page) || 1;
     const skip = (page - 1) * limit;
@@ -173,20 +173,20 @@ const getUserProductList = async (req, res) => {
     const totalPages = Math.ceil(totalProducts / limit);
 
     const products = await Product.aggregate([
-      {$match: {isBlocked: false}},
-      {$lookup: 
-        {
+      { $match: { isBlocked: false } },
+      {
+        $lookup: {
           from: "categories",
           localField: "categoryId",
           foreignField: "_id",
-          as: "category"
-        }
+          as: "category",
+        },
       },
-      {$unwind: "$category"},
-      {$match: {"category.isBlocked": false}},
-      {$sort: {createdAt: -1}},
-      {$skip: skip},
-      {$limit: limit}
+      { $unwind: "$category" },
+      { $match: { "category.isBlocked": false } },
+      { $sort: { createdAt: -1 } },
+      { $skip: skip },
+      { $limit: limit },
     ]);
 
     const currentDate = new Date();
@@ -282,55 +282,36 @@ const getUserProductList = async (req, res) => {
       })
     );
 
-    // //  Aggregate category counts
-    // const categoryCounts = await Product.aggregate([
-    //   { $match: { isBlocked: false } },
-    //   {
-    //     $group: {
-    //       _id: "$categoryId",
-    //       count: { $sum: 1 },
-    //     },
-    //   },
-    // ]);
-
-    // const countsWithNames = await Category.populate(categoryCounts, {
-    //   path: "_id",
-    //   select: "name",
-    // });
-
-    // const categories = countsWithNames.map((item) => ({
-    //   name: item._id.name,
-    //   count: item.count,
-    // }));
-
     const categories = await Product.aggregate([
-      {$match: {isBlocked: false}},
-      {$lookup: {
-        from: "categories",
-        localField: "categoryId",
-        foreignField: "_id",
-        as: "category"
-      }},
-      {$unwind: "$category"},
-      {$match: {"category.isBlocked": false}},
+      { $match: { isBlocked: false } },
+      {
+        $lookup: {
+          from: "categories",
+          localField: "categoryId",
+          foreignField: "_id",
+          as: "category",
+        },
+      },
+      { $unwind: "$category" },
+      { $match: { "category.isBlocked": false } },
       {
         $group: {
           _id: "$category._id",
-          name: {$first: "$category.name"},
-          count: {$sum: 1}
-        }
-      },
-        {
-          $project: {
-            _id: 0,
-            categoryId: "$_id",
-            name: 1,
-            count: 1
-          }
+          name: { $first: "$category.name" },
+          count: { $sum: 1 },
         },
-        {
-          $sort: {count: -1}
-        }
+      },
+      {
+        $project: {
+          _id: 0,
+          categoryId: "$_id",
+          name: 1,
+          count: 1,
+        },
+      },
+      {
+        $sort: { count: -1 },
+      },
     ]);
 
     res.render("userProductList", {
@@ -343,11 +324,10 @@ const getUserProductList = async (req, res) => {
       categories,
     });
   } catch (error) {
-    console.error("Error loading user product List:", error);
+    logger.error("Error loading user product List:", error);
     res.redirect("/PageNotFound");
   }
 };
-
 
 const getFilteredProductList = async (req, res) => {
   try {
@@ -357,15 +337,18 @@ const getFilteredProductList = async (req, res) => {
 
     const query = { isBlocked: false };
     if (category) {
-      const catDoc = await Category.findOne({ name: category, isBlocked: false });
+      const catDoc = await Category.findOne({
+        name: category,
+        isBlocked: false,
+      });
       if (catDoc) {
         query.categoryId = catDoc._id;
       } else {
-        return res.render('user/productListPartial', {
+        return res.render("user/productListPartial", {
           products: [],
           totalPages: 0,
           currentPage: 1,
-          limit
+          limit,
         });
       }
     }
@@ -410,20 +393,13 @@ const getFilteredProductList = async (req, res) => {
       .sort(sortOption)
       .lean();
 
-    const productsWithActiveCategories = allProducts.filter
-    (product => product.categoryId && !product.categoryId.isBlocked);
-
-    console.log(productsWithActiveCategories);
-    
-
+    const productsWithActiveCategories = allProducts.filter(
+      (product) => product.categoryId && !product.categoryId.isBlocked
+    );
     const totalProducts = await Product.countDocuments(query);
     const totalPages = Math.ceil(totalProducts / limit);
     const safePage =
-      page > totalPages && totalPages !== 0
-        ? totalPages
-        : page < 1
-        ? 1
-        : page;
+      page > totalPages && totalPages !== 0 ? totalPages : page < 1 ? 1 : page;
 
     const skip = (safePage - 1) * limit;
 
@@ -512,17 +488,11 @@ const getFilteredProductList = async (req, res) => {
       limit,
     });
   } catch (error) {
-    console.error("Error fetching products while using filter:", error);
-    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).send(MESSAGES.PRODUCT.FETCH_ERROR);
+    logger.error("Error fetching products while using filter:", error);
+    res
+      .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
+      .send(MESSAGES.PRODUCT.FETCH_ERROR);
   }
 };
 
-
-
-
-
-module.exports= {
-    loadProductDetails,
-    getUserProductList,
-    getFilteredProductList
-}
+export default { loadProductDetails, getUserProductList, getFilteredProductList };
