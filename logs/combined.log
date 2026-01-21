@@ -28,3 +28,1834 @@
 2026-01-18 16:22:55 [info]: server running on port 3000
 2026-01-18 16:23:01 [info]: DB Connected
 2026-01-18 16:23:01 [info]: server running on port 3000
+2026-01-18 16:53:04 [info]: DB Connected
+2026-01-18 16:53:04 [info]: server running on port 3000
+2026-01-18 17:06:22 [info]: GET /productList
+2026-01-18 20:23:24 [info]: GET /admin/category
+2026-01-18 20:23:25 [info]: GET /admin
+2026-01-19 07:41:20 [info]: GET /productList
+2026-01-19 14:05:55 [info]: GET /admin
+2026-01-19 16:12:16 [info]: DB Connected
+2026-01-19 16:12:16 [info]: server running on port 3000
+2026-01-19 16:12:21 [info]: DB Connected
+2026-01-19 16:12:21 [info]: server running on port 3000
+2026-01-19 16:12:33 [info]: DB Connected
+2026-01-19 16:12:33 [info]: server running on port 3000
+2026-01-19 16:12:46 [info]: DB Connected
+2026-01-19 16:12:46 [info]: server running on port 3000
+2026-01-19 16:12:55 [info]: DB Connected
+2026-01-19 16:12:55 [info]: server running on port 3000
+2026-01-19 16:13:07 [info]: DB Connected
+2026-01-19 16:13:07 [info]: server running on port 3000
+2026-01-19 16:13:24 [info]: DB Connected
+2026-01-19 16:13:24 [info]: server running on port 3000
+2026-01-19 16:13:38 [info]: DB Connected
+2026-01-19 16:13:39 [info]: server running on port 3000
+2026-01-19 16:13:47 [info]: DB Connected
+2026-01-19 16:13:47 [info]: server running on port 3000
+2026-01-19 16:13:51 [info]: DB Connected
+2026-01-19 16:13:51 [info]: server running on port 3000
+2026-01-19 16:14:13 [info]: DB Connected
+2026-01-19 16:14:13 [info]: server running on port 3000
+2026-01-19 16:15:04 [info]: DB Connected
+2026-01-19 16:15:04 [info]: server running on port 3000
+2026-01-19 16:15:08 [info]: DB Connected
+2026-01-19 16:15:08 [info]: server running on port 3000
+2026-01-19 16:15:16 [info]: DB Connected
+2026-01-19 16:15:16 [info]: server running on port 3000
+2026-01-19 16:15:32 [info]: DB Connected
+2026-01-19 16:15:32 [info]: server running on port 3000
+2026-01-19 16:15:34 [info]: DB Connected
+2026-01-19 16:15:34 [info]: server running on port 3000
+2026-01-19 16:15:51 [info]: DB Connected
+2026-01-19 16:15:51 [info]: server running on port 3000
+2026-01-19 16:15:57 [info]: DB Connected
+2026-01-19 16:15:57 [info]: server running on port 3000
+2026-01-19 16:16:05 [info]: DB Connected
+2026-01-19 16:16:05 [info]: server running on port 3000
+2026-01-19 16:16:25 [info]: DB Connected
+2026-01-19 16:16:25 [info]: server running on port 3000
+2026-01-19 16:16:36 [info]: DB Connected
+2026-01-19 16:16:36 [info]: server running on port 3000
+2026-01-19 16:16:52 [info]: DB Connected
+2026-01-19 16:16:53 [info]: server running on port 3000
+2026-01-19 16:17:11 [info]: DB Connected
+2026-01-19 16:17:11 [info]: server running on port 3000
+2026-01-19 16:19:36 [info]: DB Connected
+2026-01-19 16:19:36 [info]: server running on port 3000
+2026-01-19 19:00:39 [info]: DB Connected
+2026-01-19 19:00:39 [info]: server running on port 3000
+2026-01-19 19:00:42 [info]: DB Connected
+2026-01-19 19:00:42 [info]: server running on port 3000
+2026-01-19 19:01:07 [info]: DB Connected
+2026-01-19 19:01:07 [info]: server running on port 3000
+2026-01-19 19:02:17 [info]: DB Connected
+2026-01-19 19:02:17 [info]: server running on port 3000
+2026-01-19 19:03:13 [info]: DB Connected
+2026-01-19 19:03:13 [info]: server running on port 3000
+2026-01-19 19:03:16 [info]: DB Connected
+2026-01-19 19:03:16 [info]: server running on port 3000
+2026-01-19 19:27:11 [info]: DB Connected
+2026-01-19 19:27:11 [info]: server running on port 3000
+2026-01-19 19:27:38 [info]: DB Connected
+2026-01-19 19:27:38 [info]: server running on port 3000
+2026-01-19 19:27:43 [info]: DB Connected
+2026-01-19 19:27:43 [info]: server running on port 3000
+2026-01-19 19:27:48 [info]: DB Connected
+2026-01-19 19:27:48 [info]: server running on port 3000
+2026-01-19 19:28:27 [info]: DB Connected
+2026-01-19 19:28:27 [info]: server running on port 3000
+2026-01-19 19:28:47 [info]: DB Connected
+2026-01-19 19:28:47 [info]: server running on port 3000
+2026-01-19 19:29:09 [info]: DB Connected
+2026-01-19 19:29:09 [info]: server running on port 3000
+2026-01-19 19:29:17 [info]: DB Connected
+2026-01-19 19:29:17 [info]: server running on port 3000
+2026-01-19 19:29:19 [info]: DB Connected
+2026-01-19 19:29:19 [info]: server running on port 3000
+2026-01-19 19:29:29 [info]: DB Connected
+2026-01-19 19:29:29 [info]: server running on port 3000
+2026-01-19 19:30:01 [info]: DB Connected
+2026-01-19 19:30:01 [info]: server running on port 3000
+2026-01-19 19:30:14 [info]: DB Connected
+2026-01-19 19:30:14 [info]: server running on port 3000
+2026-01-19 19:30:16 [info]: DB Connected
+2026-01-19 19:30:16 [info]: server running on port 3000
+2026-01-19 19:30:21 [info]: DB Connected
+2026-01-19 19:30:21 [info]: server running on port 3000
+2026-01-19 19:30:40 [info]: DB Connected
+2026-01-19 19:30:40 [info]: server running on port 3000
+2026-01-19 19:30:43 [info]: DB Connected
+2026-01-19 19:30:43 [info]: server running on port 3000
+2026-01-19 19:30:58 [info]: DB Connected
+2026-01-19 19:30:58 [info]: server running on port 3000
+2026-01-19 19:31:09 [info]: DB Connected
+2026-01-19 19:31:09 [info]: server running on port 3000
+2026-01-19 19:31:12 [info]: DB Connected
+2026-01-19 19:31:12 [info]: server running on port 3000
+2026-01-19 19:31:14 [info]: DB Connected
+2026-01-19 19:31:14 [info]: server running on port 3000
+2026-01-19 19:31:18 [info]: DB Connected
+2026-01-19 19:31:18 [info]: server running on port 3000
+2026-01-19 19:31:30 [info]: DB Connected
+2026-01-19 19:31:30 [info]: server running on port 3000
+2026-01-19 19:31:48 [info]: DB Connected
+2026-01-19 19:31:48 [info]: server running on port 3000
+2026-01-19 19:34:13 [info]: DB Connected
+2026-01-19 19:34:13 [info]: server running on port 3000
+2026-01-19 19:34:22 [info]: DB Connected
+2026-01-19 19:34:22 [info]: server running on port 3000
+2026-01-19 19:34:31 [info]: DB Connected
+2026-01-19 19:34:31 [info]: server running on port 3000
+2026-01-19 19:34:40 [info]: DB Connected
+2026-01-19 19:34:40 [info]: server running on port 3000
+2026-01-19 19:34:44 [info]: DB Connected
+2026-01-19 19:34:44 [info]: server running on port 3000
+2026-01-19 19:34:46 [info]: DB Connected
+2026-01-19 19:34:46 [info]: server running on port 3000
+2026-01-19 19:34:54 [info]: DB Connected
+2026-01-19 19:34:54 [info]: server running on port 3000
+2026-01-19 19:35:02 [info]: DB Connected
+2026-01-19 19:35:02 [info]: server running on port 3000
+2026-01-19 19:35:09 [info]: DB Connected
+2026-01-19 19:35:09 [info]: server running on port 3000
+2026-01-19 19:35:25 [info]: DB Connected
+2026-01-19 19:35:25 [info]: server running on port 3000
+2026-01-19 19:35:32 [info]: DB Connected
+2026-01-19 19:35:32 [info]: server running on port 3000
+2026-01-19 19:35:44 [info]: DB Connected
+2026-01-19 19:35:44 [info]: server running on port 3000
+2026-01-19 19:35:52 [info]: DB Connected
+2026-01-19 19:35:52 [info]: server running on port 3000
+2026-01-19 19:35:58 [info]: DB Connected
+2026-01-19 19:35:58 [info]: server running on port 3000
+2026-01-19 19:36:01 [info]: DB Connected
+2026-01-19 19:36:01 [info]: server running on port 3000
+2026-01-19 19:38:48 [info]: DB Connected
+2026-01-19 19:38:48 [info]: server running on port 3000
+2026-01-19 19:41:55 [info]: DB Connected
+2026-01-19 19:41:55 [info]: server running on port 3000
+2026-01-19 19:42:08 [info]: DB Connected
+2026-01-19 19:42:08 [info]: server running on port 3000
+2026-01-19 19:42:18 [info]: DB Connected
+2026-01-19 19:42:18 [info]: server running on port 3000
+2026-01-19 19:43:26 [info]: DB Connected
+2026-01-19 19:43:26 [info]: server running on port 3000
+2026-01-19 19:44:10 [info]: DB Connected
+2026-01-19 19:44:10 [info]: server running on port 3000
+2026-01-19 19:44:18 [info]: DB Connected
+2026-01-19 19:44:18 [info]: server running on port 3000
+2026-01-19 19:45:29 [info]: DB Connected
+2026-01-19 19:45:29 [info]: server running on port 3000
+2026-01-19 19:45:38 [info]: DB Connected
+2026-01-19 19:45:38 [info]: server running on port 3000
+2026-01-19 19:46:02 [info]: DB Connected
+2026-01-19 19:46:02 [info]: server running on port 3000
+2026-01-19 19:46:06 [info]: DB Connected
+2026-01-19 19:46:06 [info]: server running on port 3000
+2026-01-19 19:46:12 [info]: DB Connected
+2026-01-19 19:46:12 [info]: server running on port 3000
+2026-01-19 19:46:29 [info]: DB Connected
+2026-01-19 19:46:29 [info]: server running on port 3000
+2026-01-19 19:46:37 [info]: DB Connected
+2026-01-19 19:46:37 [info]: server running on port 3000
+2026-01-19 19:46:40 [info]: DB Connected
+2026-01-19 19:46:40 [info]: server running on port 3000
+2026-01-19 19:46:46 [info]: DB Connected
+2026-01-19 19:46:46 [info]: server running on port 3000
+2026-01-19 19:47:03 [info]: DB Connected
+2026-01-19 19:47:03 [info]: server running on port 3000
+2026-01-19 19:47:13 [info]: DB Connected
+2026-01-19 19:47:13 [info]: server running on port 3000
+2026-01-19 19:47:16 [info]: DB Connected
+2026-01-19 19:47:16 [info]: server running on port 3000
+2026-01-19 19:47:23 [info]: DB Connected
+2026-01-19 19:47:23 [info]: server running on port 3000
+2026-01-19 19:47:36 [info]: DB Connected
+2026-01-19 19:47:36 [info]: server running on port 3000
+2026-01-19 19:47:45 [info]: DB Connected
+2026-01-19 19:47:45 [info]: server running on port 3000
+2026-01-19 19:48:25 [info]: DB Connected
+2026-01-19 19:48:25 [info]: server running on port 3000
+2026-01-19 19:48:39 [info]: DB Connected
+2026-01-19 19:48:39 [info]: server running on port 3000
+2026-01-19 19:48:47 [info]: DB Connected
+2026-01-19 19:48:47 [info]: server running on port 3000
+2026-01-19 19:48:50 [info]: DB Connected
+2026-01-19 19:48:50 [info]: server running on port 3000
+2026-01-19 19:48:53 [info]: DB Connected
+2026-01-19 19:48:53 [info]: server running on port 3000
+2026-01-19 19:48:58 [info]: DB Connected
+2026-01-19 19:48:58 [info]: server running on port 3000
+2026-01-19 19:49:00 [info]: DB Connected
+2026-01-19 19:49:00 [info]: server running on port 3000
+2026-01-19 19:49:09 [info]: DB Connected
+2026-01-19 19:49:09 [info]: server running on port 3000
+2026-01-19 19:49:20 [info]: DB Connected
+2026-01-19 19:49:20 [info]: server running on port 3000
+2026-01-19 19:49:25 [info]: DB Connected
+2026-01-19 19:49:25 [info]: server running on port 3000
+2026-01-19 19:49:27 [info]: DB Connected
+2026-01-19 19:49:27 [info]: server running on port 3000
+2026-01-19 19:49:31 [info]: DB Connected
+2026-01-19 19:49:31 [info]: server running on port 3000
+2026-01-19 19:57:55 [info]: DB Connected
+2026-01-19 19:57:55 [info]: server running on port 3000
+2026-01-19 19:58:37 [info]: DB Connected
+2026-01-19 19:58:37 [info]: server running on port 3000
+2026-01-19 19:59:13 [info]: DB Connected
+2026-01-19 19:59:13 [info]: server running on port 3000
+2026-01-19 19:59:17 [info]: DB Connected
+2026-01-19 19:59:17 [info]: server running on port 3000
+2026-01-19 19:59:22 [info]: DB Connected
+2026-01-19 19:59:22 [info]: server running on port 3000
+2026-01-19 19:59:32 [info]: DB Connected
+2026-01-19 19:59:32 [info]: server running on port 3000
+2026-01-19 19:59:54 [info]: DB Connected
+2026-01-19 19:59:54 [info]: server running on port 3000
+2026-01-19 19:59:59 [info]: DB Connected
+2026-01-19 19:59:59 [info]: server running on port 3000
+2026-01-19 20:00:20 [info]: DB Connected
+2026-01-19 20:00:20 [info]: server running on port 3000
+2026-01-19 20:00:32 [info]: DB Connected
+2026-01-19 20:00:32 [info]: server running on port 3000
+2026-01-19 22:23:58 [info]: DB Connected
+2026-01-19 22:23:58 [info]: server running on port 3000
+2026-01-19 22:24:16 [info]: GET /productList
+2026-01-19 22:24:26 [info]: GET /product-details/6957ec38f74c6619c6dff21b
+2026-01-19 22:24:26 [info]: GET /css/vendor.css
+2026-01-19 22:24:26 [info]: GET /css/utility.css
+2026-01-19 22:24:26 [info]: GET /css/app.css
+2026-01-19 22:24:26 [info]: GET /css/OfferTag.css
+2026-01-19 22:24:26 [info]: GET /css/productDetailsLogo.css
+2026-01-19 22:24:26 [info]: GET /css/productDetails.css
+2026-01-19 22:24:26 [info]: GET /css/profileName.css
+2026-01-19 22:24:26 [info]: GET /css/containerWidth.css
+2026-01-19 22:24:26 [info]: GET /images/preloader.png
+2026-01-19 22:24:26 [info]: GET /js/vendor.js
+2026-01-19 22:24:26 [info]: GET /js/jquery.shopnav.js
+2026-01-19 22:24:26 [info]: GET /js/app.js
+2026-01-19 22:24:26 [info]: GET /images/product/product-d-1.jpg
+2026-01-19 22:24:26 [info]: GET /images/product/product-d-2.jpg
+2026-01-19 22:24:26 [info]: GET /images/product/product-d-3.jpg
+2026-01-19 22:24:26 [info]: GET /images/product/product-d-4.jpg
+2026-01-19 22:24:26 [info]: GET /images/product/product-d-5.jpg
+2026-01-19 22:24:26 [info]: GET /images/product/electronic/product1.jpg
+2026-01-19 22:24:27 [info]: GET /check-wishlist/6957ec38f74c6619c6dff21b
+2026-01-19 22:24:27 [info]: GET /login
+2026-01-19 22:24:29 [info]: GET /productList
+2026-01-19 22:24:46 [info]: GET /user/products/filter?category=&sort=newest&limit=12&page=1&search=666
+2026-01-19 22:24:52 [info]: GET /user/products/filter?category=&sort=newest&limit=12&page=1&search=999
+2026-01-19 22:25:01 [info]: GET /productList
+2026-01-19 22:25:01 [info]: GET /css/vendor.css
+2026-01-19 22:25:01 [info]: GET /css/utility.css
+2026-01-19 22:25:01 [info]: GET /css/app.css
+2026-01-19 22:25:01 [info]: GET /css/OfferTag.css
+2026-01-19 22:25:01 [info]: GET /css/productDetailsLogo.css
+2026-01-19 22:25:01 [info]: GET /css/containerWidth.css
+2026-01-19 22:25:01 [info]: GET /images/preloader.png
+2026-01-19 22:25:01 [info]: GET /js/vendor.js
+2026-01-19 22:25:01 [info]: GET /js/jquery.shopnav.js
+2026-01-19 22:25:01 [info]: GET /js/app.js
+2026-01-19 22:25:01 [info]: GET /images/favicon.png
+2026-01-19 22:25:12 [info]: GET /user/products/filter?category=&sort=price_asc&limit=12&page=1&search=
+2026-01-19 22:25:53 [info]: POST /admin
+2026-01-19 22:25:54 [info]: GET /admin/dashboard
+2026-01-19 22:25:54 [info]: GET /admin-assets/css/bootstrap.min.css
+2026-01-19 22:25:54 [info]: GET /admin-assets/css/animate.css
+2026-01-19 22:25:54 [info]: GET /admin-assets/css/dataTables.bootstrap4.min.css
+2026-01-19 22:25:54 [info]: GET /admin-assets/plugins/fontawesome/css/fontawesome.min.css
+2026-01-19 22:25:54 [info]: GET /admin-assets/plugins/fontawesome/css/all.min.css
+2026-01-19 22:25:54 [info]: GET /admin-assets/css/logo.css
+2026-01-19 22:25:54 [info]: GET /admin-assets/css/style.css
+2026-01-19 22:25:54 [info]: GET /admin-assets/css/salesGraph.css
+2026-01-19 22:25:54 [info]: GET /admin-assets/img/icons/dash2.svg
+2026-01-19 22:25:54 [info]: GET /admin-assets/img/icons/dash3.svg
+2026-01-19 22:25:54 [info]: GET /admin-assets/img/icons/dash4.svg
+2026-01-19 22:25:54 [info]: GET /admin-assets/js/feather.min.js
+2026-01-19 22:25:54 [info]: GET /admin-assets/js/jquery.slimscroll.min.js
+2026-01-19 22:25:54 [info]: GET /admin-assets/js/jquery.dataTables.min.js
+2026-01-19 22:25:54 [info]: GET /admin-assets/js/dataTables.bootstrap4.min.js
+2026-01-19 22:25:54 [info]: GET /admin-assets/js/jquery-3.6.0.min.js
+2026-01-19 22:25:54 [info]: GET /css2
+2026-01-19 22:25:54 [info]: GET /admin-assets/js/bootstrap.bundle.min.js
+2026-01-19 22:25:54 [info]: GET /admin-assets/plugins/apexchart/apexcharts.min.js
+2026-01-19 22:25:54 [info]: GET /admin-assets/plugins/apexchart/chart-data.js
+2026-01-19 22:25:54 [info]: GET /admin-assets/js/script.js
+2026-01-19 22:25:54 [info]: GET /admin-assets/plugins/sweetalert/sweetalert2.all.min.js
+2026-01-19 22:25:54 [info]: GET /admin-assets/plugins/sweetalert/sweetalerts.min.js
+2026-01-19 22:25:54 [info]: GET /admin-assets/plugins/fontawesome/webfonts/fa-solid-900.woff2
+2026-01-19 22:25:54 [info]: GET /admin/sales?type=monthly
+2026-01-19 22:25:58 [info]: GET /admin/productList
+2026-01-19 22:25:58 [info]: GET /admin-assets/css/bootstrap.min.css
+2026-01-19 22:25:58 [info]: GET /admin-assets/css/animate.css
+2026-01-19 22:25:58 [info]: GET /admin-assets/plugins/select2/css/select2.min.css
+2026-01-19 22:25:58 [info]: GET /admin-assets/css/dataTables.bootstrap4.min.css
+2026-01-19 22:25:58 [info]: GET /admin-assets/plugins/fontawesome/css/fontawesome.min.css
+2026-01-19 22:25:58 [info]: GET /admin-assets/plugins/fontawesome/css/all.min.css
+2026-01-19 22:25:58 [info]: GET /admin-assets/css/style.css
+2026-01-19 22:25:58 [info]: GET /admin-assets/css/logo.css
+2026-01-19 22:25:58 [info]: GET /admin-assets/img/icons/plus.svg
+2026-01-19 22:25:58 [info]: GET /admin-assets/img/icons/filter.svg
+2026-01-19 22:25:58 [info]: GET /admin-assets/img/icons/closes.svg
+2026-01-19 22:25:58 [info]: GET /admin-assets/img/icons/search-white.svg
+2026-01-19 22:25:58 [info]: GET /admin-assets/js/jquery-3.6.0.min.js
+2026-01-19 22:25:58 [info]: GET /admin-assets/img/icons/search-whites.svg
+2026-01-19 22:25:58 [info]: GET /admin-assets/js/feather.min.js
+2026-01-19 22:25:58 [info]: GET /css2
+2026-01-19 22:25:58 [info]: GET /admin-assets/js/jquery.slimscroll.min.js
+2026-01-19 22:25:58 [info]: GET /admin-assets/js/jquery.dataTables.min.js
+2026-01-19 22:25:58 [info]: GET /admin-assets/js/dataTables.bootstrap4.min.js
+2026-01-19 22:25:58 [info]: GET /admin-assets/js/bootstrap.bundle.min.js
+2026-01-19 22:25:58 [info]: GET /admin-assets/plugins/sweetalert/sweetalert2.all.min.js
+2026-01-19 22:25:58 [info]: GET /admin-assets/plugins/select2/js/select2.min.js
+2026-01-19 22:25:58 [info]: GET /admin-assets/plugins/sweetalert/sweetalerts.min.js
+2026-01-19 22:25:58 [info]: GET /admin-assets/img/icons/edit.svg
+2026-01-19 22:25:58 [info]: GET /admin-assets/js/script.js
+2026-01-19 22:25:58 [info]: GET /admin-assets/img/icons/delete.svg
+2026-01-19 22:25:58 [info]: GET /admin-assets/img/icons/dropdown.svg
+2026-01-19 22:26:15 [info]: GET /admin/category
+2026-01-19 22:26:15 [info]: GET /admin-assets/css/bootstrap.min.css
+2026-01-19 22:26:15 [info]: GET /admin-assets/css/animate.css
+2026-01-19 22:26:15 [info]: GET /admin-assets/plugins/select2/css/select2.min.css
+2026-01-19 22:26:15 [info]: GET /admin-assets/plugins/fontawesome/css/all.min.css
+2026-01-19 22:26:15 [info]: GET /admin-assets/css/style.css
+2026-01-19 22:26:15 [info]: GET /admin-assets/css/dataTables.bootstrap4.min.css
+2026-01-19 22:26:15 [info]: GET /admin-assets/plugins/fontawesome/css/fontawesome.min.css
+2026-01-19 22:26:15 [info]: GET /admin-assets/css/logo.css
+2026-01-19 22:26:15 [info]: GET /admin-assets/img/icons/plus.svg
+2026-01-19 22:26:15 [info]: GET /admin-assets/js/jquery-3.6.0.min.js
+2026-01-19 22:26:15 [info]: GET /admin-assets/js/feather.min.js
+2026-01-19 22:26:15 [info]: GET /admin-assets/js/jquery.slimscroll.min.js
+2026-01-19 22:26:15 [info]: GET /css2
+2026-01-19 22:26:15 [info]: GET /admin-assets/js/jquery.dataTables.min.js
+2026-01-19 22:26:15 [info]: GET /admin-assets/js/dataTables.bootstrap4.min.js
+2026-01-19 22:26:15 [info]: GET /admin-assets/js/bootstrap.bundle.min.js
+2026-01-19 22:26:15 [info]: GET /admin-assets/js/moment.min.js
+2026-01-19 22:26:15 [info]: GET /admin-assets/js/bootstrap-datetimepicker.min.js
+2026-01-19 22:26:15 [info]: GET /admin-assets/plugins/select2/js/select2.min.js
+2026-01-19 22:26:15 [info]: GET /admin-assets/plugins/sweetalert/sweetalert2.all.min.js
+2026-01-19 22:26:15 [info]: GET /admin-assets/plugins/sweetalert/sweetalerts.min.js
+2026-01-19 22:26:15 [info]: GET /admin-assets/js/script.js
+2026-01-19 22:26:39 [info]: GET /admin/productList
+2026-01-19 22:26:39 [info]: GET /admin-assets/css/bootstrap.min.css
+2026-01-19 22:26:39 [info]: GET /admin-assets/css/animate.css
+2026-01-19 22:26:39 [info]: GET /admin-assets/plugins/select2/css/select2.min.css
+2026-01-19 22:26:39 [info]: GET /admin-assets/css/dataTables.bootstrap4.min.css
+2026-01-19 22:26:40 [info]: GET /admin-assets/plugins/fontawesome/css/fontawesome.min.css
+2026-01-19 22:26:40 [info]: GET /admin-assets/plugins/fontawesome/css/all.min.css
+2026-01-19 22:26:40 [info]: GET /admin-assets/css/style.css
+2026-01-19 22:26:40 [info]: GET /admin-assets/css/logo.css
+2026-01-19 22:26:40 [info]: GET /admin-assets/img/icons/plus.svg
+2026-01-19 22:26:40 [info]: GET /admin-assets/img/icons/filter.svg
+2026-01-19 22:26:40 [info]: GET /admin-assets/img/icons/closes.svg
+2026-01-19 22:26:40 [info]: GET /admin-assets/img/icons/search-white.svg
+2026-01-19 22:26:40 [info]: GET /admin-assets/img/icons/search-whites.svg
+2026-01-19 22:26:40 [info]: GET /admin-assets/js/jquery-3.6.0.min.js
+2026-01-19 22:26:40 [info]: GET /css2
+2026-01-19 22:26:40 [info]: GET /admin-assets/js/feather.min.js
+2026-01-19 22:26:40 [info]: GET /admin-assets/js/jquery.slimscroll.min.js
+2026-01-19 22:26:40 [info]: GET /admin-assets/js/jquery.dataTables.min.js
+2026-01-19 22:26:40 [info]: GET /admin-assets/js/dataTables.bootstrap4.min.js
+2026-01-19 22:26:40 [info]: GET /admin-assets/js/bootstrap.bundle.min.js
+2026-01-19 22:26:40 [info]: GET /admin-assets/plugins/select2/js/select2.min.js
+2026-01-19 22:26:40 [info]: GET /admin-assets/plugins/sweetalert/sweetalert2.all.min.js
+2026-01-19 22:26:40 [info]: GET /admin-assets/plugins/sweetalert/sweetalerts.min.js
+2026-01-19 22:26:40 [info]: GET /admin-assets/js/script.js
+2026-01-19 22:26:40 [info]: GET /admin-assets/img/icons/edit.svg
+2026-01-19 22:26:40 [info]: GET /admin-assets/img/icons/delete.svg
+2026-01-19 22:26:40 [info]: GET /admin-assets/img/icons/dropdown.svg
+2026-01-19 22:43:22 [info]: GET /admin/productList
+2026-01-19 22:43:23 [info]: GET /admin-assets/css/bootstrap.min.css
+2026-01-19 22:43:23 [info]: GET /admin-assets/css/animate.css
+2026-01-19 22:43:23 [info]: GET /admin-assets/plugins/fontawesome/css/fontawesome.min.css
+2026-01-19 22:43:23 [info]: GET /admin-assets/plugins/select2/css/select2.min.css
+2026-01-19 22:43:23 [info]: GET /admin-assets/plugins/fontawesome/css/all.min.css
+2026-01-19 22:43:23 [info]: GET /admin-assets/css/dataTables.bootstrap4.min.css
+2026-01-19 22:43:23 [info]: GET /admin-assets/css/style.css
+2026-01-19 22:43:23 [info]: GET /admin-assets/css/logo.css
+2026-01-19 22:43:23 [info]: GET /admin-assets/img/icons/plus.svg
+2026-01-19 22:43:23 [info]: GET /admin-assets/img/icons/filter.svg
+2026-01-19 22:43:23 [info]: GET /admin-assets/img/icons/closes.svg
+2026-01-19 22:43:23 [info]: GET /admin-assets/img/icons/search-white.svg
+2026-01-19 22:43:23 [info]: GET /admin-assets/img/icons/search-whites.svg
+2026-01-19 22:43:23 [info]: GET /admin-assets/js/jquery-3.6.0.min.js
+2026-01-19 22:43:23 [info]: GET /admin-assets/js/feather.min.js
+2026-01-19 22:43:23 [info]: GET /admin-assets/js/jquery.slimscroll.min.js
+2026-01-19 22:43:23 [info]: GET /css2
+2026-01-19 22:43:24 [info]: GET /admin-assets/js/jquery.dataTables.min.js
+2026-01-19 22:43:24 [info]: GET /admin-assets/js/dataTables.bootstrap4.min.js
+2026-01-19 22:43:24 [info]: GET /admin-assets/js/bootstrap.bundle.min.js
+2026-01-19 22:43:24 [info]: GET /admin-assets/plugins/select2/js/select2.min.js
+2026-01-19 22:43:24 [info]: GET /admin-assets/plugins/sweetalert/sweetalert2.all.min.js
+2026-01-19 22:43:24 [info]: GET /admin-assets/plugins/sweetalert/sweetalerts.min.js
+2026-01-19 22:43:24 [info]: GET /admin-assets/js/script.js
+2026-01-19 22:43:24 [info]: GET /admin-assets/img/icons/edit.svg
+2026-01-19 22:43:24 [info]: GET /admin-assets/img/icons/delete.svg
+2026-01-19 22:43:24 [info]: GET /admin-assets/img/icons/dropdown.svg
+2026-01-19 22:43:25 [info]: GET /images/favicon.png
+2026-01-19 22:43:37 [info]: GET /productList
+2026-01-19 22:43:37 [info]: GET /css/utility.css
+2026-01-19 22:43:37 [info]: GET /css/app.css
+2026-01-19 22:43:37 [info]: GET /css/containerWidth.css
+2026-01-19 22:43:37 [info]: GET /css/OfferTag.css
+2026-01-19 22:43:37 [info]: GET /css/vendor.css
+2026-01-19 22:43:37 [info]: GET /css/productDetailsLogo.css
+2026-01-19 22:43:37 [info]: GET /images/preloader.png
+2026-01-19 22:43:38 [info]: GET /js/vendor.js
+2026-01-19 22:43:38 [info]: GET /js/jquery.shopnav.js
+2026-01-19 22:43:38 [info]: GET /js/app.js
+2026-01-19 22:43:39 [info]: GET /images/favicon.png
+2026-01-19 22:44:17 [info]: GET /login
+2026-01-19 22:44:17 [info]: GET /css/vendor.css
+2026-01-19 22:44:17 [info]: GET /css/utility.css
+2026-01-19 22:44:17 [info]: GET /css/app.css
+2026-01-19 22:44:17 [info]: GET /css/productDetailsLogo.css
+2026-01-19 22:44:17 [info]: GET /images/preloader.png
+2026-01-19 22:44:17 [info]: GET /css/profileName.css
+2026-01-19 22:44:17 [info]: GET /images/product/product-d-1.jpg
+2026-01-19 22:44:17 [info]: GET /images/product/product-d-3.jpg
+2026-01-19 22:44:17 [info]: GET /images/product/product-d-2.jpg
+2026-01-19 22:44:17 [info]: GET /images/product/product-d-4.jpg
+2026-01-19 22:44:17 [info]: GET /js/app.js
+2026-01-19 22:44:17 [info]: GET /js/vendor.js
+2026-01-19 22:44:17 [info]: GET /js/jquery.shopnav.js
+2026-01-19 22:44:17 [info]: GET /images/product/product-d-5.jpg
+2026-01-19 22:44:17 [info]: GET /images/product/electronic/product1.jpg
+2026-01-19 22:44:26 [info]: POST /login
+2026-01-19 22:44:26 [info]: GET /
+2026-01-19 22:44:26 [info]: GET /css/orderSuccess.css
+2026-01-19 22:44:26 [info]: GET /css/vendor.css
+2026-01-19 22:44:26 [info]: GET /css/utility.css
+2026-01-19 22:44:26 [info]: GET /css/OfferTag.css
+2026-01-19 22:44:26 [info]: GET /css/app.css
+2026-01-19 22:44:26 [info]: GET /css/home.css
+2026-01-19 22:44:26 [info]: GET /css/logo.css
+2026-01-19 22:44:26 [info]: GET /css/profileName.css
+2026-01-19 22:44:26 [info]: GET /css/containerWidth.css
+2026-01-19 22:44:26 [info]: GET /css/productDetails.css
+2026-01-19 22:44:26 [info]: GET /images/preloader.png
+2026-01-19 22:44:26 [info]: GET /images/promo/Konoha-homepage-banner.webp
+2026-01-19 22:44:26 [info]: GET /images/promo/Ikebana_harubana_desk.webp
+2026-01-19 22:44:26 [info]: GET /images/promo/Ikebana_midori.webp
+2026-01-19 22:44:26 [info]: GET /images/banners/home-page-bottom-banners-furniture1.webp
+2026-01-19 22:44:26 [info]: GET /js/vendor.js
+2026-01-19 22:44:26 [info]: GET /js/jquery.shopnav.js
+2026-01-19 22:44:26 [info]: GET /js/app.js
+2026-01-19 22:44:26 [info]: GET /images/product2/wallPainting1.png
+2026-01-19 22:44:26 [info]: GET /images/product2/desert.png
+2026-01-19 22:44:26 [info]: GET /images/banners/AL.webp
+2026-01-19 22:44:26 [info]: GET /images/product/product-d-1.jpg
+2026-01-19 22:44:26 [info]: GET /images/product/product-d-2.jpg
+2026-01-19 22:44:26 [info]: GET /images/product/product-d-3.jpg
+2026-01-19 22:44:26 [info]: GET /images/product/product-d-4.jpg
+2026-01-19 22:44:26 [info]: GET /images/product/product-d-5.jpg
+2026-01-19 22:44:26 [info]: GET /images/product/electronic/product1.jpg
+2026-01-19 22:44:27 [info]: GET /images/slider/slide-7.jpg
+2026-01-19 22:44:27 [info]: GET /images/slider/slide-8.jpg
+2026-01-19 22:44:27 [info]: GET /images/slider/slide-9.jpg
+2026-01-19 22:44:37 [info]: GET /productList
+2026-01-19 22:44:37 [info]: GET /css/vendor.css
+2026-01-19 22:44:37 [info]: GET /css/utility.css
+2026-01-19 22:44:37 [info]: GET /css/OfferTag.css
+2026-01-19 22:44:37 [info]: GET /css/app.css
+2026-01-19 22:44:37 [info]: GET /css/productDetailsLogo.css
+2026-01-19 22:44:37 [info]: GET /css/containerWidth.css
+2026-01-19 22:44:37 [info]: GET /images/preloader.png
+2026-01-19 22:44:37 [info]: GET /js/vendor.js
+2026-01-19 22:44:37 [info]: GET /js/jquery.shopnav.js
+2026-01-19 22:44:37 [info]: GET /js/app.js
+2026-01-19 22:44:39 [info]: GET /product-details/68dd0d584a9440017e24fe00
+2026-01-19 22:44:40 [info]: GET /css/vendor.css
+2026-01-19 22:44:40 [info]: GET /css/utility.css
+2026-01-19 22:44:40 [info]: GET /css/app.css
+2026-01-19 22:44:40 [info]: GET /css/OfferTag.css
+2026-01-19 22:44:40 [info]: GET /css/productDetailsLogo.css
+2026-01-19 22:44:40 [info]: GET /css/productDetails.css
+2026-01-19 22:44:40 [info]: GET /css/profileName.css
+2026-01-19 22:44:40 [info]: GET /css/containerWidth.css
+2026-01-19 22:44:40 [info]: GET /images/preloader.png
+2026-01-19 22:44:40 [info]: GET /js/vendor.js
+2026-01-19 22:44:40 [info]: GET /js/jquery.shopnav.js
+2026-01-19 22:44:40 [info]: GET /js/app.js
+2026-01-19 22:44:40 [info]: GET /images/product/product-d-1.jpg
+2026-01-19 22:44:40 [info]: GET /images/product/product-d-2.jpg
+2026-01-19 22:44:40 [info]: GET /images/product/product-d-3.jpg
+2026-01-19 22:44:40 [info]: GET /images/product/product-d-4.jpg
+2026-01-19 22:44:40 [info]: GET /images/product/product-d-5.jpg
+2026-01-19 22:44:40 [info]: GET /images/product/electronic/product1.jpg
+2026-01-19 22:44:40 [info]: GET /check-wishlist/68dd0d584a9440017e24fe00
+2026-01-19 22:44:43 [info]: POST /add-to-cart
+2026-01-19 22:44:45 [info]: GET /product-details/68dd0d584a9440017e24fe00
+2026-01-19 22:44:45 [info]: GET /css/vendor.css
+2026-01-19 22:44:45 [info]: GET /css/utility.css
+2026-01-19 22:44:45 [info]: GET /css/app.css
+2026-01-19 22:44:45 [info]: GET /css/OfferTag.css
+2026-01-19 22:44:45 [info]: GET /css/productDetailsLogo.css
+2026-01-19 22:44:45 [info]: GET /css/productDetails.css
+2026-01-19 22:44:45 [info]: GET /css/profileName.css
+2026-01-19 22:44:45 [info]: GET /css/containerWidth.css
+2026-01-19 22:44:45 [info]: GET /images/preloader.png
+2026-01-19 22:44:45 [info]: GET /js/vendor.js
+2026-01-19 22:44:45 [info]: GET /js/jquery.shopnav.js
+2026-01-19 22:44:45 [info]: GET /js/app.js
+2026-01-19 22:44:45 [info]: GET /images/product/product-d-1.jpg
+2026-01-19 22:44:45 [info]: GET /images/product/product-d-2.jpg
+2026-01-19 22:44:45 [info]: GET /images/product/product-d-3.jpg
+2026-01-19 22:44:45 [info]: GET /images/product/product-d-4.jpg
+2026-01-19 22:44:45 [info]: GET /images/product/product-d-5.jpg
+2026-01-19 22:44:45 [info]: GET /images/product/electronic/product1.jpg
+2026-01-19 22:44:45 [info]: GET /check-wishlist/68dd0d584a9440017e24fe00
+2026-01-19 22:44:45 [info]: GET /images/favicon.png
+2026-01-19 22:44:57 [info]: DELETE /deleteCartItem/6960cf92637da8a77dd9d0a4
+2026-01-19 22:44:59 [info]: GET /product-details/68dd0d584a9440017e24fe00
+2026-01-19 22:44:59 [info]: GET /css/vendor.css
+2026-01-19 22:44:59 [info]: GET /css/utility.css
+2026-01-19 22:44:59 [info]: GET /css/app.css
+2026-01-19 22:44:59 [info]: GET /css/OfferTag.css
+2026-01-19 22:44:59 [info]: GET /css/productDetails.css
+2026-01-19 22:44:59 [info]: GET /css/productDetailsLogo.css
+2026-01-19 22:44:59 [info]: GET /css/profileName.css
+2026-01-19 22:44:59 [info]: GET /css/containerWidth.css
+2026-01-19 22:44:59 [info]: GET /images/preloader.png
+2026-01-19 22:44:59 [info]: GET /js/vendor.js
+2026-01-19 22:44:59 [info]: GET /js/jquery.shopnav.js
+2026-01-19 22:44:59 [info]: GET /js/app.js
+2026-01-19 22:44:59 [info]: GET /images/product/product-d-1.jpg
+2026-01-19 22:44:59 [info]: GET /images/product/product-d-2.jpg
+2026-01-19 22:44:59 [info]: GET /images/product/product-d-3.jpg
+2026-01-19 22:44:59 [info]: GET /images/product/product-d-4.jpg
+2026-01-19 22:44:59 [info]: GET /images/product/product-d-5.jpg
+2026-01-19 22:44:59 [info]: GET /images/product/electronic/product1.jpg
+2026-01-19 22:44:59 [info]: GET /check-wishlist/68dd0d584a9440017e24fe00
+2026-01-19 22:44:59 [info]: GET /images/favicon.png
+2026-01-19 22:45:02 [info]: DELETE /deleteCartItem/695fa5bd5d7af3c0cc524c03
+2026-01-19 22:45:04 [info]: GET /product-details/68dd0d584a9440017e24fe00
+2026-01-19 22:45:04 [info]: GET /css/vendor.css
+2026-01-19 22:45:04 [info]: GET /css/utility.css
+2026-01-19 22:45:04 [info]: GET /css/app.css
+2026-01-19 22:45:04 [info]: GET /css/profileName.css
+2026-01-19 22:45:04 [info]: GET /css/containerWidth.css
+2026-01-19 22:45:04 [info]: GET /css/OfferTag.css
+2026-01-19 22:45:04 [info]: GET /css/productDetailsLogo.css
+2026-01-19 22:45:04 [info]: GET /css/productDetails.css
+2026-01-19 22:45:04 [info]: GET /images/preloader.png
+2026-01-19 22:45:04 [info]: GET /js/vendor.js
+2026-01-19 22:45:04 [info]: GET /js/jquery.shopnav.js
+2026-01-19 22:45:04 [info]: GET /js/app.js
+2026-01-19 22:45:04 [info]: GET /images/product/product-d-1.jpg
+2026-01-19 22:45:04 [info]: GET /images/product/product-d-2.jpg
+2026-01-19 22:45:04 [info]: GET /images/product/product-d-3.jpg
+2026-01-19 22:45:04 [info]: GET /images/product/product-d-4.jpg
+2026-01-19 22:45:04 [info]: GET /images/product/product-d-5.jpg
+2026-01-19 22:45:04 [info]: GET /images/product/electronic/product1.jpg
+2026-01-19 22:45:04 [info]: GET /check-wishlist/68dd0d584a9440017e24fe00
+2026-01-19 22:45:05 [info]: GET /images/favicon.png
+2026-01-19 22:45:07 [info]: GET /checkout
+2026-01-19 22:45:07 [info]: GET /css/couponModal.css
+2026-01-19 22:45:07 [info]: GET /css/checkout.css
+2026-01-19 22:45:07 [info]: GET /css/vendor.css
+2026-01-19 22:45:07 [info]: GET /css/utility.css
+2026-01-19 22:45:07 [info]: GET /css/app.css
+2026-01-19 22:45:08 [info]: GET /css/productDetailsLogo.css
+2026-01-19 22:45:08 [info]: GET /css/profileName.css
+2026-01-19 22:45:08 [info]: GET /css/containerWidth.css
+2026-01-19 22:45:08 [info]: GET /images/preloader.png
+2026-01-19 22:45:08 [info]: GET /js/vendor.js
+2026-01-19 22:45:08 [info]: GET /js/jquery.shopnav.js
+2026-01-19 22:45:08 [info]: GET /js/app.js
+2026-01-19 22:45:09 [info]: POST /calculate-delivery-charge
+2026-01-19 22:45:15 [info]: POST /order-save
+2026-01-19 22:45:15 [error]: ReferenceError: Cannot access 'order' before initialization
+    at placeCODOrder (file:///C:/Users/shahi/project/ecommerceWebsite/services/order.service.js:8:29)
+    at file:///C:/Users/shahi/project/ecommerceWebsite/controllers/user/orderController.js:236:20
+    at withTransaction (file:///C:/Users/shahi/project/ecommerceWebsite/utils/withTransaction.js:7:30)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async saveOrderInSession (file:///C:/Users/shahi/project/ecommerceWebsite/controllers/user/orderController.js:235:24)
+2026-01-19 22:46:43 [info]: DB Connected
+2026-01-19 22:46:43 [info]: server running on port 3000
+2026-01-19 22:46:44 [info]: POST /order-save
+2026-01-19 22:46:47 [info]: GET /checkout
+2026-01-19 22:46:47 [info]: GET /login
+2026-01-19 22:46:47 [info]: GET /css/vendor.css
+2026-01-19 22:46:47 [info]: GET /css/utility.css
+2026-01-19 22:46:47 [info]: GET /css/app.css
+2026-01-19 22:46:47 [info]: GET /css/productDetailsLogo.css
+2026-01-19 22:46:47 [info]: GET /css/profileName.css
+2026-01-19 22:46:47 [info]: GET /images/preloader.png
+2026-01-19 22:46:47 [info]: GET /images/product/product-d-1.jpg
+2026-01-19 22:46:47 [info]: GET /images/product/product-d-2.jpg
+2026-01-19 22:46:47 [info]: GET /images/product/product-d-3.jpg
+2026-01-19 22:46:47 [info]: GET /images/product/product-d-4.jpg
+2026-01-19 22:46:47 [info]: GET /js/vendor.js
+2026-01-19 22:46:47 [info]: GET /js/jquery.shopnav.js
+2026-01-19 22:46:47 [info]: GET /js/app.js
+2026-01-19 22:46:47 [info]: GET /images/product/product-d-5.jpg
+2026-01-19 22:46:47 [info]: GET /images/product/electronic/product1.jpg
+2026-01-19 22:46:47 [info]: GET /images/favicon.png
+2026-01-19 22:46:52 [info]: POST /login
+2026-01-19 22:46:52 [info]: GET /css/vendor.css
+2026-01-19 22:46:52 [info]: GET /css/utility.css
+2026-01-19 22:46:52 [info]: GET /css/app.css
+2026-01-19 22:46:52 [info]: GET /css/productDetailsLogo.css
+2026-01-19 22:46:52 [info]: GET /css/profileName.css
+2026-01-19 22:46:52 [info]: GET /images/preloader.png
+2026-01-19 22:46:52 [info]: GET /images/product/product-d-1.jpg
+2026-01-19 22:46:52 [info]: GET /images/product/product-d-2.jpg
+2026-01-19 22:46:52 [info]: GET /images/product/product-d-3.jpg
+2026-01-19 22:46:52 [info]: GET /images/product/product-d-4.jpg
+2026-01-19 22:46:52 [info]: GET /js/vendor.js
+2026-01-19 22:46:52 [info]: GET /js/jquery.shopnav.js
+2026-01-19 22:46:52 [info]: GET /js/app.js
+2026-01-19 22:46:52 [info]: GET /images/product/product-d-5.jpg
+2026-01-19 22:46:52 [info]: GET /images/product/electronic/product1.jpg
+2026-01-19 22:47:02 [info]: POST /login
+2026-01-19 22:47:03 [info]: GET /
+2026-01-19 22:47:03 [info]: GET /css/orderSuccess.css
+2026-01-19 22:47:03 [info]: GET /css/vendor.css
+2026-01-19 22:47:03 [info]: GET /css/utility.css
+2026-01-19 22:47:03 [info]: GET /css/OfferTag.css
+2026-01-19 22:47:03 [info]: GET /css/app.css
+2026-01-19 22:47:03 [info]: GET /css/home.css
+2026-01-19 22:47:03 [info]: GET /css/logo.css
+2026-01-19 22:47:03 [info]: GET /css/productDetails.css
+2026-01-19 22:47:03 [info]: GET /css/profileName.css
+2026-01-19 22:47:03 [info]: GET /css/containerWidth.css
+2026-01-19 22:47:03 [info]: GET /images/preloader.png
+2026-01-19 22:47:03 [info]: GET /images/promo/Konoha-homepage-banner.webp
+2026-01-19 22:47:03 [info]: GET /images/promo/Ikebana_harubana_desk.webp
+2026-01-19 22:47:03 [info]: GET /images/promo/Ikebana_midori.webp
+2026-01-19 22:47:03 [info]: GET /images/banners/home-page-bottom-banners-furniture1.webp
+2026-01-19 22:47:03 [info]: GET /js/vendor.js
+2026-01-19 22:47:03 [info]: GET /js/jquery.shopnav.js
+2026-01-19 22:47:03 [info]: GET /js/app.js
+2026-01-19 22:47:03 [info]: GET /images/product2/wallPainting1.png
+2026-01-19 22:47:03 [info]: GET /images/product2/desert.png
+2026-01-19 22:47:03 [info]: GET /images/banners/AL.webp
+2026-01-19 22:47:03 [info]: GET /images/product/product-d-1.jpg
+2026-01-19 22:47:03 [info]: GET /images/product/product-d-2.jpg
+2026-01-19 22:47:03 [info]: GET /images/product/product-d-3.jpg
+2026-01-19 22:47:03 [info]: GET /images/product/product-d-4.jpg
+2026-01-19 22:47:03 [info]: GET /images/product/product-d-5.jpg
+2026-01-19 22:47:03 [info]: GET /images/product/electronic/product1.jpg
+2026-01-19 22:47:06 [info]: GET /profile
+2026-01-19 22:47:06 [info]: GET /css/vendor.css
+2026-01-19 22:47:06 [info]: GET /css/utility.css
+2026-01-19 22:47:06 [info]: GET /css/app.css
+2026-01-19 22:47:06 [info]: GET /css/productDetailsLogo.css
+2026-01-19 22:47:06 [info]: GET /css/profileName.css
+2026-01-19 22:47:06 [info]: GET /css/containerWidth.css
+2026-01-19 22:47:06 [info]: GET /images/preloader.png
+2026-01-19 22:47:06 [info]: GET /js/vendor.js
+2026-01-19 22:47:06 [info]: GET /js/jquery.shopnav.js
+2026-01-19 22:47:06 [info]: GET /js/app.js
+2026-01-19 22:47:08 [info]: GET /cart
+2026-01-19 22:47:08 [info]: GET /css/vendor.css
+2026-01-19 22:47:08 [info]: GET /css/utility.css
+2026-01-19 22:47:08 [info]: GET /css/app.css
+2026-01-19 22:47:08 [info]: GET /css/productDetailsLogo.css
+2026-01-19 22:47:08 [info]: GET /css/profileName.css
+2026-01-19 22:47:08 [info]: GET /images/preloader.png
+2026-01-19 22:47:08 [info]: GET /css/containerWidth.css
+2026-01-19 22:47:08 [info]: GET /js/vendor.js
+2026-01-19 22:47:08 [info]: GET /js/jquery.shopnav.js
+2026-01-19 22:47:08 [info]: GET /js/app.js
+2026-01-19 22:47:10 [info]: GET /checkout
+2026-01-19 22:47:11 [info]: GET /css/vendor.css
+2026-01-19 22:47:11 [info]: GET /css/utility.css
+2026-01-19 22:47:11 [info]: GET /css/app.css
+2026-01-19 22:47:11 [info]: GET /css/couponModal.css
+2026-01-19 22:47:11 [info]: GET /css/productDetailsLogo.css
+2026-01-19 22:47:11 [info]: GET /css/profileName.css
+2026-01-19 22:47:11 [info]: GET /css/checkout.css
+2026-01-19 22:47:11 [info]: GET /css/containerWidth.css
+2026-01-19 22:47:11 [info]: GET /images/preloader.png
+2026-01-19 22:47:11 [info]: GET /js/vendor.js
+2026-01-19 22:47:11 [info]: GET /js/jquery.shopnav.js
+2026-01-19 22:47:11 [info]: GET /js/app.js
+2026-01-19 22:47:11 [info]: POST /calculate-delivery-charge
+2026-01-19 22:47:14 [info]: POST /order-save
+2026-01-19 22:47:14 [error]: MongoServerError: Transaction numbers are only allowed on a replica set member or mongos
+    at Connection.sendCommand (C:\Users\shahi\project\ecommerceWebsite\node_modules\mongodb\lib\cmap\connection.js:305:27)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async Connection.command (C:\Users\shahi\project\ecommerceWebsite\node_modules\mongodb\lib\cmap\connection.js:333:26)
+    at async Server.command (C:\Users\shahi\project\ecommerceWebsite\node_modules\mongodb\lib\sdam\server.js:171:29)
+    at async FindOperation.execute (C:\Users\shahi\project\ecommerceWebsite\node_modules\mongodb\lib\operations\find.js:36:16)
+    at async tryOperation (C:\Users\shahi\project\ecommerceWebsite\node_modules\mongodb\lib\operations\execute_operation.js:207:20)
+    at async executeOperation (C:\Users\shahi\project\ecommerceWebsite\node_modules\mongodb\lib\operations\execute_operation.js:75:16)
+    at async FindCursor._initialize (C:\Users\shahi\project\ecommerceWebsite\node_modules\mongodb\lib\cursor\find_cursor.js:61:26)
+    at async FindCursor.cursorInit (C:\Users\shahi\project\ecommerceWebsite\node_modules\mongodb\lib\cursor\abstract_cursor.js:632:27)
+    at async FindCursor.fetchBatch (C:\Users\shahi\project\ecommerceWebsite\node_modules\mongodb\lib\cursor\abstract_cursor.js:666:13)
+    at async FindCursor.next (C:\Users\shahi\project\ecommerceWebsite\node_modules\mongodb\lib\cursor\abstract_cursor.js:342:17)
+    at async Collection.findOne (C:\Users\shahi\project\ecommerceWebsite\node_modules\mongodb\lib\collection.js:277:21)
+    at async model.Query._findOne (C:\Users\shahi\project\ecommerceWebsite\node_modules\mongoose\lib\query.js:2710:15)
+    at async model.Query.exec (C:\Users\shahi\project\ecommerceWebsite\node_modules\mongoose\lib\query.js:4627:63)
+    at async placeCODOrder (file:///C:/Users/shahi/project/ecommerceWebsite/services/order.service.js:9:25)
+    at async file:///C:/Users/shahi/project/ecommerceWebsite/controllers/user/orderController.js:236:14
+2026-01-19 22:48:59 [info]: GET /checkout
+2026-01-19 22:48:59 [info]: GET /css/vendor.css
+2026-01-19 22:48:59 [info]: GET /css/utility.css
+2026-01-19 22:48:59 [info]: GET /css/app.css
+2026-01-19 22:48:59 [info]: GET /css/couponModal.css
+2026-01-19 22:48:59 [info]: GET /css/productDetailsLogo.css
+2026-01-19 22:48:59 [info]: GET /css/profileName.css
+2026-01-19 22:48:59 [info]: GET /css/checkout.css
+2026-01-19 22:48:59 [info]: GET /css/containerWidth.css
+2026-01-19 22:48:59 [info]: GET /images/preloader.png
+2026-01-19 22:48:59 [info]: GET /js/vendor.js
+2026-01-19 22:48:59 [info]: GET /js/jquery.shopnav.js
+2026-01-19 22:48:59 [info]: GET /js/app.js
+2026-01-19 22:48:59 [info]: POST /calculate-delivery-charge
+2026-01-19 22:49:01 [info]: GET /images/favicon.png
+2026-01-20 10:39:17 [info]: DB Connected
+2026-01-20 10:39:18 [info]: server running on port 3000
+2026-01-20 10:39:29 [info]: DB Connected
+2026-01-20 10:39:29 [info]: server running on port 3000
+2026-01-20 10:43:51 [info]: GET /.well-known/appspecific/com.chrome.devtools.json
+2026-01-20 10:43:51 [info]: GET /css/app.css
+2026-01-20 10:43:51 [info]: GET /css/utility.css
+2026-01-20 10:43:51 [info]: GET /css/couponModal.css
+2026-01-20 10:43:51 [info]: GET /css/vendor.css
+2026-01-20 10:43:51 [info]: GET /css/containerWidth.css
+2026-01-20 10:43:51 [info]: GET /css/productDetailsLogo.css
+2026-01-20 10:43:51 [info]: GET /css/profileName.css
+2026-01-20 10:43:51 [info]: GET /css/checkout.css
+2026-01-20 10:43:58 [info]: POST /order-save
+2026-01-20 10:49:38 [info]: POST /order-save
+2026-01-20 10:49:45 [info]: POST /order-save
+2026-01-20 11:10:15 [info]: DB Connected
+2026-01-20 11:10:15 [info]: server running on port 3000
+2026-01-20 11:10:20 [info]: GET /checkout
+2026-01-20 11:10:20 [info]: GET /login
+2026-01-20 11:10:20 [info]: GET /.well-known/appspecific/com.chrome.devtools.json
+2026-01-20 11:10:20 [info]: GET /css/vendor.css
+2026-01-20 11:10:20 [info]: GET /css/utility.css
+2026-01-20 11:10:20 [info]: GET /css/profileName.css
+2026-01-20 11:10:20 [info]: GET /css/app.css
+2026-01-20 11:10:20 [info]: GET /css/productDetailsLogo.css
+2026-01-20 11:10:20 [info]: GET /images/preloader.png
+2026-01-20 11:10:20 [info]: GET /images/product/product-d-1.jpg
+2026-01-20 11:10:21 [info]: GET /images/product/product-d-3.jpg
+2026-01-20 11:10:21 [info]: GET /images/product/product-d-4.jpg
+2026-01-20 11:10:21 [info]: GET /images/product/product-d-2.jpg
+2026-01-20 11:10:21 [info]: GET /js/vendor.js
+2026-01-20 11:10:21 [info]: GET /js/jquery.shopnav.js
+2026-01-20 11:10:21 [info]: GET /js/app.js
+2026-01-20 11:10:21 [info]: GET /images/product/product-d-5.jpg
+2026-01-20 11:10:21 [info]: GET /images/product/electronic/product1.jpg
+2026-01-20 11:10:22 [info]: GET /images/favicon.png
+2026-01-20 11:10:37 [info]: POST /login
+2026-01-20 11:10:38 [info]: GET /
+2026-01-20 11:10:38 [info]: GET /.well-known/appspecific/com.chrome.devtools.json
+2026-01-20 11:10:38 [info]: GET /css/vendor.css
+2026-01-20 11:10:38 [info]: GET /css/utility.css
+2026-01-20 11:10:38 [info]: GET /css/app.css
+2026-01-20 11:10:38 [info]: GET /css/profileName.css
+2026-01-20 11:10:38 [info]: GET /css/orderSuccess.css
+2026-01-20 11:10:38 [info]: GET /css/OfferTag.css
+2026-01-20 11:10:38 [info]: GET /css/logo.css
+2026-01-20 11:10:38 [info]: GET /css/productDetails.css
+2026-01-20 11:10:38 [info]: GET /css/home.css
+2026-01-20 11:10:38 [info]: GET /images/preloader.png
+2026-01-20 11:10:38 [info]: GET /css/containerWidth.css
+2026-01-20 11:10:38 [info]: GET /images/promo/Konoha-homepage-banner.webp
+2026-01-20 11:10:39 [info]: GET /images/promo/Ikebana_midori.webp
+2026-01-20 11:10:39 [info]: GET /js/vendor.js
+2026-01-20 11:10:39 [info]: GET /js/jquery.shopnav.js
+2026-01-20 11:10:39 [info]: GET /js/app.js
+2026-01-20 11:10:39 [info]: GET /images/promo/Ikebana_harubana_desk.webp
+2026-01-20 11:10:39 [info]: GET /images/banners/home-page-bottom-banners-furniture1.webp
+2026-01-20 11:10:39 [info]: GET /images/product2/wallPainting1.png
+2026-01-20 11:10:39 [info]: GET /images/product2/desert.png
+2026-01-20 11:10:39 [info]: GET /images/banners/AL.webp
+2026-01-20 11:10:39 [info]: GET /images/product/product-d-1.jpg
+2026-01-20 11:10:39 [info]: GET /images/product/product-d-2.jpg
+2026-01-20 11:10:39 [info]: GET /images/product/product-d-3.jpg
+2026-01-20 11:10:39 [info]: GET /images/product/product-d-4.jpg
+2026-01-20 11:10:39 [info]: GET /images/product/product-d-5.jpg
+2026-01-20 11:10:39 [info]: GET /images/product/electronic/product1.jpg
+2026-01-20 11:10:46 [info]: GET /cart
+2026-01-20 11:10:46 [info]: GET /.well-known/appspecific/com.chrome.devtools.json
+2026-01-20 11:10:46 [info]: GET /css/vendor.css
+2026-01-20 11:10:46 [info]: GET /css/utility.css
+2026-01-20 11:10:46 [info]: GET /css/app.css
+2026-01-20 11:10:46 [info]: GET /css/productDetailsLogo.css
+2026-01-20 11:10:46 [info]: GET /css/profileName.css
+2026-01-20 11:10:46 [info]: GET /css/containerWidth.css
+2026-01-20 11:10:46 [info]: GET /images/preloader.png
+2026-01-20 11:10:46 [info]: GET /js/vendor.js
+2026-01-20 11:10:46 [info]: GET /js/jquery.shopnav.js
+2026-01-20 11:10:46 [info]: GET /js/app.js
+2026-01-20 11:10:49 [info]: GET /checkout
+2026-01-20 11:10:49 [info]: GET /.well-known/appspecific/com.chrome.devtools.json
+2026-01-20 11:10:49 [info]: GET /css/vendor.css
+2026-01-20 11:10:49 [info]: GET /css/utility.css
+2026-01-20 11:10:49 [info]: GET /css/app.css
+2026-01-20 11:10:49 [info]: GET /css/couponModal.css
+2026-01-20 11:10:49 [info]: GET /css/productDetailsLogo.css
+2026-01-20 11:10:49 [info]: GET /css/profileName.css
+2026-01-20 11:10:49 [info]: GET /css/containerWidth.css
+2026-01-20 11:10:49 [info]: GET /css/checkout.css
+2026-01-20 11:10:49 [info]: GET /images/preloader.png
+2026-01-20 11:10:49 [info]: GET /js/vendor.js
+2026-01-20 11:10:49 [info]: GET /js/jquery.shopnav.js
+2026-01-20 11:10:49 [info]: GET /js/app.js
+2026-01-20 11:10:50 [info]: POST /calculate-delivery-charge
+2026-01-20 11:10:55 [info]: POST /order-save
+2026-01-20 11:10:55 [error]: MongoServerError: Transaction numbers are only allowed on a replica set member or mongos
+    at Connection.sendCommand (C:\Users\shahi\project\ecommerceWebsite\node_modules\mongodb\lib\cmap\connection.js:305:27)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async Connection.command (C:\Users\shahi\project\ecommerceWebsite\node_modules\mongodb\lib\cmap\connection.js:333:26)
+    at async Server.command (C:\Users\shahi\project\ecommerceWebsite\node_modules\mongodb\lib\sdam\server.js:171:29)
+    at async FindOperation.execute (C:\Users\shahi\project\ecommerceWebsite\node_modules\mongodb\lib\operations\find.js:36:16)
+    at async tryOperation (C:\Users\shahi\project\ecommerceWebsite\node_modules\mongodb\lib\operations\execute_operation.js:207:20)
+    at async executeOperation (C:\Users\shahi\project\ecommerceWebsite\node_modules\mongodb\lib\operations\execute_operation.js:75:16)
+    at async FindCursor._initialize (C:\Users\shahi\project\ecommerceWebsite\node_modules\mongodb\lib\cursor\find_cursor.js:61:26)
+    at async FindCursor.cursorInit (C:\Users\shahi\project\ecommerceWebsite\node_modules\mongodb\lib\cursor\abstract_cursor.js:632:27)
+    at async FindCursor.fetchBatch (C:\Users\shahi\project\ecommerceWebsite\node_modules\mongodb\lib\cursor\abstract_cursor.js:666:13)
+    at async FindCursor.next (C:\Users\shahi\project\ecommerceWebsite\node_modules\mongodb\lib\cursor\abstract_cursor.js:342:17)
+    at async Collection.findOne (C:\Users\shahi\project\ecommerceWebsite\node_modules\mongodb\lib\collection.js:277:21)
+    at async model.Query._findOne (C:\Users\shahi\project\ecommerceWebsite\node_modules\mongoose\lib\query.js:2710:15)
+    at async model.Query.exec (C:\Users\shahi\project\ecommerceWebsite\node_modules\mongoose\lib\query.js:4627:63)
+    at async placeCODOrder (file:///C:/Users/shahi/project/ecommerceWebsite/services/order.service.js:9:25)
+    at async file:///C:/Users/shahi/project/ecommerceWebsite/controllers/user/orderController.js:236:14
+2026-01-20 13:48:16 [info]: DB Connected
+2026-01-20 13:48:16 [info]: server running on port 3000
+2026-01-20 13:48:44 [info]: DB Connected
+2026-01-20 13:48:44 [info]: server running on port 3000
+2026-01-20 13:49:41 [info]: DB Connected
+2026-01-20 13:49:41 [info]: server running on port 3000
+2026-01-20 13:49:53 [info]: DB Connected
+2026-01-20 13:49:53 [info]: server running on port 3000
+2026-01-20 13:50:13 [info]: DB Connected
+2026-01-20 13:50:13 [info]: server running on port 3000
+2026-01-20 13:52:00 [info]: DB Connected
+2026-01-20 13:52:00 [info]: server running on port 3000
+2026-01-20 13:52:04 [info]: DB Connected
+2026-01-20 13:52:04 [info]: server running on port 3000
+2026-01-20 13:52:33 [info]: DB Connected
+2026-01-20 13:52:33 [info]: server running on port 3000
+2026-01-20 13:52:54 [info]: DB Connected
+2026-01-20 13:52:54 [info]: server running on port 3000
+2026-01-20 13:52:58 [info]: DB Connected
+2026-01-20 13:52:58 [info]: server running on port 3000
+2026-01-20 13:53:11 [info]: DB Connected
+2026-01-20 13:53:11 [info]: server running on port 3000
+2026-01-20 18:27:50 [info]: DB Connected
+2026-01-20 18:27:50 [info]: server running on port 3000
+2026-01-20 18:38:54 [info]: DB Connected
+2026-01-20 18:38:54 [info]: server running on port 3000
+2026-01-20 19:30:14 [info]: DB Connected
+2026-01-20 19:30:14 [info]: server running on port 3000
+2026-01-20 19:30:19 [info]: DB Connected
+2026-01-20 19:30:19 [info]: server running on port 3000
+2026-01-21 02:42:57 [info]: DB Connected
+2026-01-21 02:42:57 [info]: server running on port 3000
+2026-01-21 02:44:31 [info]: DB Connected
+2026-01-21 02:44:31 [info]: server running on port 3000
+2026-01-21 02:44:49 [info]: DB Connected
+2026-01-21 02:44:49 [info]: server running on port 3000
+2026-01-21 02:47:06 [info]: DB Connected
+2026-01-21 02:47:06 [info]: server running on port 3000
+2026-01-21 02:47:18 [info]: DB Connected
+2026-01-21 02:47:18 [info]: server running on port 3000
+2026-01-21 02:47:25 [info]: DB Connected
+2026-01-21 02:47:25 [info]: server running on port 3000
+2026-01-21 02:48:12 [info]: DB Connected
+2026-01-21 02:48:12 [info]: server running on port 3000
+2026-01-21 02:51:09 [info]: DB Connected
+2026-01-21 02:51:09 [info]: server running on port 3000
+2026-01-21 02:51:44 [info]: DB Connected
+2026-01-21 02:51:44 [info]: server running on port 3000
+2026-01-21 02:52:59 [info]: DB Connected
+2026-01-21 02:52:59 [info]: server running on port 3000
+2026-01-21 03:31:27 [info]: DB Connected
+2026-01-21 03:31:28 [info]: server running on port 3000
+2026-01-21 03:32:30 [info]: DB Connected
+2026-01-21 03:32:30 [info]: server running on port 3000
+2026-01-21 03:32:51 [info]: DB Connected
+2026-01-21 03:32:51 [info]: server running on port 3000
+2026-01-21 03:32:54 [info]: DB Connected
+2026-01-21 03:32:54 [info]: server running on port 3000
+2026-01-21 03:34:09 [info]: DB Connected
+2026-01-21 03:34:09 [info]: server running on port 3000
+2026-01-21 03:35:26 [info]: DB Connected
+2026-01-21 03:35:26 [info]: server running on port 3000
+2026-01-21 03:35:32 [info]: DB Connected
+2026-01-21 03:35:32 [info]: server running on port 3000
+2026-01-21 03:36:04 [info]: DB Connected
+2026-01-21 03:36:04 [info]: server running on port 3000
+2026-01-21 03:36:09 [info]: DB Connected
+2026-01-21 03:36:09 [info]: server running on port 3000
+2026-01-21 03:38:21 [info]: DB Connected
+2026-01-21 03:38:21 [info]: server running on port 3000
+2026-01-21 03:39:10 [info]: DB Connected
+2026-01-21 03:39:10 [info]: server running on port 3000
+2026-01-21 03:39:14 [info]: DB Connected
+2026-01-21 03:39:14 [info]: server running on port 3000
+2026-01-21 03:39:36 [info]: DB Connected
+2026-01-21 03:39:36 [info]: server running on port 3000
+2026-01-21 03:40:04 [info]: DB Connected
+2026-01-21 03:40:04 [info]: server running on port 3000
+2026-01-21 03:40:48 [info]: DB Connected
+2026-01-21 03:40:48 [info]: server running on port 3000
+2026-01-21 03:41:13 [info]: DB Connected
+2026-01-21 03:41:13 [info]: server running on port 3000
+2026-01-21 03:42:31 [info]: DB Connected
+2026-01-21 03:42:32 [info]: server running on port 3000
+2026-01-21 03:43:25 [info]: DB Connected
+2026-01-21 03:43:25 [info]: server running on port 3000
+2026-01-21 03:43:38 [info]: DB Connected
+2026-01-21 03:43:38 [info]: server running on port 3000
+2026-01-21 03:47:55 [info]: GET /checkout
+2026-01-21 03:47:55 [info]: GET /login
+2026-01-21 03:47:55 [info]: GET /css/vendor.css
+2026-01-21 03:47:55 [info]: GET /css/utility.css
+2026-01-21 03:47:55 [info]: GET /css/app.css
+2026-01-21 03:47:55 [info]: GET /css/profileName.css
+2026-01-21 03:47:55 [info]: GET /css/productDetailsLogo.css
+2026-01-21 03:47:55 [info]: GET /images/preloader.png
+2026-01-21 03:47:55 [info]: GET /images/product/product-d-1.jpg
+2026-01-21 03:47:56 [info]: GET /.well-known/appspecific/com.chrome.devtools.json
+2026-01-21 03:47:56 [info]: GET /js/vendor.js
+2026-01-21 03:47:56 [info]: GET /images/product/product-d-3.jpg
+2026-01-21 03:47:56 [info]: GET /images/product/product-d-4.jpg
+2026-01-21 03:47:56 [info]: GET /images/product/product-d-2.jpg
+2026-01-21 03:47:56 [info]: GET /js/jquery.shopnav.js
+2026-01-21 03:47:56 [info]: GET /js/app.js
+2026-01-21 03:47:56 [info]: GET /images/product/product-d-5.jpg
+2026-01-21 03:47:56 [info]: GET /images/product/electronic/product1.jpg
+2026-01-21 03:47:57 [info]: GET /images/favicon.png
+2026-01-21 03:48:09 [info]: POST /login
+2026-01-21 03:48:09 [info]: GET /
+2026-01-21 03:48:10 [info]: GET /.well-known/appspecific/com.chrome.devtools.json
+2026-01-21 03:48:10 [info]: GET /css/orderSuccess.css
+2026-01-21 03:48:10 [info]: GET /css/vendor.css
+2026-01-21 03:48:10 [info]: GET /css/OfferTag.css
+2026-01-21 03:48:10 [info]: GET /css/utility.css
+2026-01-21 03:48:10 [info]: GET /css/app.css
+2026-01-21 03:48:10 [info]: GET /css/productDetails.css
+2026-01-21 03:48:10 [info]: GET /css/logo.css
+2026-01-21 03:48:10 [info]: GET /css/home.css
+2026-01-21 03:48:10 [info]: GET /css/containerWidth.css
+2026-01-21 03:48:10 [info]: GET /images/preloader.png
+2026-01-21 03:48:10 [info]: GET /css/profileName.css
+2026-01-21 03:48:10 [info]: GET /images/promo/Konoha-homepage-banner.webp
+2026-01-21 03:48:10 [info]: GET /images/promo/Ikebana_midori.webp
+2026-01-21 03:48:10 [info]: GET /images/banners/home-page-bottom-banners-furniture1.webp
+2026-01-21 03:48:10 [info]: GET /js/vendor.js
+2026-01-21 03:48:10 [info]: GET /js/jquery.shopnav.js
+2026-01-21 03:48:10 [info]: GET /js/app.js
+2026-01-21 03:48:10 [info]: GET /images/promo/Ikebana_harubana_desk.webp
+2026-01-21 03:48:10 [info]: GET /images/product2/wallPainting1.png
+2026-01-21 03:48:10 [info]: GET /images/product2/desert.png
+2026-01-21 03:48:10 [info]: GET /images/banners/AL.webp
+2026-01-21 03:48:10 [info]: GET /images/product/product-d-1.jpg
+2026-01-21 03:48:10 [info]: GET /images/product/product-d-2.jpg
+2026-01-21 03:48:10 [info]: GET /images/product/product-d-3.jpg
+2026-01-21 03:48:10 [info]: GET /images/product/product-d-4.jpg
+2026-01-21 03:48:10 [info]: GET /images/product/product-d-5.jpg
+2026-01-21 03:48:10 [info]: GET /images/product/electronic/product1.jpg
+2026-01-21 03:48:19 [info]: GET /cart
+2026-01-21 03:48:19 [info]: GET /.well-known/appspecific/com.chrome.devtools.json
+2026-01-21 03:48:19 [info]: GET /css/vendor.css
+2026-01-21 03:48:19 [info]: GET /css/utility.css
+2026-01-21 03:48:19 [info]: GET /css/app.css
+2026-01-21 03:48:19 [info]: GET /css/productDetailsLogo.css
+2026-01-21 03:48:19 [info]: GET /css/profileName.css
+2026-01-21 03:48:19 [info]: GET /css/containerWidth.css
+2026-01-21 03:48:19 [info]: GET /images/preloader.png
+2026-01-21 03:48:19 [info]: GET /js/vendor.js
+2026-01-21 03:48:19 [info]: GET /js/jquery.shopnav.js
+2026-01-21 03:48:19 [info]: GET /js/app.js
+2026-01-21 03:48:22 [info]: GET /checkout
+2026-01-21 03:48:22 [info]: GET /.well-known/appspecific/com.chrome.devtools.json
+2026-01-21 03:48:22 [info]: GET /css/vendor.css
+2026-01-21 03:48:22 [info]: GET /css/utility.css
+2026-01-21 03:48:22 [info]: GET /css/app.css
+2026-01-21 03:48:22 [info]: GET /css/productDetailsLogo.css
+2026-01-21 03:48:22 [info]: GET /css/profileName.css
+2026-01-21 03:48:22 [info]: GET /css/containerWidth.css
+2026-01-21 03:48:22 [info]: GET /css/couponModal.css
+2026-01-21 03:48:22 [info]: GET /css/checkout.css
+2026-01-21 03:48:22 [info]: GET /images/preloader.png
+2026-01-21 03:48:22 [info]: GET /js/vendor.js
+2026-01-21 03:48:22 [info]: GET /js/jquery.shopnav.js
+2026-01-21 03:48:22 [info]: GET /js/app.js
+2026-01-21 03:48:22 [info]: POST /calculate-delivery-charge
+2026-01-21 03:48:27 [info]: POST /order-save
+2026-01-21 03:48:27 [error]: MongoServerError: Transaction numbers are only allowed on a replica set member or mongos
+    at Connection.sendCommand (C:\Users\shahi\project\ecommerceWebsite\node_modules\mongodb\lib\cmap\connection.js:305:27)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async Connection.command (C:\Users\shahi\project\ecommerceWebsite\node_modules\mongodb\lib\cmap\connection.js:333:26)
+    at async Server.command (C:\Users\shahi\project\ecommerceWebsite\node_modules\mongodb\lib\sdam\server.js:171:29)
+    at async FindOperation.execute (C:\Users\shahi\project\ecommerceWebsite\node_modules\mongodb\lib\operations\find.js:36:16)
+    at async tryOperation (C:\Users\shahi\project\ecommerceWebsite\node_modules\mongodb\lib\operations\execute_operation.js:207:20)
+    at async executeOperation (C:\Users\shahi\project\ecommerceWebsite\node_modules\mongodb\lib\operations\execute_operation.js:75:16)
+    at async FindCursor._initialize (C:\Users\shahi\project\ecommerceWebsite\node_modules\mongodb\lib\cursor\find_cursor.js:61:26)
+    at async FindCursor.cursorInit (C:\Users\shahi\project\ecommerceWebsite\node_modules\mongodb\lib\cursor\abstract_cursor.js:632:27)
+    at async FindCursor.fetchBatch (C:\Users\shahi\project\ecommerceWebsite\node_modules\mongodb\lib\cursor\abstract_cursor.js:666:13)
+    at async FindCursor.next (C:\Users\shahi\project\ecommerceWebsite\node_modules\mongodb\lib\cursor\abstract_cursor.js:342:17)
+    at async Collection.findOne (C:\Users\shahi\project\ecommerceWebsite\node_modules\mongodb\lib\collection.js:277:21)
+    at async model.Query._findOne (C:\Users\shahi\project\ecommerceWebsite\node_modules\mongoose\lib\query.js:2710:15)
+    at async model.Query.exec (C:\Users\shahi\project\ecommerceWebsite\node_modules\mongoose\lib\query.js:4627:63)
+    at async placeCODOrder (file:///C:/Users/shahi/project/ecommerceWebsite/services/order.service.js:27:25)
+    at async file:///C:/Users/shahi/project/ecommerceWebsite/controllers/user/orderController.js:224:14
+2026-01-21 03:55:23 [info]: DB Connected
+2026-01-21 03:55:23 [info]: server running on port 3000
+2026-01-21 03:55:29 [info]: GET /checkout
+2026-01-21 03:55:29 [info]: GET /login
+2026-01-21 03:55:29 [info]: GET /.well-known/appspecific/com.chrome.devtools.json
+2026-01-21 03:55:29 [info]: GET /css/app.css
+2026-01-21 03:55:29 [info]: GET /css/productDetailsLogo.css
+2026-01-21 03:55:29 [info]: GET /images/preloader.png
+2026-01-21 03:55:29 [info]: GET /css/vendor.css
+2026-01-21 03:55:29 [info]: GET /css/utility.css
+2026-01-21 03:55:29 [info]: GET /css/profileName.css
+2026-01-21 03:55:29 [info]: GET /images/product/product-d-1.jpg
+2026-01-21 03:55:29 [info]: GET /images/product/product-d-2.jpg
+2026-01-21 03:55:29 [info]: GET /images/product/product-d-3.jpg
+2026-01-21 03:55:29 [info]: GET /images/product/product-d-4.jpg
+2026-01-21 03:55:29 [info]: GET /js/vendor.js
+2026-01-21 03:55:29 [info]: GET /js/jquery.shopnav.js
+2026-01-21 03:55:29 [info]: GET /js/app.js
+2026-01-21 03:55:29 [info]: GET /images/product/product-d-5.jpg
+2026-01-21 03:55:29 [info]: GET /images/product/electronic/product1.jpg
+2026-01-21 03:55:29 [info]: GET /webfonts/fa-brands-400.woff2
+2026-01-21 03:55:29 [info]: GET /webfonts/fa-solid-900.woff2
+2026-01-21 03:55:29 [info]: GET /webfonts/fa-regular-400.woff2
+2026-01-21 03:55:30 [info]: GET /images/favicon.png
+2026-01-21 03:55:44 [info]: POST /login
+2026-01-21 03:55:44 [info]: GET /
+2026-01-21 03:55:44 [info]: GET /.well-known/appspecific/com.chrome.devtools.json
+2026-01-21 03:55:44 [info]: GET /css/orderSuccess.css
+2026-01-21 03:55:44 [info]: GET /css/vendor.css
+2026-01-21 03:55:44 [info]: GET /css/utility.css
+2026-01-21 03:55:44 [info]: GET /css/OfferTag.css
+2026-01-21 03:55:44 [info]: GET /css/app.css
+2026-01-21 03:55:44 [info]: GET /css/containerWidth.css
+2026-01-21 03:55:44 [info]: GET /css/home.css
+2026-01-21 03:55:44 [info]: GET /css/logo.css
+2026-01-21 03:55:44 [info]: GET /css/productDetails.css
+2026-01-21 03:55:44 [info]: GET /images/preloader.png
+2026-01-21 03:55:44 [info]: GET /css/profileName.css
+2026-01-21 03:55:44 [info]: GET /images/promo/Konoha-homepage-banner.webp
+2026-01-21 03:55:44 [info]: GET /images/promo/Ikebana_harubana_desk.webp
+2026-01-21 03:55:44 [info]: GET /images/promo/Ikebana_midori.webp
+2026-01-21 03:55:44 [info]: GET /images/banners/home-page-bottom-banners-furniture1.webp
+2026-01-21 03:55:44 [info]: GET /js/vendor.js
+2026-01-21 03:55:44 [info]: GET /js/jquery.shopnav.js
+2026-01-21 03:55:44 [info]: GET /js/app.js
+2026-01-21 03:55:44 [info]: GET /images/product2/wallPainting1.png
+2026-01-21 03:55:44 [info]: GET /images/product2/desert.png
+2026-01-21 03:55:44 [info]: GET /images/product/product-d-1.jpg
+2026-01-21 03:55:44 [info]: GET /images/banners/AL.webp
+2026-01-21 03:55:44 [info]: GET /images/product/product-d-2.jpg
+2026-01-21 03:55:44 [info]: GET /images/product/product-d-3.jpg
+2026-01-21 03:55:44 [info]: GET /images/product/product-d-4.jpg
+2026-01-21 03:55:45 [info]: GET /images/product/product-d-5.jpg
+2026-01-21 03:55:45 [info]: GET /images/product/electronic/product1.jpg
+2026-01-21 03:55:45 [info]: GET /images/slider/slide-7.jpg
+2026-01-21 03:55:45 [info]: GET /images/slider/slide-8.jpg
+2026-01-21 03:55:45 [info]: GET /images/slider/slide-9.jpg
+2026-01-21 03:55:48 [info]: GET /cart
+2026-01-21 03:55:48 [info]: GET /.well-known/appspecific/com.chrome.devtools.json
+2026-01-21 03:55:48 [info]: GET /css/vendor.css
+2026-01-21 03:55:48 [info]: GET /css/utility.css
+2026-01-21 03:55:48 [info]: GET /css/app.css
+2026-01-21 03:55:48 [info]: GET /css/productDetailsLogo.css
+2026-01-21 03:55:48 [info]: GET /css/profileName.css
+2026-01-21 03:55:48 [info]: GET /css/containerWidth.css
+2026-01-21 03:55:48 [info]: GET /images/preloader.png
+2026-01-21 03:55:48 [info]: GET /js/vendor.js
+2026-01-21 03:55:48 [info]: GET /js/jquery.shopnav.js
+2026-01-21 03:55:48 [info]: GET /js/app.js
+2026-01-21 03:55:51 [info]: GET /checkout
+2026-01-21 03:55:51 [info]: GET /.well-known/appspecific/com.chrome.devtools.json
+2026-01-21 03:55:51 [info]: GET /css/vendor.css
+2026-01-21 03:55:51 [info]: GET /css/utility.css
+2026-01-21 03:55:51 [info]: GET /css/app.css
+2026-01-21 03:55:51 [info]: GET /css/productDetailsLogo.css
+2026-01-21 03:55:51 [info]: GET /css/profileName.css
+2026-01-21 03:55:51 [info]: GET /css/containerWidth.css
+2026-01-21 03:55:51 [info]: GET /css/checkout.css
+2026-01-21 03:55:51 [info]: GET /css/couponModal.css
+2026-01-21 03:55:51 [info]: GET /images/preloader.png
+2026-01-21 03:55:51 [info]: GET /js/vendor.js
+2026-01-21 03:55:52 [info]: GET /js/jquery.shopnav.js
+2026-01-21 03:55:52 [info]: GET /js/app.js
+2026-01-21 03:55:52 [info]: POST /calculate-delivery-charge
+2026-01-21 03:56:02 [info]: POST /order-save
+2026-01-21 03:56:04 [info]: GET /order-success
+2026-01-21 03:56:04 [info]: GET /.well-known/appspecific/com.chrome.devtools.json
+2026-01-21 03:56:04 [info]: GET /css/orderSuccess.css
+2026-01-21 03:56:20 [info]: GET /
+2026-01-21 03:56:20 [info]: GET /.well-known/appspecific/com.chrome.devtools.json
+2026-01-21 03:56:20 [info]: GET /css/orderSuccess.css
+2026-01-21 03:56:20 [info]: GET /css/vendor.css
+2026-01-21 03:56:20 [info]: GET /css/utility.css
+2026-01-21 03:56:20 [info]: GET /css/OfferTag.css
+2026-01-21 03:56:20 [info]: GET /css/app.css
+2026-01-21 03:56:20 [info]: GET /css/home.css
+2026-01-21 03:56:20 [info]: GET /css/logo.css
+2026-01-21 03:56:20 [info]: GET /css/productDetails.css
+2026-01-21 03:56:20 [info]: GET /css/profileName.css
+2026-01-21 03:56:20 [info]: GET /css/containerWidth.css
+2026-01-21 03:56:20 [info]: GET /images/preloader.png
+2026-01-21 03:56:20 [info]: GET /images/promo/Konoha-homepage-banner.webp
+2026-01-21 03:56:20 [info]: GET /images/promo/Ikebana_harubana_desk.webp
+2026-01-21 03:56:20 [info]: GET /images/promo/Ikebana_midori.webp
+2026-01-21 03:56:20 [info]: GET /images/banners/home-page-bottom-banners-furniture1.webp
+2026-01-21 03:56:20 [info]: GET /js/vendor.js
+2026-01-21 03:56:20 [info]: GET /js/jquery.shopnav.js
+2026-01-21 03:56:20 [info]: GET /js/app.js
+2026-01-21 03:56:20 [info]: GET /images/product2/wallPainting1.png
+2026-01-21 03:56:20 [info]: GET /images/product2/desert.png
+2026-01-21 03:56:20 [info]: GET /images/banners/AL.webp
+2026-01-21 03:56:20 [info]: GET /images/product/product-d-1.jpg
+2026-01-21 03:56:20 [info]: GET /images/product/product-d-2.jpg
+2026-01-21 03:56:20 [info]: GET /images/product/product-d-3.jpg
+2026-01-21 03:56:20 [info]: GET /images/product/product-d-4.jpg
+2026-01-21 03:56:20 [info]: GET /images/product/product-d-5.jpg
+2026-01-21 03:56:20 [info]: GET /images/product/electronic/product1.jpg
+2026-01-21 03:56:30 [info]: GET /product-details/675e9d749033f17b3f747ad0
+2026-01-21 03:56:31 [info]: GET /.well-known/appspecific/com.chrome.devtools.json
+2026-01-21 03:56:31 [info]: GET /css/vendor.css
+2026-01-21 03:56:31 [info]: GET /css/utility.css
+2026-01-21 03:56:31 [info]: GET /css/app.css
+2026-01-21 03:56:31 [info]: GET /css/OfferTag.css
+2026-01-21 03:56:31 [info]: GET /css/productDetailsLogo.css
+2026-01-21 03:56:31 [info]: GET /css/productDetails.css
+2026-01-21 03:56:31 [info]: GET /css/profileName.css
+2026-01-21 03:56:31 [info]: GET /css/containerWidth.css
+2026-01-21 03:56:31 [info]: GET /images/preloader.png
+2026-01-21 03:56:31 [info]: GET /js/vendor.js
+2026-01-21 03:56:31 [info]: GET /js/jquery.shopnav.js
+2026-01-21 03:56:31 [info]: GET /js/app.js
+2026-01-21 03:56:31 [info]: GET /images/product/product-d-1.jpg
+2026-01-21 03:56:31 [info]: GET /images/product/product-d-2.jpg
+2026-01-21 03:56:31 [info]: GET /images/product/product-d-3.jpg
+2026-01-21 03:56:31 [info]: GET /images/product/product-d-4.jpg
+2026-01-21 03:56:31 [info]: GET /images/product/product-d-5.jpg
+2026-01-21 03:56:31 [info]: GET /images/product/electronic/product1.jpg
+2026-01-21 03:56:31 [info]: GET /check-wishlist/675e9d749033f17b3f747ad0
+2026-01-21 03:56:33 [info]: POST /add-to-cart
+2026-01-21 03:56:37 [info]: GET /
+2026-01-21 03:56:37 [info]: GET /.well-known/appspecific/com.chrome.devtools.json
+2026-01-21 03:56:39 [info]: GET /product-details/675e97df9033f17b3f747a80
+2026-01-21 03:56:39 [info]: GET /.well-known/appspecific/com.chrome.devtools.json
+2026-01-21 03:56:39 [info]: GET /css/vendor.css
+2026-01-21 03:56:39 [info]: GET /css/utility.css
+2026-01-21 03:56:39 [info]: GET /css/productDetails.css
+2026-01-21 03:56:39 [info]: GET /css/app.css
+2026-01-21 03:56:39 [info]: GET /css/OfferTag.css
+2026-01-21 03:56:39 [info]: GET /css/productDetailsLogo.css
+2026-01-21 03:56:39 [info]: GET /css/profileName.css
+2026-01-21 03:56:39 [info]: GET /css/containerWidth.css
+2026-01-21 03:56:39 [info]: GET /images/preloader.png
+2026-01-21 03:56:39 [info]: GET /js/vendor.js
+2026-01-21 03:56:39 [info]: GET /js/jquery.shopnav.js
+2026-01-21 03:56:39 [info]: GET /js/app.js
+2026-01-21 03:56:39 [info]: GET /images/product/product-d-1.jpg
+2026-01-21 03:56:39 [info]: GET /images/product/product-d-2.jpg
+2026-01-21 03:56:39 [info]: GET /images/product/product-d-3.jpg
+2026-01-21 03:56:39 [info]: GET /images/product/product-d-4.jpg
+2026-01-21 03:56:39 [info]: GET /images/product/product-d-5.jpg
+2026-01-21 03:56:39 [info]: GET /images/product/electronic/product1.jpg
+2026-01-21 03:56:39 [info]: GET /check-wishlist/675e97df9033f17b3f747a80
+2026-01-21 03:56:43 [info]: POST /add-to-cart
+2026-01-21 03:56:47 [info]: GET /
+2026-01-21 03:56:47 [info]: GET /.well-known/appspecific/com.chrome.devtools.json
+2026-01-21 03:56:51 [info]: GET /product-details/675b44c649e2c4cec2d4a9c2
+2026-01-21 03:56:51 [info]: GET /.well-known/appspecific/com.chrome.devtools.json
+2026-01-21 03:56:51 [info]: GET /css/vendor.css
+2026-01-21 03:56:51 [info]: GET /css/utility.css
+2026-01-21 03:56:51 [info]: GET /css/app.css
+2026-01-21 03:56:51 [info]: GET /css/OfferTag.css
+2026-01-21 03:56:51 [info]: GET /css/productDetailsLogo.css
+2026-01-21 03:56:51 [info]: GET /css/profileName.css
+2026-01-21 03:56:51 [info]: GET /css/productDetails.css
+2026-01-21 03:56:51 [info]: GET /css/containerWidth.css
+2026-01-21 03:56:51 [info]: GET /images/preloader.png
+2026-01-21 03:56:51 [info]: GET /js/vendor.js
+2026-01-21 03:56:51 [info]: GET /js/jquery.shopnav.js
+2026-01-21 03:56:51 [info]: GET /js/app.js
+2026-01-21 03:56:51 [info]: GET /images/product/product-d-1.jpg
+2026-01-21 03:56:51 [info]: GET /images/product/product-d-2.jpg
+2026-01-21 03:56:51 [info]: GET /images/product/product-d-3.jpg
+2026-01-21 03:56:51 [info]: GET /images/product/product-d-4.jpg
+2026-01-21 03:56:51 [info]: GET /images/product/product-d-5.jpg
+2026-01-21 03:56:51 [info]: GET /images/product/electronic/product1.jpg
+2026-01-21 03:56:51 [info]: GET /check-wishlist/675b44c649e2c4cec2d4a9c2
+2026-01-21 03:56:54 [info]: GET /
+2026-01-21 03:56:54 [info]: GET /.well-known/appspecific/com.chrome.devtools.json
+2026-01-21 03:56:56 [info]: GET /product-details/675b410c49e2c4cec2d4a9ba
+2026-01-21 03:56:56 [info]: GET /.well-known/appspecific/com.chrome.devtools.json
+2026-01-21 03:56:56 [info]: GET /css/vendor.css
+2026-01-21 03:56:56 [info]: GET /css/app.css
+2026-01-21 03:56:56 [info]: GET /css/utility.css
+2026-01-21 03:56:56 [info]: GET /css/OfferTag.css
+2026-01-21 03:56:56 [info]: GET /css/productDetailsLogo.css
+2026-01-21 03:56:56 [info]: GET /css/productDetails.css
+2026-01-21 03:56:56 [info]: GET /css/profileName.css
+2026-01-21 03:56:56 [info]: GET /css/containerWidth.css
+2026-01-21 03:56:56 [info]: GET /images/preloader.png
+2026-01-21 03:56:56 [info]: GET /js/vendor.js
+2026-01-21 03:56:56 [info]: GET /js/jquery.shopnav.js
+2026-01-21 03:56:56 [info]: GET /js/app.js
+2026-01-21 03:56:56 [info]: GET /images/product/product-d-1.jpg
+2026-01-21 03:56:56 [info]: GET /images/product/product-d-2.jpg
+2026-01-21 03:56:56 [info]: GET /images/product/product-d-3.jpg
+2026-01-21 03:56:56 [info]: GET /images/product/product-d-4.jpg
+2026-01-21 03:56:56 [info]: GET /images/product/product-d-5.jpg
+2026-01-21 03:56:56 [info]: GET /images/product/electronic/product1.jpg
+2026-01-21 03:56:56 [info]: GET /check-wishlist/675b410c49e2c4cec2d4a9ba
+2026-01-21 03:57:01 [info]: GET /
+2026-01-21 03:57:01 [info]: GET /.well-known/appspecific/com.chrome.devtools.json
+2026-01-21 03:57:04 [info]: GET /product-details/675e41fafe360f1e61262afb
+2026-01-21 03:57:04 [info]: GET /.well-known/appspecific/com.chrome.devtools.json
+2026-01-21 03:57:04 [info]: GET /css/vendor.css
+2026-01-21 03:57:04 [info]: GET /css/utility.css
+2026-01-21 03:57:04 [info]: GET /css/app.css
+2026-01-21 03:57:04 [info]: GET /css/OfferTag.css
+2026-01-21 03:57:04 [info]: GET /css/productDetailsLogo.css
+2026-01-21 03:57:04 [info]: GET /css/productDetails.css
+2026-01-21 03:57:04 [info]: GET /css/profileName.css
+2026-01-21 03:57:04 [info]: GET /css/containerWidth.css
+2026-01-21 03:57:04 [info]: GET /images/preloader.png
+2026-01-21 03:57:04 [info]: GET /js/vendor.js
+2026-01-21 03:57:04 [info]: GET /js/jquery.shopnav.js
+2026-01-21 03:57:04 [info]: GET /js/app.js
+2026-01-21 03:57:04 [info]: GET /images/product/product-d-1.jpg
+2026-01-21 03:57:04 [info]: GET /images/product/product-d-2.jpg
+2026-01-21 03:57:04 [info]: GET /images/product/product-d-3.jpg
+2026-01-21 03:57:04 [info]: GET /images/product/product-d-4.jpg
+2026-01-21 03:57:04 [info]: GET /images/product/product-d-5.jpg
+2026-01-21 03:57:04 [info]: GET /images/product/electronic/product1.jpg
+2026-01-21 03:57:04 [info]: GET /check-wishlist/675e41fafe360f1e61262afb
+2026-01-21 03:57:07 [info]: POST /add-to-cart
+2026-01-21 03:57:09 [info]: GET /product-details/675e41fafe360f1e61262afb
+2026-01-21 03:57:09 [info]: GET /.well-known/appspecific/com.chrome.devtools.json
+2026-01-21 03:57:09 [info]: GET /css/vendor.css
+2026-01-21 03:57:09 [info]: GET /css/utility.css
+2026-01-21 03:57:09 [info]: GET /css/app.css
+2026-01-21 03:57:09 [info]: GET /css/OfferTag.css
+2026-01-21 03:57:09 [info]: GET /css/productDetailsLogo.css
+2026-01-21 03:57:09 [info]: GET /css/productDetails.css
+2026-01-21 03:57:09 [info]: GET /css/profileName.css
+2026-01-21 03:57:09 [info]: GET /css/containerWidth.css
+2026-01-21 03:57:09 [info]: GET /images/preloader.png
+2026-01-21 03:57:09 [info]: GET /js/vendor.js
+2026-01-21 03:57:09 [info]: GET /js/jquery.shopnav.js
+2026-01-21 03:57:09 [info]: GET /js/app.js
+2026-01-21 03:57:09 [info]: GET /images/product/product-d-1.jpg
+2026-01-21 03:57:09 [info]: GET /images/product/product-d-2.jpg
+2026-01-21 03:57:09 [info]: GET /images/product/product-d-3.jpg
+2026-01-21 03:57:09 [info]: GET /images/product/product-d-4.jpg
+2026-01-21 03:57:09 [info]: GET /images/product/product-d-5.jpg
+2026-01-21 03:57:09 [info]: GET /images/product/electronic/product1.jpg
+2026-01-21 03:57:09 [info]: GET /check-wishlist/675e41fafe360f1e61262afb
+2026-01-21 03:57:10 [info]: GET /images/favicon.png
+2026-01-21 03:57:13 [info]: GET /checkout
+2026-01-21 03:57:13 [info]: GET /.well-known/appspecific/com.chrome.devtools.json
+2026-01-21 03:57:13 [info]: GET /css/vendor.css
+2026-01-21 03:57:13 [info]: GET /css/utility.css
+2026-01-21 03:57:13 [info]: GET /css/app.css
+2026-01-21 03:57:13 [info]: GET /css/couponModal.css
+2026-01-21 03:57:13 [info]: GET /css/productDetailsLogo.css
+2026-01-21 03:57:13 [info]: GET /css/profileName.css
+2026-01-21 03:57:13 [info]: GET /css/checkout.css
+2026-01-21 03:57:13 [info]: GET /css/containerWidth.css
+2026-01-21 03:57:13 [info]: GET /images/preloader.png
+2026-01-21 03:57:13 [info]: GET /js/vendor.js
+2026-01-21 03:57:13 [info]: GET /js/jquery.shopnav.js
+2026-01-21 03:57:13 [info]: GET /js/app.js
+2026-01-21 03:57:13 [info]: POST /calculate-delivery-charge
+2026-01-21 03:57:23 [info]: POST /create-razorpay-order
+2026-01-21 03:57:47 [info]: POST /verify-razorpay-payment
+2026-01-21 04:06:44 [info]: DB Connected
+2026-01-21 04:06:44 [info]: server running on port 3000
+2026-01-21 04:07:08 [info]: DB Connected
+2026-01-21 04:07:08 [info]: server running on port 3000
+2026-01-21 04:11:34 [info]: DB Connected
+2026-01-21 04:11:34 [info]: server running on port 3000
+2026-01-21 04:11:47 [info]: DB Connected
+2026-01-21 04:11:47 [info]: server running on port 3000
+2026-01-21 09:26:42 [info]: POST /create-razorpay-order
+2026-01-21 09:30:15 [info]: DB Connected
+2026-01-21 09:30:15 [info]: server running on port 3000
+2026-01-21 09:31:54 [info]: GET /checkout
+2026-01-21 09:31:54 [info]: GET /login
+2026-01-21 09:31:54 [info]: GET /.well-known/appspecific/com.chrome.devtools.json
+2026-01-21 09:31:54 [info]: GET /css/vendor.css
+2026-01-21 09:31:54 [info]: GET /css/utility.css
+2026-01-21 09:31:54 [info]: GET /css/app.css
+2026-01-21 09:31:54 [info]: GET /css/productDetailsLogo.css
+2026-01-21 09:31:54 [info]: GET /css/profileName.css
+2026-01-21 09:31:55 [info]: GET /images/preloader.png
+2026-01-21 09:31:55 [info]: GET /images/product/product-d-1.jpg
+2026-01-21 09:31:55 [info]: GET /images/product/product-d-2.jpg
+2026-01-21 09:31:55 [info]: GET /images/product/product-d-3.jpg
+2026-01-21 09:31:55 [info]: GET /js/vendor.js
+2026-01-21 09:31:55 [info]: GET /images/product/product-d-4.jpg
+2026-01-21 09:31:55 [info]: GET /js/jquery.shopnav.js
+2026-01-21 09:31:55 [info]: GET /js/app.js
+2026-01-21 09:31:55 [info]: GET /images/product/product-d-5.jpg
+2026-01-21 09:31:55 [info]: GET /images/product/electronic/product1.jpg
+2026-01-21 09:31:59 [info]: GET /images/favicon.png
+2026-01-21 09:32:11 [info]: POST /login
+2026-01-21 09:32:12 [info]: GET /
+2026-01-21 09:32:12 [info]: GET /.well-known/appspecific/com.chrome.devtools.json
+2026-01-21 09:32:12 [info]: GET /css/vendor.css
+2026-01-21 09:32:12 [info]: GET /css/app.css
+2026-01-21 09:32:12 [info]: GET /css/OfferTag.css
+2026-01-21 09:32:12 [info]: GET /css/utility.css
+2026-01-21 09:32:12 [info]: GET /css/profileName.css
+2026-01-21 09:32:12 [info]: GET /css/orderSuccess.css
+2026-01-21 09:32:12 [info]: GET /css/home.css
+2026-01-21 09:32:12 [info]: GET /css/productDetails.css
+2026-01-21 09:32:12 [info]: GET /css/logo.css
+2026-01-21 09:32:12 [info]: GET /css/containerWidth.css
+2026-01-21 09:32:12 [info]: GET /images/preloader.png
+2026-01-21 09:32:12 [info]: GET /images/promo/Konoha-homepage-banner.webp
+2026-01-21 09:32:12 [info]: GET /images/promo/Ikebana_harubana_desk.webp
+2026-01-21 09:32:12 [info]: GET /images/promo/Ikebana_midori.webp
+2026-01-21 09:32:12 [info]: GET /images/banners/home-page-bottom-banners-furniture1.webp
+2026-01-21 09:32:12 [info]: GET /js/vendor.js
+2026-01-21 09:32:12 [info]: GET /js/jquery.shopnav.js
+2026-01-21 09:32:12 [info]: GET /js/app.js
+2026-01-21 09:32:12 [info]: GET /images/product2/wallPainting1.png
+2026-01-21 09:32:12 [info]: GET /images/product2/desert.png
+2026-01-21 09:32:12 [info]: GET /images/product/product-d-1.jpg
+2026-01-21 09:32:12 [info]: GET /images/banners/AL.webp
+2026-01-21 09:32:12 [info]: GET /images/product/product-d-2.jpg
+2026-01-21 09:32:13 [info]: GET /images/product/product-d-3.jpg
+2026-01-21 09:32:13 [info]: GET /images/product/product-d-4.jpg
+2026-01-21 09:32:13 [info]: GET /images/product/product-d-5.jpg
+2026-01-21 09:32:13 [info]: GET /images/product/electronic/product1.jpg
+2026-01-21 09:32:22 [info]: GET /cart
+2026-01-21 09:32:29 [info]: GET /.well-known/appspecific/com.chrome.devtools.json
+2026-01-21 09:32:29 [info]: GET /css/vendor.css
+2026-01-21 09:32:29 [info]: GET /css/profileName.css
+2026-01-21 09:32:29 [info]: GET /css/productDetailsLogo.css
+2026-01-21 09:32:29 [info]: GET /css/app.css
+2026-01-21 09:32:29 [info]: GET /css/utility.css
+2026-01-21 09:32:29 [info]: GET /images/preloader.png
+2026-01-21 09:32:29 [info]: GET /js/vendor.js
+2026-01-21 09:32:29 [info]: GET /css/containerWidth.css
+2026-01-21 09:32:29 [info]: GET /js/jquery.shopnav.js
+2026-01-21 09:32:29 [info]: GET /js/app.js
+2026-01-21 09:32:37 [info]: GET /
+2026-01-21 09:32:37 [info]: GET /.well-known/appspecific/com.chrome.devtools.json
+2026-01-21 09:32:44 [info]: GET /product-details/675e41fafe360f1e61262afb
+2026-01-21 09:32:44 [info]: GET /.well-known/appspecific/com.chrome.devtools.json
+2026-01-21 09:32:44 [info]: GET /css/vendor.css
+2026-01-21 09:32:44 [info]: GET /css/utility.css
+2026-01-21 09:32:44 [info]: GET /css/app.css
+2026-01-21 09:32:44 [info]: GET /css/OfferTag.css
+2026-01-21 09:32:44 [info]: GET /css/productDetailsLogo.css
+2026-01-21 09:32:44 [info]: GET /css/productDetails.css
+2026-01-21 09:32:44 [info]: GET /css/profileName.css
+2026-01-21 09:32:44 [info]: GET /css/containerWidth.css
+2026-01-21 09:32:44 [info]: GET /images/preloader.png
+2026-01-21 09:32:44 [info]: GET /js/vendor.js
+2026-01-21 09:32:44 [info]: GET /js/jquery.shopnav.js
+2026-01-21 09:32:44 [info]: GET /js/app.js
+2026-01-21 09:32:44 [info]: GET /images/product/product-d-1.jpg
+2026-01-21 09:32:44 [info]: GET /images/product/product-d-2.jpg
+2026-01-21 09:32:44 [info]: GET /images/product/product-d-3.jpg
+2026-01-21 09:32:44 [info]: GET /images/product/product-d-4.jpg
+2026-01-21 09:32:44 [info]: GET /images/product/product-d-5.jpg
+2026-01-21 09:32:44 [info]: GET /images/product/electronic/product1.jpg
+2026-01-21 09:32:44 [info]: GET /check-wishlist/675e41fafe360f1e61262afb
+2026-01-21 09:32:46 [info]: POST /add-to-cart
+2026-01-21 09:32:49 [info]: GET /product-details/675e41fafe360f1e61262afb
+2026-01-21 09:32:49 [info]: GET /.well-known/appspecific/com.chrome.devtools.json
+2026-01-21 09:32:49 [info]: GET /css/vendor.css
+2026-01-21 09:32:49 [info]: GET /css/utility.css
+2026-01-21 09:32:49 [info]: GET /css/app.css
+2026-01-21 09:32:49 [info]: GET /css/OfferTag.css
+2026-01-21 09:32:49 [info]: GET /css/productDetailsLogo.css
+2026-01-21 09:32:49 [info]: GET /css/productDetails.css
+2026-01-21 09:32:49 [info]: GET /css/profileName.css
+2026-01-21 09:32:49 [info]: GET /css/containerWidth.css
+2026-01-21 09:32:49 [info]: GET /images/preloader.png
+2026-01-21 09:32:49 [info]: GET /js/vendor.js
+2026-01-21 09:32:49 [info]: GET /js/jquery.shopnav.js
+2026-01-21 09:32:49 [info]: GET /js/app.js
+2026-01-21 09:32:49 [info]: GET /images/product/product-d-1.jpg
+2026-01-21 09:32:49 [info]: GET /images/product/product-d-2.jpg
+2026-01-21 09:32:49 [info]: GET /images/product/product-d-3.jpg
+2026-01-21 09:32:49 [info]: GET /images/product/product-d-4.jpg
+2026-01-21 09:32:49 [info]: GET /images/product/product-d-5.jpg
+2026-01-21 09:32:49 [info]: GET /images/product/electronic/product1.jpg
+2026-01-21 09:32:49 [info]: GET /check-wishlist/675e41fafe360f1e61262afb
+2026-01-21 09:32:50 [info]: GET /images/favicon.png
+2026-01-21 09:32:53 [info]: GET /checkout
+2026-01-21 09:32:53 [info]: GET /.well-known/appspecific/com.chrome.devtools.json
+2026-01-21 09:32:53 [info]: GET /css/vendor.css
+2026-01-21 09:32:53 [info]: GET /css/utility.css
+2026-01-21 09:32:53 [info]: GET /css/app.css
+2026-01-21 09:32:53 [info]: GET /css/productDetailsLogo.css
+2026-01-21 09:32:53 [info]: GET /css/profileName.css
+2026-01-21 09:32:53 [info]: GET /css/containerWidth.css
+2026-01-21 09:32:53 [info]: GET /css/checkout.css
+2026-01-21 09:32:53 [info]: GET /css/couponModal.css
+2026-01-21 09:32:53 [info]: GET /images/preloader.png
+2026-01-21 09:32:53 [info]: GET /js/vendor.js
+2026-01-21 09:32:54 [info]: GET /js/jquery.shopnav.js
+2026-01-21 09:32:54 [info]: GET /js/app.js
+2026-01-21 09:32:54 [info]: POST /calculate-delivery-charge
+2026-01-21 09:32:58 [info]: POST /create-razorpay-order
+2026-01-21 09:33:23 [info]: POST /verify-razorpay-payment
+2026-01-21 09:33:26 [info]: GET /order-success
+2026-01-21 09:33:26 [info]: GET /.well-known/appspecific/com.chrome.devtools.json
+2026-01-21 09:33:26 [info]: GET /css/orderSuccess.css
+2026-01-21 09:33:42 [info]: GET /
+2026-01-21 09:33:42 [info]: GET /.well-known/appspecific/com.chrome.devtools.json
+2026-01-21 09:33:42 [info]: GET /css/orderSuccess.css
+2026-01-21 09:33:42 [info]: GET /css/OfferTag.css
+2026-01-21 09:33:42 [info]: GET /css/utility.css
+2026-01-21 09:33:42 [info]: GET /css/vendor.css
+2026-01-21 09:33:42 [info]: GET /css/app.css
+2026-01-21 09:33:42 [info]: GET /css/home.css
+2026-01-21 09:33:42 [info]: GET /css/logo.css
+2026-01-21 09:33:42 [info]: GET /css/productDetails.css
+2026-01-21 09:33:42 [info]: GET /css/profileName.css
+2026-01-21 09:33:42 [info]: GET /css/containerWidth.css
+2026-01-21 09:33:42 [info]: GET /images/preloader.png
+2026-01-21 09:33:42 [info]: GET /images/promo/Konoha-homepage-banner.webp
+2026-01-21 09:33:43 [info]: GET /images/promo/Ikebana_midori.webp
+2026-01-21 09:33:43 [info]: GET /images/banners/home-page-bottom-banners-furniture1.webp
+2026-01-21 09:33:43 [info]: GET /js/jquery.shopnav.js
+2026-01-21 09:33:43 [info]: GET /js/app.js
+2026-01-21 09:33:43 [info]: GET /js/vendor.js
+2026-01-21 09:33:43 [info]: GET /images/promo/Ikebana_harubana_desk.webp
+2026-01-21 09:33:43 [info]: GET /images/product2/wallPainting1.png
+2026-01-21 09:33:43 [info]: GET /images/product2/desert.png
+2026-01-21 09:33:43 [info]: GET /images/banners/AL.webp
+2026-01-21 09:33:43 [info]: GET /images/product/product-d-1.jpg
+2026-01-21 09:33:43 [info]: GET /images/product/product-d-2.jpg
+2026-01-21 09:33:43 [info]: GET /images/product/product-d-3.jpg
+2026-01-21 09:33:43 [info]: GET /images/product/product-d-4.jpg
+2026-01-21 09:33:43 [info]: GET /images/product/product-d-5.jpg
+2026-01-21 09:33:43 [info]: GET /images/product/electronic/product1.jpg
+2026-01-21 09:33:48 [info]: GET /product-details/675e41fafe360f1e61262afb
+2026-01-21 09:33:48 [info]: GET /.well-known/appspecific/com.chrome.devtools.json
+2026-01-21 09:33:48 [info]: GET /css/vendor.css
+2026-01-21 09:33:48 [info]: GET /css/utility.css
+2026-01-21 09:33:48 [info]: GET /css/app.css
+2026-01-21 09:33:48 [info]: GET /css/OfferTag.css
+2026-01-21 09:33:48 [info]: GET /css/productDetails.css
+2026-01-21 09:33:48 [info]: GET /css/profileName.css
+2026-01-21 09:33:48 [info]: GET /css/containerWidth.css
+2026-01-21 09:33:48 [info]: GET /css/productDetailsLogo.css
+2026-01-21 09:33:48 [info]: GET /images/preloader.png
+2026-01-21 09:33:49 [info]: GET /js/vendor.js
+2026-01-21 09:33:49 [info]: GET /js/jquery.shopnav.js
+2026-01-21 09:33:49 [info]: GET /js/app.js
+2026-01-21 09:33:49 [info]: GET /images/product/product-d-1.jpg
+2026-01-21 09:33:49 [info]: GET /images/product/product-d-2.jpg
+2026-01-21 09:33:49 [info]: GET /images/product/product-d-3.jpg
+2026-01-21 09:33:49 [info]: GET /images/product/product-d-4.jpg
+2026-01-21 09:33:49 [info]: GET /images/product/product-d-5.jpg
+2026-01-21 09:33:49 [info]: GET /images/product/electronic/product1.jpg
+2026-01-21 09:33:49 [info]: GET /check-wishlist/675e41fafe360f1e61262afb
+2026-01-21 09:33:52 [info]: GET /
+2026-01-21 09:33:52 [info]: GET /.well-known/appspecific/com.chrome.devtools.json
+2026-01-21 10:25:15 [info]: DB Connected
+2026-01-21 10:25:15 [info]: server running on port 3000
+2026-01-21 10:25:52 [info]: DB Connected
+2026-01-21 10:25:52 [info]: server running on port 3000
+2026-01-21 10:26:13 [info]: DB Connected
+2026-01-21 10:26:13 [info]: server running on port 3000
+2026-01-21 10:26:23 [info]: DB Connected
+2026-01-21 10:26:23 [info]: server running on port 3000
+2026-01-21 10:26:30 [info]: DB Connected
+2026-01-21 10:26:30 [info]: server running on port 3000
+2026-01-21 10:26:35 [info]: DB Connected
+2026-01-21 10:26:35 [info]: server running on port 3000
+2026-01-21 10:41:32 [info]: DB Connected
+2026-01-21 10:41:32 [info]: server running on port 3000
+2026-01-21 10:41:36 [info]: GET /productList
+2026-01-21 10:41:37 [info]: GET /.well-known/appspecific/com.chrome.devtools.json
+2026-01-21 10:41:37 [info]: GET /css/productDetailsLogo.css
+2026-01-21 10:41:37 [info]: GET /css/OfferTag.css
+2026-01-21 10:41:37 [info]: GET /css/utility.css
+2026-01-21 10:41:37 [info]: GET /css/vendor.css
+2026-01-21 10:41:37 [info]: GET /css/app.css
+2026-01-21 10:41:37 [info]: GET /css/containerWidth.css
+2026-01-21 10:41:37 [info]: GET /images/preloader.png
+2026-01-21 10:41:37 [info]: GET /js/vendor.js
+2026-01-21 10:41:37 [info]: GET /js/jquery.shopnav.js
+2026-01-21 10:41:37 [info]: GET /js/app.js
+2026-01-21 10:41:38 [info]: GET /webfonts/fa-regular-400.woff2
+2026-01-21 10:41:38 [info]: GET /webfonts/fa-solid-900.woff2
+2026-01-21 10:41:38 [info]: GET /webfonts/fa-brands-400.woff2
+2026-01-21 10:41:39 [info]: GET /images/favicon.png
+2026-01-21 10:41:42 [info]: GET /product-details/68dd0d584a9440017e24fe00
+2026-01-21 10:41:42 [info]: GET /.well-known/appspecific/com.chrome.devtools.json
+2026-01-21 10:41:42 [info]: GET /css/vendor.css
+2026-01-21 10:41:42 [info]: GET /css/utility.css
+2026-01-21 10:41:42 [info]: GET /css/OfferTag.css
+2026-01-21 10:41:42 [info]: GET /css/app.css
+2026-01-21 10:41:42 [info]: GET /css/productDetailsLogo.css
+2026-01-21 10:41:42 [info]: GET /css/profileName.css
+2026-01-21 10:41:42 [info]: GET /css/containerWidth.css
+2026-01-21 10:41:42 [info]: GET /images/preloader.png
+2026-01-21 10:41:42 [info]: GET /css/productDetails.css
+2026-01-21 10:41:43 [info]: GET /js/app.js
+2026-01-21 10:41:43 [info]: GET /images/product/product-d-2.jpg
+2026-01-21 10:41:43 [info]: GET /js/vendor.js
+2026-01-21 10:41:43 [info]: GET /js/jquery.shopnav.js
+2026-01-21 10:41:43 [info]: GET /images/product/product-d-4.jpg
+2026-01-21 10:41:43 [info]: GET /images/product/product-d-3.jpg
+2026-01-21 10:41:43 [info]: GET /images/product/product-d-1.jpg
+2026-01-21 10:41:43 [info]: GET /images/product/product-d-5.jpg
+2026-01-21 10:41:43 [info]: GET /images/product/electronic/product1.jpg
+2026-01-21 10:41:43 [info]: GET /check-wishlist/68dd0d584a9440017e24fe00
+2026-01-21 10:41:45 [info]: GET /login
+2026-01-21 10:41:46 [info]: POST /add-to-cart
+2026-01-21 10:41:46 [info]: GET /login
+2026-01-21 10:41:46 [info]: GET /login
+2026-01-21 10:41:46 [info]: GET /.well-known/appspecific/com.chrome.devtools.json
+2026-01-21 10:41:46 [info]: GET /css/vendor.css
+2026-01-21 10:41:46 [info]: GET /css/utility.css
+2026-01-21 10:41:46 [info]: GET /css/app.css
+2026-01-21 10:41:46 [info]: GET /css/productDetailsLogo.css
+2026-01-21 10:41:46 [info]: GET /css/profileName.css
+2026-01-21 10:41:46 [info]: GET /images/preloader.png
+2026-01-21 10:41:46 [info]: GET /images/product/product-d-1.jpg
+2026-01-21 10:41:47 [info]: GET /images/product/product-d-2.jpg
+2026-01-21 10:41:47 [info]: GET /images/product/product-d-3.jpg
+2026-01-21 10:41:47 [info]: GET /images/product/product-d-4.jpg
+2026-01-21 10:41:47 [info]: GET /js/vendor.js
+2026-01-21 10:41:47 [info]: GET /js/jquery.shopnav.js
+2026-01-21 10:41:47 [info]: GET /js/app.js
+2026-01-21 10:41:47 [info]: GET /images/product/product-d-5.jpg
+2026-01-21 10:41:47 [info]: GET /images/product/electronic/product1.jpg
+2026-01-21 10:42:00 [info]: POST /login
+2026-01-21 10:42:00 [info]: GET /
+2026-01-21 10:42:00 [info]: GET /.well-known/appspecific/com.chrome.devtools.json
+2026-01-21 10:42:00 [info]: GET /css/vendor.css
+2026-01-21 10:42:00 [info]: GET /css/utility.css
+2026-01-21 10:42:00 [info]: GET /css/OfferTag.css
+2026-01-21 10:42:00 [info]: GET /css/app.css
+2026-01-21 10:42:00 [info]: GET /css/home.css
+2026-01-21 10:42:00 [info]: GET /css/productDetails.css
+2026-01-21 10:42:00 [info]: GET /css/containerWidth.css
+2026-01-21 10:42:00 [info]: GET /css/orderSuccess.css
+2026-01-21 10:42:00 [info]: GET /css/logo.css
+2026-01-21 10:42:00 [info]: GET /css/profileName.css
+2026-01-21 10:42:00 [info]: GET /images/preloader.png
+2026-01-21 10:42:00 [info]: GET /images/promo/Konoha-homepage-banner.webp
+2026-01-21 10:42:00 [info]: GET /images/promo/Ikebana_harubana_desk.webp
+2026-01-21 10:42:01 [info]: GET /images/banners/home-page-bottom-banners-furniture1.webp
+2026-01-21 10:42:01 [info]: GET /js/vendor.js
+2026-01-21 10:42:01 [info]: GET /js/jquery.shopnav.js
+2026-01-21 10:42:01 [info]: GET /js/app.js
+2026-01-21 10:42:01 [info]: GET /images/promo/Ikebana_midori.webp
+2026-01-21 10:42:01 [info]: GET /images/product2/wallPainting1.png
+2026-01-21 10:42:01 [info]: GET /images/product2/desert.png
+2026-01-21 10:42:01 [info]: GET /images/product/product-d-1.jpg
+2026-01-21 10:42:01 [info]: GET /images/banners/AL.webp
+2026-01-21 10:42:01 [info]: GET /images/product/product-d-2.jpg
+2026-01-21 10:42:01 [info]: GET /images/product/product-d-3.jpg
+2026-01-21 10:42:01 [info]: GET /images/product/product-d-4.jpg
+2026-01-21 10:42:01 [info]: GET /images/product/product-d-5.jpg
+2026-01-21 10:42:01 [info]: GET /images/product/electronic/product1.jpg
+2026-01-21 10:42:01 [info]: GET /images/slider/slide-7.jpg
+2026-01-21 10:42:01 [info]: GET /images/slider/slide-8.jpg
+2026-01-21 10:42:01 [info]: GET /images/slider/slide-9.jpg
+2026-01-21 10:42:07 [info]: GET /productList
+2026-01-21 10:42:07 [info]: GET /.well-known/appspecific/com.chrome.devtools.json
+2026-01-21 10:42:07 [info]: GET /css/vendor.css
+2026-01-21 10:42:07 [info]: GET /css/utility.css
+2026-01-21 10:42:07 [info]: GET /css/app.css
+2026-01-21 10:42:07 [info]: GET /css/OfferTag.css
+2026-01-21 10:42:07 [info]: GET /css/productDetailsLogo.css
+2026-01-21 10:42:07 [info]: GET /css/containerWidth.css
+2026-01-21 10:42:07 [info]: GET /images/preloader.png
+2026-01-21 10:42:07 [info]: GET /js/vendor.js
+2026-01-21 10:42:08 [info]: GET /js/jquery.shopnav.js
+2026-01-21 10:42:08 [info]: GET /js/app.js
+2026-01-21 10:42:09 [info]: GET /product-details/68dd0d584a9440017e24fe00
+2026-01-21 10:42:10 [info]: GET /.well-known/appspecific/com.chrome.devtools.json
+2026-01-21 10:42:10 [info]: GET /css/vendor.css
+2026-01-21 10:42:10 [info]: GET /css/utility.css
+2026-01-21 10:42:10 [info]: GET /css/app.css
+2026-01-21 10:42:10 [info]: GET /css/OfferTag.css
+2026-01-21 10:42:10 [info]: GET /css/productDetailsLogo.css
+2026-01-21 10:42:10 [info]: GET /css/productDetails.css
+2026-01-21 10:42:10 [info]: GET /css/profileName.css
+2026-01-21 10:42:10 [info]: GET /css/containerWidth.css
+2026-01-21 10:42:10 [info]: GET /images/preloader.png
+2026-01-21 10:42:10 [info]: GET /js/vendor.js
+2026-01-21 10:42:10 [info]: GET /js/jquery.shopnav.js
+2026-01-21 10:42:10 [info]: GET /js/app.js
+2026-01-21 10:42:10 [info]: GET /images/product/product-d-1.jpg
+2026-01-21 10:42:10 [info]: GET /images/product/product-d-2.jpg
+2026-01-21 10:42:10 [info]: GET /images/product/product-d-3.jpg
+2026-01-21 10:42:10 [info]: GET /images/product/product-d-4.jpg
+2026-01-21 10:42:10 [info]: GET /images/product/product-d-5.jpg
+2026-01-21 10:42:10 [info]: GET /images/product/electronic/product1.jpg
+2026-01-21 10:42:10 [info]: GET /check-wishlist/68dd0d584a9440017e24fe00
+2026-01-21 10:42:18 [info]: POST /add-to-cart
+2026-01-21 10:42:19 [info]: GET /product-details/68dd0d584a9440017e24fe00
+2026-01-21 10:42:20 [info]: GET /.well-known/appspecific/com.chrome.devtools.json
+2026-01-21 10:42:20 [info]: GET /css/vendor.css
+2026-01-21 10:42:20 [info]: GET /css/utility.css
+2026-01-21 10:42:20 [info]: GET /css/app.css
+2026-01-21 10:42:20 [info]: GET /css/OfferTag.css
+2026-01-21 10:42:20 [info]: GET /css/productDetailsLogo.css
+2026-01-21 10:42:20 [info]: GET /css/productDetails.css
+2026-01-21 10:42:20 [info]: GET /css/profileName.css
+2026-01-21 10:42:20 [info]: GET /css/containerWidth.css
+2026-01-21 10:42:20 [info]: GET /images/preloader.png
+2026-01-21 10:42:20 [info]: GET /js/vendor.js
+2026-01-21 10:42:20 [info]: GET /js/jquery.shopnav.js
+2026-01-21 10:42:20 [info]: GET /js/app.js
+2026-01-21 10:42:20 [info]: GET /images/product/product-d-1.jpg
+2026-01-21 10:42:20 [info]: GET /images/product/product-d-2.jpg
+2026-01-21 10:42:20 [info]: GET /images/product/product-d-3.jpg
+2026-01-21 10:42:20 [info]: GET /images/product/product-d-4.jpg
+2026-01-21 10:42:20 [info]: GET /images/product/product-d-5.jpg
+2026-01-21 10:42:20 [info]: GET /images/product/electronic/product1.jpg
+2026-01-21 10:42:20 [info]: GET /check-wishlist/68dd0d584a9440017e24fe00
+2026-01-21 10:42:21 [info]: GET /images/favicon.png
+2026-01-21 10:42:23 [info]: GET /checkout
+2026-01-21 10:42:23 [info]: GET /.well-known/appspecific/com.chrome.devtools.json
+2026-01-21 10:42:23 [info]: GET /css/vendor.css
+2026-01-21 10:42:23 [info]: GET /css/utility.css
+2026-01-21 10:42:23 [info]: GET /css/app.css
+2026-01-21 10:42:23 [info]: GET /css/productDetailsLogo.css
+2026-01-21 10:42:23 [info]: GET /css/profileName.css
+2026-01-21 10:42:23 [info]: GET /css/containerWidth.css
+2026-01-21 10:42:23 [info]: GET /css/checkout.css
+2026-01-21 10:42:23 [info]: GET /css/couponModal.css
+2026-01-21 10:42:23 [info]: GET /images/preloader.png
+2026-01-21 10:42:23 [info]: GET /js/vendor.js
+2026-01-21 10:42:24 [info]: GET /js/jquery.shopnav.js
+2026-01-21 10:42:24 [info]: GET /js/app.js
+2026-01-21 10:42:24 [info]: POST /calculate-delivery-charge
+2026-01-21 10:42:29 [info]: POST /wallet-order
+2026-01-21 10:42:29 [error]: TypeError: Cannot read properties of undefined (reading 'push')
+    at placeWalletOrder (file:///C:/Users/shahi/project/ecommerceWebsite/services/order.service.js:81:23)
+    at file:///C:/Users/shahi/project/ecommerceWebsite/controllers/user/orderController.js:342:13
+    at withTransaction (file:///C:/Users/shahi/project/ecommerceWebsite/utils/withTransaction.js:21:16)
+    at saveWalletOrder (file:///C:/Users/shahi/project/ecommerceWebsite/controllers/user/orderController.js:341:12)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+2026-01-21 10:45:47 [info]: DB Connected
+2026-01-21 10:45:47 [info]: server running on port 3000
+2026-01-21 10:47:10 [info]: GET /checkout
+2026-01-21 10:47:10 [info]: GET /login
+2026-01-21 10:47:11 [info]: GET /.well-known/appspecific/com.chrome.devtools.json
+2026-01-21 10:47:11 [info]: GET /css/productDetailsLogo.css
+2026-01-21 10:47:11 [info]: GET /css/profileName.css
+2026-01-21 10:47:11 [info]: GET /css/vendor.css
+2026-01-21 10:47:11 [info]: GET /css/app.css
+2026-01-21 10:47:11 [info]: GET /css/utility.css
+2026-01-21 10:47:11 [info]: GET /images/preloader.png
+2026-01-21 10:47:11 [info]: GET /images/product/product-d-1.jpg
+2026-01-21 10:47:11 [info]: GET /images/product/product-d-3.jpg
+2026-01-21 10:47:11 [info]: GET /images/product/product-d-4.jpg
+2026-01-21 10:47:11 [info]: GET /js/vendor.js
+2026-01-21 10:47:11 [info]: GET /js/app.js
+2026-01-21 10:47:11 [info]: GET /images/product/product-d-2.jpg
+2026-01-21 10:47:11 [info]: GET /js/jquery.shopnav.js
+2026-01-21 10:47:11 [info]: GET /images/product/product-d-5.jpg
+2026-01-21 10:47:11 [info]: GET /images/product/electronic/product1.jpg
+2026-01-21 10:47:12 [info]: GET /images/favicon.png
+2026-01-21 10:47:23 [info]: POST /login
+2026-01-21 10:47:23 [info]: GET /
+2026-01-21 10:47:24 [info]: GET /.well-known/appspecific/com.chrome.devtools.json
+2026-01-21 10:47:24 [info]: GET /css/vendor.css
+2026-01-21 10:47:24 [info]: GET /css/utility.css
+2026-01-21 10:47:24 [info]: GET /css/OfferTag.css
+2026-01-21 10:47:24 [info]: GET /css/app.css
+2026-01-21 10:47:24 [info]: GET /css/home.css
+2026-01-21 10:47:24 [info]: GET /css/productDetails.css
+2026-01-21 10:47:24 [info]: GET /css/profileName.css
+2026-01-21 10:47:24 [info]: GET /css/containerWidth.css
+2026-01-21 10:47:24 [info]: GET /css/orderSuccess.css
+2026-01-21 10:47:24 [info]: GET /css/logo.css
+2026-01-21 10:47:24 [info]: GET /images/preloader.png
+2026-01-21 10:47:24 [info]: GET /images/promo/Konoha-homepage-banner.webp
+2026-01-21 10:47:24 [info]: GET /images/promo/Ikebana_midori.webp
+2026-01-21 10:47:24 [info]: GET /js/vendor.js
+2026-01-21 10:47:24 [info]: GET /js/jquery.shopnav.js
+2026-01-21 10:47:24 [info]: GET /js/app.js
+2026-01-21 10:47:24 [info]: GET /images/banners/home-page-bottom-banners-furniture1.webp
+2026-01-21 10:47:24 [info]: GET /images/promo/Ikebana_harubana_desk.webp
+2026-01-21 10:47:24 [info]: GET /images/product2/desert.png
+2026-01-21 10:47:24 [info]: GET /images/product2/wallPainting1.png
+2026-01-21 10:47:24 [info]: GET /images/banners/AL.webp
+2026-01-21 10:47:24 [info]: GET /images/product/product-d-1.jpg
+2026-01-21 10:47:24 [info]: GET /images/product/product-d-2.jpg
+2026-01-21 10:47:24 [info]: GET /images/product/product-d-3.jpg
+2026-01-21 10:47:24 [info]: GET /images/product/product-d-4.jpg
+2026-01-21 10:47:24 [info]: GET /images/product/product-d-5.jpg
+2026-01-21 10:47:24 [info]: GET /images/product/electronic/product1.jpg
+2026-01-21 10:47:28 [info]: GET /cart
+2026-01-21 10:47:29 [info]: GET /.well-known/appspecific/com.chrome.devtools.json
+2026-01-21 10:47:29 [info]: GET /css/vendor.css
+2026-01-21 10:47:29 [info]: GET /css/utility.css
+2026-01-21 10:47:29 [info]: GET /css/app.css
+2026-01-21 10:47:29 [info]: GET /css/productDetailsLogo.css
+2026-01-21 10:47:29 [info]: GET /css/profileName.css
+2026-01-21 10:47:29 [info]: GET /css/containerWidth.css
+2026-01-21 10:47:29 [info]: GET /images/preloader.png
+2026-01-21 10:47:29 [info]: GET /js/vendor.js
+2026-01-21 10:47:29 [info]: GET /js/jquery.shopnav.js
+2026-01-21 10:47:29 [info]: GET /js/app.js
+2026-01-21 10:47:31 [info]: GET /checkout
+2026-01-21 10:47:32 [info]: GET /.well-known/appspecific/com.chrome.devtools.json
+2026-01-21 10:47:32 [info]: GET /css/vendor.css
+2026-01-21 10:47:32 [info]: GET /css/utility.css
+2026-01-21 10:47:32 [info]: GET /css/app.css
+2026-01-21 10:47:32 [info]: GET /css/productDetailsLogo.css
+2026-01-21 10:47:32 [info]: GET /css/profileName.css
+2026-01-21 10:47:32 [info]: GET /css/containerWidth.css
+2026-01-21 10:47:32 [info]: GET /css/couponModal.css
+2026-01-21 10:47:32 [info]: GET /css/checkout.css
+2026-01-21 10:47:32 [info]: GET /images/preloader.png
+2026-01-21 10:47:32 [info]: GET /js/vendor.js
+2026-01-21 10:47:32 [info]: GET /js/jquery.shopnav.js
+2026-01-21 10:47:32 [info]: GET /js/app.js
+2026-01-21 10:47:33 [info]: POST /calculate-delivery-charge
+2026-01-21 10:47:37 [info]: POST /wallet-order
+2026-01-21 10:47:37 [error]: TypeError: Cannot read properties of undefined (reading 'push')
+    at placeWalletOrder (file:///C:/Users/shahi/project/ecommerceWebsite/services/order.service.js:81:24)
+    at file:///C:/Users/shahi/project/ecommerceWebsite/controllers/user/orderController.js:342:13
+    at withTransaction (file:///C:/Users/shahi/project/ecommerceWebsite/utils/withTransaction.js:21:16)
+    at saveWalletOrder (file:///C:/Users/shahi/project/ecommerceWebsite/controllers/user/orderController.js:341:12)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+2026-01-21 10:50:40 [info]: DB Connected
+2026-01-21 10:50:40 [info]: server running on port 3000
+2026-01-21 10:50:41 [info]: GET /checkout
+2026-01-21 10:50:41 [info]: GET /login
+2026-01-21 10:50:41 [info]: GET /css/app.css
+2026-01-21 10:50:41 [info]: GET /.well-known/appspecific/com.chrome.devtools.json
+2026-01-21 10:50:41 [info]: GET /css/vendor.css
+2026-01-21 10:50:41 [info]: GET /css/utility.css
+2026-01-21 10:50:41 [info]: GET /css/productDetailsLogo.css
+2026-01-21 10:50:41 [info]: GET /css/profileName.css
+2026-01-21 10:50:42 [info]: GET /images/preloader.png
+2026-01-21 10:50:42 [info]: GET /images/product/product-d-1.jpg
+2026-01-21 10:50:42 [info]: GET /images/product/product-d-2.jpg
+2026-01-21 10:50:42 [info]: GET /images/product/product-d-4.jpg
+2026-01-21 10:50:42 [info]: GET /js/vendor.js
+2026-01-21 10:50:42 [info]: GET /images/product/product-d-3.jpg
+2026-01-21 10:50:42 [info]: GET /js/jquery.shopnav.js
+2026-01-21 10:50:42 [info]: GET /js/app.js
+2026-01-21 10:50:42 [info]: GET /images/product/product-d-5.jpg
+2026-01-21 10:50:42 [info]: GET /images/product/electronic/product1.jpg
+2026-01-21 10:50:43 [info]: GET /images/favicon.png
+2026-01-21 10:50:53 [info]: POST /login
+2026-01-21 10:50:53 [info]: GET /
+2026-01-21 10:50:54 [info]: GET /.well-known/appspecific/com.chrome.devtools.json
+2026-01-21 10:50:54 [info]: GET /css/vendor.css
+2026-01-21 10:50:54 [info]: GET /css/containerWidth.css
+2026-01-21 10:50:54 [info]: GET /css/profileName.css
+2026-01-21 10:50:54 [info]: GET /css/app.css
+2026-01-21 10:50:54 [info]: GET /css/utility.css
+2026-01-21 10:50:54 [info]: GET /css/orderSuccess.css
+2026-01-21 10:50:54 [info]: GET /css/OfferTag.css
+2026-01-21 10:50:54 [info]: GET /css/productDetails.css
+2026-01-21 10:50:54 [info]: GET /css/home.css
+2026-01-21 10:50:54 [info]: GET /css/logo.css
+2026-01-21 10:50:54 [info]: GET /images/preloader.png
+2026-01-21 10:50:54 [info]: GET /images/promo/Konoha-homepage-banner.webp
+2026-01-21 10:50:54 [info]: GET /images/promo/Ikebana_harubana_desk.webp
+2026-01-21 10:50:54 [info]: GET /images/promo/Ikebana_midori.webp
+2026-01-21 10:50:54 [info]: GET /images/banners/home-page-bottom-banners-furniture1.webp
+2026-01-21 10:50:54 [info]: GET /js/vendor.js
+2026-01-21 10:50:54 [info]: GET /js/jquery.shopnav.js
+2026-01-21 10:50:54 [info]: GET /js/app.js
+2026-01-21 10:50:54 [info]: GET /images/product2/wallPainting1.png
+2026-01-21 10:50:54 [info]: GET /images/product2/desert.png
+2026-01-21 10:50:54 [info]: GET /images/banners/AL.webp
+2026-01-21 10:50:54 [info]: GET /images/product/product-d-1.jpg
+2026-01-21 10:50:54 [info]: GET /images/product/product-d-2.jpg
+2026-01-21 10:50:54 [info]: GET /images/product/product-d-3.jpg
+2026-01-21 10:50:54 [info]: GET /images/product/product-d-4.jpg
+2026-01-21 10:50:54 [info]: GET /images/product/product-d-5.jpg
+2026-01-21 10:50:54 [info]: GET /images/product/electronic/product1.jpg
+2026-01-21 10:51:01 [info]: GET /cart
+2026-01-21 10:51:01 [info]: GET /.well-known/appspecific/com.chrome.devtools.json
+2026-01-21 10:51:01 [info]: GET /css/vendor.css
+2026-01-21 10:51:01 [info]: GET /css/app.css
+2026-01-21 10:51:01 [info]: GET /css/utility.css
+2026-01-21 10:51:01 [info]: GET /css/productDetailsLogo.css
+2026-01-21 10:51:01 [info]: GET /css/profileName.css
+2026-01-21 10:51:01 [info]: GET /css/containerWidth.css
+2026-01-21 10:51:01 [info]: GET /images/preloader.png
+2026-01-21 10:51:01 [info]: GET /js/vendor.js
+2026-01-21 10:51:01 [info]: GET /js/jquery.shopnav.js
+2026-01-21 10:51:01 [info]: GET /js/app.js
+2026-01-21 10:51:03 [info]: GET /checkout
+2026-01-21 10:51:04 [info]: GET /.well-known/appspecific/com.chrome.devtools.json
+2026-01-21 10:51:04 [info]: GET /css/vendor.css
+2026-01-21 10:51:04 [info]: GET /css/utility.css
+2026-01-21 10:51:04 [info]: GET /css/app.css
+2026-01-21 10:51:04 [info]: GET /css/productDetailsLogo.css
+2026-01-21 10:51:04 [info]: GET /css/containerWidth.css
+2026-01-21 10:51:04 [info]: GET /css/profileName.css
+2026-01-21 10:51:04 [info]: GET /css/couponModal.css
+2026-01-21 10:51:04 [info]: GET /css/checkout.css
+2026-01-21 10:51:04 [info]: GET /images/preloader.png
+2026-01-21 10:51:04 [info]: GET /js/vendor.js
+2026-01-21 10:51:04 [info]: GET /js/jquery.shopnav.js
+2026-01-21 10:51:04 [info]: GET /js/app.js
+2026-01-21 10:51:04 [info]: POST /calculate-delivery-charge
+2026-01-21 10:51:18 [info]: POST /wallet-order
+2026-01-21 10:51:18 [error]: TypeError: wallet.schemaLevelProjections is not a function
+    at placeWalletOrder (file:///C:/Users/shahi/project/ecommerceWebsite/services/order.service.js:89:16)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async file:///C:/Users/shahi/project/ecommerceWebsite/controllers/user/orderController.js:342:7
+    at async withTransaction (file:///C:/Users/shahi/project/ecommerceWebsite/utils/withTransaction.js:21:10)
+    at async saveWalletOrder (file:///C:/Users/shahi/project/ecommerceWebsite/controllers/user/orderController.js:341:6)
+2026-01-21 10:52:53 [info]: DB Connected
+2026-01-21 10:52:53 [info]: server running on port 3000
+2026-01-21 10:53:24 [info]: DB Connected
+2026-01-21 10:53:24 [info]: server running on port 3000

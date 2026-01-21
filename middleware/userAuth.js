@@ -31,26 +31,32 @@ const isLogout = async (req, res, next) => {
 
 const sessionVerify = async (req, res, next) => {
   try {
-    const user = req.session.user;
-    const passport = req.session.passport || req.session.passport?.user;
+    const user =
+      req.session.user ||
+      (req.session.passport && req.session.passport.user);
 
-    console.log("sessionVerify", user, passport);
-
-    if (user || passport) {
-      next();
-    } else {
-      if (req.xhr) {
-        return res
-          .status(401)
-          .json({ success: false, error: "Please login first" });
-      }
-      // Otherwise, normal redirect
-      return res.redirect("/login");
+    if (user) {
+      return next();
     }
+
+    const isAjax =
+      req.headers["x-requested-with"] === "XMLHttpRequest" ||
+      req.headers.accept?.includes("application/json");
+
+    if (isAjax) {
+      return res.status(401).json({
+        success: false,
+        message: "Please login first",
+      });
+    }
+
+    return res.redirect("/login");
   } catch (error) {
-    logger.error("IsLogin middleware error", error);
+    logger.error("sessionVerify middleware error", error);
+    return res.status(500).send("Internal Server Error");
   }
 };
+
 
 export default {
   isLogin,
