@@ -6,7 +6,7 @@ export const withTransaction = async (callback) => {
     mongoose.connection?.client?.topology?.description?.type === "ReplicaSetWithPrimary";
 
   if (isReplicaSet) {
-    logger.info("✅ MongoDB TRANSACTIONS ENABLED (Replica Set detected)");
+    logger.info(" MongoDB TRANSACTIONS ENABLED (Replica Set detected)");
     const session = await mongoose.startSession();
     try {
       let result;
@@ -18,7 +18,7 @@ export const withTransaction = async (callback) => {
       session.endSession();
     }
   } else {
-  logger.info("⚠️ MongoDB running WITHOUT transactions");
+  logger.info(" MongoDB running WITHOUT transactions");
 }
 
   //  Local MongoDB → NO SESSION AT ALL
