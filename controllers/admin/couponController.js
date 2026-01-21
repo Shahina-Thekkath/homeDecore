@@ -1,13 +1,16 @@
-const Coupon = require("../../models/couponSchema");
-const moment = require("moment");
-const { STATUS_CODES, MESSAGES } = require("../../constants");
+import Coupon from "../../models/couponSchema.js";
+import moment from "moment";
+import { STATUS_CODES, MESSAGES } from "../../constants/index.js";
+import logger from "../../utils/logger.js";
 
 const renderAddCouponPage = async (req, res) => {
   try {
     res.render("addCoupon");
   } catch (error) {
-    console.error("Add Coupon render error:", error);
-    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).send(MESSAGES.GENERIC.SERVER_ERROR);
+    logger.error("Add Coupon render error:", error);
+    res
+      .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
+      .send(MESSAGES.GENERIC.SERVER_ERROR);
   }
 };
 
@@ -59,23 +62,21 @@ const addCoupon = async (req, res) => {
 
     let newDate;
     if (expiresOn) {
-      const [day, month, year] = expiresOn.split('-');
+      const [day, month, year] = expiresOn.split("-");
       const isoDate = new Date(year, month - 1, day); // Convert to valid Date object
       if (isNaN(isoDate.getTime())) {
         errors.expiresOn = "Invalid date format";
-      }else {
+      } else {
         const today = new Date();
-        today.setHours(0,0,0,0);
-        
-        if(isoDate <= today){
+        today.setHours(0, 0, 0, 0);
 
-        errors.expiresOn = "Give an appropriate date";
-      }else{
-      newDate = isoDate;
+        if (isoDate <= today) {
+          errors.expiresOn = "Give an appropriate date";
+        } else {
+          newDate = isoDate;
+        }
       }
     }
-  }
-
 
     if (discountType && !["percentage", "flat"].includes(discountType)) {
       errors.discountType =
@@ -83,22 +84,33 @@ const addCoupon = async (req, res) => {
     }
 
     if (Object.keys(errors).length > 0) {
-      return res.status(STATUS_CODES.BAD_REQUEST).json({ success: false, errors });
+      return res
+        .status(STATUS_CODES.BAD_REQUEST)
+        .json({ success: false, errors });
     }
 
-    const existingCoupon = await Coupon.findOne({ code});
+    const existingCoupon = await Coupon.findOne({ code });
     if (existingCoupon) {
       return res.status(STATUS_CODES.BAD_REQUEST).json({
         success: false,
-        errors: { code: MESSAGES.COUPON.CODE_EXISTS},
+        errors: { code: MESSAGES.COUPON.CODE_EXISTS },
       });
     }
 
-    if (discountType === "flat" && Number(discountAmount) >= Number(minPurchaseAmount)) {
-      return res.status(400).json({success: false, errors: {minPurchaseAmount: "Minimum purchase amount should be greater than discount amount for flat coupons"}})
+    if (
+      discountType === "flat" &&
+      Number(discountAmount) >= Number(minPurchaseAmount)
+    ) {
+      return res
+        .status(400)
+        .json({
+          success: false,
+          errors: {
+            minPurchaseAmount:
+              "Minimum purchase amount should be greater than discount amount for flat coupons",
+          },
+        });
     }
-    
-    
 
     await Coupon.create({
       name,
@@ -112,56 +124,68 @@ const addCoupon = async (req, res) => {
 
     return res.json({ success: true, message: MESSAGES.COUPON.ADDED_SUCCESS });
   } catch (error) {
-    console.error("Internal Server Error adding coupon)", error);
-    return res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ success: false, message: MESSAGES.GENERIC.SERVER_ERROR });
+    logger.error("Internal Server Error adding coupon)", error);
+    return res
+      .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
+      .json({ success: false, message: MESSAGES.GENERIC.SERVER_ERROR });
   }
 };
 
-
 const getCouponList = async (req, res) => {
-    try {
-        const coupons = await Coupon.find().sort({ createdAt: -1 });
-        res.render('couponList', { coupons });
-    } catch (error) {
-        console.error(error);
-        res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).send(MESSAGES.GENERIC.SERVER_ERROR);
-    }
+  try {
+    const coupons = await Coupon.find().sort({ createdAt: -1 });
+    res.render("couponList", { coupons });
+  } catch (error) {
+    logger.error(error);
+    res
+      .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
+      .send(MESSAGES.GENERIC.SERVER_ERROR);
+  }
 };
 
 const toggleCouponStatus = async (req, res) => {
-    try {
-        const couponId = req.params.id;
-        const coupon = await Coupon.findById(couponId);
+  try {
+    const couponId = req.params.id;
+    const coupon = await Coupon.findById(couponId);
 
-        if(!coupon) {
-            return res.status(STATUS_CODES.NOT_FOUND).json({ success: false, message: MESSAGES.COUPON.NOT_FOUND });
-        }
-
-        coupon.isActive = !coupon.isActive;
-        await coupon.save();
-
-        return res.json({ success: true, message: `Coupon ${coupon.isActive ? 'activated' : 'deactivated'} successfully` });
-    } catch (error) {
-        console.error(err);
-        return res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ success: false, message:MESSAGES.GENERIC.SERVER_ERROR });
-        
+    if (!coupon) {
+      return res
+        .status(STATUS_CODES.NOT_FOUND)
+        .json({ success: false, message: MESSAGES.COUPON.NOT_FOUND });
     }
+
+    coupon.isActive = !coupon.isActive;
+    await coupon.save();
+
+    return res.json({
+      success: true,
+      message: `Coupon ${
+        coupon.isActive ? "activated" : "deactivated"
+      } successfully`,
+    });
+  } catch (error) {
+    logger.error(error);
+    return res
+      .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
+      .json({ success: false, message: MESSAGES.GENERIC.SERVER_ERROR });
+  }
 };
 
 const getEditCoupon = async (req, res) => {
   try {
     const coupon = await Coupon.findById(req.params.id);
-    res.render('editCoupon', {moment, coupon});
+    res.render("editCoupon", { moment, coupon });
   } catch (error) {
-    console.error("EditCoupon render error", error);
-    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).send(MESSAGES.GENERIC.SERVER_ERROR)
-    
+    logger.error("EditCoupon render error", error);
+    res
+      .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
+      .send(MESSAGES.GENERIC.SERVER_ERROR);
   }
 };
 
 const updateCoupon = async (req, res) => {
   try {
-     const id = req.params.id;
+    const id = req.params.id;
 
     const {
       name,
@@ -172,9 +196,6 @@ const updateCoupon = async (req, res) => {
       expiresOn,
       discountType,
     } = req.body;
-
-    
-    
 
     const errors = {};
 
@@ -213,57 +234,58 @@ const updateCoupon = async (req, res) => {
     const usage = Number(usageLimit);
     const discount = Number(discountAmount);
     const minPurchase = Number(minPurchaseAmount);
-    if(usage && usage <= 0) {
+    if (usage && usage <= 0) {
       errors.usageLimit = "Usage limit should'nt be zero or less than zero";
     }
 
-    if(discount && discount <= 0) {
-      errors.discountAmount = "Discount amount should'nt less than or equal to zero";
+    if (discount && discount <= 0) {
+      errors.discountAmount =
+        "Discount amount should'nt less than or equal to zero";
     }
 
-    if(minPurchase && minPurchase <= 0) {
-      errors.minPurchaseAmount = "Minimum Purchase amount should'nt be equal to or less than zero";
+    if (minPurchase && minPurchase <= 0) {
+      errors.minPurchaseAmount =
+        "Minimum Purchase amount should'nt be equal to or less than zero";
     }
 
     const MAX_FLAT_DISCOUNT_PERCENT = 50;
     const MAX_PERCENTAGE_DISCOUNT = 50;
 
-    if(discountType === 'flat') {
-
-      if(discountAmount >= minPurchaseAmount) {
-         errors.discountAmount = "discount amount should'nt go beyond minimum purchase amount";
+    if (discountType === "flat") {
+      if (discountAmount >= minPurchaseAmount) {
+        errors.discountAmount =
+          "discount amount should'nt go beyond minimum purchase amount";
       }
 
-      const maxAllowedDiscount = (minPurchaseAmount * MAX_FLAT_DISCOUNT_PERCENT) / 100;
-      
-      if(discountAmount > maxAllowedDiscount) {
+      const maxAllowedDiscount =
+        (minPurchaseAmount * MAX_FLAT_DISCOUNT_PERCENT) / 100;
+
+      if (discountAmount > maxAllowedDiscount) {
         errors.discountAmount = `Discount Amount should'nt be more than ${MAX_FLAT_DISCOUNT_PERCENT}% of minimum purchase amount`;
       }
-
-      
-    } else if(discountType === 'percentage' && discount > MAX_PERCENTAGE_DISCOUNT) {
+    } else if (
+      discountType === "percentage" &&
+      discount > MAX_PERCENTAGE_DISCOUNT
+    ) {
       errors.discountAmount = `Percentage discount cannot exceed ${MAX_PERCENTAGE_DISCOUNT}%`;
     }
 
     let newDate;
     if (expiresOn) {
-      const [day, month, year] = expiresOn.split('-');
-      const isoDate = new Date(year, month-1, day); // Convert to valid Date object
+      const [day, month, year] = expiresOn.split("-");
+      const isoDate = new Date(year, month - 1, day); // Convert to valid Date object
       if (isNaN(isoDate.getTime())) {
         errors.expiresOn = "Invalid date format";
-      }else {
+      } else {
         const today = new Date();
         today.setHours(0, 0, 0, 0);
-        if(isoDate <= today){
-         errors.expiresOn = "Give a future date"
+        if (isoDate <= today) {
+          errors.expiresOn = "Give a future date";
         } else {
-           newDate = isoDate;
+          newDate = isoDate;
+        }
       }
     }
-  }
-
-
-
 
     if (discountType && !["percentage", "flat"].includes(discountType)) {
       errors.discountType =
@@ -271,10 +293,12 @@ const updateCoupon = async (req, res) => {
     }
 
     if (Object.keys(errors).length > 0) {
-      return res.status(STATUS_CODES.BAD_REQUEST).json({ success: false, errors });
+      return res
+        .status(STATUS_CODES.BAD_REQUEST)
+        .json({ success: false, errors });
     }
 
-    const existingCoupon = await Coupon.findOne({ code, _id: {$ne: id} });
+    const existingCoupon = await Coupon.findOne({ code, _id: { $ne: id } });
     if (existingCoupon) {
       return res.status(STATUS_CODES.BAD_REQUEST).json({
         success: false,
@@ -282,28 +306,37 @@ const updateCoupon = async (req, res) => {
       });
     }
 
-    await Coupon.findByIdAndUpdate( id, {
-      name,
-      code,
-      discountAmount,
-      usageLimit,
-      minPurchaseAmount,
-      expiresOn: newDate,
-      discountType,
-    }, { new: true });
+    await Coupon.findByIdAndUpdate(
+      id,
+      {
+        name,
+        code,
+        discountAmount,
+        usageLimit,
+        minPurchaseAmount,
+        expiresOn: newDate,
+        discountType,
+      },
+      { new: true }
+    );
 
-    return res.json({ success: true, message: MESSAGES.COUPON.UPDATED_SUCCESS });
+    return res.json({
+      success: true,
+      message: MESSAGES.COUPON.UPDATED_SUCCESS,
+    });
   } catch (error) {
-    console.error("Internal Server Error editing coupon", error);
-    return res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ success: false, message: MESSAGES.GENERIC.SERVER_ERROR });
+    logger.error("Internal Server Error editing coupon", error);
+    return res
+      .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
+      .json({ success: false, message: MESSAGES.GENERIC.SERVER_ERROR });
   }
 };
 
-module.exports = {
-    renderAddCouponPage,
-    addCoupon,
-    getCouponList,
-    toggleCouponStatus,
-    getEditCoupon,
-    updateCoupon
+export default {
+  renderAddCouponPage,
+  addCoupon,
+  getCouponList,
+  toggleCouponStatus,
+  getEditCoupon,
+  updateCoupon,
 };

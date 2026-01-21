@@ -644,6 +644,11 @@
                         subtotalField.textContent = `₹${result.subtotal.toFixed(2)}`;
                     }
 
+                    const subTotalSummaryField = document.querySelector('.grand-total');
+                    if(subTotalSummaryField) {
+                        subTotalSummaryField.textContent = `${result.grandTotal.toFixed(2)}`;
+                    }
+                    
                     // Update the grand total dynamically
                     const grandTotalField = document.querySelector("#grand-total");
                     if (grandTotalField) {

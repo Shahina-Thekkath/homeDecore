@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 const { Schema } = mongoose;
 const { model } = mongoose;
 const { Types } = mongoose;
@@ -9,20 +9,19 @@ const ProductSchema = new Schema(
     description: { type: String, required: true },
     price: { type: Number, required: true },
     categoryId: { type: Types.ObjectId, ref: "Category", required: true },
-   
 
     quantity: { type: Number, required: true },
     image: [
-            {
-              public_id: { type: String },
-              url: { type: String }
-            }
-          ],
-     specification: [
+      {
+        public_id: { type: String },
+        url: { type: String },
+      },
+    ],
+    specification: [
       {
         key: { type: String, required: true },
-        value: { type: String, required: true }
-      }
+        value: { type: String, required: true },
+      },
     ],
     rating: { type: Number, default: 0 },
     isFeatured: { type: Boolean, default: false },
@@ -42,12 +41,10 @@ const ProductSchema = new Schema(
     status: {
       type: String,
       enum: ["Available", "Out of stock", "Discontinued"],
-    }
+    },
   },
   { timestamps: true }
 );
 
-
-
 const Product = model("Product", ProductSchema);
-module.exports = Product;
+export default Product;

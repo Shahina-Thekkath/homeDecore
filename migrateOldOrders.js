@@ -1,8 +1,9 @@
-require('dotenv').config();
-const mongoose = require('mongoose');
+import dotenv from "dotenv";
+import mongoose from "mongoose";
 
-const Order = require('./models/orderSchema');
-const generateOrderId = require('./helpers/generateOrderId');
+import Order from "./models/orderSchema.js";
+
+dotenv.config();
 
 async function migrateOldOrders() {
 

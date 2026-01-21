@@ -1,5 +1,4 @@
-const User = require("../models/userSchma");
-
+import User from "../models/userSchma.js";
 
 const checkBlocked = async (req, res, next) => {
   try {
@@ -16,24 +15,25 @@ const checkBlocked = async (req, res, next) => {
     const user = await User.findById(userId);
 
     if (user?.isBlocked) {
-    res.cookie(
-        "blockedMessage",
-        "Your account has been blocked by admin.",
-        { httpOnly: true, maxAge: 5000 }
-    );
+      res.cookie("blockedMessage", "Your account has been blocked by admin.", {
+        httpOnly: true,
+        maxAge: 5000,
+      });
 
-    return req.session.destroy(() => {
-        return res.redirect("/login");
-    });
+      req.session.destroy((err) => {
+        if (err) {
+          console.error("Session destroy error:", err);
+          return next();
+        }
+        return next();
+      });
+    } else {
+      next();
     }
-
-
-    next();
   } catch (err) {
     console.error("checkBlocked error:", err);
     next();
   }
 };
 
-
-module.exports = checkBlocked;
+export default checkBlocked;

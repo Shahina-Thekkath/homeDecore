@@ -1,6 +1,6 @@
-const Wallet = require('../../models/walletSchema');
-const User = require('../../models/userSchma');
-const { STATUS_CODES, MESSAGES } = require("../../constants");
+import Wallet from "../../models/walletSchema.js";
+import { STATUS_CODES, MESSAGES } from "../../constants/index.js";
+import logger from "../../utils/logger.js";
 
 const getWallet = async (req, res) => {
   try {
@@ -13,7 +13,7 @@ const getWallet = async (req, res) => {
 
     // Fetch wallet
     let wallet = await Wallet.findOne({ userId })
-      .populate('userId', 'name email')
+      .populate("userId", "name email")
       .lean();
 
     // If wallet doesn't exist, create one
@@ -21,7 +21,7 @@ const getWallet = async (req, res) => {
       wallet = await Wallet.create({
         userId,
         balance: 0,
-        transactions: []
+        transactions: [],
       });
     }
 
@@ -39,7 +39,10 @@ const getWallet = async (req, res) => {
     // Slice transactions for current page
     const startIndex = (page - 1) * limit;
     const endIndex = startIndex + limit;
-    const paginatedTransactions = wallet.transactions.slice(startIndex, endIndex);
+    const paginatedTransactions = wallet.transactions.slice(
+      startIndex,
+      endIndex
+    );
 
     // Replace full transactions with paginated ones
     wallet.transactions = paginatedTransactions;
@@ -50,14 +53,14 @@ const getWallet = async (req, res) => {
       user,
       currentPage: page,
       totalPages,
-      filter: req.query.filter || null // if you plan to use filters later
+      filter: req.query.filter || null, // if you plan to use filters later
     });
-
   } catch (error) {
-    console.error("Error fetching wallet:", error);
-    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).render("error", { message: MESSAGES.WALLET.SERVER_ERROR_WHILE_LOADING });
+    logger.error("Error fetching wallet:", error);
+    res
+      .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
+      .render("error", { message: MESSAGES.WALLET.SERVER_ERROR_WHILE_LOADING });
   }
 };
 
-
-module.exports = {getWallet};
+export default { getWallet };

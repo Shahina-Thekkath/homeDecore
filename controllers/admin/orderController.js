@@ -1,10 +1,8 @@
-const Product = require("../../models/productSchema");
-const Order = require("../../models/orderSchema");
-const Wallet = require("../../models/walletSchema");
-const mongoose = require("mongoose");
-const Coupon = require("../../models/couponSchema");
-const { STATUS_CODES, MESSAGES } = require("../../constants");
-
+import Product from "../../models/productSchema.js";
+import Order from "../../models/orderSchema.js";
+import Wallet from "../../models/walletSchema.js";
+import { STATUS_CODES, MESSAGES } from "../../constants/index.js";
+import logger from "../../utils/logger.js";
 
 const getAdminOrders = async (req, res) => {
   try {
@@ -14,28 +12,35 @@ const getAdminOrders = async (req, res) => {
 
     res.render("orderList", { orders });
   } catch (error) {
-    console.error("Error fetching orders");
-    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).send(MESSAGES.ORDER.FETCH_FAILED);
+    logger.error("Error fetching orders", error);
+    res
+      .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
+      .send(MESSAGES.ORDER.FETCH_FAILED);
   }
 };
-
 
 const getOrderById = async (req, res) => {
   try {
     const order = await Order.findById(req.params.orderId)
       .populate("userId", "email phone name")
       .populate("products.productId", "name image");
-    if (!order) return res.status(STATUS_CODES.NOT_FOUND).json({ message: MESSAGES.ORDER.NOT_FOUND });
+    if (!order)
+      return res
+        .status(STATUS_CODES.NOT_FOUND)
+        .json({ message: MESSAGES.ORDER.NOT_FOUND });
 
     // need to check
     const grandTotal = order.totalAmount;
 
     res.render("orderDetails", { order, grandTotal });
   } catch (error) {
-    console.error("Error fetching order by ID:", error);
+    logger.error("Error fetching order by ID:", error);
     res
       .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
-      .json({ message: MESSAGES.ORDER.ORDER_DETAILS_FETCH_FAILED, error: error.message });
+      .json({
+        message: MESSAGES.ORDER.ORDER_DETAILS_FETCH_FAILED,
+        error: error.message,
+      });
   }
 };
 
@@ -44,7 +49,6 @@ const generateTransactionId = () => {
   const randomPart = Math.floor(1000 + Math.random() * 9000); // 4-digit random
   return `TXN${timestamp}${randomPart}`;
 };
-
 
 const handleRefundToWallet = async (userId, amount, reason) => {
   const transactionId = generateTransactionId();
@@ -63,11 +67,10 @@ const handleRefundToWallet = async (userId, amount, reason) => {
       type: "credit",
       amount,
       reason,
-      date: new Date()
+      date: new Date(),
     });
 
     await wallet.save();
-
   } else {
     await Wallet.create({
       userId,
@@ -78,7 +81,7 @@ const handleRefundToWallet = async (userId, amount, reason) => {
           type: "credit",
           amount,
           reason,
-          date: new Date()
+          date: new Date(),
         },
       ],
     });
@@ -91,7 +94,7 @@ const cancelOrder = async (req, res) => {
     const order = await Order.findById(req.params.id)
       .populate("userId")
       .populate("products.productId");
-      
+
     if (!order) {
       return res
         .status(STATUS_CODES.NOT_FOUND)
@@ -116,12 +119,12 @@ const cancelOrder = async (req, res) => {
         $inc: { quantity: item.quantity },
       });
     }
-  
+
     const refundAmount = order.totalAmount;
-    
+
     const userId = order.userId._id;
     if (order.isPaid) {
-      await handleRefundToWallet(userId, refundAmount, "Order Refund");     // for razor pay
+      await handleRefundToWallet(userId, refundAmount, "Order Refund"); // for razor pay
     }
 
     order.orderStatus = "Cancelled";
@@ -134,21 +137,17 @@ const cancelOrder = async (req, res) => {
 
     await order.save();
 
-    res
-      .status(STATUS_CODES.OK)
-      .json({
-        success: true,
-        message: MESSAGES.ORDER.CANCELLED_AND_REFUNDED,
-        products: order.products,
-      });
+    res.status(STATUS_CODES.OK).json({
+      success: true,
+      message: MESSAGES.ORDER.CANCELLED_AND_REFUNDED,
+      products: order.products,
+    });
   } catch (error) {
-    console.error("cancel Order Error: ", error);
-    res
-      .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
-      .json({
-        success: false,
-        message: MESSAGES.ORDER.SERVER_ERROR_WHILE_CANCELLING,
-      });
+    logger.error("cancel Order Error: ", error);
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
+      success: false,
+      message: MESSAGES.ORDER.SERVER_ERROR_WHILE_CANCELLING,
+    });
   }
 };
 
@@ -159,13 +158,13 @@ const cancelOrder = async (req, res) => {
 // need to set condition if the product status not pending or processing product cannot be cancelled
 
 function updateOverallOrderStatus(order) {
-  const statuses = order.products.map(p => p.status);
+  const statuses = order.products.map((p) => p.status);
 
-  if (statuses.every(s => s === "Cancelled")) {
+  if (statuses.every((s) => s === "Cancelled")) {
     order.orderStatus = "Cancelled";
-  } else if (statuses.every(s => s === "Returned")) {
+  } else if (statuses.every((s) => s === "Returned")) {
     order.orderStatus = "Returned";
-  } else if (statuses.every(s => s === "Delivered")) {
+  } else if (statuses.every((s) => s === "Delivered")) {
     order.orderStatus = "Completed";
   } else if (statuses.includes("Processing") || statuses.includes("Shipped")) {
     order.orderStatus = "Processing";
@@ -190,9 +189,13 @@ const calculateRefund = (order, product) => {
 
   let refundAmount;
 
-  if (activeProducts.length === 1 && activeProducts[0]._id.equals(product._id)) {
+  if (
+    activeProducts.length === 1 &&
+    activeProducts[0]._id.equals(product._id)
+  ) {
     // Last product → refund remaining amount (actual paid)
-    refundAmount = (order.totalAmount - totalRefundedSoFar) - order.deliveryCharge;
+    refundAmount =
+      order.totalAmount - totalRefundedSoFar - order.deliveryCharge;
   } else {
     // Proportional refund from amount actually paid
     const subtotal = order.products.reduce(
@@ -209,7 +212,6 @@ const calculateRefund = (order, product) => {
   return refundAmount;
 };
 
-
 const updateProductStatus = async (req, res) => {
   try {
     const { orderId, productIndex, newStatus } = req.body;
@@ -218,12 +220,16 @@ const updateProductStatus = async (req, res) => {
       .populate("userId")
       .populate("products.productId");
     if (!order) {
-      return res.status(STATUS_CODES.NOT_FOUND).json({ message: MESSAGES.ORDER.NOT_FOUND });
+      return res
+        .status(STATUS_CODES.NOT_FOUND)
+        .json({ message: MESSAGES.ORDER.NOT_FOUND });
     }
 
     const product = order.products[productIndex];
     if (!product) {
-      return res.status(STATUS_CODES.BAD_REQUEST).json({ message: MESSAGES.ORDER.INVALID_PRODUCT_INDEX });
+      return res
+        .status(STATUS_CODES.BAD_REQUEST)
+        .json({ message: MESSAGES.ORDER.INVALID_PRODUCT_INDEX });
     }
 
     const currentStatus = product.status;
@@ -268,17 +274,19 @@ const updateProductStatus = async (req, res) => {
     else if (newStatus === "Returned") {
       if (currentStatus !== "Return Requested") {
         return res.status(STATUS_CODES.BAD_REQUEST).json({
-          message:
-            MESSAGES.ORDER.PRODUCT_MUST_BE_IN_RETURN_REQUESTED,
+          message: MESSAGES.ORDER.PRODUCT_MUST_BE_IN_RETURN_REQUESTED,
         });
       }
 
       const MAx_RETURN_DAYS = 3;
       const deliveryDate = new Date(product.productId.deliveredAt);
-      const daysSinceDelivery = (Date.now() - deliveryDate.getTime()) / 1000 * 60 * 60 * 24;
+      const daysSinceDelivery =
+        ((Date.now() - deliveryDate.getTime()) / 1000) * 60 * 60 * 24;
 
-      if(daysSinceDelivery > MAx_RETURN_DAYS) {
-        res.status(STATUS_CODES.BAD_REQUEST).json({message: MESSAGES.ORDER.RETURN_WITHIN_3_DAYS});
+      if (daysSinceDelivery > MAx_RETURN_DAYS) {
+        res
+          .status(STATUS_CODES.BAD_REQUEST)
+          .json({ message: MESSAGES.ORDER.RETURN_WITHIN_3_DAYS });
       }
 
       product.status = "Returned";
@@ -286,13 +294,11 @@ const updateProductStatus = async (req, res) => {
       const refundAmount = calculateRefund(order, product);
       product.refundedAmount = refundAmount;
 
-      
-        await handleRefundToWallet(
-          order.userId._id,
-          refundAmount,
-          "Return Refund"
-        );
-      
+      await handleRefundToWallet(
+        order.userId._id,
+        refundAmount,
+        "Return Refund"
+      );
 
       await Product.findByIdAndUpdate(product.productId._id, {
         $inc: { quantity: product.quantity },
@@ -315,11 +321,12 @@ const updateProductStatus = async (req, res) => {
 
     res.json({ message: MESSAGES.ORDER.PRODUCT_STATUS_UPDATED });
   } catch (error) {
-    console.error("Error updating status:", error);
-    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ message: MESSAGES.GENERIC.SERVER_ERROR });
+    logger.error("Error updating status:", error);
+    res
+      .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
+      .json({ message: MESSAGES.GENERIC.SERVER_ERROR });
   }
 };
-
 
 const cancelProductByIndex = async (req, res) => {
   try {
@@ -329,10 +336,16 @@ const cancelProductByIndex = async (req, res) => {
       .populate("userId")
       .populate("products.productId");
 
-    if (!order) return res.status(STATUS_CODES.NOT_FOUND).json({ message: MESSAGES.ORDER.NOT_FOUND });
+    if (!order)
+      return res
+        .status(STATUS_CODES.NOT_FOUND)
+        .json({ message: MESSAGES.ORDER.NOT_FOUND });
 
     const product = order.products[productIndex];
-    if (!product) return res.status(STATUS_CODES.BAD_REQUEST).json({ message: MESSAGES.ORDER.INVALID_PRODUCT_INDEX });
+    if (!product)
+      return res
+        .status(STATUS_CODES.BAD_REQUEST)
+        .json({ message: MESSAGES.ORDER.INVALID_PRODUCT_INDEX });
 
     // Only allow user to cancel if Pending or Processing
     if (!["Pending", "Processing"].includes(product.status)) {
@@ -367,20 +380,19 @@ const cancelProductByIndex = async (req, res) => {
 
     await order.save();
     res.json({ message: MESSAGES.ORDER.PRODUCT_CANCELLED_AND_REFUNDED });
-
   } catch (error) {
-    console.error("Cancel product error:", error);
-    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ message: MESSAGES.GENERIC.SERVER_ERROR });
+    logger.error("Cancel product error:", error);
+    res
+      .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
+      .json({ message: MESSAGES.GENERIC.SERVER_ERROR });
   }
 };
 
-
-module.exports = {
+export default {
   getAdminOrders,
   getOrderById,
   cancelOrder,
   cancelProductByIndex,
   updateProductStatus,
-  calculateRefund
-
+  calculateRefund,
 };

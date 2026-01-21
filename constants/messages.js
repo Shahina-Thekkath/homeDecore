@@ -238,4 +238,4 @@ const MESSAGES = {
     }
 };
 
-module.exports = MESSAGES;
+export default MESSAGES;

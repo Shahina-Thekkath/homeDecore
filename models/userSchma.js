@@ -1,71 +1,70 @@
-const mongoose = require("mongoose");
-const {Schema} = mongoose;
+import mongoose from "mongoose";
+const { Schema } = mongoose;
 
-const addressSchema = require('../models/addressSchema');
-
+import addressSchema from "../models/addressSchema.js";
 
 const UserSchema = new Schema({
-    name:{
-        type:String,
-        required:true
-    },
-    email:{
-        type:String,
-        required:true,
-        unique: true, 
-        default: null
-    },
+  name: {
+    type: String,
+    required: true,
+  },
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+    default: null,
+  },
 
-    phone:{
-        type:String,
-        required:false,
-        sparse: true,
+  phone: {
+    type: String,
+    required: false,
+    sparse: true,
+  },
+  password: {
+    type: String,
+    required: false,
+  },
 
-
-    },
-    password:{
-        type:String,
-        required:false
-    },
-    
-    token:{
-        type:String,
-        default:''
-    },
-    is_admin:{
-        type:Boolean,
-        default: false
-        // required:true
-    },
-    isBlocked:{
-        type:Boolean,
-        default:false 
-    },
-    gender:{
-        type:String,
-        enum:['male','female'],
-        
-    },
-    addresses:[addressSchema],
-    defaultAddress: {
-        type: mongoose.Schema.Types.ObjectId, // References the _id of one of the addresses
-        ref: "Address", // Optional: Logical reference (not a separate collection)
-    },
-    wishlist: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Product',
-    createdAt: {
+  token: {
+    type: String,
+    default: "",
+  },
+  is_admin: {
+    type: Boolean,
+    default: false,
+    // required:true
+  },
+  isBlocked: {
+    type: Boolean,
+    default: false,
+  },
+  gender: {
+    type: String,
+    enum: ["male", "female"],
+  },
+  addresses: [addressSchema],
+  defaultAddress: {
+    type: mongoose.Schema.Types.ObjectId, // References the _id of one of the addresses
+    ref: "Address", // Optional: Logical reference (not a separate collection)
+  },
+  wishlist: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Product",
+      createdAt: {
         type: Date,
-        default: Date.now
-    }
-  }],
-    walletId: {
-        type: mongoose.Schema.Types.ObjectId,
-         ref: "wallet"},
-        createdAt: {
-            type:Date, 
-           default: Date.now
-        }      
-    });
+        default: Date.now,
+      },
+    },
+  ],
+  walletId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "wallet",
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
+});
 
-    module.exports = mongoose.model('User', UserSchema);
+export default mongoose.model("User", UserSchema);

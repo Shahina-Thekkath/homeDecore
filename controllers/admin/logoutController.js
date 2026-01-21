@@ -1,20 +1,18 @@
+import logger from "../../utils/logger.js";
 
+const logout = async (req, res) => {
+  try {
+    if (req.session && req.session.admin) {
+      delete req.session.admin;
 
-const logout = async(req,res)=>{
-try {
-       if(req.session && req.session.admin){
-        delete req.session.admin;
+      setTimeout(() => {
+        res.redirect("/admin");
+      }, 1500);
+    }
+  } catch (error) {
+    logger.error("unexpected error during logout", error);
+    res.redirect("/pageerror");
+  }
+};
 
-        setTimeout(()=>{
-            res.redirect('/admin');
-        },1500);
-        
-       } 
-    } catch (error) {
-
-        console.error("unexpected error during logout", error);
-        res.redirect("/pageerror");
-    } 
-}
-
-module.exports = {logout}
+export default { logout };

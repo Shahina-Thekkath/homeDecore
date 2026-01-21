@@ -1,6 +1,7 @@
-const User = require("../models/userSchma");
-const passport = require("passport");
-const GoogleStrategy = require("passport-google-oauth2").Strategy;
+import User from "../models/userSchma.js";
+import passport from "passport";
+import { Strategy as GoogleStrategy } from "passport-google-oauth2";
+
 
 passport.serializeUser((user, done) => {
   done(null, user._id); //  Only store ID in session
@@ -45,4 +46,4 @@ passport.use(
   )
 );
 
-module.exports = passport;
+export default passport;
