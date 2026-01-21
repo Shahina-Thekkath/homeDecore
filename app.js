@@ -14,6 +14,7 @@ app.use(cookieParser());
 
 
 const passport = require("./config/passport");
+
 db();
 app.use(
   express.static(
