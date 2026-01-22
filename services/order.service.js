@@ -96,10 +96,21 @@ export const placeWalletOrder = async (
     date: new Date(),
   });
 
-  await wallet.save(session ? { session } : {});
+  if (session) {
+    await wallet.save({ session });
+  } else {
+    await wallet.save();
+  }
 
-  const orderDocs = await Order.create([orderData], { session });
-  const order = orderDocs[0];
+  
+  const order = new Order(orderData);
+
+  if (session) {
+    await order.save({ session });
+  } else {
+    await order.save();
+  }
+
 
   for (const item of orderData.products) {
     await Product.findByIdAndUpdate(
