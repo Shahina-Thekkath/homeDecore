@@ -75,3 +75,46 @@
     at async saveWalletOrder (file:///C:/Users/shahi/project/ecommerceWebsite/controllers/user/orderController.js:341:6)
 2026-01-21 13:21:24 [error]: 🔥 FORCE FILE LOG TEST 🔥
 2026-01-21 13:38:29 [error]: 🔥 FORCE FILE LOG TEST 🔥
+2026-01-22 13:42:15 [error]: 🔥 FORCE FILE LOG TEST 🔥
+2026-01-22 16:04:42 [error]: TypeError: Cannot read properties of undefined (reading 'admin')
+    at isLogin (file:///C:/Users/shahi/project/ecommerceWebsite/middleware/adminAuth.js:5:21)
+    at Layer.handle [as handle_request] (C:\Users\shahi\project\ecommerceWebsite\node_modules\express\lib\router\layer.js:95:5)
+    at trim_prefix (C:\Users\shahi\project\ecommerceWebsite\node_modules\express\lib\router\index.js:328:13)
+    at C:\Users\shahi\project\ecommerceWebsite\node_modules\express\lib\router\index.js:286:9
+    at Function.process_params (C:\Users\shahi\project\ecommerceWebsite\node_modules\express\lib\router\index.js:346:12)
+    at next (C:\Users\shahi\project\ecommerceWebsite\node_modules\express\lib\router\index.js:280:10)
+    at Function.handle (C:\Users\shahi\project\ecommerceWebsite\node_modules\express\lib\router\index.js:175:3)
+    at router (C:\Users\shahi\project\ecommerceWebsite\node_modules\express\lib\router\index.js:47:12)
+    at Layer.handle [as handle_request] (C:\Users\shahi\project\ecommerceWebsite\node_modules\express\lib\router\layer.js:95:5)
+    at trim_prefix (C:\Users\shahi\project\ecommerceWebsite\node_modules\express\lib\router\index.js:328:13)
+    at C:\Users\shahi\project\ecommerceWebsite\node_modules\express\lib\router\index.js:286:9
+    at Function.process_params (C:\Users\shahi\project\ecommerceWebsite\node_modules\express\lib\router\index.js:346:12)
+    at next (C:\Users\shahi\project\ecommerceWebsite\node_modules\express\lib\router\index.js:280:10)
+    at Immediate._onImmediate (file:///C:/Users/shahi/project/ecommerceWebsite/middleware/checkBlocked.js:28:16)
+    at process.processImmediate (node:internal/timers:478:21)
+2026-01-22 16:10:56 [error]: 🔥 FORCE FILE LOG TEST 🔥
+2026-01-22 16:12:17 [error]: 🔥 FORCE FILE LOG TEST 🔥
+2026-01-22 16:14:37 [error]: TypeError: Cannot read properties of undefined (reading 'admin')
+    at isLogin (file:///C:/Users/shahi/project/ecommerceWebsite/middleware/adminAuth.js:5:21)
+    at Layer.handle [as handle_request] (C:\Users\shahi\project\ecommerceWebsite\node_modules\express\lib\router\layer.js:95:5)
+    at trim_prefix (C:\Users\shahi\project\ecommerceWebsite\node_modules\express\lib\router\index.js:328:13)
+    at C:\Users\shahi\project\ecommerceWebsite\node_modules\express\lib\router\index.js:286:9
+    at Function.process_params (C:\Users\shahi\project\ecommerceWebsite\node_modules\express\lib\router\index.js:346:12)
+    at next (C:\Users\shahi\project\ecommerceWebsite\node_modules\express\lib\router\index.js:280:10)
+    at Function.handle (C:\Users\shahi\project\ecommerceWebsite\node_modules\express\lib\router\index.js:175:3)
+    at router (C:\Users\shahi\project\ecommerceWebsite\node_modules\express\lib\router\index.js:47:12)
+    at Layer.handle [as handle_request] (C:\Users\shahi\project\ecommerceWebsite\node_modules\express\lib\router\layer.js:95:5)
+    at trim_prefix (C:\Users\shahi\project\ecommerceWebsite\node_modules\express\lib\router\index.js:328:13)
+    at C:\Users\shahi\project\ecommerceWebsite\node_modules\express\lib\router\index.js:286:9
+    at Function.process_params (C:\Users\shahi\project\ecommerceWebsite\node_modules\express\lib\router\index.js:346:12)
+    at next (C:\Users\shahi\project\ecommerceWebsite\node_modules\express\lib\router\index.js:280:10)
+    at Immediate._onImmediate (file:///C:/Users/shahi/project/ecommerceWebsite/middleware/checkBlocked.js:28:16)
+    at process.processImmediate (node:internal/timers:478:21)
+2026-01-22 16:20:12 [error]: 🔥 FORCE FILE LOG TEST 🔥
+2026-01-22 16:35:01 [error]: 🔥 FORCE FILE LOG TEST 🔥
+2026-01-22 16:41:23 [error]: 🔥 FORCE FILE LOG TEST 🔥
+2026-01-22 16:47:18 [error]: 🔥 FORCE FILE LOG TEST 🔥
+2026-01-22 16:49:04 [error]: 🔥 FORCE FILE LOG TEST 🔥
+2026-01-22 16:54:13 [error]: 🔥 FORCE FILE LOG TEST 🔥
+2026-01-22 16:56:15 [error]: 🔥 FORCE FILE LOG TEST 🔥
+2026-01-22 16:56:26 [error]: 🔥 FORCE FILE LOG TEST 🔥
