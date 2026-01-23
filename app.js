@@ -25,9 +25,6 @@ import  requestLogger from "./middleware/requestLogger.js";
 
 app.use(requestLogger);
 
-
-const passport = require("./config/passport");
-
 app.use(
   express.static(
     path.join(__dirname, "public/ludus-free-premium-ecommerce-template-master")

@@ -37,7 +37,7 @@ const getAllUsers = async (req, res) => {
     });
   } catch (error) {
     logger.error("userManagement error", error);
-    return res.status(STATUS_CODES.NOT_FOUND).render("404");
+    return res.status(STATUS_CODES.NOT_FOUND).render("404Error");
   }
 };
 
