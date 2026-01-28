@@ -217,22 +217,29 @@ const sendResetPasswordEmail = async (name, email, token) => {
 
 const forgotPassword = async (req, res) => {
   try {
-    res.render("forgotPassword", { message: "" });
+    const message = req.session.forgotMessage || null;
+
+    // clear after reading
+    req.session.forgotMessage = null;
+
+    return res.render("forgotPassword", { message });
   } catch (error) {
-    logger.error("Forgot password logic error", error.message);
-    return res.status(STATUS_CODES.NOT_FOUND).redirect("/pageNotFound");
+    logger.error("Forgot password load error:", error.message);
+    return res.redirect("/pageNotFound");
   }
 };
 
 const forgotVerify = async (req, res) => {
   try {
     const { email } = req.body;
+
+    req.session.forgotMessage = null;
+
     const user = await User.findOne({ email });
 
     if (!user) {
-      return res.render("forgotPassword", {
-        message: MESSAGES.SIGNUP.EMAIL_NOT_FOUND,
-      });
+      req.session.forgotMessage = MESSAGES.SIGNUP.EMAIL_NOT_FOUND;
+      return res.redirect("/forgotPassword");
     }
 
     const randomString = randomstring.generate();
@@ -245,21 +252,21 @@ const forgotVerify = async (req, res) => {
     );
 
     if (mailResult) {
-      res.render("forgotPassword", {
-        message: MESSAGES.SIGNUP.RESET_EMAIL_SENT,
-      });
+      req.session.forgotMessage = MESSAGES.SIGNUP.RESET_EMAIL_SENT;
     } else {
-      res.render("forgotPassword", {
-        message: mailResult.reason || MESSAGES.SIGNUP.RESET_EMAIL_FAILED,
-      });
+      req.session.forgotMessage =
+        mailResult?.reason || MESSAGES.SIGNUP.RESET_EMAIL_FAILED;
     }
+
+    return res.redirect("/forgotPassword");
+
   } catch (error) {
     logger.error("Forgot verify error:", error.message);
-    res
-      .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
-      .render("forgotPassword", { message: MESSAGES.PROFILE.SERVER_ERROR });
+    req.session.forgotMessage = MESSAGES.PROFILE.SERVER_ERROR;
+    return res.redirect("/forgotPassword");
   }
 };
+
 
 const changePassword = async (req, res) => {
   try {

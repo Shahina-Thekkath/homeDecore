@@ -357,35 +357,6 @@ const saveWalletOrder = async (req, res) => {
     req.session.order = order;
     req.session.paymentMethod = payment;
 
-    // const newOrder = new Order(order);
-    // await newOrder.save();
-
-    // Decrement stock
-    // for (const item of order.products) {
-    //   await Product.findByIdAndUpdate(
-    //     item.productId,
-    //     { $inc: { quantity: -item.quantity } },
-    //     { new: true },
-    //   );
-    // }
-
-    // Mark coupon as used
-    // const couponCode = req.session.coupon?.code;
-    // if (couponCode) {
-    //   const coupon = await Coupon.findOne({
-    //     code: couponCode.trim().toUpperCase(),
-    //   });
-    //   if (coupon && !coupon.usersUsed.includes(userId)) {
-    //     coupon.usersUsed.push(userId);
-    //     coupon.usedCount += 1;
-    //     await coupon.save();
-    //   }
-    // }
-
-    // Empty cart
-    // await Cart.findOneAndUpdate({ userId }, { $set: { items: [] } });
-
-    // Clear session data
     req.session.order = order;
     req.session.paymentMethod = "Wallet Payment";
 

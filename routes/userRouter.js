@@ -35,12 +35,6 @@ userRouter.post("/verify-otp", auth.isLogout, signupController.verifyOtp);
 userRouter.post("/resend-otp", signupController.resendOtp);
 userRouter.get("/logout", auth.isLogin, logoutController.logout);
 
-// userRouter.get('/auth/google', passport.authenticate('google', {scope: ['profile', 'email'] }));
-
-// userRouter.get('auth/google/callback', passport.authenticate('google', {failureRedirect: '/signup'}),(req, rs) =>{
-//     res.redirect('/')
-// });
-
 userRouter.get(
   "/auth/google",
   passport.authenticate("google", {
