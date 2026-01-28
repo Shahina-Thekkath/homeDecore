@@ -10,11 +10,6 @@ dotenv.config();
 
 const loadLogin = async (req, res) => {
   try {
-
-    const email = req.session.loginData?.email || "";
-
-  req.session.loginData = null;
-
     const user = req.session.user || req.session.passport;
 
     const blockedMessage = req.cookies?.blockedMessage || null;
@@ -34,7 +29,6 @@ const loadLogin = async (req, res) => {
       return res.render("login", { 
         message: message || null,
         blockedMessage: blockedMessage || null,
-        email
       });
     } else {
       res.redirect("/");
@@ -48,64 +42,65 @@ const loadLogin = async (req, res) => {
 const login = async (req, res) => {
   try {
     const { email, password } = req.body;
-
-    // clear old errors
-    req.session.loginError = null;
-    req.session.loginData = null;
-
-    const validateEmail = (email) =>
-      String(email)
+    const validateEmail = (email) => {
+      return String(email)
         .toLowerCase()
         .match(/^[a-zA-Z0-9._%+-]{3,64}@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/);
+    };
 
-    // Email validation
-    if (!email || email.trim() === "") {
-      req.session.loginError = "Email is required";
-      req.session.loginData = { email };
-      return res.redirect("/login");
+    const validationErrors = {};
+    if (email === "") {
+      validationErrors.invalidEmail = "Email is required";
+    } else if (!validateEmail(email)) {
+      validationErrors.invalidEmail = "Invalid email";
     }
 
-    if (!validateEmail(email)) {
-      req.session.loginError = "Invalid email";
-      req.session.loginData = { email };
-      return res.redirect("/login");
+    if (Object.keys(validationErrors).length > 0) {
+      validationErrors.email = email;
+      return res.render("login", validationErrors);
+    } else {
+      const findUser = await User.findOne({ email: email });
+
+      if (!findUser || findUser.is_admin === true) {
+        return res.render("login", { message: MESSAGES.USER.NOT_FOUND, email });
+      }
+
+      if (findUser.isBlocked) {
+        return res.render("login", {
+          message: MESSAGES.AUTH.USER_BLOCKED,
+          email,
+        });
+      }
+
+      // Check if password is empty
+      if (!password || password.trim() === "") {
+        return res.render("login", {
+          invalidPassword: MESSAGES.AUTH.PASSWORD_EMPTY,
+          email,
+        });
+      }
+
+      // Compare passwords
+      const passwordMatch = await bcrypt.compare(password, findUser.password);
+      if (!passwordMatch) {
+        return res.render("login", {
+          invalidPassword: MESSAGES.AUTH.INCORRECT_PASSWORD,
+          email,
+        });
+      }
+
+      // Set user session
+      if (req.session.user !== undefined) {
+        req.session.user = findUser;
+      } else {
+        req.session.passport = { user: findUser };
+      }
+      res.redirect("/");
     }
-
-    const findUser = await User.findOne({ email });
-
-    if (!findUser || findUser.is_admin) {
-      req.session.loginError = MESSAGES.USER.NOT_FOUND;
-      req.session.loginData = { email };
-      return res.redirect("/login");
-    }
-
-    if (findUser.isBlocked) {
-      req.session.loginError = MESSAGES.AUTH.USER_BLOCKED;
-      return res.redirect("/login");
-    }
-
-    if (!password || password.trim() === "") {
-      req.session.loginError = MESSAGES.AUTH.PASSWORD_EMPTY;
-      req.session.loginData = { email };
-      return res.redirect("/login");
-    }
-
-    const passwordMatch = await bcrypt.compare(password, findUser.password);
-    if (!passwordMatch) {
-      req.session.loginError = MESSAGES.AUTH.INCORRECT_PASSWORD;
-      req.session.loginData = { email };
-      return res.redirect("/login");
-    }
-
-    // SUCCESS
-    req.session.user = findUser;
-    return res.redirect("/");
-
   } catch (error) {
     logger.error("Login error", error);
-    return res.redirect("/login");
   }
+  // Redirect to home after successful session save
 };
-
 
 export default { loadLogin, login };
