@@ -275,6 +275,7 @@ const changePassword = async (req, res) => {
 
 const changeVerify = async (req, res) => {
   try {
+    logger.info("change verify");
     const { email, oldPassword, newPassword, cpassword } = req.body;
     const errors = {};
 
