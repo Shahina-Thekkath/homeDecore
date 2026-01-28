@@ -12,6 +12,13 @@ const loadLogin = async (req, res) => {
   try {
     const user = req.session.user || req.session.passport;
 
+    const blockedMessage = req.cookies?.blockedMessage || null;
+    
+
+    if (blockedMessage) {
+      res.clearCookie("blockedMessage");
+    }
+
     const message = req.cookies?.blockedMessage || null;
 
     if (message) {
@@ -19,7 +26,10 @@ const loadLogin = async (req, res) => {
     }
 
     if (!user) {
-      return res.render("login", { message });
+      return res.render("login", { 
+        message: message || null,
+        blockedMessage: blockedMessage || null,
+      });
     } else {
       res.redirect("/");
     }

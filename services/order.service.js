@@ -4,15 +4,25 @@ import Order from "../models/orderSchema.js";
 import Cart from "../models/cartSchema.js";
 import Wallet from "../models/walletSchema.js";
 
-export const finalizeOrder = async (order, session = null) => {
+export const finalizeOrder = async (order, session) => {
+  if (!session) {
+    throw new Error("Session missing in finalizeOrder");
+  }
+
   for (const item of order.products) {
-    await Product.findByIdAndUpdate(
+    const updated = await Product.findByIdAndUpdate(
       item.productId,
       { $inc: { quantity: -item.quantity } },
-      session ? { session } : {},
+      { session, new: true }
     );
+
+    if (!updated) {
+      throw new Error("Product update failed");
+    }
   }
 };
+
+
 
 export const placeCODOrder = async (orderData, userId, session) => {
   console.log(
@@ -21,23 +31,21 @@ export const placeCODOrder = async (orderData, userId, session) => {
   );
 
   for (const item of orderData.products) {
-    const query = Product.findById(item.productId);
-    if (session) query.session(session);
-    const product = await query;
+   const product = await Product.findById(item.productId).session(session);
 
     if (!product || product.quantity < item.quantity) {
       throw new Error("insufficient stock");
     }
   }
 
-  const orderDocs = await Order.create([orderData], { session });
-  const order = orderDocs[0];
-
+  const order = new Order(orderData);
+  await order.save({ session });
+  
   for (const item of orderData.products) {
     await Product.findByIdAndUpdate(
       item.productId,
       { $inc: { quantity: -item.quantity } },
-      session ? { session } : {},
+      { session }
     );
   }
 
@@ -45,18 +53,19 @@ export const placeCODOrder = async (orderData, userId, session) => {
     await Coupon.updateOne(
       { code: orderData.couponCode, usersUsed: { $ne: userId } },
       { $push: { usersUsed: userId }, $inc: { usedCount: 1 } },
-      session ? { session } : {},
+      { session }
     );
   }
 
   await Cart.updateOne(
     { userId },
     { $set: { items: [] } },
-    session ? { session } : {},
+    { session }
   );
 
   return order;
 };
+
 
 export const placeWalletOrder = async (
   orderData,
@@ -70,18 +79,15 @@ export const placeWalletOrder = async (
   );
 
   for (const item of orderData.products) {
-    const query = Product.findById(item.productId);
-    if (session) query.session(session);
-    const product = await query;
+    const product = await Product.findById(item.productId).session(session);
 
     if (!product || product.quantity < item.quantity) {
       throw new Error("Insufficient stock");
     }
   }
   
-  const walletQuery = Wallet.findOne({ userId });
-  if (session) walletQuery.session(session);
-  const wallet = await walletQuery;
+  const wallet = await Wallet.findOne({ userId }).session(session);
+
 
   if (!wallet || wallet.balance < finalTotal) {
     throw new Error("Insufficient wallet balance");
@@ -96,27 +102,19 @@ export const placeWalletOrder = async (
     date: new Date(),
   });
 
-  if (session) {
-    await wallet.save({ session });
-  } else {
-    await wallet.save();
-  }
+  await wallet.save({ session });
 
   
   const order = new Order(orderData);
 
-  if (session) {
-    await order.save({ session });
-  } else {
-    await order.save();
-  }
+  await order.save({ session });
 
 
   for (const item of orderData.products) {
     await Product.findByIdAndUpdate(
       item.productId,
       { $inc: { quantity: -item.quantity } },
-      session ? { session } : {},
+      { session }
     );
   }
 
@@ -124,14 +122,15 @@ export const placeWalletOrder = async (
     await Coupon.updateOne(
       { code: orderData.couponCode, usersUsed: { $ne: userId } },
       { $push: { usersUsed: userId }, $inc: { usedCount: 1 } },
-      session ? { session } : {},
+      { session }
     );
   }
 
-  await Cart.updateOne(
+
+   await Cart.updateOne(
     { userId },
     { $set: { items: [] } },
-    session ? { session } : {},
+    { session }
   );
 
   return order;

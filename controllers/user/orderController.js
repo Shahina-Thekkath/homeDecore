@@ -97,8 +97,13 @@ const saveOrderFromSerializedData = async (
   couponCode = null,
   couponDiscount = 0,
   deliveryCharge = 0,
-  session = null,
+  session,
 ) => {
+
+  if (!session) {
+    throw new Error("Session missing in saveOrderFromSerializedData");
+  }
+
   try {
     const parsedFormData = qs.parse(formData);
 
@@ -141,7 +146,9 @@ const saveOrderFromSerializedData = async (
       couponDiscount: couponDiscount || 0,
     });
 
-    let savedOrder = await newOrder.save(session ? { session } : {});
+    let savedOrder = await newOrder.save({ session });
+
+    
 
     if (!savedOrder || !savedOrder._id) {
       logger.error("Order saving failed!");
@@ -152,12 +159,17 @@ const saveOrderFromSerializedData = async (
       await Coupon.updateOne(
         { code: couponCode.trim().toUpperCase(), usersUsed: { $ne: userId } },
         { $push: { usersUsed: userId }, $inc: { usedCount: 1 } },
-        session ? { session } : {},
+         { session }
       );
     }
 
     //  Clear cart
-    await Cart.deleteOne({ userId }, session ? { session } : {});
+    await Cart.updateOne(
+  { userId },
+  { $set: { items: [] } },
+  { session }
+);
+
 
     return savedOrder;
   } catch (error) {
@@ -918,23 +930,30 @@ const verifyRazorpayPayment = async (req, res) => {
       });
     }
 
-    let savedOrder;
+    let savedOrder = await withTransaction(async (session) => {
+      let order;
 
-    await withTransaction(async (session) => {
-      if (isRetry && formData.orderId) {
-        savedOrder = await Order.findByIdAndUpdate(
+      if (isRetry && formData?.orderId) {
+        order = await Order.findByIdAndUpdate(
           formData.orderId,
           {
             orderStatus: "Processing",
             isPaid: true,
             paymentId: razorpay_payment_id,
           },
-          { new: true, ...(session && { session }) },
+          {
+            new: true,
+            session,
+          }
         );
 
-        await finalizeOrder(savedOrder, session);
+        if (!order) {
+          throw new Error("Retry order not found");
+        }
+
+        await finalizeOrder(order, session);
       } else {
-        savedOrder = await saveOrderFromSerializedData(
+        order = await saveOrderFromSerializedData(
           formData,
           req.session.user?._id || req.session.passport._id,
           true,
@@ -944,8 +963,9 @@ const verifyRazorpayPayment = async (req, res) => {
           session,
         );
 
-        await finalizeOrder(savedOrder, session);
+        await finalizeOrder(order, session);
       }
+      return order;
     });
 
     //  Store the saved order in session for success page

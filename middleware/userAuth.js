@@ -4,7 +4,7 @@ import logger from "../utils/logger.js";
 
 const isLogin = (req, res, next) => {
   try {
-    if (req.session.user) {
+    if (req.session.user || req.session.passport) {
       return next();
     } else {
       return res.redirect("/");

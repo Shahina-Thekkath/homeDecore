@@ -82,7 +82,6 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use("/",checkBlocked);
 
 app.set("view engine", "ejs");
 app.set("views", [
@@ -97,7 +96,7 @@ app.use("/admin", (req, res) => {
   res.status(404).render("404Error")
 });
 
-app.use("/", userRouter);
+app.use("/", checkBlocked, userRouter);
 
 app.use((req, res) => {
   res.status(404).render("page-404");

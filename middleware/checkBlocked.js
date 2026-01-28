@@ -3,6 +3,12 @@ import User from "../models/userSchma.js";
 const checkBlocked = async (req, res, next) => {
   try {
     console.log("checkBlocked");
+
+    // to recheck it is not admin
+    if(!req.session?.user && !req.session?.passport) {
+      return next();
+    }
+
     let userId = null;
 
     if (req.session?.user) {
@@ -21,13 +27,10 @@ const checkBlocked = async (req, res, next) => {
         maxAge: 5000,
       });
 
-      return req.session.destroy((err) => {
-        if (err) {
-          console.error("Session destroy error:", err);
-          
-        }
-        return res.redirect("/login");
-      });
+      delete req.session.user;
+      delete req.session.passport;
+      return res.redirect("/login");
+      
     } else {
       next();
     }
