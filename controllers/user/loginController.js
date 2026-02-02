@@ -10,24 +10,31 @@ dotenv.config();
 
 const loadLogin = async (req, res) => {
   try {
-    const user = req.session.user || req.session.passport;
+    
+    const user = req.session.user;
 
     const blockedMessage = req.cookies?.blockedMessage || null;
+    console.log("blockedMessage", blockedMessage);
     
-
     if (blockedMessage) {
       res.clearCookie("blockedMessage");
     }
 
-    const message = req.cookies?.blockedMessage || null;
+    const errors = req.session.loginErrors || {};
+    const email = req.session.loginEmail || "";
 
-    if (message) {
-      res.clearCookie("blockedMessage");
-    }
+    req.session.loginErrors = null;
+    req.session.loginEmail = null;
+
+    console.log("errors", errors);
+    console.log("email", email);
+    
+    
 
     if (!user) {
       return res.render("login", { 
-        message: message || null,
+        ...errors,
+        email,
         blockedMessage: blockedMessage || null,
       });
     } else {
@@ -45,7 +52,7 @@ const login = async (req, res) => {
     const validateEmail = (email) => {
       return String(email)
         .toLowerCase()
-        .match(/^[a-zA-Z0-9._%+-]{3,64}@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/);
+        .match(/^[a-zA-Z0-9._%+-]{3,64}@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/);
     };
 
     const validationErrors = {};
@@ -56,49 +63,46 @@ const login = async (req, res) => {
     }
 
     if (Object.keys(validationErrors).length > 0) {
-      validationErrors.email = email;
-      return res.render("login", validationErrors);
+      req.session.loginErrors = validationErrors;
+      req.session.loginEmail = email;
+      return res.redirect("/login");
     } else {
       const findUser = await User.findOne({ email: email });
 
       if (!findUser || findUser.is_admin === true) {
-        return res.render("login", { message: MESSAGES.USER.NOT_FOUND, email });
+        req.session.loginErrors = { message: MESSAGES.USER.NOT_FOUND};
+        req.session.loginEmail = email;
+        return res.redirect("/login");
       }
 
       if (findUser.isBlocked) {
-        return res.render("login", {
-          message: MESSAGES.AUTH.USER_BLOCKED,
-          email,
-        });
+        req.session.loginErrors = {message: MESSAGES.AUTH.USER_BLOCKED};
+        req.session.loginEmail = email;
+        return res.redirect("/login");
       }
 
       // Check if password is empty
       if (!password || password.trim() === "") {
-        return res.render("login", {
-          invalidPassword: MESSAGES.AUTH.PASSWORD_EMPTY,
-          email,
-        });
+        req.session.loginErrors = {invalidPassword: MESSAGES.AUTH.PASSWORD_EMPTY};
+        req.session.loginEmail = email;
+        return res.redirect("/login");
       }
 
       // Compare passwords
       const passwordMatch = await bcrypt.compare(password, findUser.password);
       if (!passwordMatch) {
-        return res.render("login", {
-          invalidPassword: MESSAGES.AUTH.INCORRECT_PASSWORD,
-          email,
-        });
+        req.session.loginErrors = {invalidPassword: MESSAGES.AUTH.INCORRECT_PASSWORD};
+        req.session.loginEmail = email;
+        return res.redirect("/login");
       }
 
       // Set user session
-      if (req.session.user !== undefined) {
-        req.session.user = findUser;
-      } else {
-        req.session.passport = { user: findUser };
-      }
+      req.session.user = findUser;
       res.redirect("/");
     }
   } catch (error) {
     logger.error("Login error", error);
+    res.redirect("/login");
   }
   // Redirect to home after successful session save
 };

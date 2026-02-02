@@ -72,9 +72,9 @@
                                                         
                                                 </div>
 
-                                                        <% if (typeof blockedMessage !== 'undefined') { %>
+                                                        <% if (blockedMessage) { %>
                                                         <p class="text-danger" style="color: red;"><%= blockedMessage %></p>
-                                                        <% } else if (typeof locals.message !== 'undefined') { %>
+                                                        <% } else if (locals.message) { %>
                                                         <p class="text-danger" style="color: red;"><%= locals.message %></p>
                                                         <% } %>
 

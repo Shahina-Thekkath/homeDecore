@@ -1,9 +1,13 @@
 import Order from "../../models/orderSchema.js";
-import PdfPrinter from "pdfmake";
+import pdfPrinter from "pdfmake";
 import path from "path";
 import ExcelJS from "exceljs";
 import { STATUS_CODES, MESSAGES } from "../../constants/index.js";
 import logger from "../../utils/logger.js";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const getSalesReport = async (req, res) => {
   try {
