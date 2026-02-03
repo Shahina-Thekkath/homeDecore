@@ -139,12 +139,10 @@ const resendOtp = async (req, res) => {
   try {
     const { email } = req.session.userData;
     if (!email) {
-      return res
-        .status(STATUS_CODES.BAD_REQUEST)
-        .json({
-          success: false,
-          message: MESSAGES.SIGNUP.EMAIL_NOT_IN_SESSION,
-        });
+      return res.status(STATUS_CODES.BAD_REQUEST).json({
+        success: false,
+        message: MESSAGES.SIGNUP.EMAIL_NOT_IN_SESSION,
+      });
     }
     const otp = generateOtp();
     req.session.userOtp = otp;
@@ -248,7 +246,7 @@ const forgotVerify = async (req, res) => {
     const mailResult = await sendResetPasswordEmail(
       user.name,
       user.email,
-      randomString
+      randomString,
     );
 
     if (mailResult) {
@@ -259,14 +257,12 @@ const forgotVerify = async (req, res) => {
     }
 
     return res.redirect("/forgotPassword");
-
   } catch (error) {
     logger.error("Forgot verify error:", error.message);
     req.session.forgotMessage = MESSAGES.PROFILE.SERVER_ERROR;
     return res.redirect("/forgotPassword");
   }
 };
-
 
 const changePassword = async (req, res) => {
   try {
@@ -355,7 +351,7 @@ const changeVerify = async (req, res) => {
     const hashedPassword = await securePassword(newPassword);
     await User.updateOne(
       { email },
-      { $set: { password: hashedPassword, token: "" } }
+      { $set: { password: hashedPassword, token: "" } },
     );
 
     res.redirect("/login");
@@ -369,11 +365,21 @@ const changeVerify = async (req, res) => {
 
 const resetPasswordLoad = async (req, res) => {
   try {
+    console.log("inside resetPasswordLoad");
+    
     const token = req.query.token;
     const tokenData = await User.findOne({ token });
 
+    const errors = req.session.resetError || {};
+    req.session.resetError = null;
+
     if (tokenData) {
-      res.render("resetPassword", { user_id: tokenData._id });
+      res.render("resetPassword", {
+        token,
+        user_id: tokenData._id,
+        invalidPassword: errors.invalidPassword || "",
+        passwordMismatch: errors.passwordMismatch || "",
+      });
     } else {
       res.render("page-404", { message: MESSAGES.SIGNUP.INVALID_TOKEN });
     }
@@ -385,18 +391,48 @@ const resetPasswordLoad = async (req, res) => {
 
 const verifyResetPassword = async (req, res) => {
   try {
-    const password = req.body.password;
-    const user_id = req.body.user_id;
+    const PASSWORD_REGEX = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,25}$/;
+    const { password, cpassword, user_id, token} = req.body;
+
+    let errors = {};
+
+    if (!password) {
+      errors.invalidPassword = "Enter valid password";
+    } else if (!PASSWORD_REGEX.test(password)) {
+      errors.invalidPassword =
+        "Password must be at least 8 characters and contain letters and numbers";
+    }
+
+    if (!cpassword) {
+      errors.passwordMismatch = "Enter valid confirm password";
+    } else if (password !== cpassword) {
+      errors.passwordMismatch = "Passwords do not match";
+    }
+
+
+    console.log("errors:" , errors);
+
+    if (Object.keys(errors).length > 0) {
+      req.session.resetError = errors;
+      return res.redirect(`/resetPassword?token=${token}`);
+    }
+
+    console.log("user_id from body:", user_id);
+console.log("token from body:", token);
 
     const securepassword = await securePassword(password);
-    await User.findByIdAndUpdate(
-      { _id: user_id },
-      { $set: { password: securepassword, token: "" } }
+    await User.findOneAndUpdate(
+       {token} ,
+      { $set: { password: securepassword, token: "" } },
+      {new: true}
     );
+
+    console.log("after setting the user");
 
     res.redirect("/login");
   } catch (error) {
-    logger.error("verify reset password error", error.message);
+    logger.error(`verify reset password error: ${error.message}`);
+
 
     return res.status(STATUS_CODES.NOT_FOUND).redirect("/pageNotFound");
   }

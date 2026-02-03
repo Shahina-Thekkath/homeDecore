@@ -14,7 +14,7 @@ const loadLogin = async (req, res) => {
     const user = req.session.user;
 
     const blockedMessage = req.cookies?.blockedMessage || null;
-    console.log("blockedMessage", blockedMessage);
+    
     
     if (blockedMessage) {
       res.clearCookie("blockedMessage");
@@ -25,11 +25,6 @@ const loadLogin = async (req, res) => {
 
     req.session.loginErrors = null;
     req.session.loginEmail = null;
-
-    console.log("errors", errors);
-    console.log("email", email);
-    
-    
 
     if (!user) {
       return res.render("login", { 
