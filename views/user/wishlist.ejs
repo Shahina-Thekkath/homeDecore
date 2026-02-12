@@ -552,6 +552,19 @@
     <script src="/js/app.js"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="/socket.io/socket.io.js"></script>
+
+    <script>
+        const socket = io();
+
+        socket.on("connect", () => {
+            console.log("USER SOCKET CONNECTED:", socket.id);
+        });
+        socket.on("offer:changed", (data) => {
+            console.log("Offer updated:", data);
+            location.reload();
+        });
+    </script>
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {

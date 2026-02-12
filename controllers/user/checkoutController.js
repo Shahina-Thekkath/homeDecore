@@ -30,7 +30,7 @@ const loadCheckout = async (req, res) => {
       (coupon) =>
         new Date(coupon.expiresOn) >= new Date() &&
         coupon.usageLimit > 0 &&
-        !coupon.usersUsed.includes(userId)
+        !coupon.usersUsed.includes(userId) && coupon.isActive
     );
 
     const flatCoupons = validCoupons.filter(
@@ -38,7 +38,8 @@ const loadCheckout = async (req, res) => {
     );
 
     const percentageCoupons = validCoupons.filter(
-      (coupon) => coupon.discountType === "percentage"
+      (coupon) => coupon.discountType === "percentage" &&
+      coupon.isActive
     );
 
     const expiredCoupons = allCoupons.filter(

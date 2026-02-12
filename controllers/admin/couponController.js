@@ -2,6 +2,7 @@ import Coupon from "../../models/couponSchema.js";
 import moment from "moment";
 import { STATUS_CODES, MESSAGES } from "../../constants/index.js";
 import logger from "../../utils/logger.js";
+import { emitCouponChange } from "../../utils/couponNotifier.js";
 
 const renderAddCouponPage = async (req, res) => {
   try {
@@ -43,7 +44,7 @@ const addCoupon = async (req, res) => {
       errors.name = "Name should be 3-30 letters only";
     }
 
-    if (code && !/^[A-Z0-9_-]{3,10}$/.test(code)) {
+    if (code && !/^[A-Z0-9_-]{3,20}$/.test(code)) {
       errors.code =
         "Code should be 3-10 character, uppercase letters/numbers only";
     }
@@ -112,7 +113,7 @@ const addCoupon = async (req, res) => {
         });
     }
 
-    await Coupon.create({
+    const newCoupon = await Coupon.create({
       name,
       code,
       discountAmount,
@@ -120,6 +121,11 @@ const addCoupon = async (req, res) => {
       minPurchaseAmount,
       expiresOn: newDate,
       discountType,
+    });
+
+    emitCouponChange({
+      action: "created",
+      couponId: newCoupon._id
     });
 
     return res.json({ success: true, message: MESSAGES.COUPON.ADDED_SUCCESS });
@@ -156,6 +162,11 @@ const toggleCouponStatus = async (req, res) => {
 
     coupon.isActive = !coupon.isActive;
     await coupon.save();
+
+    emitCouponChange({
+      action: "statusChanged",
+      couponId: coupon._id
+    });
 
     return res.json({
       success: true,
@@ -214,7 +225,7 @@ const updateCoupon = async (req, res) => {
       errors.name = "Name should be 3-30 letters only";
     }
 
-    if (code && !/^[A-Z0-9_-]{3,10}$/.test(code)) {
+    if (code && !/^[A-Z0-9_-]{3,20}$/.test(code)) {
       errors.code =
         "Code should be 3-10 character, uppercase letters/numbers only";
     }
@@ -306,7 +317,7 @@ const updateCoupon = async (req, res) => {
       });
     }
 
-    await Coupon.findByIdAndUpdate(
+    const updatedCoupon = await Coupon.findByIdAndUpdate(
       id,
       {
         name,
@@ -319,6 +330,11 @@ const updateCoupon = async (req, res) => {
       },
       { new: true }
     );
+
+    emitCouponChange({
+      action: "updated",
+      couponId: updatedCoupon._id
+    });
 
     return res.json({
       success: true,

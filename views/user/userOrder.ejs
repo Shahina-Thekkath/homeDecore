@@ -574,6 +574,7 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script src="/js/retryPayment.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
        
 
     <script>
@@ -581,6 +582,25 @@
     this.form.submit();
   });
     </script>
+
+    <script>
+        const socket = io();
+
+        socket.on("connect", () => {
+            console.log("USER SOCKET CONNECTED:", socket.id);
+
+            socket.emit("joinRoom", {
+                role: "user",
+                userId: "<%= user._id %>"
+            });
+        });
+
+        socket.on("order:updated", (data) => {
+            console.log("USER RECEIVED order:updated", data);
+            location.reload();
+        });
+    </script>
+
 
     <!--====== Noscript ======-->
     <noscript>

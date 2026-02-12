@@ -274,11 +274,17 @@
                                                     </div>
                                                 <% } %>
 
-                                                <% if (product.refundedAmount && product.refundedAmount > 0) { %>
+                                               <% if (product.status === 'Cancelled' && order.paymentMethod === 'Cash on Delivery') { %>
+                                                    <div style="color: gray; font-size: 0.8rem; margin-top: 4px;">
+                                                        Cash on Delivery – No refund required
+                                                    </div>
+
+                                                <% } else if (order.isPaid && product.refundedAmount && product.refundedAmount > 0) { %>
                                                     <div style="color: #007BFF; font-size: 0.85rem; margin-top: 4px;">
-                                                     Refunded: ₹<%= product.refundedAmount.toFixed(2) %>
+                                                        Refunded: ₹<%= product.refundedAmount.toFixed(2) %>
                                                     </div>
                                                 <% } %>
+
                                                 </td>
 
 

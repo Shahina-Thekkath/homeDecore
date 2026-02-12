@@ -1,6 +1,7 @@
 import Category from "../../models/categorySchema.js";
 import { STATUS_CODES, MESSAGES } from "../../constants/index.js";
 import logger from '../../utils/logger.js';
+import { emitCategoryAdded, emitCategoryUpdated, emitCategoryStatusChanged } from "../../utils/categoryNotifier.js";
 
 const categoryInfo = async (req, res) => {
   try {
@@ -60,6 +61,10 @@ const addCategory = async (req, res) => {
     });
 
     await newCategory.save();
+
+   emitCategoryAdded(newCategory);
+
+
     return res.json({ ok: true });
   } catch (error) {
     return res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ error: MESSAGES.GENERIC.INTERNAL_ERROR });
@@ -114,6 +119,9 @@ const editCategory = async (req, res) => {
     );
 
     if (newCategory) {
+
+      emitCategoryUpdated(newCategory);
+
       return res.json({ ok: true });
     }
   } catch (error) {
@@ -135,6 +143,9 @@ try {
  if (!category) {
      return res.status(STATUS_CODES.NOT_FOUND).json({ success: false});
  }
+
+ emitCategoryStatusChanged(category);
+ 
  res.status(STATUS_CODES.OK).json({ success: true });
 } catch (error) {
  logger.error("Error blocking category:", error);
@@ -151,6 +162,9 @@ try {
  if (!category) {
      return res.status(STATUS_CODES.NOT_FOUND).json({ success: false });
  }
+
+ emitCategoryStatusChanged(category);
+
  res.status(STATUS_CODES.OK).json({ success: true});
 } catch (error) {
  logger.error("Error unblocking category:", error);

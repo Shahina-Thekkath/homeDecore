@@ -3,6 +3,7 @@ import Category from "../../models/categorySchema.js";
 import cloudinary from "cloudinary";
 import { STATUS_CODES, MESSAGES } from "../../constants/index.js";
 import logger from "../../utils/logger.js";
+import { emitProductStockChanged, emitProductUpdated, emitProductAdded, emitProductStatusChanged } from "../../utils/productNotifier.js";
 
 const getProductAddPage = async (req, res) => {
   try {
@@ -104,6 +105,9 @@ const addProducts = async (req, res) => {
     });
 
     await newProduct.save();
+
+    emitProductAdded(newProduct);
+
     return res.json({ message: MESSAGES.PRODUCT.ADDED_SUCCESS });
   } catch (error) {
     logger.error("Error saving product", error);
@@ -190,6 +194,8 @@ const updateProduct = async (req, res) => {
         .send(MESSAGES.PRODUCT.NOT_FOUND);
     }
 
+    const oldQuantity = product.quantity;
+
     product.name = productName;
     product.categoryId = categoryId;
     product.price = price;
@@ -242,6 +248,12 @@ const updateProduct = async (req, res) => {
     }
 
     await product.save();
+
+    emitProductUpdated(product);
+
+    if(oldQuantity !== product.quantity) {
+      emitProductStockChanged(product);
+    }
     res.redirect("/admin/productList/?success=Product Updated Successfully");
   } catch (error) {
     logger.error(error);
@@ -263,6 +275,8 @@ const removeProduct = async (req, res) => {
 
     product.isBlocked = !product.isBlocked; // toggle
     await product.save();
+
+    emitProductStatusChanged(product);
 
     res
       .status(STATUS_CODES.OK)

@@ -318,6 +318,61 @@
         <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/socket.io/socket.io.js"></script>
+
+<script>
+        const socket = io();
+
+        socket.on("connect", () => {
+            console.log("USER SOCKET CONNECTED:", socket.id);
+
+            <%if (locals.user && locals.user._id) {%>
+              socket.emit("joinRoom", { role: "user", userId: "<%= user._id %>" })              
+            <%}%>
+
+        });
+
+        socket.on("product:stockChanged", (data) => {
+            console.log("USER RECEIVED product:stockChanged", data);
+            location.reload();
+        });
+
+        socket.on("product:updated", (data) => {
+        console.log("USER RECEIVED product:updated", data);
+        location.reload();
+       });
+
+       socket.on("product:added", () => {
+            location.reload();
+        });
+
+        socket.on("product:statusChanged", () => {
+            location.reload();
+        });
+
+        socket.on("category:statusChanged", () => {
+            location.reload();
+        });
+
+        socket.on("offer:changed", (data) => {
+            console.log("Offer updated:", data);
+            location.reload();
+        });
+
+        <% if (locals.user && locals.user._id) { %>
+        socket.on("user:blocked", (data) => {
+            alert(data.message);
+            window.location.href = "/login"; // force logout
+        });
+
+        socket.on("user:unblocked", (data) => {
+            alert(data.message);
+            location.reload(); // refresh page so actions work
+        });
+    <% } %>
+
+        
+</script>
 <script>
 
 
@@ -370,7 +425,7 @@
                     Swal.fire({
                         icon: "error",
                         title: "Failed to add to wishlist",
-                        text: "Please try again later",
+                        text: "Please login",
                     })
                 }
             })

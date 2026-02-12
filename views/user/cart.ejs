@@ -27,7 +27,6 @@
 
     <link rel="stylesheet" href="/css/containerWidth.css">
 
-    
     <style>
         .custom-button {
         padding: 12px 24px; /* Adjust padding for top/bottom and left/right */
@@ -597,6 +596,15 @@
 
     <!--====== App ======-->
     <script src="/js/app.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/js/userSocket.js"></script>
+    <script>
+        <% if (locals.user && locals.user._id) { %>
+            window.USER_ID = "<%= user._id %>";
+        <% } else { %>
+            window.USER_ID = null;
+        <% } %>
+    </script>
 
     <script>
 

@@ -268,9 +268,19 @@
                                 location.reload();
                             });
                         },
-                        error: function () {
-                            Swal.fire('Error', 'Something went wrong', 'error');
-                        }
+                        error: function (xhr) {
+                              if (xhr.status === 401) {
+                                  Swal.fire({
+                                      icon: 'warning',
+                                      title: 'Session Expired',
+                                      text: 'Please login again'
+                                  }).then(() => {
+                                      window.location.href = '/admin';
+                                  });
+                              } else {
+                                  Swal.fire('Error', 'Something went wrong', 'error');
+                              }
+                          }
                        });
                     }
                 });

@@ -1,4 +1,3 @@
-
 import Product from "../../models/productSchema.js";
 import CategoryOffer from "../../models/categoryOfferSchema.js";
 import ProductOffer from "../../models/productOfferSchema.js";
@@ -7,39 +6,35 @@ import logger from "../../utils/logger.js";
 
 const loadHomepage = async (req, res) => {
   try {
-
-  //    if (req.session.orderCompleted) {
-  //   req.session.orderCompleted = false; // allow future orders
-  // }
-
-  // res.set({
-  //   "Cache-Control": "no-store, no-cache, must-revalidate, private",
-  // });
-  
     const user = req.session.user || req.session.passport;
-    
+
     const currentDate = new Date();
+
+    const startOfToday = new Date();
+     startOfToday.setHours(0, 0, 0, 0);
+
+  const endOfToday = new Date();
+   endOfToday.setHours(23, 59, 59, 999);
 
     const products = await Product.aggregate([
       {
-        $match: {isBlocked: false}
+        $match: { isBlocked: false },
       },
       {
         $lookup: {
           from: "categories",
           localField: "categoryId",
           foreignField: "_id",
-          as: "category"
-        }
+          as: "category",
+        },
       },
-       {
-          $unwind: "$category"
-        },
-        {
-          $match: {"category.isBlocked": false}
-        },
-        {$limit: 20},
-       
+      {
+        $unwind: "$category",
+      },
+      {
+        $match: { "category.isBlocked": false },
+      },
+      { $limit: 20 },
     ]);
 
     const updatedProducts = await Promise.all(
@@ -53,14 +48,14 @@ const loadHomepage = async (req, res) => {
           ProductOffer.find({
             productId: product._id,
             isActive: true,
-            startDate: { $lte: currentDate },
-            endDate: { $gte: currentDate },
+            startDate: { $lte: startOfToday },
+            endDate: { $gte: endOfToday },
           }),
           CategoryOffer.find({
             categoryId: product.categoryId._id,
             isActive: true,
-            startDate: { $lte: currentDate },
-            endDate: { $gte: currentDate },
+            startDate: { $lte: startOfToday },
+            endDate: { $gte: endOfToday },
           }),
         ]);
 
@@ -71,7 +66,8 @@ const loadHomepage = async (req, res) => {
           for (const offer of offers) {
             let discounted = originalPrice;
             if (offer.discountType === "percentage") {
-              discounted = originalPrice - (originalPrice * offer.discountAmount) / 100;
+              discounted =
+                originalPrice - (originalPrice * offer.discountAmount) / 100;
             } else if (offer.discountType === "flat") {
               discounted = originalPrice - offer.discountAmount;
             }
@@ -89,7 +85,7 @@ const loadHomepage = async (req, res) => {
         // Find best product-level and category-level offer
         const bestProductOffer = getBestOffer(productOffers);
         const bestCategoryOffer = getBestOffer(categoryOffers);
-
+        
         // Compare which offer gives the lower price
         if (bestProductOffer.finalPrice < bestCategoryOffer.finalPrice) {
           bestPrice = bestProductOffer.finalPrice;
@@ -98,7 +94,10 @@ const loadHomepage = async (req, res) => {
             type: bestProductOffer.offer?.discountType,
             amount: bestProductOffer.offer?.discountAmount,
           };
-        } else if (bestCategoryOffer.offer && bestCategoryOffer.finalPrice < originalPrice) {
+        } else if (
+          bestCategoryOffer.offer &&
+          bestCategoryOffer.finalPrice < originalPrice
+        ) {
           bestPrice = bestCategoryOffer.finalPrice;
           discountInfo = {
             source: "category",
@@ -113,7 +112,7 @@ const loadHomepage = async (req, res) => {
           finalPrice: bestPrice.toFixed(2),
           discountInfo,
         };
-      })
+      }),
     );
 
     // Render home page
@@ -124,13 +123,10 @@ const loadHomepage = async (req, res) => {
     }
   } catch (error) {
     logger.error("Error loading home page:", error);
-    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).send(MESSAGES.GENERIC.SERVER_ERROR);
+    res
+      .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
+      .send(MESSAGES.GENERIC.SERVER_ERROR);
   }
 };
 
-
-
 export default { loadHomepage };
-    
-
-    

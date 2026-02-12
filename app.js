@@ -13,22 +13,21 @@ app.use(cookieParser());
 import logger from "./utils/logger.js";
 import path from "path";
 import { fileURLToPath } from "url";
-
-logger.error("🔥 FORCE FILE LOG TEST 🔥");
+import http from "http";
+import { initSocket } from "./config/socket.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-
 import passport from "./config/passport.js";
-import  requestLogger from "./middleware/requestLogger.js";
+import requestLogger from "./middleware/requestLogger.js";
 
 app.use(requestLogger);
 
 app.use(
   express.static(
-    path.join(__dirname, "public/ludus-free-premium-ecommerce-template-master")
-  )
+    path.join(__dirname, "public/ludus-free-premium-ecommerce-template-master"),
+  ),
 );
 
 app.use(
@@ -46,7 +45,7 @@ app.use(
         res.setHeader("Content-Type", "application/javascript");
       }
     },
-  })
+  }),
 );
 
 app.use(express.json({ limit: "10mb" })); // for JSON
@@ -61,13 +60,11 @@ app.use(
       httpOnly: true,
       maxAge: 72 * 60 * 60 * 1000,
     },
-  })
+  }),
 );
 
 app.use(passport.initialize());
 app.use(passport.session());
-
-
 
 app.use((req, res, next) => {
   if (req.isAuthenticated() && !req.session.user) {
@@ -76,12 +73,10 @@ app.use((req, res, next) => {
   next();
 });
 
-
 app.use((req, res, next) => {
   res.set("cache-control", "no-store");
   next();
 });
-
 
 app.set("view engine", "ejs");
 app.set("views", [
@@ -93,25 +88,25 @@ app.set("views", [
 app.use("/admin", adminRouter);
 
 app.use("/admin", (req, res) => {
-  res.status(404).render("404Error")
+  res.status(404).render("404Error");
 });
 
 app.use("/", checkBlocked, userRouter);
 
 app.use((req, res) => {
   res.status(404).render("page-404");
-})
+});
 
+db().then(() => {
+  const server = http.createServer(app);
 
+   initSocket(server);
 
-db()
-  .then(() => {
-    app.listen(process.env.PORT, () => {
-      logger.info(`server running on port ${process.env.PORT}`);
-    });
-  })
-  .catch((error) => {
-    logger.info(`failed to connect to the database`, error);
+  server.listen(process.env.PORT, () => {
+    logger.info(`server running on port ${process.env.PORT}`);
   });
+}).catch((error) => {
+  logger.error("failed to connect to the database", error);
+});
 
 export default app;

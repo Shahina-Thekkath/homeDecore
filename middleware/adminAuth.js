@@ -3,7 +3,6 @@ import logger from "../utils/logger.js";
 const isLogin = async (req, res, next) => {
   try {
     if (req.session.admin) {
-      console.log("admin",req.session.admin);
       return next();
     }
 

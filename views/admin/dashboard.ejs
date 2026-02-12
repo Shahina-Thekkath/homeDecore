@@ -327,6 +327,60 @@
     <script src="/admin-assets/plugins/sweetalert/sweetalerts.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <% if(enableSocket) { %>
+      <script src="/socket.io/socket.io.js"></script>
+      <script>
+        const socket = io();
+
+        socket.on("connect", () => {
+          console.log("🟢 Connected:", socket.id);
+
+          //join admin room
+          socket.emit("joinRoom", {
+            role: "admin"
+          });
+        });
+
+        socket.on("disconnect", () => {
+          console.log("🔴 Disconnected");
+        });
+
+        socket.on("newOrderPlaced", (data) => {
+          Swal.fire({
+            icon: "info",
+            title: "New Order Received",
+            text: "A customer has placed a new order.",
+            toast: true,
+            position: "top-end",
+            timer: 3000,
+            showConfirmButton: false
+          });
+        });
+
+         socket.on("product:updated", (data) => {
+        console.log("USER RECEIVED product:updated", data);
+        location.reload();
+       });
+
+       socket.on("product:added", () => {
+            location.reload();
+        });
+
+        socket.on("product:statusChanged", () => {
+            location.reload();
+        });
+
+        socket.on("category:statusChanged", () => {
+            location.reload();
+        });
+
+        socket.on("category:updated", () => {
+            location.reload();
+        });
+
+      </script>
+
+    <% } %>
     
 
     <script>

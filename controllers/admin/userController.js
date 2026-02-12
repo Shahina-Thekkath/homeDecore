@@ -1,6 +1,7 @@
 import User from "../../models/userSchma.js";
 import { STATUS_CODES, MESSAGES } from "../../constants/index.js";
 import logger from "../../utils/logger.js";
+import { emitUserBlocked, emitUserUnblocked } from "../../utils/userNotifier.js";
 
 const getAllUsers = async (req, res) => {
   try {
@@ -58,6 +59,8 @@ const blockUser = async (req, res) => {
         .json({ success: false, message: MESSAGES.USER.NOT_FOUND });
     }
 
+    emitUserBlocked(userId);
+
     return res.status(STATUS_CODES.OK).json({ success: true });
   } catch (error) {
     logger.error("Error blocking user:", error);
@@ -76,6 +79,8 @@ const unblockUser = async (req, res) => {
     if (!user) {
       return res.status(STATUS_CODES.NOT_FOUND).json({ success: false });
     }
+
+    emitUserUnblocked(userId);
     res.status(STATUS_CODES.OK).json({ success: true });
   } catch (error) {
     logger.error("Error unblocking user:", error);

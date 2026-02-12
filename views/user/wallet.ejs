@@ -552,6 +552,26 @@
     <!--====== App ======-->
     <script src="/js/app.js"></script>
 
+     <script src="/socket.io/socket.io.js"></script>
+
+    <script>
+        const socket = io();
+
+        socket.on("connect", () => {
+            console.log("USER SOCKET CONNECTED:", socket.id);
+
+            socket.emit("joinRoom", {
+                role: "user",
+                userId: "<%= user._id %>"
+            });
+        });
+
+        socket.on("order:updated", (data) => {
+            console.log("USER RECEIVED order:updated", data);
+            location.reload();
+        });
+    </script>
+
     <!--====== Noscript ======-->
     <noscript>
         <div class="app-setting">

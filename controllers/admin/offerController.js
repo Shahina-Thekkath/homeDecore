@@ -4,6 +4,7 @@ import ProductOffer from "../../models/productOfferSchema.js";
 import CategoryOffer from "../../models/categoryOfferSchema.js";
 import { STATUS_CODES, MESSAGES } from "../../constants/index.js";
 import logger from "../../utils/logger.js";
+import { emitOfferChange } from "../../utils/offerNotifier.js";
 
 const getAddOffer = async (req, res) => {
   try {
@@ -123,6 +124,13 @@ const postAddOffer = async (req, res) => {
       });
     }
 
+    emitOfferChange({
+      action: "created",
+      offerType,
+      productId: offerType === "product" ? productId : null,
+      categoryId: offerType === "category" ? categoryId : null
+    });
+
     return res.status(STATUS_CODES.OK).json({ success: true });
   } catch (error) {
     logger.error("Error creating offer:", error);
@@ -207,6 +215,13 @@ const toggleOfferStatus = async (req, res) => {
       }
     }
 
+    emitOfferChange({
+      action: offer.isActive ? "activated" : "deactivated",
+      offerType,
+      productId: offerType === "product"? offer.productId : null,
+      categoryId: offerType === "category" ? offer.categoryId : null
+    });
+
     res
       .status(STATUS_CODES.OK)
       .json({
@@ -225,7 +240,7 @@ const toggleOfferStatus = async (req, res) => {
 const getEditOffer = async (req, res) => {
   try {
     const offerId = req.params.id;
-    let offer, offerType;
+    let offer;
 
     offer = await ProductOffer.findById(offerId).lean();
     if (offer) {
@@ -379,6 +394,13 @@ const updateOffer = async (req, res) => {
         .status(STATUS_CODES.BAD_REQUEST)
         .json({ success: false, message: MESSAGES.OFFER.INVALID_TYPE });
     }
+
+    emitOfferChange({
+      action: "updated",
+      offerType,
+      productId: offerType === "product" ? productId: null,
+       categoryId: offerType === "category" ?  categoryId : null
+    });
 
     res
       .status(STATUS_CODES.OK)

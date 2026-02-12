@@ -144,10 +144,6 @@
                         <h4>Order List</h4>
                         <h6>Manage your orders</h6>
                     </div>
-                    <!-- <div class="page-btn">
-                        <a href="/admin/products/addProducts" class="btn btn-added"><img src="/admin-assets/img/icons/plus.svg" alt="img"
-                                class="me-1">Add New Product</a>
-                    </div> -->
                 </div>
 
                 <div class="card">
@@ -202,18 +198,6 @@
                                           <a href="/admin/orders/<%=order._id %>" class="btn btn-primary text-white btn-sm mb-2">
                                             <i class="bi bi-eye"></i> View
                                           </a>
-                                      
-                                          <!-- <select class="form-select form-select-sm mb-2"
-                                                  style="max-width: 180px;"
-                                                  onchange="updateOrderStatus('<%= order._id %>', this.value)">
-                                            <option disabled selected>Update Status</option>
-                                            <option value="Processing" <%= order.orderStatus === "Processing" ? "selected" : "" %>>Processing</option>
-                                            <option value="Shipped" <%= order.orderStatus === "Shipped" ? "selected" : "" %>>Shipped</option>
-                                            <option value="Delivered" <%= order.orderStatus === "Delivered" ? "selected" : "" %>>Delivered</option>
-                                            <option value="Cancelled" <%= order.orderStatus === "Cancelled" ? "selected" : "" %>>Cancelled</option>
-                                            <option value="Return Requested" <%= order.orderStatus === "Return Requested"? "selected" : "" %>>Return Requested</option>
-                                            <option value="Returned" <%= order.orderStatus === "Returned"? "selected" : "" %>>Returned</option>
-                                          </select> -->
                                         </div>
                                       </td>
                                 </tr>
@@ -251,11 +235,27 @@
     <script src="/admin-assets/plugins/sweetalert/sweetalerts.min.js"></script>
 
     <script src="/admin-assets/js/script.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+
+        socket.on("connect", () => {
+            console.log("ADMIN SOCKET CONNECTED:", socket.id);
+        });
+
+        socket.emit("joinRoom", { role: "admin" });
+
+        socket.on("order:updated", (data) => {
+            console.log("ADMIN RECEIVED order:updated", data);
+            location.reload();
+        });
+    </script>
+
     <script>
           function message(msg){
             if(msg){
                   Swal.fire({
-                    positition: "center",
+                    position: "center",
                     icon: "success",
                     title: msg,
                     showConfirmButton: false,

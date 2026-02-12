@@ -1341,6 +1341,45 @@
     <!--====== App ======-->
     <script src="/js/app.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="/socket.io/socket.io.js"></script>
+
+    <script>
+            const socket = io();
+
+            socket.on("connect", () => {
+                console.log("USER SOCKET CONNECTED:", socket.id);
+            });
+
+            socket.on("product:stockChanged", (data) => {
+                console.log("USER RECEIVED product:stockChanged", data);
+                location.reload();
+            });
+
+            socket.on("product:updated", (data) => {
+                console.log("USER RECEIVED product:updated", data);
+                location.reload();
+            });
+
+            socket.on("product:added", () => {
+                location.reload();
+            });
+
+            socket.on("product:statusChanged", () => {
+                location.reload();
+            });
+
+            socket.on("category:statusChanged", () => {
+                location.reload();
+            });
+
+            socket.on("category:updated", () => {
+                location.reload();
+            });
+            socket.on("offer:changed", (data) => {
+                console.log("Offer updated:", data);
+                location.reload();
+            });
+    </script>
 
 
     <script>

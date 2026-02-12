@@ -3,6 +3,7 @@ import Order from "../../models/orderSchema.js";
 import Wallet from "../../models/walletSchema.js";
 import { STATUS_CODES, MESSAGES } from "../../constants/index.js";
 import logger from "../../utils/logger.js";
+import { emitOrderUpdated } from "../../utils/orderNotifier.js";
 
 const getAdminOrders = async (req, res) => {
   try {
@@ -35,12 +36,10 @@ const getOrderById = async (req, res) => {
     res.render("orderDetails", { order, grandTotal });
   } catch (error) {
     logger.error("Error fetching order by ID:", error);
-    res
-      .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
-      .json({
-        message: MESSAGES.ORDER.ORDER_DETAILS_FETCH_FAILED,
-        error: error.message,
-      });
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
+      message: MESSAGES.ORDER.ORDER_DETAILS_FETCH_FAILED,
+      error: error.message,
+    });
   }
 };
 
@@ -137,6 +136,8 @@ const cancelOrder = async (req, res) => {
 
     await order.save();
 
+    emitOrderUpdated(order);
+
     res.status(STATUS_CODES.OK).json({
       success: true,
       message: MESSAGES.ORDER.CANCELLED_AND_REFUNDED,
@@ -179,12 +180,12 @@ const calculateRefund = (order, product) => {
   // Total refunded so far
   const totalRefundedSoFar = order.products.reduce(
     (sum, p) => sum + (p.refundedAmount || 0),
-    0
+    0,
   );
 
   // Active (non-cancelled/returned) products
   const activeProducts = order.products.filter(
-    (p) => !["Cancelled", "Returned"].includes(p.status)
+    (p) => !["Cancelled", "Returned"].includes(p.status),
   );
 
   let refundAmount;
@@ -200,7 +201,7 @@ const calculateRefund = (order, product) => {
     // Proportional refund from amount actually paid
     const subtotal = order.products.reduce(
       (sum, p) => sum + p.discountedPrice * p.quantity,
-      0
+      0,
     );
     const productPrice = product.discountedPrice * product.quantity;
 
@@ -265,7 +266,7 @@ const updateProductStatus = async (req, res) => {
         await handleRefundToWallet(
           order.userId._id,
           refundAmount,
-          "Cancelled Refund"
+          "Cancelled Refund",
         );
       }
     }
@@ -297,7 +298,7 @@ const updateProductStatus = async (req, res) => {
       await handleRefundToWallet(
         order.userId._id,
         refundAmount,
-        "Return Refund"
+        "Return Refund",
       );
 
       await Product.findByIdAndUpdate(product.productId._id, {
@@ -318,6 +319,8 @@ const updateProductStatus = async (req, res) => {
 
     updateOverallOrderStatus(order);
     await order.save();
+
+    emitOrderUpdated(order);
 
     res.json({ message: MESSAGES.ORDER.PRODUCT_STATUS_UPDATED });
   } catch (error) {
@@ -371,7 +374,7 @@ const cancelProductByIndex = async (req, res) => {
       await handleRefundToWallet(
         order.userId._id,
         refundAmount,
-        "Cancelled Refund"
+        "Cancelled Refund",
       );
     }
 
@@ -379,6 +382,9 @@ const cancelProductByIndex = async (req, res) => {
     updateOverallOrderStatus(order);
 
     await order.save();
+
+    emitOrderUpdated(order);
+    
     res.json({ message: MESSAGES.ORDER.PRODUCT_CANCELLED_AND_REFUNDED });
   } catch (error) {
     logger.error("Cancel product error:", error);

@@ -1,7 +1,9 @@
 import Order from "../../models/orderSchema.js";
 import Product from "../../models/productSchema.js";
+import Category from "../../models/categorySchema.js";
 import { STATUS_CODES, MESSAGES } from "../../constants/index.js";
 import logger from "../../utils/logger.js";
+
 
 const loadDashboard = async (req, res) => {
   try {
@@ -73,7 +75,17 @@ const loadDashboard = async (req, res) => {
       }
     }
 
-    const recentProducts = await Product.find()
+    const activeCategories = await Category.find(
+      { isBlocked: false },
+      {_id: 1}
+    );
+
+    const activeCategoryIds = activeCategories.map(c => c._id);
+
+    const recentProducts = await Product.find({
+      isBlocked: false,
+      categoryId: { $in: activeCategoryIds }
+    })
       .sort({ createdAt: -1 })
       .limit(5);
 
@@ -141,6 +153,7 @@ const loadDashboard = async (req, res) => {
       recentProducts,
       topProducts,
       topCategories,
+      enableSocket: true
     });
   } catch (error) {
     logger.error("dashboard error", error);

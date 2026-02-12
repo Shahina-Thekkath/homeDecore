@@ -17,8 +17,8 @@ import { withTransaction } from "../../utils/withTransaction.js";
 import { placeCODOrder, finalizeOrder } from "../../services/order.service.js";
 import mongoose from "mongoose";
 import { placeWalletOrder } from "../../services/order.service.js";
-
-//controller
+import { getIO } from "../../config/socket.js";
+import { notifyAdminNewOrder } from "../../utils/orderNotifier.js"
 
 dotenv.config();
 
@@ -238,6 +238,8 @@ const saveOrderInSession = async (req, res) => {
     req.session.order = savedOrder;
     req.session.paymentMethod = "COD";
 
+    notifyAdminNewOrder(savedOrder);
+    
     return res.json({ success: true });
   } catch (error) {
     logger.error("Error saving order in session:", error);
@@ -319,18 +321,6 @@ const saveWalletOrder = async (req, res) => {
       });
     }
 
-    // Deduct from wallet
-    // wallet.balance -= finalTotal;
-    // wallet.transactions.push({
-    //   transactionId: `TXN${Date.now()}`,
-    //   type: "debit",
-    //   amount: finalTotal,
-    //   reason: "Order Payment",
-    //   date: new Date(),
-    // });
-    // await wallet.save();
-
-    // Save order
     const order = {
       userId,
       products: itemsArray.map((item) => ({
@@ -361,6 +351,8 @@ const saveWalletOrder = async (req, res) => {
 
     req.session.order = order;
     req.session.paymentMethod = "Wallet Payment";
+
+    notifyAdminNewOrder();
 
     res.json({ success: true });
   } catch (error) {
@@ -944,6 +936,8 @@ const verifyRazorpayPayment = async (req, res) => {
     //  Store the saved order in session for success page
     req.session.order = savedOrder;
     req.session.paymentMethod = "Razorpay";
+
+    notifyAdminNewOrder(savedOrder);
 
     return res.json({ success: true });
   } catch (error) {
