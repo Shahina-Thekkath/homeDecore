@@ -431,34 +431,18 @@
           const selectedProductPrice = Number(document.querySelector("#productSelect option:checked").dataset.price);
 
           // Discount amount
-          const discountValue = Number(discountAmount);
-
-          const MAX_PERCENT = 60;
-          const MAX_FLAT = selectedProductPrice * 0.60;
-
-          if(!discountAmount) {
-            document.getElementById("discountAmount-error").innerText = "Enter a discount amount";
+          if (!discountAmount) {
+            document.getElementById("discountAmount-error").innerText ="Enter a discount amount";
             isValid = false;
-          }
-          else if(discountType === "flat") {
-            if(!discountRegex.test(discountAmount) || discountValue <= 0) {
-              document.getElementById("discountAmount-error").innerText = "Enter a valid numeric discount (up to 2 decimals)";
-              isValid = false;
-            }
-            else if (discountValue > MAX_FLAT) {
-              document.getElementById("discountAmount-error").innerText = "Flat discount cannot exceed 60% of product price (" + MAX_FLAT.toFixed(2) + ")";
-              isValid = false;
-            }
-          } 
-          else if (discountType === "percentage") {
-            if(isNaN(discountValue) || discountValue <= 0) {
-              document.getElementById("discountAmount-error").innerText = "Enter a valid percentage value";
-              isValid = false;
-            } 
-            else if (discountValue > MAX_PERCENT) {
-              document.getElementById("discountAmount-error").innerText = "Discount percentage cannot exceed 60%";
-              isValid = false;
-            }
+          } else if (
+            !discountRegex.test(discountAmount) ||
+            Number(discountAmount) <= 0
+          ) {
+            document.getElementById("discountAmount-error").innerText ="Enter a valid numeric discount (up to 2 decimals)";
+            isValid = false;
+          } else if(Number(discountAmount > selectedProductPrice)) {
+            document.getElementById("discountAmount-error").innerText = "The discount Amount cannot exceed the product price ( " + selectedProductPrice + ")";
+            isValid = false;
           }
 
           // Start date

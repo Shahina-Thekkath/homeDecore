@@ -200,7 +200,7 @@
                     <select class="form-select" name="productId" id="productSelect">
                       <option value="">Choose Product...</option>
                       <% products.forEach(product => { %>
-                         <option value="<%= product._id %>" <%= offer.productId?.toString() === product._id?.toString() ? 'selected' : '' %>><%= product.name %></option>
+                         <option value="<%= product._id %>" data-price="<%= product.price %>" <%= offer.productId?.toString() === product._id?.toString() ? 'selected' : '' %>><%= product.name %></option>
                       <% }) %>
                     </select>
                     <small class="text-danger" id="productId-error"></small>

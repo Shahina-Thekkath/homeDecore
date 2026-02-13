@@ -37,6 +37,14 @@
         .has-dropdown:focus-within > ul {
             right: -10px;  
         }
+        .disabled-btn {
+            background-color: #ee4e14 !important; /* lighter shade */
+            border-color: #db6a3a !important;
+            color: #dbe4ec !important;
+            cursor: not-allowed;
+            opacity: 0.8;
+        }
+
 
      </style>
 
@@ -454,7 +462,7 @@
                                             </div>
                                             <div class="u-s-m-b-15">
 
-                                                <button class="btn btn--e-brand-b-2" type="submit">Add to Cart</button></div>
+                                                <button class="btn btn--e-brand-b-2 <%= currentProduct.quantity === 0 ? 'disabled-btn' : '' %>" type="submit"  <%= currentProduct.quantity === 0 ? "disabled" : "" %>>Add to Cart</button></div>
                                         </div>
                                     </form>
                                 </div>
