@@ -1,5 +1,5 @@
 import Product from "../models/productSchema.js";
-import { logger } from "../utils/logger.js";
+import logger from "../utils/logger.js";
 
 export default async (req, res, next) => {
   try {
