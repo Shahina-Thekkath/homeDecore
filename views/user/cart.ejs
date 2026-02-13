@@ -597,14 +597,33 @@
     <!--====== App ======-->
     <script src="/js/app.js"></script>
     <script src="/socket.io/socket.io.js"></script>
-    <script src="/js/userSocket.js"></script>
+
     <script>
+        const socket = io();
+
+        socket.on("connect", () => {
+            <% if (locals.user && locals.user._id) { %>
+                socket.emit("joinRoom", { 
+                    role: "user", 
+                    userId: "<%= user._id %>" 
+                });
+            <% } %>
+        });
+
         <% if (locals.user && locals.user._id) { %>
-            window.USER_ID = "<%= user._id %>";
-        <% } else { %>
-            window.USER_ID = null;
+            socket.on("user:blocked", () => {
+                location.reload();   
+            });
+
+        <% } %>
+        <% if (locals.user && locals.user._id) { %>
+            socket.on("user:unblocked", () => {
+                location.reload();   
+            });
         <% } %>
     </script>
+
+   
 
     <script>
 

@@ -570,6 +570,14 @@
             console.log("USER RECEIVED order:updated", data);
             location.reload();
         });
+
+        socket.on("user:blocked", () => {
+                location.reload();   
+        });
+
+        socket.on("user:unblocked", () => {
+            location.reload();   
+        });
     </script>
 
     <!--====== Noscript ======-->

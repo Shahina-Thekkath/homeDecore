@@ -402,6 +402,31 @@
 <!--====== Google Analytics: change UA-XXXXX-Y to be your site's ID ======-->
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="/socket.io/socket.io.js"></script>
+
+    <script>
+        const socket = io();
+
+        socket.on("connect", () => {
+            <% if (locals.user && locals.user._id) { %>
+                socket.emit("joinRoom", { 
+                    role: "user", 
+                    userId: "<%= user._id %>" 
+                });
+            <% } %>
+        });
+
+        <% if (locals.user && locals.user._id) { %>
+            socket.on("user:blocked", () => {
+                location.reload();   
+            });
+
+            socket.on("user:unblocked", () => {
+                location.reload();   
+            });
+        <% } %>
+    </script>
+
 <script>
 window.ga = function() {
     ga.q.push(arguments)

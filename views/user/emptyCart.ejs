@@ -407,6 +407,26 @@
 
     <!--====== App ======-->
     <script src="/js/app.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+
+    <script>
+        const socket = io();
+
+        socket.on("connect", () => {
+            <% if (locals.user && locals.user._id) { %>
+                socket.emit("joinRoom", { 
+                    role: "user", 
+                    userId: "<%= user._id %>" 
+                });
+            <% } %>
+        });
+
+        <% if (locals.user && locals.user._id) { %>
+            socket.on("user:blocked", () => {
+                location.reload();   // 🔥 just reload
+            });
+        <% } %>
+    </script>
 
     <!--====== Noscript ======-->
     <noscript>

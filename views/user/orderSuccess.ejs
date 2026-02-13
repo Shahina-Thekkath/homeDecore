@@ -110,6 +110,30 @@
         };
     }
 </script>
+<script src="/socket.io/socket.io.js"></script>
+
+    <script>
+        const socket = io();
+
+        socket.on("connect", () => {
+            <% if (locals.user && locals.user._id) { %>
+                socket.emit("joinRoom", { 
+                    role: "user", 
+                    userId: "<%= user._id %>" 
+                });
+            <% } %>
+        });
+
+        <% if (locals.user && locals.user._id) { %>
+            socket.on("user:blocked", () => {
+                location.reload();   
+            });
+
+            socket.on("user:unblocked", () => {
+                location.reload();   
+            });
+        <% } %>
+    </script>
 
 </body>
 </html>

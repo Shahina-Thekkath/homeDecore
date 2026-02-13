@@ -559,11 +559,25 @@
 
         socket.on("connect", () => {
             console.log("USER SOCKET CONNECTED:", socket.id);
+            socket.emit("joinRoom", { 
+                    role: "user", 
+                    userId: "<%= user._id %>" 
+                });
         });
         socket.on("offer:changed", (data) => {
             console.log("Offer updated:", data);
             location.reload();
         });
+
+        <% if (locals.user && locals.user._id) { %>
+            socket.on("user:blocked", () => {
+                location.reload();   
+            });
+
+            socket.on("user:unblocked", () => {
+                location.reload();   
+            });
+        <% } %>
     </script>
 
     <script>

@@ -365,8 +365,6 @@ const changeVerify = async (req, res) => {
 
 const resetPasswordLoad = async (req, res) => {
   try {
-    console.log("inside resetPasswordLoad");
-    
     const token = req.query.token;
     const tokenData = await User.findOne({ token });
 
@@ -392,7 +390,7 @@ const resetPasswordLoad = async (req, res) => {
 const verifyResetPassword = async (req, res) => {
   try {
     const PASSWORD_REGEX = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,25}$/;
-    const { password, cpassword, user_id, token} = req.body;
+    const { password, cpassword, user_id, token } = req.body;
 
     let errors = {};
 
@@ -409,30 +407,21 @@ const verifyResetPassword = async (req, res) => {
       errors.passwordMismatch = "Passwords do not match";
     }
 
-
-    console.log("errors:" , errors);
-
     if (Object.keys(errors).length > 0) {
       req.session.resetError = errors;
       return res.redirect(`/resetPassword?token=${token}`);
     }
 
-    console.log("user_id from body:", user_id);
-console.log("token from body:", token);
-
     const securepassword = await securePassword(password);
     await User.findOneAndUpdate(
-       {token} ,
+      { token },
       { $set: { password: securepassword, token: "" } },
-      {new: true}
+      { new: true },
     );
-
-    console.log("after setting the user");
 
     res.redirect("/login");
   } catch (error) {
     logger.error(`verify reset password error: ${error.message}`);
-
 
     return res.status(STATUS_CODES.NOT_FOUND).redirect("/pageNotFound");
   }

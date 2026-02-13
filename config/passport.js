@@ -1,6 +1,7 @@
 import User from "../models/userSchma.js";
 import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth2";
+import logger from "../utils/logger.js";
 
 
 passport.serializeUser((user, done) => {
@@ -39,7 +40,7 @@ passport.use(
 
         return done(null, user);
       } catch (error) {
-        console.error("Error in Google strategy callback:", error);
+        logger.error("Error in Google strategy callback:", error);
         return done(error, null);
       }
     }

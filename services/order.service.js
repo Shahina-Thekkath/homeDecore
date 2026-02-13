@@ -3,6 +3,7 @@ import Product from "../models/productSchema.js";
 import Order from "../models/orderSchema.js";
 import Cart from "../models/cartSchema.js";
 import Wallet from "../models/walletSchema.js";
+import logger from "../utils/logger.js";
 
 export const finalizeOrder = async (order, session) => {
   if (!session) {
@@ -25,7 +26,7 @@ export const finalizeOrder = async (order, session) => {
 
 
 export const placeCODOrder = async (orderData, userId, session) => {
-  console.log(
+  logger.info(
     "SESSION INSIDE SERVICE:",
     session ? "TRANSACTION" : "NO TRANSACTION",
   );
@@ -73,7 +74,7 @@ export const placeWalletOrder = async (
   finalTotal,
   session = null,
 ) => {
-  console.log(
+  logger.info(
     "SESSION INSIDE WALLET SERVICE:",
     session ? "TRANSACTION" : "NO TRANSACTION",
   );

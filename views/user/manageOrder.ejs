@@ -877,8 +877,18 @@
             console.log("USER RECEIVED order:updated", data);
             location.reload();
         });
-    </script>
 
+        <% if (locals.user && locals.user._id) { %>
+            socket.on("user:blocked", () => {
+                location.reload();   // 🔥 just reload
+            });
+       
+            socket.on("user:unblocked", () => {
+                location.reload();   
+            });
+        <% } %>
+    
+    </script>
 
     <script>
      // Global variable to track current action type

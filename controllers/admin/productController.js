@@ -3,7 +3,12 @@ import Category from "../../models/categorySchema.js";
 import cloudinary from "cloudinary";
 import { STATUS_CODES, MESSAGES } from "../../constants/index.js";
 import logger from "../../utils/logger.js";
-import { emitProductStockChanged, emitProductUpdated, emitProductAdded, emitProductStatusChanged } from "../../utils/productNotifier.js";
+import {
+  emitProductStockChanged,
+  emitProductUpdated,
+  emitProductAdded,
+  emitProductStatusChanged,
+} from "../../utils/productNotifier.js";
 
 const getProductAddPage = async (req, res) => {
   try {
@@ -80,7 +85,7 @@ const addProducts = async (req, res) => {
       const uploadResults = await Promise.all(
         req.files.map((file) => {
           return cloudinary.uploader.upload(file.path, { folder: "products" });
-        })
+        }),
       );
 
       uploadedImages = uploadResults.map((r) => ({
@@ -127,7 +132,7 @@ const getAllProducts = async (req, res) => {
   try {
     const productData = await Product.find({ isBlocked: false }).populate(
       "categoryId",
-      "name"
+      "name",
     );
 
     const categories = await Category.find({ isBlocked: false }, "name");
@@ -184,7 +189,7 @@ const updateProduct = async (req, res) => {
     } = req.body;
 
     let filteredSpecifications = specifications.filter(
-      (spec) => spec && spec.key && spec.value
+      (spec) => spec && spec.key && spec.value,
     );
 
     const product = await Product.findById(productId);
@@ -251,7 +256,7 @@ const updateProduct = async (req, res) => {
 
     emitProductUpdated(product);
 
-    if(oldQuantity !== product.quantity) {
+    if (oldQuantity !== product.quantity) {
       emitProductStockChanged(product);
     }
     res.redirect("/admin/productList/?success=Product Updated Successfully");

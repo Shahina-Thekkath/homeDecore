@@ -1,4 +1,5 @@
 import Product from "../models/productSchema.js";
+import { logger } from "../utils/logger.js";
 
 export default async (req, res, next) => {
   try {
@@ -18,7 +19,7 @@ export default async (req, res, next) => {
 
     next();
   } catch (error) {
-    console.error(error);
+    logger.error(error);
     res
       .status(500)
       .json({ success: false, message: "Server error in duplicate check" });

@@ -1,4 +1,5 @@
 import User from "../models/userSchma.js";
+import { logger } from "../utils/logger.js";
 
 const checkBlocked = async (req, res, next) => {
   try {
@@ -35,7 +36,7 @@ const checkBlocked = async (req, res, next) => {
       next();
     }
   } catch (err) {
-    console.error("checkBlocked error:", err);
+    logger.error("checkBlocked error:", err);
     next();
   }
 };
