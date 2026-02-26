@@ -369,6 +369,9 @@
         const categoryRadio = document.getElementById('categoryOffer');
         const productWrapper = document.getElementById('productWrapper');
         const categoryWrapper = document.getElementById('categoryWrapper');
+         const discountTypeSelect = document.querySelector('select[name="discountType"]');
+
+  const flatOption = discountTypeSelect.querySelector('option[value="flat"]');
 
         function toggleOfferType(){
           if (productRadio.checked) {
@@ -376,11 +379,13 @@
             productWrapper.style.display = 'block';
             categoryWrapper.style.display = 'none';
             document.getElementById('categorySelect').value = '';
+            flatOption.disabled = false;
           } else if (categoryRadio.checked) {
             productRadio.checked = false;
             productWrapper.style.display = 'none';
             categoryWrapper.style.display = 'block';
             document.getElementById('productSelect').value = '';
+            flatOption.disabled = true;
           }
         }
 
@@ -435,16 +440,30 @@
           }
 
           // Discount amount
-          if (!discountAmount) {
-            document.getElementById("discountAmount-error").innerText ="Enter a discount amount";
-            isValid = false;
-          } else if (
-            !discountRegex.test(discountAmount) ||
-            Number(discountAmount) <= 0
-          ) {
-            document.getElementById("discountAmount-error").innerText ="Enter a valid numeric discount (up to 2 decimals)";
+           if (!discountAmount) {
+          document.getElementById("discountAmount-error").innerText = "Enter a discount amount";
+          isValid = false;
+        } else if (!discountRegex.test(discountAmount) || Number(discountAmount) <= 0) {
+          document.getElementById("discountAmount-error").innerText = "Enter a valid numeric discount (up to 2 decimals)";
+          isValid = false;
+        } else if (discountType === "percentage") {
+          // ── Percentage: must be between 1 and 100 
+          if (Number(discountAmount) > 80) {
+            document.getElementById("discountAmount-error").innerText = "Percentage discount cannot exceed 80%";
             isValid = false;
           }
+        } else if (discountType === "flat" && offerType === "product") {
+          // ── Flat: cannot exceed product price
+          const selectedProductPrice = Number(
+            document.querySelector("#productSelect option:checked").dataset.price
+          );
+          const maxFlatDiscount = selectedProductPrice * 0.50;
+          if (Number(discountAmount) >= maxFlatDiscount) {   // fixed bug: was Number(discountAmount > price)
+            document.getElementById("discountAmount-error").innerText =
+              "Discount amount cannot equal or exceed the product price (" + maxFlatDiscount + ")";
+            isValid = false;
+          }
+        }
 
           // Start date
           if (!startDate) {
